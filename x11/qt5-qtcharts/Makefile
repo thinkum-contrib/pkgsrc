@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1 2018/10/06 22:41:22 adam Exp $
+# $NetBSD: Makefile,v 1.4 2018/12/18 09:57:18 adam Exp $
 
 DISTNAME=	qtcharts-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtcharts-${QTVERSION}

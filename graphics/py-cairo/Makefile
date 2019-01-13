@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.58 2018/08/16 12:32:58 wiz Exp $
+# $NetBSD: Makefile,v 1.60 2018/12/02 09:11:41 wiz Exp $
 
-DISTNAME=		pycairo-1.17.1
+DISTNAME=		pycairo-1.18.0
 PKGNAME=		${PYPKGPREFIX}-${DISTNAME:S/py//}
 CATEGORIES=		graphics
 MASTER_SITES=		${MASTER_SITE_GITHUB:=pygobject/}

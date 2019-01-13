@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.40 2018/10/11 09:46:31 adam Exp $
+# $NetBSD: Makefile,v 1.43 2018/12/17 13:39:37 adam Exp $
 
-DISTNAME=	libuv-1.23.2
+DISTNAME=	libuv-1.24.1
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_GITHUB:=libuv/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
@@ -30,4 +30,5 @@ pre-configure:
 post-install:
 	${INSTALL_DATA} ${WRKSRC}/include/uv/* ${DESTDIR}${PREFIX}/include/uv/
 
+.include "../../mk/pthread.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

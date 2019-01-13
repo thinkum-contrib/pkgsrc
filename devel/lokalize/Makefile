@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.26 2018/10/24 15:42:47 bsiegert Exp $
+# $NetBSD: Makefile,v 1.28 2018/12/13 19:51:48 adam Exp $
 
 DISTNAME=	lokalize-${_KDE_VERSION}
-PKGREVISION=	12
+PKGREVISION=	14
 CATEGORIES=	devel
 COMMENT=	Computer-Aided Translation System
 

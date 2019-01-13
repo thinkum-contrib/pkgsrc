@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.39 2018/10/07 09:01:22 adam Exp $
+# $NetBSD: Makefile,v 1.42 2018/12/09 18:52:51 adam Exp $
 
 DISTNAME=	PyQt5_gpl-5.11.3
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:S/PyQt5_gpl/qt5/}
+PKGREVISION=	3
 CATEGORIES=	x11 python
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=pyqt/}
 
@@ -13,6 +14,7 @@ HOMEPAGE=	http://www.riverbankcomputing.com/software/pyqt/intro
 .if ${_PYTHON_VERSION} == 27
 DEPENDS+=	${PYPKGPREFIX}-enum34-[0-9]*:../../devel/py-enum34
 .endif
+DEPENDS+=	${PYPKGPREFIX}-sip-qt5-[0-9]*:../../x11/py-sip-qt5
 
 USE_LANGUAGES=		c c++
 USE_LIBTOOL=		yes

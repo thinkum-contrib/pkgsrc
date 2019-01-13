@@ -1,12 +1,14 @@
-# $NetBSD: Makefile,v 1.26 2018/10/24 15:42:47 bsiegert Exp $
+# $NetBSD: Makefile,v 1.30 2018/12/09 18:52:09 adam Exp $
 
 DISTNAME=	sonnet-${KF5VER}
-PKGREVISION=	3
+PKGREVISION=	6
 CATEGORIES=	textproc
 
 HOMEPAGE=	https://community.kde.org/Frameworks
 COMMENT=	Spelling framework for Qt5
 LICENSE=	gnu-lgpl-v2.1
+
+USE_TOOLS+=	pkg-config
 
 .include "../../meta-pkgs/kde/kf5.mk"
 

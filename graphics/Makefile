@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.804 2018/10/22 14:40:33 schmonz Exp $
+# $NetBSD: Makefile,v 1.811 2019/01/01 16:31:55 wiz Exp $
 #
 
 COMMENT=	Graphics tools and libraries
@@ -34,6 +34,7 @@ SUBDIR+=	R-viridisLite
 SUBDIR+=	SDL2_image
 SUBDIR+=	SDL_image
 SUBDIR+=	aalib
+SUBDIR+=	adapta-gtk-theme
 SUBDIR+=	adaptagrams
 SUBDIR+=	adwaita-icon-theme
 SUBDIR+=	agg
@@ -206,6 +207,7 @@ SUBDIR+=	gnome-icon-theme-symbolic
 SUBDIR+=	gnome-themes-standard
 SUBDIR+=	gnuplot
 SUBDIR+=	go-image
+SUBDIR+=	go-imaging
 SUBDIR+=	go-resize
 SUBDIR+=	go-smartcrop
 SUBDIR+=	gocr
@@ -254,6 +256,7 @@ SUBDIR+=	imlib-gtk
 SUBDIR+=	imlib2
 SUBDIR+=	impress
 SUBDIR+=	inkscape
+SUBDIR+=	ipe
 SUBDIR+=	ivtools
 SUBDIR+=	jasper
 SUBDIR+=	jbig2dec
@@ -408,6 +411,8 @@ SUBDIR+=	p5-cairo-gobject
 SUBDIR+=	p5-clutter
 SUBDIR+=	panomatic
 SUBDIR+=	paper-icon-theme
+SUBDIR+=	papirus-folders
+SUBDIR+=	papirus-icon-theme
 SUBDIR+=	pdiff
 SUBDIR+=	pear-Image_Canvas
 SUBDIR+=	pear-Image_Color
@@ -514,6 +519,7 @@ SUBDIR+=	ruby-imlib2
 SUBDIR+=	ruby-mini-magick
 SUBDIR+=	ruby-oily_png
 SUBDIR+=	ruby-opengl
+SUBDIR+=	ruby-screengif
 SUBDIR+=	s10sh
 SUBDIR+=	sane-backends
 SUBDIR+=	sane-frontends

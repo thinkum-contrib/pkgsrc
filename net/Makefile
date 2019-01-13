@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1232 2018/10/23 03:18:06 riastradh Exp $
+# $NetBSD: Makefile,v 1.1237 2019/01/08 10:45:02 markd Exp $
 #
 
 COMMENT=	Networking tools
@@ -106,6 +106,7 @@ SUBDIR+=	dhid
 SUBDIR+=	dhisd
 SUBDIR+=	djbdns
 SUBDIR+=	djbdns-run
+SUBDIR+=	djbdnscurve6
 SUBDIR+=	dlint
 SUBDIR+=	dnscap
 SUBDIR+=	dnscheck
@@ -371,6 +372,7 @@ SUBDIR+=	mydns-pgsql
 SUBDIR+=	nagios-base
 SUBDIR+=	nagios-nrpe
 SUBDIR+=	nagios-nsca
+SUBDIR+=	nagios-plugin-dnsmaster
 SUBDIR+=	nagios-plugin-dnsrbl
 SUBDIR+=	nagios-plugin-dotpid
 SUBDIR+=	nagios-plugin-dumpdates
@@ -685,6 +687,7 @@ SUBDIR+=	py-omniORBpy
 SUBDIR+=	py-onionbalance
 SUBDIR+=	py-pcap
 SUBDIR+=	py-portend
+SUBDIR+=	py-prometheus_client
 SUBDIR+=	py-ptt
 SUBDIR+=	py-py3dns
 SUBDIR+=	py-pydns
@@ -698,6 +701,7 @@ SUBDIR+=	py-sbws
 SUBDIR+=	py-scp
 SUBDIR+=	py-simplesoap
 SUBDIR+=	py-smb
+SUBDIR+=	py-smbc
 SUBDIR+=	py-soaplib
 SUBDIR+=	py-soappy
 SUBDIR+=	py-socketpool
@@ -790,6 +794,7 @@ SUBDIR+=	sendfile
 SUBDIR+=	ser
 SUBDIR+=	sharity-light
 SUBDIR+=	sipcalc
+SUBDIR+=	siproxd
 SUBDIR+=	sipsak
 SUBDIR+=	sitescooper
 SUBDIR+=	slurm

@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.2 2018/11/04 22:43:40 adam Exp $
+# $NetBSD: Makefile,v 1.4 2018/12/09 18:52:29 adam Exp $
 
 DISTNAME=	GPXSee-6.3
 PKGNAME=	${DISTNAME:tl}
+PKGREVISION=	2
 CATEGORIES=	geography
 MASTER_SITES=	${MASTER_SITE_GITHUB:=tumic0/}
 GITHUB_PROJECT=	GPXSee

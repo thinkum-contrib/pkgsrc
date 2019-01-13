@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.3 2018/08/22 09:46:40 wiz Exp $
+# $NetBSD: Makefile,v 1.7 2018/12/09 18:52:46 adam Exp $
 
-DISTNAME=	qdirstat-1.0
-PKGREVISION=	2
+DISTNAME=	qdirstat-1.5
+PKGREVISION=	1
 CATEGORIES=	sysutils
 MASTER_SITES=	${MASTER_SITE_GITHUB:=shundhammer/}
 
@@ -27,14 +27,13 @@ pre-configure:
 do-configure:
 	cd ${WRKSRC} && qmake
 
-INSTALLATION_DIRS= bin share/applications share/pixmaps share/doc/qdirstat
+INSTALLATION_DIRS= bin share/applications share/pixmaps
 
 do-install:
 	${INSTALL_PROGRAM} ${WRKSRC}/src/qdirstat ${DESTDIR}${PREFIX}/bin/qdirstat
 	${INSTALL_SCRIPT} ${WRKSRC}/scripts/qdirstat-cache-writer ${DESTDIR}${PREFIX}/bin/qdirstat-cache-writer
 	${INSTALL_DATA} ${WRKSRC}/src/qdirstat.desktop ${DESTDIR}${PREFIX}/share/applications/qdirstat.desktop
 	${INSTALL_DATA} ${WRKSRC}/src/icons/qdirstat.png ${DESTDIR}${PREFIX}/share/pixmaps/qdirstat.png
-	cd ${WRKSRC} && ${INSTALL_DATA} Contributing.md DevHistory.md README.md TODO.md LICENSE ${DESTDIR}${PREFIX}/share/doc/qdirstat/
 
 .include "../../x11/qt5-qtbase/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

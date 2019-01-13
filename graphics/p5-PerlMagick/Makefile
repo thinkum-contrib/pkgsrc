@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.132 2018/09/03 10:37:34 wiz Exp $
+# $NetBSD: Makefile,v 1.135 2018/12/02 10:20:45 wiz Exp $
 
 .include "../../graphics/ImageMagick/Makefile.common"
 

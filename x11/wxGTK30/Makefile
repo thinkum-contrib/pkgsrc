@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.28 2018/05/02 11:33:44 adam Exp $
+# $NetBSD: Makefile,v 1.32 2018/12/13 21:21:55 adam Exp $
 
 DISTNAME=	wxWidgets-3.0.4
 PKGNAME=	${DISTNAME:S/wxWidgets/wxGTK30/}
+PKGREVISION=	2
 CATEGORIES=	x11
 MASTER_SITES=	${MASTER_SITE_GITHUB:=wxWidgets/}
 GITHUB_PROJECT=	wxWidgets
@@ -50,16 +51,16 @@ SUBST_SED.fix-paths+=		-e 's,@PREFIX@,${PREFIX},g'
 
 .include "../../mk/bsd.prefs.mk"
 
-PLIST_SRC+=		${PLIST_SRC_DFLT}
 .if ${OPSYS} == "Darwin"
 CONFIGURE_ARGS+=	--with-osx_cocoa
 CONFIGURE_ARGS+=	--without-macosx-sdk
 CONFIGURE_ARGS+=	--without-macosx-version-min
 CPPFLAGS+=		-D__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=1
 .else
-PLIST_SRC+=		PLIST.gtk3
-CONFIGURE_ARGS+=	--with-gtk=3
+.include "options.mk"
 .endif
+
+PLIST_SRC+=		${PLIST_SRC_DFLT}
 
 CONFIGURE_ARGS.SunOS+=	--disable-xlocale
 
@@ -101,7 +102,6 @@ post-install:
 .include "../../graphics/MesaLib/buildlink3.mk"
 .include "../../graphics/cairo/buildlink3.mk"
 .include "../../graphics/glu/buildlink3.mk"
-.include "../../x11/gtk3/buildlink3.mk"
 .include "../../x11/libSM/buildlink3.mk"
 .include "../../x11/libXxf86vm/buildlink3.mk"
 .endif

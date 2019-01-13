@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.69 2018/08/22 09:45:23 wiz Exp $
+# $NetBSD: Makefile,v 1.75 2018/12/13 19:52:07 adam Exp $
 #
 
 PLUGIN_NAME=    vcalendar
-PKGREVISION= 9
+PKGREVISION= 5
 .include "../../mail/claws-mail/plugins.mk"
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
@@ -11,8 +11,8 @@ COMMENT=	Enable vCalendar message handling
 USE_TOOLS+=	perl
 
 CONFIGURE_ARGS+= --enable-${PLUGIN_NAME}-plugin
-PLIST_SRC+=	PLIST
 
 DEPENDS+=	claws-mail-${CLAWS_VERSION}{,nb[0-9]*}:../../mail/claws-mail
 
+.include "../../time/libical/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

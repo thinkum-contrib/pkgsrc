@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.160 2018/10/24 21:11:56 leot Exp $
+# $NetBSD: Makefile,v 1.164 2018/12/09 18:52:49 adam Exp $
 
-DISTNAME=		liferea-1.10.19
-PKGREVISION=		17
+DISTNAME=		liferea-1.12.5a
+PKGREVISION=		1
 CATEGORIES=		www
-GITHUB_RELEASE=		v${PKGVERSION_NOREV}
+GITHUB_RELEASE=		v${PKGVERSION_NOREV:S/a//}
 MASTER_SITES=		${MASTER_SITE_GITHUB:=lwindolf/}
 EXTRACT_SUFX=		.tar.bz2
 
@@ -33,7 +33,7 @@ GLIB_SCHEMAS=		net.sf.liferea.gschema.xml
 .include "../../sysutils/gsettings-desktop-schemas/buildlink3.mk"
 .include "../../textproc/libxml2/buildlink3.mk"
 .include "../../textproc/libxslt/buildlink3.mk"
-.include "../../www/webkit24-gtk3/buildlink3.mk"
+.include "../../www/webkit-gtk/buildlink3.mk"
 .include "../../x11/libSM/buildlink3.mk"
 .include "../../x11/gtk3/buildlink3.mk"
 .include "../../textproc/json-glib/buildlink3.mk"

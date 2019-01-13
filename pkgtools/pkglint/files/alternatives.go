@@ -1,42 +1,79 @@
-package main
+package pkglint
 
-import "strings"
+import (
+	"netbsd.org/pkglint/textproc"
+	"strings"
+)
 
-func CheckfileAlternatives(filename string, plistFiles map[string]bool) {
+func CheckFileAlternatives(filename string) {
 	lines := Load(filename, NotEmpty|LogErrors)
 	if lines == nil {
 		return
 	}
 
-	for _, line := range lines {
-		if m, wrapper, space, implementation := match3(line.Text, `^(\S+)([ \t]+)(\S+)`); m {
-			if plistFiles != nil {
-				if plistFiles[wrapper] {
-					line.Errorf("Alternative wrapper %q must not appear in the PLIST.", wrapper)
-				}
+	var plist PlistContent
+	if G.Pkg != nil {
+		plist = G.Pkg.Plist
+	}
 
-				relImplementation := strings.Replace(implementation, "@PREFIX@/", "", 1)
-				plistName := replaceAll(relImplementation, `@(\w+)@`, "${$1}")
-				if !plistFiles[plistName] && !G.Pkg.vars.Defined("ALTERNATIVES_SRC") {
-					if plistName != implementation {
-						line.Errorf("Alternative implementation %q must appear in the PLIST as %q.", implementation, plistName)
-					} else {
-						line.Errorf("Alternative implementation %q must appear in the PLIST.", implementation)
-					}
-				}
-			}
+	checkPlistWrapper := func(line Line, wrapper string) {
+		if plist.Files[wrapper] {
+			line.Errorf("Alternative wrapper %q must not appear in the PLIST.", wrapper)
+		}
+	}
 
+	checkPlistAlternative := func(line Line, alternative string) {
+		relImplementation := strings.Replace(alternative, "@PREFIX@/", "", 1)
+		plistName := replaceAll(relImplementation, `@(\w+)@`, "${$1}")
+		if plist.Files[plistName] || G.Pkg.vars.Defined("ALTERNATIVES_SRC") {
+			return
+		}
+
+		switch {
+
+		case hasPrefix(alternative, "/"):
+			// It's possible but unusual to refer to a fixed absolute path.
+			// These cannot be mentioned in the PLIST since they are not part of the package.
+			break
+
+		case plistName == alternative:
+			line.Errorf("Alternative implementation %q must appear in the PLIST.", alternative)
+
+		default:
+			line.Errorf("Alternative implementation %q must appear in the PLIST as %q.", alternative, plistName)
+		}
+	}
+
+	for _, line := range lines.Lines {
+		m, wrapper, space, alternative := match3(line.Text, `^([^\t ]+)([ \t]+)([^\t ]+)`)
+		if !m {
+			line.Errorf("Invalid line %q.", line.Text)
+			G.Explain(
+				sprintf("Run %q for more information.", makeHelp("alternatives")))
+			continue
+		}
+
+		if plist.Files != nil {
+			checkPlistWrapper(line, wrapper)
+			checkPlistAlternative(line, alternative)
+		}
+
+		switch {
+		case hasPrefix(alternative, "/"), hasPrefix(alternative, "@"):
+			break
+
+		case textproc.NewLexer(alternative).NextByteSet(textproc.Alnum) != -1:
 			fix := line.Autofix()
-			fix.Notef("@PREFIX@/ can be omitted from the file name.")
+			fix.Errorf("Alternative implementation %q must be an absolute path.", alternative)
 			fix.Explain(
-				"The alternative implementation is always interpreted relative to",
-				"${PREFIX}.")
-			fix.ReplaceAfter(space, "@PREFIX@/", "")
+				"It usually starts with @PREFIX@/... to refer to a path inside the installation prefix.")
+			fix.ReplaceAfter(space, alternative, "@PREFIX@/"+alternative)
 			fix.Apply()
-		} else {
-			line.Errorf("Invalid ALTERNATIVES line %q.", line.Text)
-			Explain(
-				"Run \"" + confMake + " help topic=alternatives\" for more information.")
+
+		default:
+			line.Errorf("Alternative implementation %q must be an absolute path.", alternative)
+			line.Explain(
+				"It usually starts with @PREFIX@/... to refer to a path inside the installation prefix.")
 		}
 	}
 }

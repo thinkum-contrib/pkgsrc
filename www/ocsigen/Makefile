@@ -1,10 +1,10 @@
-# $NetBSD: Makefile,v 1.32 2018/08/03 08:51:48 jaapb Exp $
+# $NetBSD: Makefile,v 1.34 2018/11/29 10:54:14 jaapb Exp $
 #
 
 VERSION=	2.9
 GITHUB_PROJECT=	ocsigenserver
 PKGNAME=	ocsigen-${VERSION}
-PKGREVISION=	2
+PKGREVISION=	4
 DISTNAME=	${GITHUB_PROJECT}-${VERSION}
 CATEGORIES=	www
 MASTER_SITES=	${MASTER_SITE_GITHUB:=ocsigen/}
@@ -81,4 +81,5 @@ post-extract:
 .include "../../security/ocaml-cryptokit/buildlink3.mk"
 .include "../../security/ocaml-ssl/buildlink3.mk"
 .include "../../textproc/ocaml-tyxml/buildlink3.mk"
+.include "../../textproc/ocaml-xml-light/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

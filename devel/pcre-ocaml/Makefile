@@ -1,9 +1,8 @@
-# $NetBSD: Makefile,v 1.33 2018/07/19 15:15:26 jaapb Exp $
+# $NetBSD: Makefile,v 1.35 2018/11/27 19:08:14 jaapb Exp $
 
-VERSION=		7.3.4
+VERSION=		7.3.5
 DISTNAME=		pcre-${VERSION}
 PKGNAME=		pcre-ocaml-${VERSION}
-PKGREVISION=		3
 CATEGORIES=		devel
 MASTER_SITES=          ${MASTER_SITE_GITHUB:=mmottl/}
 
@@ -14,7 +13,7 @@ LICENSE=	gnu-lgpl-v2.1
 
 WRKSRC=	${WRKDIR}/pcre-ocaml-${VERSION}
 
-OCAML_USE_JBUILDER=	yes
+OCAML_USE_DUNE=	yes
 OPAM_INSTALL_FILES=	pcre
 USE_TOOLS=	pax
 

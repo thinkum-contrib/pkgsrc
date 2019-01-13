@@ -1,8 +1,4 @@
-package main
-
-import (
-	"netbsd.org/pkglint/trace"
-)
+package pkglint
 
 type Toplevel struct {
 	dir            string
@@ -15,10 +11,10 @@ func CheckdirToplevel(dir string) {
 		defer trace.Call1(dir)()
 	}
 
-	ctx := &Toplevel{dir, "", nil}
-	fname := dir + "/Makefile"
+	ctx := Toplevel{dir, "", nil}
+	filename := dir + "/Makefile"
 
-	mklines := LoadMk(fname, NotEmpty|LogErrors)
+	mklines := LoadMk(filename, NotEmpty|LogErrors)
 	if mklines == nil {
 		return
 	}
@@ -31,8 +27,8 @@ func CheckdirToplevel(dir string) {
 
 	mklines.Check()
 
-	if G.opts.Recursive {
-		if G.opts.CheckGlobal {
+	if G.Opts.Recursive {
+		if G.Opts.CheckGlobal {
 			G.Pkgsrc.UsedLicenses = make(map[string]bool)
 			G.Pkgsrc.Hashes = make(map[string]*Hash)
 		}

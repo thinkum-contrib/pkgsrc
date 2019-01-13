@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.30 2018/10/01 17:44:47 adam Exp $
+# $NetBSD: Makefile,v 1.34 2018/12/18 09:57:18 adam Exp $
 
 DISTNAME=	qtlocation-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtlocation-${QTVERSION}
@@ -18,4 +18,5 @@ post-install:
 .endfor
 
 .include "../../x11/qt5-qtdeclarative/buildlink3.mk"
+.include "../../x11/qt5-qtserialport/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

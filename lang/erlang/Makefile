@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.89 2018/09/18 04:12:38 maya Exp $
+# $NetBSD: Makefile,v 1.92 2019/01/04 00:03:21 nia Exp $
 
 DISTNAME=		OTP-${DIST_VERSION_MAJOR}.${DIST_VERSION_MINOR}${!empty(DIST_VERSION_PATCH):?.:}${DIST_VERSION_PATCH}
 PKGNAME=		${DISTNAME:S/OTP-/erlang-/}
-PKGREVISION=		1
 CATEGORIES=		lang
 MASTER_SITES=		https://github.com/erlang/otp/archive/
 
@@ -11,10 +10,10 @@ HOMEPAGE=		http://www.erlang.org/
 COMMENT=		Concurrent functional programming language
 LICENSE=		apache-2.0
 
+EXTRACT_USING=		bsdtar
 DIST_SUBDIR=		erlang
 
 WRKSRC=			${WRKDIR}/otp-${DISTNAME}
-
 GNU_CONFIGURE=		yes
 USE_GNU_CONFIGURE_HOST=	${USE_CROSS_COMPILE}
 OVERRIDE_DIRDEPTH=	4

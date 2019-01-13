@@ -1,8 +1,6 @@
-package main
+package pkglint
 
 import (
-	"fmt"
-	"netbsd.org/pkglint/trace"
 	"sort"
 	"strings"
 )
@@ -24,7 +22,7 @@ type Tool struct {
 }
 
 func (tool *Tool) String() string {
-	return fmt.Sprintf("%s:%s:%s:%s",
+	return sprintf("%s:%s:%s:%s",
 		tool.Name, tool.Varname, ifelseStr(tool.MustUseVarForm, "var", ""), tool.Validity)
 }
 
@@ -85,7 +83,16 @@ type Tools struct {
 	byName    map[string]*Tool // "sed" => tool
 	byVarname map[string]*Tool // "GREP_CMD" => tool
 	fallback  *Tools
-	SeenPrefs bool // Determines the effect of adding the tool to USE_TOOLS
+
+	// Determines the effect of adding the tool to USE_TOOLS.
+	//
+	// As long as bsd.prefs.mk has definitely not been included by the current file,
+	// tools added to USE_TOOLS are available at load time, but only after bsd.prefs.mk
+	// has been included.
+	//
+	// Adding a tool to USE_TOOLS _after_ bsd.prefs.mk has been included, on the other
+	// hand, only makes the tool available at run time.
+	SeenPrefs bool
 }
 
 func NewTools(traceName string) *Tools {
@@ -113,18 +120,18 @@ func (tr *Tools) Define(name, varname string, mkline MkLine) *Tool {
 	}
 
 	validity := tr.validity(mkline.Basename, false)
-	return tr.defTool(name, varname, false, validity)
+	return tr.def(name, varname, false, validity)
 }
 
-func (tr *Tools) defTool(name, varname string, mustUseVarForm bool, validity Validity) *Tool {
-	fresh := &Tool{name, varname, mustUseVarForm, validity}
+func (tr *Tools) def(name, varname string, mustUseVarForm bool, validity Validity) *Tool {
+	fresh := Tool{name, varname, mustUseVarForm, validity}
 
 	tool := tr.byName[name]
 	if tool == nil {
-		tool = fresh
+		tool = &fresh
 		tr.byName[name] = tool
 	} else {
-		tr.merge(tool, fresh)
+		tr.merge(tool, &fresh)
 	}
 
 	if tr.fallback != nil {
@@ -212,7 +219,7 @@ func (tr *Tools) ParseToolLine(mkline MkLine, fromInfrastructure bool, addToUseT
 		case "_TOOLS.*":
 			if !containsVarRef(varparam) {
 				tr.Define(varparam, "", mkline)
-				for _, tool := range fields(value) {
+				for _, tool := range mkline.ValueFields(value) {
 					tr.Define(tool, "", mkline)
 				}
 			}
@@ -222,7 +229,7 @@ func (tr *Tools) ParseToolLine(mkline MkLine, fromInfrastructure bool, addToUseT
 		}
 
 	case mkline.IsInclude():
-		if IsPrefs(mkline.IncludeFile()) {
+		if IsPrefs(mkline.IncludedFile()) {
 			tr.SeenPrefs = true
 		}
 	}
@@ -241,7 +248,7 @@ func (tr *Tools) parseUseTools(mkline MkLine, createIfAbsent bool, addToUseTools
 		return
 	}
 
-	deps := fields(value)
+	deps := mkline.ValueFields(value)
 
 	// See mk/tools/autoconf.mk:/^\.if !defined/
 	if matches(value, `\bautoconf213\b`) {
@@ -255,14 +262,14 @@ func (tr *Tools) parseUseTools(mkline MkLine, createIfAbsent bool, addToUseTools
 	for _, dep := range deps {
 		name := strings.Split(dep, ":")[0]
 		if createIfAbsent || tr.ByName(name) != nil {
-			tr.defTool(name, "", false, validity)
+			tr.def(name, "", false, validity)
 		}
 	}
 }
 
 func (tr *Tools) validity(basename string, useTools bool) Validity {
 	switch {
-	case IsPrefs(basename): // IsPrefs is not 100% accurate here, but good enough
+	case IsPrefs(basename): // IsPrefs is not 100% accurate here but good enough
 		return AfterPrefsMk
 	case basename == "Makefile" && !tr.SeenPrefs:
 		return AfterPrefsMk
@@ -278,7 +285,7 @@ func (tr *Tools) ByVarname(varname string) *Tool {
 	if tool == nil && tr.fallback != nil {
 		fallback := tr.fallback.ByVarname(varname)
 		if fallback != nil {
-			return tr.defTool(fallback.Name, fallback.Varname, fallback.MustUseVarForm, fallback.Validity)
+			return tr.def(fallback.Name, fallback.Varname, fallback.MustUseVarForm, fallback.Validity)
 		}
 	}
 	return tool
@@ -289,7 +296,7 @@ func (tr *Tools) ByName(name string) *Tool {
 	if tool == nil && tr.fallback != nil {
 		fallback := tr.fallback.ByName(name)
 		if fallback != nil {
-			return tr.defTool(fallback.Name, fallback.Varname, fallback.MustUseVarForm, fallback.Validity)
+			return tr.def(fallback.Name, fallback.Varname, fallback.MustUseVarForm, fallback.Validity)
 		}
 	}
 	return tool

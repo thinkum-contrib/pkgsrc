@@ -1,4 +1,4 @@
-package main
+package pkglint
 
 import (
 	"gopkg.in/check.v1"
@@ -84,23 +84,34 @@ func (s *Suite) Test_cleanpath(c *check.C) {
 	c.Check(cleanpath("dir/"), equals, "dir")
 }
 
-func (s *Suite) Test_relpath__failure(c *check.C) {
+// Relpath is called so often that handling the most common calls
+// without file system IO makes sense.
+func (s *Suite) Test_relpath__quick(c *check.C) {
+	c.Check(relpath("some/dir", "some/dir/../.."), equals, "../..")
+	c.Check(relpath("some/dir", "some/dir/./././../.."), equals, "../..")
+	c.Check(relpath("some/dir", "some/dir/"), equals, ".")
+	c.Check(relpath("some/dir", "some/directory"), equals, "../directory")
+}
+
+// This is not really an internal error but won't happen in practice anyway.
+// Therefore using ExpectPanic instead of ExpectFatal is ok.
+func (s *Suite) Test_relpath__failure_on_Windows(c *check.C) {
 	t := s.Init(c)
 
 	if runtime.GOOS == "windows" {
-		t.ExpectFatal(
+		t.ExpectPanic(
 			func() { relpath("c:/", "d:/") },
-			"FATAL: Pkglint internal error: relpath \"c:/\" \"d:/\".")
+			"Pkglint internal error: relpath \"c:/\" \"d:/\".")
 	}
 }
 
-func (s *Suite) Test_abspath(c *check.C) {
+func (s *Suite) Test_abspath__on_Windows(c *check.C) {
 	t := s.Init(c)
 
 	if runtime.GOOS == "windows" {
-		t.ExpectFatal(
+		t.ExpectPanic(
 			func() { abspath("file\u0000name") },
-			"FATAL: Pkglint internal error: abspath \"file\\x00name\".")
+			"Pkglint internal error: abspath \"file\\x00name\".")
 	}
 }
 
@@ -141,13 +152,6 @@ func (s *Suite) Test_isEmptyDir__empty_subdir(c *check.C) {
 	c.Check(isEmptyDir(t.File(".")), equals, true)
 }
 
-func (s *Suite) Test__PrefixReplacer_Since(c *check.C) {
-	repl := G.NewPrefixReplacer("hello, world")
-	mark := repl.Mark()
-	repl.AdvanceRegexp(`^\w+`)
-	c.Check(repl.Since(mark), equals, "hello")
-}
-
 func (s *Suite) Test_detab(c *check.C) {
 	c.Check(detab(""), equals, "")
 	c.Check(detab("\t"), equals, "        ")
@@ -156,8 +160,8 @@ func (s *Suite) Test_detab(c *check.C) {
 	c.Check(detab("12345678\t"), equals, "12345678        ")
 }
 
-const reMkIncludeBenchmark = `^\.(\s*)(s?include)\s+\"([^\"]+)\"\s*(?:#.*)?$`
-const reMkIncludeBenchmarkPositive = `^\.(\s*)(s?include)\s+\"(.+)\"\s*(?:#.*)?$`
+const reMkIncludeBenchmark = `^\.([\t ]*)(s?include)[\t ]+\"([^\"]+)\"[\t ]*(?:#.*)?$`
+const reMkIncludeBenchmarkPositive = `^\.([\t ]*)(s?include)[\t ]+\"(.+)\"[\t ]*(?:#.*)?$`
 
 func Benchmark_match3_buildlink3(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -224,7 +228,7 @@ func (s *Suite) Test_isLocallyModified(c *check.C) {
 	t := s.Init(c)
 
 	unmodified := t.CreateFileLines("unmodified")
-	modTime := time.Unix(1136239445, 0)
+	modTime := time.Unix(1136239445, 0).UTC()
 
 	err := os.Chtimes(unmodified, modTime, modTime)
 	c.Check(err, check.IsNil)
@@ -233,7 +237,7 @@ func (s *Suite) Test_isLocallyModified(c *check.C) {
 	c.Check(err, check.IsNil)
 
 	// Make sure that the file system has second precision and accuracy.
-	c.Check(st.ModTime(), check.DeepEquals, modTime)
+	c.Check(st.ModTime().UTC(), check.DeepEquals, modTime)
 
 	modified := t.CreateFileLines("modified")
 
@@ -246,6 +250,7 @@ func (s *Suite) Test_isLocallyModified(c *check.C) {
 	c.Check(isLocallyModified(modified), equals, true)
 	c.Check(isLocallyModified(t.File("enoent")), equals, true)
 	c.Check(isLocallyModified(t.File("not_mentioned")), equals, false)
+	c.Check(isLocallyModified(t.File("subdir/file")), equals, false)
 }
 
 func (s *Suite) Test_Scope_Defined(c *check.C) {
@@ -345,6 +350,8 @@ func (s *Suite) Test_isalnum(c *check.C) {
 func (s *Suite) Test_FileCache(c *check.C) {
 	t := s.Init(c)
 
+	t.EnableTracingToLog()
+
 	cache := NewFileCache(3)
 
 	lines := t.NewLines("Makefile",
@@ -359,13 +366,15 @@ func (s *Suite) Test_FileCache(c *check.C) {
 	c.Check(cache.Get("Makefile", MustSucceed|LogErrors), check.IsNil) // Wrong LoadOptions.
 
 	linesFromCache := cache.Get("Makefile", 0)
-	c.Check(linesFromCache, check.HasLen, 2)
-	c.Check(linesFromCache[1].Filename, equals, "Makefile")
+	c.Check(linesFromCache.FileName, equals, "Makefile")
+	c.Check(linesFromCache.Lines, check.HasLen, 2)
+	c.Check(linesFromCache.Lines[0].Filename, equals, "Makefile")
 
 	// Cache keys are normalized using path.Clean.
 	linesFromCache2 := cache.Get("./Makefile", 0)
-	c.Check(linesFromCache2, check.HasLen, 2)
-	c.Check(linesFromCache2[1].Filename, equals, "./Makefile")
+	c.Check(linesFromCache2.FileName, equals, "./Makefile")
+	c.Check(linesFromCache2.Lines, check.HasLen, 2)
+	c.Check(linesFromCache2.Lines[0].Filename, equals, "./Makefile")
 
 	cache.Put("file1.mk", 0, lines)
 	cache.Put("file2.mk", 0, lines)
@@ -392,4 +401,86 @@ func (s *Suite) Test_FileCache(c *check.C) {
 	c.Check(cache.mapping, check.HasLen, 1)
 	c.Check(cache.hits, equals, 7)
 	c.Check(cache.misses, equals, 5)
+
+	t.CheckOutputLines(
+		"TRACE:   FileCache \"Makefile\" with count 4.",
+		"TRACE:   FileCache \"file1.mk\" with count 2.",
+		"TRACE:   FileCache \"file2.mk\" with count 2.",
+		"TRACE:   FileCache.Evict \"file2.mk\" with count 2.",
+		"TRACE:   FileCache.Evict \"file1.mk\" with count 2.",
+		"TRACE:   FileCache.Halve \"Makefile\" with count 4.")
+}
+
+func (s *Suite) Test_makeHelp(c *check.C) {
+	c.Check(makeHelp("subst"), equals, confMake+" help topic=subst")
+}
+
+func (s *Suite) Test_Once(c *check.C) {
+	var once Once
+
+	c.Check(once.FirstTime("str"), equals, true)
+	c.Check(once.FirstTime("str"), equals, false)
+	c.Check(once.FirstTimeSlice("str"), equals, false)
+	c.Check(once.FirstTimeSlice("str", "str2"), equals, true)
+	c.Check(once.FirstTimeSlice("str", "str2"), equals, false)
+}
+
+func (s *Suite) Test_wrap(c *check.C) {
+
+	wrapped := wrap(20,
+		"See the pkgsrc guide, section \"Package components, Makefile\":",
+		"https://www.NetBSD.org/doc/pkgsrc/pkgsrc.html#components.Makefile.",
+		"",
+		"For more information, ask on the tech-pkg@NetBSD.org mailing list.",
+		"",
+		"\tpreformatted line 1",
+		"\tpreformatted line 2",
+		"",
+		"    intentionally indented",
+		"*   itemization",
+		"",
+		"Normal",
+		"text",
+		"continues",
+		"here",
+		"with",
+		"linebreaks.",
+		"",
+		"Sentence one.  Sentence two.")
+
+	expected := []string{
+		"See the pkgsrc",
+		"guide, section",
+		"\"Package components,",
+		"Makefile\":",
+		"https://www.NetBSD.org/doc/pkgsrc/pkgsrc.html#components.Makefile.",
+		"",
+		"For more",
+		"information, ask on",
+		"the",
+		"tech-pkg@NetBSD.org",
+		"mailing list.",
+		"",
+		"\tpreformatted line 1",
+		"\tpreformatted line 2",
+		"",
+		"    intentionally indented",
+		"*   itemization",
+		"",
+		"Normal text",
+		"continues here with",
+		"linebreaks.",
+		"",
+		"Sentence one.",
+		"Sentence two."}
+
+	c.Check(wrapped, deepEquals, expected)
+}
+
+func (s *Suite) Test_escapePrintable(c *check.C) {
+	c.Check(escapePrintable(""), equals, "")
+	c.Check(escapePrintable("ASCII only~\n\t"), equals, "ASCII only~\n\t")
+	c.Check(escapePrintable("Beep \u0007 control \u001F"), equals, "Beep <U+0007> control <U+001F>")
+	c.Check(escapePrintable("Bad \xFF character"), equals, "Bad <\\xFF> character")
+	c.Check(escapePrintable("Unicode \uFFFD replacement"), equals, "Unicode <U+FFFD> replacement")
 }

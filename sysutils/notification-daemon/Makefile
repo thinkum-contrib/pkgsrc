@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.46 2018/04/16 14:35:12 wiz Exp $
+# $NetBSD: Makefile,v 1.49 2018/11/29 11:21:57 prlw1 Exp $
 #
 
 DISTNAME=	notification-daemon-0.7.6
-PKGREVISION=	11
+PKGREVISION=	14
 CATEGORIES=	sysutils gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/notification-daemon/0.7/}
 EXTRACT_SUFX=	.tar.xz

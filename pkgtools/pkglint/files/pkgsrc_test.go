@@ -1,4 +1,4 @@
-package main
+package pkglint
 
 import "gopkg.in/check.v1"
 
@@ -27,16 +27,6 @@ func (s *Suite) Test_Pkgsrc_loadMasterSites(c *check.C) {
 	c.Check(G.Pkgsrc.MasterSiteVarToURL["MASTER_SITE_B"], equals, "https://b.example.org/distfiles/")
 }
 
-func (s *Suite) Test_Pkgsrc_InitVartypes(c *check.C) {
-	t := s.Init(c)
-
-	src := NewPkgsrc(t.File("."))
-	src.InitVartypes()
-
-	c.Check(src.vartypes["BSD_MAKE_ENV"].basicType.name, equals, "ShellWord")
-	c.Check(src.vartypes["USE_BUILTIN.*"].basicType.name, equals, "YesNoIndirectly")
-}
-
 func (s *Suite) Test_Pkgsrc_parseSuggestedUpdates(c *check.C) {
 	t := s.Init(c)
 
@@ -54,8 +44,39 @@ func (s *Suite) Test_Pkgsrc_parseSuggestedUpdates(c *check.C) {
 	todo := G.Pkgsrc.parseSuggestedUpdates(lines)
 
 	c.Check(todo, check.DeepEquals, []SuggestedUpdate{
-		{lines[5], "CSP", "0.34", ""},
-		{lines[6], "freeciv-client", "2.5.0", "(urgent)"}})
+		{lines.Lines[5], "CSP", "0.34", ""},
+		{lines.Lines[6], "freeciv-client", "2.5.0", "(urgent)"}})
+}
+
+func (s *Suite) Test_Pkgsrc_checkToplevelUnusedLicenses(c *check.C) {
+	t := s.Init(c)
+
+	t.SetupPkgsrc()
+	t.CreateFileLines("mk/misc/category.mk")
+	t.CreateFileLines("licenses/2-clause-bsd")
+	t.CreateFileLines("licenses/gnu-gpl-v3")
+
+	t.CreateFileLines("Makefile",
+		MkRcsID,
+		"SUBDIR+=\tcategory")
+
+	t.CreateFileLines("category/Makefile",
+		MkRcsID,
+		"COMMENT=\tExample category",
+		"",
+		"SUBDIR+=\tpackage",
+		"",
+		".include \"../mk/misc/category.mk\"")
+
+	t.SetupPackage("category/package",
+		"LICENSE=\t2-clause-bsd")
+
+	G.Main("pkglint", "-r", "-Cglobal", t.File("."))
+
+	t.CheckOutputLines(
+		"WARN: ~/licenses/gnu-gpl-v2: This license seems to be unused.", // Added by Tester.SetupPkgsrc
+		"WARN: ~/licenses/gnu-gpl-v3: This license seems to be unused.",
+		"0 errors and 2 warnings found.")
 }
 
 func (s *Suite) Test_Pkgsrc_loadTools(c *check.C) {
@@ -125,7 +146,6 @@ func (s *Suite) Test_Pkgsrc_loadTools(c *check.C) {
 func (s *Suite) Test_Pkgsrc_loadTools__BUILD_DEFS(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall")
 	t.SetupTool("echo", "ECHO", AtRunTime)
 	pkg := t.SetupPackage("category/package",
 		"pre-configure:",
@@ -135,14 +155,13 @@ func (s *Suite) Test_Pkgsrc_loadTools__BUILD_DEFS(c *check.C) {
 		"_BUILD_DEFS+=\tPKG_SYSCONFBASEDIR PKG_SYSCONFDIR")
 	G.Pkgsrc.LoadInfrastructure()
 
-	G.CheckDirent(pkg)
+	G.Check(pkg)
 
 	c.Check(G.Pkgsrc.IsBuildDef("PKG_SYSCONFDIR"), equals, true)
 	c.Check(G.Pkgsrc.IsBuildDef("VARBASE"), equals, false)
 
 	// FIXME: There should be a warning for VARBASE, but G.Pkgsrc.UserDefinedVars
 	// does not contain anything at mklinechecker.go:/UserDefinedVars/.
-	t.CheckOutputLines()
 }
 
 func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile(c *check.C) {
@@ -174,7 +193,7 @@ func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile(c *check.C) {
 	c.Check(*changes[6], equals, Change{changes[6].Line, "Downgraded", "category/package", "1.2", "author7", "2018-01-07"})
 
 	t.CheckOutputLines(
-		"WARN: ~/doc/CHANGES-2018:1: Year 2015 for category/package does not match the file name ~/doc/CHANGES-2018.",
+		"WARN: ~/doc/CHANGES-2018:1: Year 2015 for category/package does not match the filename ~/doc/CHANGES-2018.",
 		"WARN: ~/doc/CHANGES-2018:6: Date 2018-01-06 for category/package is earlier than 2018-01-09 for category/package.",
 		"WARN: ~/doc/CHANGES-2018:12: Unknown doc/CHANGES line: \tAdded another [new package]")
 }
@@ -189,7 +208,7 @@ func (s *Suite) Test_Pkgsrc_loadDocChanges__not_found(c *check.C) {
 
 	t.ExpectFatal(
 		G.Pkgsrc.loadDocChanges,
-		"FATAL: ~/doc: Cannot be read.")
+		"FATAL: ~/doc: Cannot be read for loading the package changes.")
 }
 
 func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__not_found(c *check.C) {
@@ -214,7 +233,7 @@ func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__wip(c *check.C) {
 		"\to package-1.13 [cool new features]")
 	G.Pkgsrc.LoadInfrastructure()
 
-	G.CheckDirent(pkg)
+	G.Check(pkg)
 
 	t.CheckOutputLines(
 		"WARN: ~/wip/package/Makefile:3: This package should be updated to 1.13 ([cool new features]).")
@@ -223,42 +242,63 @@ func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__wip(c *check.C) {
 func (s *Suite) Test_Pkgsrc__deprecated(c *check.C) {
 	t := s.Init(c)
 
+	t.SetupTool("echo", "ECHO", AtRunTime)
+	t.SetupVartypes()
 	G.Pkgsrc.initDeprecatedVars()
 	mklines := t.NewMkLines("Makefile",
-		"USE_PERL5=\tyes",
-		"SUBST_POSTCMD.class=${ECHO}")
+		MkRcsID,
+		"USE_PERL5=\t\tyes",
+		"SUBST_POSTCMD.class=\t${ECHO}",
+		"CPPFLAGS+=\t\t${BUILDLINK_CPPFLAGS.${PKG_JVM}}")
 
-	MkLineChecker{mklines.mklines[0]}.checkVarassign()
-	MkLineChecker{mklines.mklines[1]}.checkVarassign()
+	mklines.Check()
 
 	t.CheckOutputLines(
-		"WARN: Makefile:1: Definition of USE_PERL5 is deprecated. Use USE_TOOLS+=perl or USE_TOOLS+=perl:run instead.",
-		"WARN: Makefile:2: Definition of SUBST_POSTCMD.class is deprecated. Has been removed, as it seemed unused.")
+		"WARN: Makefile:2: Definition of USE_PERL5 is deprecated. Use USE_TOOLS+=perl or USE_TOOLS+=perl:run instead.",
+		"WARN: Makefile:3: Definition of SUBST_POSTCMD.class is deprecated. Has been removed, as it seemed unused.",
+		"WARN: Makefile:4: Use of \"PKG_JVM\" is deprecated. Use PKG_DEFAULT_JVM instead.")
 }
 
-func (s *Suite) Test_Pkgsrc_Latest__no_basedir(c *check.C) {
+func (s *Suite) Test_Pkgsrc_ListVersions__no_basedir(c *check.C) {
 	t := s.Init(c)
 
-	latest := G.Pkgsrc.Latest("lang", `^python[0-9]+$`, "../../lang/$0")
+	versions := G.Pkgsrc.ListVersions("lang", `^python[0-9]+$`, "../../lang/$0", true)
 
-	c.Check(latest, equals, "")
+	c.Check(versions, check.HasLen, 0)
 	t.CheckOutputLines(
-		"ERROR: Cannot find latest version of \"^python[0-9]+$\" in \"~/lang\".")
+		"ERROR: Cannot find package versions of \"^python[0-9]+$\" in \"~/lang\".")
 }
 
-func (s *Suite) Test_Pkgsrc_Latest__no_subdirs(c *check.C) {
+func (s *Suite) Test_Pkgsrc_ListVersions__no_subdirs(c *check.C) {
 	t := s.Init(c)
 
 	t.CreateFileLines("lang/Makefile")
 
-	latest := G.Pkgsrc.Latest("lang", `^python[0-9]+$`, "../../lang/$0")
+	versions := G.Pkgsrc.ListVersions("lang", `^python[0-9]+$`, "../../lang/$0", true)
 
-	c.Check(latest, equals, "")
+	c.Check(versions, check.HasLen, 0)
 	t.CheckOutputLines(
-		"ERROR: Cannot find latest version of \"^python[0-9]+$\" in \"~/lang\".")
+		"ERROR: Cannot find package versions of \"^python[0-9]+$\" in \"~/lang\".")
 }
 
-func (s *Suite) Test_Pkgsrc_Latest__single(c *check.C) {
+// Ensures that failed lookups are also cached since they can be assumed
+// not to change during a single pkglint run.
+func (s *Suite) Test_Pkgsrc_ListVersions__error_is_cached(c *check.C) {
+	t := s.Init(c)
+
+	versions := G.Pkgsrc.ListVersions("lang", `^python[0-9]+$`, "../../lang/$0", true)
+
+	c.Check(versions, check.HasLen, 0)
+	t.CheckOutputLines(
+		"ERROR: Cannot find package versions of \"^python[0-9]+$\" in \"~/lang\".")
+
+	versions2 := G.Pkgsrc.ListVersions("lang", `^python[0-9]+$`, "../../lang/$0", true)
+
+	c.Check(versions2, check.HasLen, 0)
+	t.CheckOutputEmpty() // No repeated error message
+}
+
+func (s *Suite) Test_Pkgsrc__caching(c *check.C) {
 	t := s.Init(c)
 
 	t.CreateFileLines("lang/Makefile")
@@ -285,37 +325,24 @@ func (s *Suite) Test_Pkgsrc_Latest__multi(c *check.C) {
 	c.Check(latest, equals, "../../lang/python35")
 }
 
-func (s *Suite) Test_Pkgsrc_Latest__numeric(c *check.C) {
+func (s *Suite) Test_Pkgsrc_Latest__not_found(c *check.C) {
 	t := s.Init(c)
 
-	t.CreateFileLines("databases/postgresql95/Makefile")
-	t.CreateFileLines("databases/postgresql97/Makefile")
-	t.CreateFileLines("databases/postgresql100/Makefile")
-	t.CreateFileLines("databases/postgresql104/Makefile")
+	t.CreateFileLines("lang/Makefile")
 
-	latest := G.Pkgsrc.Latest("databases", `^postgresql[0-9]+$`, "$0")
+	latest := G.Pkgsrc.Latest("lang", `^python[0-9]+$`, "../../lang/$0")
 
-	c.Check(latest, equals, "postgresql104")
-}
+	c.Check(latest, equals, "")
 
-func (s *Suite) Test_Pkgsrc_Latest__numeric_multiple_numbers(c *check.C) {
-	t := s.Init(c)
-
-	t.CreateFileLines("emulators/suse_131_32_gtk2/Makefile")
-	t.CreateFileLines("emulators/suse_131_32_qt5/Makefile")
-	t.CreateFileLines("emulators/suse_131_gtk2/Makefile")
-	t.CreateFileLines("emulators/suse_131_qt5/Makefile")
-
-	latest := G.Pkgsrc.Latest("emulators", `^suse_(\d+).*$`, "$1")
-
-	c.Check(latest, equals, "131")
+	t.CheckOutputLines(
+		"ERROR: Cannot find package versions of \"^python[0-9]+$\" in \"~/lang\".")
 }
 
 // In 2017, PostgreSQL changed their versioning scheme to SemVer,
 // and since the pkgsrc directory contains the major version,
 // without any separating dots, the case of version 10 being
 // later than 95 needs to be handled specially.
-func (s *Suite) Test_Pkgsrc_Latest__postgresql(c *check.C) {
+func (s *Suite) Test_Pkgsrc_ListVersions__postgresql(c *check.C) {
 	t := s.Init(c)
 
 	t.CreateFileLines("databases/postgresql95/Makefile")
@@ -323,17 +350,62 @@ func (s *Suite) Test_Pkgsrc_Latest__postgresql(c *check.C) {
 	t.CreateFileLines("databases/postgresql10/Makefile")
 	t.CreateFileLines("databases/postgresql11/Makefile")
 
-	latest := G.Pkgsrc.Latest("databases", `^postgresql[0-9]+$`, "$0")
+	versions := G.Pkgsrc.ListVersions("databases", `^postgresql[0-9]+$`, "$0", true)
 
-	c.Check(latest, equals, "postgresql11")
+	c.Check(versions, check.DeepEquals, []string{
+		"postgresql95",
+		"postgresql97",
+		"postgresql10",
+		"postgresql11"})
 }
 
-func (s *Suite) Test_Pkgsrc_Latest__invalid_argument(c *check.C) {
+func (s *Suite) Test_Pkgsrc_ListVersions__numeric_multiple_numbers(c *check.C) {
 	t := s.Init(c)
 
-	t.ExpectFatal(
-		func() { G.Pkgsrc.Latest("databases", `postgresql[0-9]+`, "$0") },
-		"FATAL: Pkglint internal error: Regular expression \"postgresql[0-9]+\" must be anchored at both ends.")
+	t.CreateFileLines("emulators/suse_131_32_gtk2/Makefile")
+	t.CreateFileLines("emulators/suse_131_32_qt5/Makefile")
+	t.CreateFileLines("emulators/suse_131_gtk2/Makefile")
+	t.CreateFileLines("emulators/suse_131_qt5/Makefile")
+
+	versions := G.Pkgsrc.ListVersions("emulators", `^suse_(\d+).*$`, "$1", true)
+
+	c.Check(versions, deepEquals, []string{
+		"131",
+		"131",
+		"131",
+		"131"})
+}
+
+func (s *Suite) Test_Pkgsrc_ListVersions__go(c *check.C) {
+	t := s.Init(c)
+
+	t.CreateFileLines("lang/go14/Makefile")
+	t.CreateFileLines("lang/go19/Makefile")
+	t.CreateFileLines("lang/go111/Makefile")
+	t.CreateFileLines("lang/go2/Makefile")
+
+	versionsUpTo2 := G.Pkgsrc.ListVersions("lang", `^go[0-9]+$`, "$0", true)
+
+	c.Check(versionsUpTo2, deepEquals, []string{"go14", "go19", "go111", "go2"})
+
+	t.CreateFileLines("lang/go37/Makefile")
+
+	// Clear the cache; pkglint doesn't expect file system changes during the scan.
+	for k := range G.Pkgsrc.listVersions {
+		delete(G.Pkgsrc.listVersions, k)
+	}
+
+	versionsUpTo37 := G.Pkgsrc.ListVersions("lang", `^go[0-9]+$`, "$0", true)
+
+	c.Check(versionsUpTo37, deepEquals, []string{"go14", "go19", "go111", "go2", "go37"})
+}
+
+func (s *Suite) Test_Pkgsrc_ListVersions__invalid_argument(c *check.C) {
+	t := s.Init(c)
+
+	t.ExpectPanic(
+		func() { G.Pkgsrc.ListVersions("databases", `postgresql[0-9]+`, "$0", true) },
+		"Pkglint internal error: Regular expression \"postgresql[0-9]+\" must be anchored at both ends.")
 }
 
 func (s *Suite) Test_Pkgsrc_loadPkgOptions(c *check.C) {
@@ -369,4 +441,98 @@ func (s *Suite) Test_Pkgsrc_loadTools__no_tools_found(c *check.C) {
 	t.ExpectFatal(
 		G.Pkgsrc.loadTools,
 		"FATAL: ~/mk/tools/bsd.tools.mk: Too few tool files.")
+}
+
+// See PR 46570, Ctrl+F "3. In lang/perl5".
+func (s *Suite) Test_Pkgsrc_VariableType(c *check.C) {
+	t := s.Init(c)
+
+	t.SetupVartypes()
+
+	checkType := func(varname string, vartype string) {
+		actualType := G.Pkgsrc.VariableType(varname)
+		if vartype == "" {
+			c.Check(actualType, check.IsNil)
+		} else {
+			if c.Check(actualType, check.NotNil) {
+				c.Check(actualType.String(), equals, vartype)
+			}
+		}
+	}
+
+	checkType("_PERL5_PACKLIST_AWK_STRIP_DESTDIR", "")
+	checkType("SOME_DIR", "Pathname (guessed)")
+	checkType("SOMEDIR", "Pathname (guessed)")
+	checkType("SEARCHPATHS", "List of Pathname (guessed)")
+	checkType("MYPACKAGE_USER", "UserGroupName (guessed)")
+	checkType("MYPACKAGE_GROUP", "UserGroupName (guessed)")
+	checkType("MY_CMD_ENV", "List of ShellWord (guessed)")
+	checkType("MY_CMD_ARGS", "List of ShellWord (guessed)")
+	checkType("MY_CMD_CFLAGS", "List of CFlag (guessed)")
+	checkType("MY_CMD_LDFLAGS", "List of LdFlag (guessed)")
+	checkType("PLIST.abcde", "Yes")
+}
+
+// Guessing the variable type works for both plain and parameterized variable names.
+func (s *Suite) Test_Pkgsrc_VariableType__varparam(c *check.C) {
+	t := s.Init(c)
+
+	t.SetupVartypes()
+
+	t1 := G.Pkgsrc.VariableType("FONT_DIRS")
+
+	c.Assert(t1, check.NotNil)
+	c.Check(t1.String(), equals, "List of PathMask (guessed)")
+
+	t2 := G.Pkgsrc.VariableType("FONT_DIRS.ttf")
+
+	c.Assert(t2, check.NotNil)
+	c.Check(t2.String(), equals, "List of PathMask (guessed)")
+}
+
+// Guessing the variable type also works for variables that are
+// not known to pkglint but are found when scanning mk/* for otherwise
+// unknown variables.
+func (s *Suite) Test_Pkgsrc_VariableType__from_mk(c *check.C) {
+	t := s.Init(c)
+
+	// The type of OSNAME.* cannot be guessed from the variable name,
+	// but it is a known variable since the pkgsrc infrastructure uses
+	// it. But still, its type is unknown.
+
+	t.SetupPkgsrc()
+	t.CreateFileLines("mk/sys-vars.mk",
+		MkRcsID,
+		"",
+		"PKGSRC_MAKE_ENV?=\t# none",
+		"CPPPATH?=\tcpp",
+		"OSNAME.Linux?=\tLinux")
+
+	pkg := t.SetupPackage("category/package",
+		"PKGSRC_MAKE_ENV+=\tCPP=${CPPPATH:Q}",
+		"PKGSRC_UNKNOWN_ENV+=\tCPP=${ABCPATH:Q}",
+		"OSNAME.SunOS=\t\t${OSNAME.Other}")
+
+	G.Main("pkglint", "-Wall", pkg)
+
+	if typ := G.Pkgsrc.VariableType("PKGSRC_MAKE_ENV"); c.Check(typ, check.NotNil) {
+		c.Check(typ.String(), equals, "List of ShellWord (guessed)")
+	}
+
+	if typ := G.Pkgsrc.VariableType("CPPPATH"); c.Check(typ, check.NotNil) {
+		c.Check(typ.String(), equals, "Pathlist (guessed)")
+	}
+
+	if typ := G.Pkgsrc.VariableType("OSNAME.Other"); c.Check(typ, check.NotNil) {
+		c.Check(typ.String(), equals, "Unknown")
+	}
+
+	// No warnings about "defined but not used" or "used but not defined"
+	// (which both rely on VariableType) may appear here for PKGSRC_MAKE_ENV
+	// and CPPPATH since these two variables are defined somewhere in the
+	// infrastructure.
+	t.CheckOutputLines(
+		"WARN: ~/category/package/Makefile:21: PKGSRC_UNKNOWN_ENV is defined but not used.",
+		"WARN: ~/category/package/Makefile:21: ABCPATH is used but not defined.",
+		"0 errors and 2 warnings found.")
 }

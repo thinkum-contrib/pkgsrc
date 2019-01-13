@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.248 2018/09/03 10:37:10 wiz Exp $
+# $NetBSD: Makefile,v 1.254 2018/12/10 08:51:16 wiz Exp $
 
 .include "Makefile.common"
 
@@ -45,11 +45,9 @@ CFLAGS+=		-O
 
 PKG_SYSCONFSUBDIR=	ImageMagick-${IM_MAJOR_LIB_VER}
 EGDIR=		${PREFIX}/share/examples/ImageMagick
-CONF_FILES=	${EGDIR}/coder.xml ${PKG_SYSCONFDIR}/coder.xml
 CONF_FILES+=	${EGDIR}/colors.xml ${PKG_SYSCONFDIR}/colors.xml
 CONF_FILES+=	${EGDIR}/delegates.xml ${PKG_SYSCONFDIR}/delegates.xml
 CONF_FILES+=	${EGDIR}/log.xml ${PKG_SYSCONFDIR}/log.xml
-CONF_FILES+=	${EGDIR}/magic.xml ${PKG_SYSCONFDIR}/magic.xml
 CONF_FILES+=	${EGDIR}/mime.xml ${PKG_SYSCONFDIR}/mime.xml
 CONF_FILES+=	${EGDIR}/policy.xml ${PKG_SYSCONFDIR}/policy.xml
 CONF_FILES+=	${EGDIR}/thresholds.xml ${PKG_SYSCONFDIR}/thresholds.xml
@@ -83,6 +81,10 @@ SUBST_FILES.fix-pc+=	Magick++/bin/Magick++-config.in
 SUBST_FILES.fix-pc+=	MagickCore/MagickCore-config.in
 SUBST_FILES.fix-pc+=	MagickWand/MagickWand-config.in
 SUBST_SED.fix-pc=	-e 's,@PKG_CONFIG@,pkg-config,g'
+
+# failed to convert strong functions and variables: Invalid type identifier
+CTF_FILES_SKIP+=	lib/libMagickCore-7.Q16HDRI.so.4.0.0
+CTF_FILES_SKIP+=	lib/libMagickWand-7.Q16HDRI.so.4.0.0
 
 .include "../../archivers/bzip2/buildlink3.mk"
 .include "../../archivers/xz/buildlink3.mk"

@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.99 2018/10/24 13:32:26 schmonz Exp $
+# $NetBSD: Makefile,v 1.108 2019/01/09 19:32:07 schmonz Exp $
 #
 
 DISTNAME=		netqmail-1.06
 PKGNAME=		qmail-1.03
-PKGREVISION=		38
+PKGREVISION=		43
 CATEGORIES=		mail
 MASTER_SITES=		http://qmail.org/
 
@@ -13,6 +13,8 @@ COMMENT=		Secure, reliable, efficient, simple, and fast MTA
 LICENSE=		public-domain
 
 DEPENDS+=		daemontools-[0-9]*:../../sysutils/daemontools
+DEPENDS_LIBTAI=		libtai>=0.60nb5:../../devel/libtai
+DEPENDS+=		${DEPENDS_LIBTAI}
 
 CONFLICTS+=		courier-maildirmake-[0-9]*
 CONFLICTS+=		courier-mta-[0-9]*
@@ -39,9 +41,12 @@ DJB_BUILD_TARGETS=	man
 INSTALL_TARGET=		setup
 DJB_RESTRICTED=		no
 
+CFLAGS.Darwin+=		-DBIND_8_COMPAT=1
+
 PKG_SYSCONFSUBDIR=	qmail
 OWN_DIRS+=		${PKG_SYSCONFDIR} ${PKG_SYSCONFDIR}/alias
 OWN_DIRS+=		${PKG_SYSCONFDIR}/control ${PKG_SYSCONFDIR}/users
+OWN_DIRS+=		${PKG_SYSCONFDIR}/.pkgsrc-defaults-do-not-edit
 OWN_DIRS+=		${QMAILDIR} ${QMAIL_QUEUE_DIR}
 
 DOCDIR=			${PREFIX}/share/doc/qmail
@@ -57,10 +62,11 @@ FILES_SUBST+=		QMAIL_QMAIL_GROUP=${QMAIL_QMAIL_GROUP:Q}
 FILES_SUBST+=		QMAIL_QUEUE_DIR=${QMAIL_QUEUE_DIR:Q}
 FILES_SUBST+=		QMAIL_QUEUE_EXTRA=${QMAIL_QUEUE_EXTRA:Q}
 FILES_SUBST+=		PKGNAME=${PKGNAME:Q}
+FILES_SUBST+=		WC=${WC:Q}
 
 SETUP_PROGRAMS=		dnsfq dnsip dnsptr hostname ipmeprint
 SETUP_PROGRAMS+=	install-destdir instcheck
-SETUP_SCRIPTS=		config config-fast
+SETUP_SCRIPTS=		config config-fast config-fast-pkgsrc
 
 MANDIRS=		man
 .for j in 1 5 7 8
@@ -71,6 +77,19 @@ INSTALLATION_DIRS+=	${EGDIR}/alias ${EGDIR}/boot ${EGDIR}/control
 INSTALLATION_DIRS+=	${EGDIR}/users
 
 .include "../../mk/bsd.prefs.mk"
+
+# Detect the PKG_SYSCONFDIR of the installed libtai, so we can find
+# its leapsecs.dat.
+
+.if !defined(PKG_SYSCONFDIR.libtai)
+PKG_SYSCONFDIR.libtai!=							\
+	${PKG_INFO} -Q PKG_SYSCONFDIR					\
+		${DEPENDS_LIBTAI:C/:.*$//:Q} 2>/dev/null ||		\
+	${ECHO} "PKG_SYSCONFDIR.libtai_not_set"
+.  if empty(PKG_SYSCONFDIR.libtai:M*not_set)
+MAKEVARS+=	PKG_SYSCONFDIR.libtai
+.  endif
+.endif
 
 BUILD_DEFS+=		QMAILDIR QMAILPATCHES QMAIL_QUEUE_DIR QMAIL_QUEUE_EXTRA
 BUILD_DEFS+=		QMAIL_ALIAS_USER QMAIL_DAEMON_USER QMAIL_LOG_USER
@@ -118,6 +137,11 @@ SUBST_STAGE.paths=	do-configure
 SUBST_FILES.paths=	README.*
 SUBST_VARS.paths=	PKGNAME PKG_INFO PREFIX GREP
 
+SUBST_CLASSES+=		libtai
+SUBST_STAGE.libtai=	do-configure
+SUBST_FILES.libtai=	leapsecs_read.c
+SUBST_SED.libtai=	-e 's|@PKG_SYSCONFDIR@|${PKG_SYSCONFDIR.libtai}|g'
+
 SUBST_FILES.djbware+=	cdb_seek.c dns.c
 
 PKG_USERS_VARS+=	QMAIL_ALIAS_USER QMAIL_DAEMON_USER QMAIL_LOG_USER
@@ -139,6 +163,72 @@ PKG_HOME.alias=		${QMAILDIR}/alias
 
 READMES=		README.pkgsrc
 
+# Record all patches applied, starting with the non-optional ones:
+QMAILPATCHES=			netqmail:${DEFAULT_DISTFILES}
+
+QMAILPATCHES+=			tls:${TLSREMOTE_PATCH}
+TLSREMOTE_PATCH=		netqmail-1.06-tls-20160918-onlyremote-20181107.patch
+PATCHFILES+=			${TLSREMOTE_PATCH}
+SITES.${TLSREMOTE_PATCH}=	https://schmonz.com/qmail/tlsonlyremote/
+
+QMAILPATCHES+=			bigdns:${BIGDNS_PATCH}
+BIGDNS_PATCH=			qmail-103.patch
+PATCHFILES+=			${BIGDNS_PATCH}
+SITES.${BIGDNS_PATCH}=		http://www.ckdhr.com/ckd/
+SITES.${BIGDNS_PATCH}+=		${MASTER_SITE_LOCAL}
+PATCH_DIST_STRIP.${BIGDNS_PATCH}=-p1
+
+QMAILPATCHES+=			destdir:${DESTDIR_PATCH}
+DESTDIR_PATCH=			netqmail-1.06-destdir-20181217.patch
+PATCHFILES+=			${DESTDIR_PATCH}
+SITES.${DESTDIR_PATCH}=		https://schmonz.com/qmail/destdir/
+
+QMAILPATCHES+=			maildiruniq:${MAILDIRUNIQ_PATCH}
+MAILDIRUNIQ_PATCH=		qmail-1.03-maildir-uniq.patch
+PATCHFILES+=			${MAILDIRUNIQ_PATCH}
+SITES.${MAILDIRUNIQ_PATCH}=	http://www.memoryhole.net/qmail/
+PATCH_DIST_STRIP.${MAILDIRUNIQ_PATCH}=-p1
+PATCH_DIST_CAT.${MAILDIRUNIQ_PATCH}= \
+				${SED} -e 's|"057"|"\\\\057"|' \
+				-e 's|"072"|"\\\\072"|' \
+				< ${MAILDIRUNIQ_PATCH}
+
+QMAILPATCHES+=			outgoingip:${OUTGOINGIP_PATCH}
+OUTGOINGIP_PATCH=		outgoingip.patch
+PATCHFILES+=			${OUTGOINGIP_PATCH}
+SITES.${OUTGOINGIP_PATCH}=	http://www.qmail.org/
+
+QMAILPATCHES+=			qbiffutmpx:${QBIFFUTMPX_PATCH}
+QBIFFUTMPX_PATCH=		netqmail-1.06-qbiffutmpx-20170820.patch
+PATCHFILES+=			${QBIFFUTMPX_PATCH}
+SITES.${QBIFFUTMPX_PATCH}=	https://schmonz.com/qmail/qbiffutmpx/
+
+QMAILPATCHES+=			remote:${REMOTE_PATCH}
+REMOTE_PATCH=			netqmail-1.06-qmailremote-20170716.patch
+PATCHFILES+=			${REMOTE_PATCH}
+SITES.${REMOTE_PATCH}=		https://schmonz.com/qmail/remote/
+
+QMAILPATCHES+=			spp:${SPP_PATCH}:${SPP_PATCHFILE_cmd:sh}
+SPP_PATCH=			qmail-spp-0.42.tar.gz
+PATCHFILES+=			${SPP_PATCH}
+SITES.${SPP_PATCH}=		${MASTER_SITE_SOURCEFORGE:=qmail-spp/}
+SPP_PATCHFILE=			./qmail-spp-0.42/netqmail-spp.diff
+SPP_PATCHFILE_cmd=		${BASENAME} ${SPP_PATCHFILE}
+PATCH_DIST_CAT.${SPP_PATCH}=	${TAR} -C ${WRKDIR} -zxf ${SPP_PATCH} ${SPP_PATCHFILE} \
+				&& ${CAT} ${WRKDIR}/${SPP_PATCHFILE} \
+				| ${SED} -e 's|sppfok \!= 1|sppfok == -1|'
+PATCH_DIST_STRIP.${SPP_PATCH}=	-p1
+LICENSE+=			AND gnu-gpl-v2
+
+QMAILPATCHES+=			taileapsecs:${TAILEAPSECS_PATCH}
+TAILEAPSECS_PATCH=		netqmail-1.05-TAI-leapsecs.patch
+PATCHFILES+=			${TAILEAPSECS_PATCH}
+SITES.${TAILEAPSECS_PATCH}=	https://su.bze.ro/software/
+PATCH_DIST_STRIP.${TAILEAPSECS_PATCH}=-p1
+PATCH_DIST_CAT.${TAILEAPSECS_PATCH}= \
+				${SED} -e 's|"/etc/leapsecs.dat"|"@PKG_SYSCONFDIR@/leapsecs.dat"|' \
+				< ${TAILEAPSECS_PATCH}
+
 post-extract:
 	for i in ${READMES}; do						\
 		${CP} ${FILESDIR}/$$i ${WRKSRC} || ${TRUE};		\
@@ -154,6 +244,10 @@ post-patch:
 		( ${ECHO} '#ifdef TLS'; ${CAT} $$i; ${ECHO} '#endif' ) > $$i.new; \
 		mv $$i.new $$i; \
 	done
+
+post-build:
+	cd ${WRKSRC}; \
+	${SED} -e 's|${QMAILDIR}/control/|${PKG_SYSCONFDIR}/.pkgsrc-defaults-do-not-edit/|' < config-fast > config-fast-pkgsrc
 
 pre-install:
 	${MKDIR} ${DESTDIR}${QMAILDIR}

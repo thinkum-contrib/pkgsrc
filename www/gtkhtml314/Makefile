@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.87 2018/10/24 21:11:56 leot Exp $
+# $NetBSD: Makefile,v 1.91 2018/12/09 18:52:49 adam Exp $
 #
 # PKGNAME derives from the supported API (still from
 # release 3.14). See also PLIST.
@@ -6,7 +6,7 @@
 
 DISTNAME=	gtkhtml-3.32.2
 PKGNAME=	${DISTNAME:S/gtkhtml/gtkhtml314/}
-PKGREVISION=	42
+PKGREVISION=	46
 CATEGORIES=	www gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gtkhtml/3.32/}
 EXTRACT_SUFX=	.tar.bz2
@@ -31,7 +31,7 @@ PKGCONFIG_OVERRIDE+=	gtkhtml/libgtkhtml.pc.in
 .include "../../graphics/gnome-icon-theme/buildlink3.mk"
 .include "../../net/ORBit2/buildlink3.mk"
 .include "../../net/libsoup/buildlink3.mk"
-.include "../../textproc/enchant/buildlink3.mk"
+.include "../../textproc/enchant2/buildlink3.mk"
 .include "../../textproc/iso-codes/buildlink3.mk"
 .include "../../x11/gtk2/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

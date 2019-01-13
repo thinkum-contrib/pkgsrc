@@ -1,6 +1,6 @@
-package main
+package pkglint
 
-import "netbsd.org/pkglint/trace"
+import "netbsd.org/pkglint/textproc"
 
 // SubstContext records the state of a block of variable assignments
 // that make up a SUBST class (see `mk/subst.mk`).
@@ -11,6 +11,7 @@ type SubstContext struct {
 	curr          *SubstContextStats
 	inAllBranches SubstContextStats
 	filterCmd     string
+	vars          map[string]bool
 }
 
 func NewSubstContext() *SubstContext {
@@ -54,7 +55,7 @@ func (ctx *SubstContext) Varassign(mkline MkLine) {
 	op := mkline.Op()
 	value := mkline.Value()
 	if varcanon == "SUBST_CLASSES" || varcanon == "SUBST_CLASSES.*" {
-		classes := fields(value)
+		classes := mkline.ValueFields(value)
 		if len(classes) > 1 {
 			mkline.Warnf("Please add only one class at a time to SUBST_CLASSES.")
 		}
@@ -70,15 +71,23 @@ func (ctx *SubstContext) Varassign(mkline MkLine) {
 		return
 	}
 
+	foreign := true
 	switch varcanon {
-	case "SUBST_STAGE.*":
-	case "SUBST_MESSAGE.*":
-	case "SUBST_FILES.*":
-	case "SUBST_SED.*":
-	case "SUBST_VARS.*":
-	case "SUBST_FILTER_CMD.*":
+	case
+		"SUBST_STAGE.*",
+		"SUBST_MESSAGE.*",
+		"SUBST_FILES.*",
+		"SUBST_SED.*",
+		"SUBST_VARS.*",
+		"SUBST_FILTER_CMD.*":
+		foreign = false
+	}
 
-	default:
+	if foreign && ctx.vars[varname] {
+		foreign = false
+	}
+
+	if foreign {
 		if ctx.id != "" {
 			mkline.Warnf("Foreign variable %q in SUBST block.", varname)
 		}
@@ -90,7 +99,7 @@ func (ctx *SubstContext) Varassign(mkline MkLine) {
 		ctx.id = varparam
 	}
 
-	if varparam != ctx.id {
+	if hasPrefix(varname, "SUBST_") && varparam != ctx.id {
 		if ctx.IsComplete() {
 			// XXX: This code sometimes produces weird warnings. See
 			// meta-pkgs/xorg/Makefile.common 1.41 for an example.
@@ -127,22 +136,34 @@ func (ctx *SubstContext) Varassign(mkline MkLine) {
 		if G.Pkg != nil && (value == "pre-configure" || value == "post-configure") {
 			if noConfigureLine := G.Pkg.vars.FirstDefinition("NO_CONFIGURE"); noConfigureLine != nil {
 				mkline.Warnf("SUBST_STAGE %s has no effect when NO_CONFIGURE is set (in %s).",
-					value, noConfigureLine.ReferenceFrom(mkline.Line))
-				Explain(
+					value, mkline.RefTo(noConfigureLine))
+				G.Explain(
 					"To fix this properly, remove the definition of NO_CONFIGURE.")
 			}
 		}
 
 	case "SUBST_MESSAGE.*":
 		ctx.dupString(mkline, &ctx.message, varname, value)
+
 	case "SUBST_FILES.*":
 		ctx.dupBool(mkline, &ctx.curr.seenFiles, varname, op, value)
+
 	case "SUBST_SED.*":
 		ctx.dupBool(mkline, &ctx.curr.seenSed, varname, op, value)
 		ctx.curr.seenTransform = true
+
+		ctx.suggestSubstVars(mkline)
+
 	case "SUBST_VARS.*":
 		ctx.dupBool(mkline, &ctx.curr.seenVars, varname, op, value)
 		ctx.curr.seenTransform = true
+		for _, substVar := range mkline.Fields() {
+			if ctx.vars == nil {
+				ctx.vars = make(map[string]bool)
+			}
+			ctx.vars[substVar] = true
+		}
+
 	case "SUBST_FILTER_CMD.*":
 		ctx.dupString(mkline, &ctx.filterCmd, varname, value)
 		ctx.curr.seenTransform = true
@@ -201,11 +222,7 @@ func (ctx *SubstContext) Finish(mkline MkLine) {
 		mkline.Warnf("Incomplete SUBST block: SUBST_SED.%[1]s, SUBST_VARS.%[1]s or SUBST_FILTER_CMD.%[1]s missing.", id)
 	}
 
-	ctx.id = ""
-	ctx.stage = ""
-	ctx.message = ""
-	ctx.curr = &SubstContextStats{}
-	ctx.filterCmd = ""
+	*ctx = *NewSubstContext()
 }
 
 func (ctx *SubstContext) dupString(mkline MkLine, pstr *string, varname, value string) {
@@ -220,4 +237,54 @@ func (ctx *SubstContext) dupBool(mkline MkLine, flag *bool, varname string, op M
 		mkline.Warnf("All but the first %q lines should use the \"+=\" operator.", varname)
 	}
 	*flag = true
+}
+
+func (ctx *SubstContext) suggestSubstVars(mkline MkLine) {
+
+	tokens, _ := splitIntoShellTokens(mkline.Line, mkline.Value())
+	for _, token := range tokens {
+
+		parser := NewMkParser(nil, token, false)
+		lexer := parser.lexer
+		if !lexer.SkipByte('s') {
+			continue
+		}
+
+		separator := lexer.NextByteSet(textproc.XPrint) // Really any character works
+		if separator == -1 {
+			continue
+		}
+
+		if !lexer.SkipByte('@') {
+			continue
+		}
+
+		varname := parser.Varname()
+		if !lexer.SkipByte('@') || !lexer.SkipByte(byte(separator)) {
+			continue
+		}
+
+		varuse := parser.VarUse()
+		if varuse == nil || varuse.varname != varname {
+			continue
+		}
+
+		switch varuse.Mod() {
+		case "", ":Q":
+			break
+		default:
+			continue
+		}
+
+		if !lexer.SkipByte(byte(separator)) {
+			continue
+		}
+
+		mkline.Notef("The substitution command %q can be replaced with \"SUBST_VARS.%s+= %s\".", token, ctx.id, varname)
+		mkline.Explain(
+			"Replacing @VAR@ with ${VAR} is such a typical pattern that pkgsrc has built-in support for it,",
+			"requiring only the variable name instead of the full sed command.")
+	}
+
+	// TODO: Autofix
 }

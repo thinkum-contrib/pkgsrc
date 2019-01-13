@@ -1,4 +1,4 @@
-package main
+package pkglint
 
 import (
 	"fmt"
@@ -30,6 +30,8 @@ func (s *Suite) Test_SubstContext__incomplete(c *check.C) {
 	ctx.Finish(newSubstLine(t, 14, ""))
 
 	t.CheckOutputLines(
+		"NOTE: Makefile:13: The substitution command \"s,@PREFIX@,${PREFIX},g\" "+
+			"can be replaced with \"SUBST_VARS.interp+= PREFIX\".",
 		"WARN: Makefile:14: Incomplete SUBST block: SUBST_STAGE.interp missing.")
 }
 
@@ -52,13 +54,15 @@ func (s *Suite) Test_SubstContext__complete(c *check.C) {
 
 	ctx.Finish(newSubstLine(t, 15, ""))
 
-	t.CheckOutputEmpty()
+	t.CheckOutputLines(
+		"NOTE: Makefile:13: The substitution command \"s,@PREFIX@,${PREFIX},g\" " +
+			"can be replaced with \"SUBST_VARS.p+= PREFIX\".")
 }
 
 func (s *Suite) Test_SubstContext__OPSYSVARS(c *check.C) {
 	t := s.Init(c)
 
-	G.opts.WarnExtra = true
+	G.Opts.WarnExtra = true
 	ctx := NewSubstContext()
 
 	ctx.Varassign(newSubstLine(t, 11, "SUBST_CLASSES.SunOS+=prefix"))
@@ -71,7 +75,9 @@ func (s *Suite) Test_SubstContext__OPSYSVARS(c *check.C) {
 
 	ctx.Finish(newSubstLine(t, 15, ""))
 
-	t.CheckOutputEmpty()
+	t.CheckOutputLines(
+		"NOTE: Makefile:14: The substitution command \"s,@PREFIX@,${PREFIX},g\" " +
+			"can be replaced with \"SUBST_VARS.prefix+= PREFIX\".")
 }
 
 func (s *Suite) Test_SubstContext__no_class(c *check.C) {
@@ -249,7 +255,7 @@ func (s *Suite) Test_SubstContext__pre_configure_with_NO_CONFIGURE(c *check.C) {
 		"",
 		"NO_CONFIGURE=           yes")
 
-	G.CheckDirent(pkg)
+	G.Check(pkg)
 
 	t.CheckOutputLines(
 		"WARN: ~/category/package/Makefile:21: SUBST_STAGE pre-configure has no effect when NO_CONFIGURE is set (in line 25).")
@@ -301,13 +307,103 @@ func (s *Suite) Test_SubstContext__do_patch(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
+// Variables mentioned in SUBST_VARS are not considered "foreign"
+// in the block and may be mixed with the other SUBST variables.
+func (s *Suite) Test_SubstContext__SUBST_VARS_defined_in_block(c *check.C) {
+	t := s.Init(c)
+
+	t.SetupCommandLine("-Wextra,no-space")
+	t.SetupVartypes()
+
+	mklines := t.NewMkLines("os.mk",
+		MkRcsID,
+		"",
+		"SUBST_CLASSES+=         os",
+		"SUBST_STAGE.os=         pre-configure",
+		"SUBST_FILES.os=         guess-os.h",
+		"SUBST_VARS.os=          TODAY1",
+		"TODAY1!=                date",
+		"TODAY2!=                date")
+
+	mklines.Check()
+
+	t.CheckOutputLines(
+		"WARN: os.mk:8: TODAY2 is defined but not used.",
+		"WARN: os.mk:8: Foreign variable \"TODAY2\" in SUBST block.")
+}
+
+// Variables mentioned in SUBST_VARS may appear in the same paragraph,
+// or alternatively anywhere else in the file.
+func (s *Suite) Test_SubstContext__SUBST_VARS_in_next_paragraph(c *check.C) {
+	t := s.Init(c)
+
+	t.SetupCommandLine("-Wextra,no-space")
+	t.SetupVartypes()
+
+	mklines := t.NewMkLines("os.mk",
+		MkRcsID,
+		"",
+		"SUBST_CLASSES+=         os",
+		"SUBST_STAGE.os=         pre-configure",
+		"SUBST_FILES.os=         guess-os.h",
+		"SUBST_VARS.os=          TODAY1",
+		"",
+		"TODAY1!=                date",
+		"TODAY2!=                date")
+
+	mklines.Check()
+
+	t.CheckOutputLines(
+		"WARN: os.mk:9: TODAY2 is defined but not used.")
+}
+
+func (s *Suite) Test_SubstContext_suggestSubstVars(c *check.C) {
+	t := s.Init(c)
+
+	t.SetupVartypes()
+	t.SetupTool("sh", "SH", AtRunTime)
+
+	mklines := t.NewMkLines("subst.mk",
+		MkRcsID,
+		"",
+		"SUBST_CLASSES+=\t\ttest",
+		"SUBST_STAGE.test=\tpre-configure",
+		"SUBST_FILES.test=\tfilename",
+		"SUBST_SED.test+=\t-e s,@SH@,${SH},g",           // Can be replaced.
+		"SUBST_SED.test+=\t-e s,@SH@,${SH:Q},g",         // Can be replaced, with or without the :Q modifier.
+		"SUBST_SED.test+=\t-e s,@SH@,${SH:T},g",         // Cannot be replaced because of the :T modifier.
+		"SUBST_SED.test+=\t-e s,@SH@,${SH},",            // Can be replaced, even without the g option.
+		"SUBST_SED.test+=\t-e 's,@SH@,${SH},'",          // Can be replaced, whether in single quotes or not.
+		"SUBST_SED.test+=\t-e \"s,@SH@,${SH},\"",        // Can be replaced, whether in double quotes or not.
+		"SUBST_SED.test+=\t-e s,'@SH@','${SH}',",        // Can be replaced, even when the quoting changes midways.
+		"SUBST_SED.test+=\ts,'@SH@','${SH}',",           // Can be replaced, even when the -e is missing.
+		"SUBST_SED.test+=\t-e s,@SH@,${PKGNAME},",       // Cannot be replaced since the variable name differs.
+		"SUBST_SED.test+=\t-e s,@SH@,'\"'${SH:Q}'\"',g", // Cannot be replaced since the double quotes are added.
+		"# end")
+
+	mklines.Check()
+
+	t.CheckOutputLines(
+		"WARN: subst.mk:6: Please use ${SH:Q} instead of ${SH}.",
+		"NOTE: subst.mk:6: The substitution command \"s,@SH@,${SH},g\" can be replaced with \"SUBST_VARS.test+= SH\".",
+		"NOTE: subst.mk:7: The substitution command \"s,@SH@,${SH:Q},g\" can be replaced with \"SUBST_VARS.test+= SH\".",
+		"WARN: subst.mk:8: Please use ${SH:T:Q} instead of ${SH:T}.",
+		"WARN: subst.mk:9: Please use ${SH:Q} instead of ${SH}.",
+		"NOTE: subst.mk:9: The substitution command \"s,@SH@,${SH},\" can be replaced with \"SUBST_VARS.test+= SH\".",
+		// TODO: Handle the quotes in line 10
+		// TODO: Handle the quotes in line 11
+		// TODO: Handle the quotes in line 12
+		"NOTE: subst.mk:13: Please always use \"-e\" in sed commands, even if there is only one substitution.")
+}
+
 // simulateSubstLines only tests some of the inner workings of SubstContext.
 // It is not realistic for all cases. If in doubt, use MkLines.Check.
 func simulateSubstLines(t *Tester, texts ...string) {
 	ctx := NewSubstContext()
 	for _, lineText := range texts {
 		var lineno int
-		fmt.Sscanf(lineText[0:4], "%d: ", &lineno)
+		_, err := fmt.Sscanf(lineText[0:4], "%d: ", &lineno)
+		G.Assertf(err == nil, "%s", err)
 		text := lineText[4:]
 		line := newSubstLine(t, lineno, text)
 

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.113 2018/08/16 18:55:04 adam Exp $
+# $NetBSD: Makefile,v 1.116 2018/12/13 19:52:13 adam Exp $
 
 DISTNAME=		gnash-0.8.10
-PKGREVISION=		59
+PKGREVISION=		62
 CATEGORIES=		multimedia
 MASTER_SITES=		${MASTER_SITE_GNU:=gnash/${PKGVERSION_NOREV}/}
 EXTRACT_SUFX=		.tar.bz2

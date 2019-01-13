@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.44 2018/11/03 10:59:29 wiz Exp $
+# $NetBSD: Makefile,v 1.46 2018/11/23 08:06:31 ryoon Exp $
 
-DISTNAME=	gst-libav-1.14.1
+DISTNAME=	gst-libav-1.14.4
 PKGNAME=	${DISTNAME:S/gst/gst-plugins1/}
 PKGREVISION=	1
 CATEGORIES=	multimedia
@@ -19,7 +19,7 @@ GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--with-system-libav
 PKGSRC_MAKE_ENV+=	PERL=${PERL5:Q}
 
-BUILDLINK_API_DEPENDS.gstreamer1+=	gstreamer1>=1.14.0
+BUILDLINK_API_DEPENDS.gstreamer1+=	gstreamer1>=1.14.4
 .include "../../multimedia/gstreamer1/buildlink3.mk"
 .include "../../multimedia/gst-plugins1-base/buildlink3.mk"
 .include "../../multimedia/ffmpeg3/buildlink3.mk"

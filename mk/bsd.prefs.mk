@@ -1,4 +1,4 @@
-# $NetBSD: bsd.prefs.mk,v 1.401 2018/10/29 01:50:00 sevan Exp $
+# $NetBSD: bsd.prefs.mk,v 1.403 2019/01/06 12:51:45 bsiegert Exp $
 #
 # This file includes the mk.conf file, which contains the user settings.
 #
@@ -226,7 +226,11 @@ LOWER_VENDOR?=		chromeos
 LOWER_VENDOR?=          pc
 .  endif
 LOWER_VENDOR?=          unknown
+OS_VARIANT!=		${UNAME} -r
+OS_VARIANT:=		${OS_VARIANT:C/^.*-//}
+.  if ${OS_VARIANT} != "Microsoft"
 OS_VARIANT=		${LOWER_VENDOR}
+.  endif
 .  if !defined(HOST_MACHINE_ARCH)
 HOST_MACHINE_ARCH!=	${UNAME} -m
 MAKEFLAGS+=		HOST_MACHINE_ARCH=${HOST_MACHINE_ARCH:Q}
@@ -764,6 +768,20 @@ _PKGSRC_USE_STACK_CHECK=no
     ${STACK_CHECK_SUPPORTED:Uyes:tl} == "yes" && \
     ${_OPSYS_SUPPORTS_STACK_CHECK:Uno} == "yes"
 _PKGSRC_USE_STACK_CHECK=yes
+.endif
+
+# Enable CTF conversion if the user requested it, the OPSYS supports it, there
+# is a tool for it, and the package supports it.  We also need to explicitly
+# turn on _INSTALL_UNSTRIPPED as conversion is impossible on stripped files.
+#
+.if ${PKGSRC_USE_CTF:Uno:tl} == "yes" && \
+    ${_OPSYS_SUPPORTS_CTF:Uno:tl} == "yes" && \
+    defined(TOOLS_PLATFORM.ctfconvert) && \
+    ${CTF_SUPPORTED:Uyes:tl} == "yes"
+_PKGSRC_USE_CTF=	yes
+_INSTALL_UNSTRIPPED=	# defined
+.else
+_PKGSRC_USE_CTF=	no
 .endif
 
 # Enable cwrappers if not building the wrappers themselves, and if the user has

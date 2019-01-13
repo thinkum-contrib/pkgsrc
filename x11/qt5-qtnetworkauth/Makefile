@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1 2018/10/06 22:41:22 adam Exp $
+# $NetBSD: Makefile,v 1.4 2018/12/18 09:57:19 adam Exp $
 
 DISTNAME=	qtnetworkauth-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtnetworkauth-${QTVERSION}

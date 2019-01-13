@@ -1,9 +1,11 @@
-# $NetBSD: mozilla-common.mk,v 1.118 2018/11/04 09:10:40 maya Exp $
+# $NetBSD: mozilla-common.mk,v 1.122 2018/12/23 01:11:26 gutteridge Exp $
 #
 # common Makefile fragment for mozilla packages based on gecko 2.0.
 #
 # used by www/firefox/Makefile
 # used by www/seamonkey/Makefile
+
+.include "../../mk/bsd.prefs.mk"
 
 # Python 2.7 and Python 3.5 or later are required simultaneously.
 PYTHON_VERSIONS_ACCEPTED=	27
@@ -23,10 +25,12 @@ USE_TOOLS+=		pkg-config perl gmake autoconf213 unzip zip
 USE_LANGUAGES+=		c99 gnu++14
 UNLIMIT_RESOURCES+=	datasize
 
-.include "../../mk/bsd.prefs.mk"
-
 TOOL_DEPENDS+=		cbindgen-[0-9]*:../../devel/cbindgen
+.if ${MACHINE_ARCH} == "sparc64"
+CONFIGURE_ARGS+=	--disable-nodejs
+.else
 TOOL_DEPENDS+=		nodejs-[0-9]*:../../lang/nodejs
+.endif
 
 .if ${MACHINE_ARCH} == "i386" || ${MACHINE_ARCH} == "x86_64"
 BUILD_DEPENDS+=		yasm>=1.1:../../devel/yasm
@@ -74,9 +78,6 @@ CHECK_PORTABILITY_SKIP+=${MOZILLA_DIR}browser/extensions/loop/run-all-loop-tests
 #CHECK_PORTABILITY_SKIP+=${MOZILLA_DIR}modules/pdfium/update.sh
 
 CONFIGURE_ARGS+=	--enable-default-toolkit=cairo-gtk3
-.if ${OPSYS} != "SunOS"
-CONFIGURE_ARGS+=	--enable-pie
-.endif
 CONFIGURE_ARGS+=	--enable-release
 CONFIGURE_ARGS+=	--enable-rust-simd
 CONFIGURE_ARGS+=	--enable-webrender=build
@@ -127,12 +128,6 @@ CONFIG_SUB_OVERRIDE+=		${MOZILLA_DIR}nsprpub/build/autoconf/config.sub
 CONFIG_SUB_OVERRIDE+=		${MOZILLA_DIR}/js/ctypes/libffi/config.sub
 
 CONFIGURE_ENV+=		CPP=${CPP}
-
-SUBST_CLASSES+=		python
-SUBST_STAGE.python=	pre-configure
-SUBST_MESSAGE.python=	Fixing path to python.
-SUBST_FILES.python+=	media/webrtc/trunk/build/common.gypi
-SUBST_SED.python+=	-e 's,<!(python,<!(${PYTHONBIN},'
 
 # Build outside ${WRKSRC}
 # Try to avoid conflict with config/makefiles/xpidl/Makefile.in
@@ -218,7 +213,7 @@ BUILDLINK_API_DEPENDS.libevent+=	libevent>=1.1
 BUILDLINK_API_DEPENDS.nspr+=	nspr>=4.19
 .include "../../devel/nspr/buildlink3.mk"
 .include "../../textproc/icu/buildlink3.mk"
-BUILDLINK_API_DEPENDS.nss+=	nss>=3.38
+BUILDLINK_API_DEPENDS.nss+=	nss>=3.40.1
 .include "../../devel/nss/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
 #.include "../../mk/jpeg.buildlink3.mk"

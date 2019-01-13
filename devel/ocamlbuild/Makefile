@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.9 2018/07/19 15:15:25 jaapb Exp $
+# $NetBSD: Makefile,v 1.11 2018/11/27 13:59:42 jaapb Exp $
 
-DISTNAME=	ocamlbuild-0.12.0
-PKGREVISION=	2
+DISTNAME=	ocamlbuild-0.13.1
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_GITHUB:=ocaml/}
 

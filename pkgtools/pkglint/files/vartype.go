@@ -1,4 +1,4 @@
-package main
+package pkglint
 
 import (
 	"path"
@@ -16,9 +16,9 @@ type Vartype struct {
 
 type KindOfList uint8
 
+// TODO: Rename lkNone to Plain, and lkShell to List.
 const (
 	lkNone  KindOfList = iota // Plain data type
-	lkSpace                   // List entries are separated by whitespace; used in .for loops.
 	lkShell                   // List entries are shell words; used in the :M, :S modifiers.
 )
 
@@ -36,10 +36,10 @@ const (
 	aclpUseLoadtime                            // OTHER := ${VAR}, OTHER != ${VAR}
 	aclpUse                                    // OTHER = ${VAR}
 	aclpUnknown
-	aclpAll        = aclpAppend | aclpSetDefault | aclpSet | aclpUseLoadtime | aclpUse
-	aclpAllRuntime = aclpAppend | aclpSetDefault | aclpSet | aclpUse
 	aclpAllWrite   = aclpSet | aclpSetDefault | aclpAppend
 	aclpAllRead    = aclpUseLoadtime | aclpUse
+	aclpAll        = aclpAllWrite | aclpAllRead
+	aclpAllRuntime = aclpAll &^ aclpUseLoadtime
 )
 
 func (perms ACLPermissions) Contains(subset ACLPermissions) bool {
@@ -104,11 +104,8 @@ func (vt *Vartype) AllowedFiles(perms ACLPermissions) string {
 // This distinction between "real lists" and "considered a list" makes
 // the implementation of checklineMkVartype easier.
 func (vt *Vartype) IsConsideredList() bool {
-	switch vt.kindOfList {
-	case lkShell:
+	if vt.kindOfList == lkShell {
 		return true
-	case lkSpace:
-		return false
 	}
 	switch vt.basicType {
 	case BtAwkCommand, BtSedCommands, BtShellCommand, BtShellCommands, BtLicense, BtConfFiles:
@@ -122,7 +119,7 @@ func (vt *Vartype) MayBeAppendedTo() bool {
 }
 
 func (vt *Vartype) String() string {
-	listPrefix := [...]string{"", "SpaceList of ", "ShellList of "}[vt.kindOfList]
+	listPrefix := [...]string{"", "List of "}[vt.kindOfList]
 	guessedSuffix := ifelseStr(vt.guessed, " (guessed)", "")
 	return listPrefix + vt.basicType.name + guessedSuffix
 }
@@ -140,16 +137,19 @@ func (vt *Vartype) IsShell() bool {
 	return false
 }
 
-// IsBasicSafe returns whether the basic vartype consists only of
-// characters that don't need escaping in most contexts, like A-Za-z0-9-_.
-func (vt *Vartype) IsBasicSafe() bool {
-	switch vt.basicType {
+// NeedsQ returns whether variables of this type need the :Q
+// modifier to be safely embedded in other variables or shell programs.
+//
+// Variables that can consists only of characters like A-Za-z0-9-._
+// don't need the :Q modifier. All others do, for safety reasons.
+func (bt *BasicType) NeedsQ() bool {
+	switch bt {
 	case BtBuildlinkDepmethod,
 		BtCategory,
 		BtDistSuffix,
 		BtEmulPlatform,
 		BtFileMode,
-		BtFilename,
+		BtFileName,
 		BtIdentifier,
 		BtInteger,
 		BtMachineGnuPlatform,
@@ -172,9 +172,9 @@ func (vt *Vartype) IsBasicSafe() bool {
 		BtWrkdirSubdirectory,
 		BtYesNo,
 		BtYesNoIndirectly:
-		return true
+		return false
 	}
-	return false
+	return !bt.IsEnum()
 }
 
 func (vt *Vartype) IsPlainString() bool {
@@ -200,6 +200,10 @@ func (bt *BasicType) AllowedEnums() string {
 	return bt.name[6 : len(bt.name)-1]
 }
 
+// TODO: Try to implement BasicType.PossibleChars()
+// TODO: Try to implement BasicType.CanBeEmpty()
+// TODO: Try to implement BasicType.PossibleWords() / PossibleValues()
+
 var (
 	BtAwkCommand             = &BasicType{"AwkCommand", (*VartypeCheck).AwkCommand}
 	BtBasicRegularExpression = &BasicType{"BasicRegularExpression", (*VartypeCheck).BasicRegularExpression}
@@ -213,8 +217,8 @@ var (
 	BtDistSuffix             = &BasicType{"DistSuffix", (*VartypeCheck).DistSuffix}
 	BtEmulPlatform           = &BasicType{"EmulPlatform", (*VartypeCheck).EmulPlatform}
 	BtFetchURL               = &BasicType{"FetchURL", (*VartypeCheck).FetchURL}
-	BtFilename               = &BasicType{"Filename", (*VartypeCheck).Filename}
-	BtFilemask               = &BasicType{"Filemask", (*VartypeCheck).Filemask}
+	BtFileName               = &BasicType{"Filename", (*VartypeCheck).Filename}
+	BtFileMask               = &BasicType{"FileMask", (*VartypeCheck).FileMask}
 	BtFileMode               = &BasicType{"FileMode", (*VartypeCheck).FileMode}
 	BtGccReqd                = &BasicType{"GccReqd", (*VartypeCheck).GccReqd}
 	BtHomepage               = &BasicType{"Homepage", (*VartypeCheck).Homepage}
@@ -229,7 +233,7 @@ var (
 	BtMessage                = &BasicType{"Message", (*VartypeCheck).Message}
 	BtOption                 = &BasicType{"Option", (*VartypeCheck).Option}
 	BtPathlist               = &BasicType{"Pathlist", (*VartypeCheck).Pathlist}
-	BtPathmask               = &BasicType{"Pathmask", (*VartypeCheck).Pathmask}
+	BtPathmask               = &BasicType{"PathMask", (*VartypeCheck).PathMask}
 	BtPathname               = &BasicType{"Pathname", (*VartypeCheck).Pathname}
 	BtPerl5Packlist          = &BasicType{"Perl5Packlist", (*VartypeCheck).Perl5Packlist}
 	BtPerms                  = &BasicType{"Perms", (*VartypeCheck).Perms}
@@ -242,7 +246,6 @@ var (
 	BtRelativePkgDir         = &BasicType{"RelativePkgDir", (*VartypeCheck).RelativePkgDir}
 	BtRelativePkgPath        = &BasicType{"RelativePkgPath", (*VartypeCheck).RelativePkgPath}
 	BtRestricted             = &BasicType{"Restricted", (*VartypeCheck).Restricted}
-	BtSedCommand             = &BasicType{"SedCommand", (*VartypeCheck).SedCommand}
 	BtSedCommands            = &BasicType{"SedCommands", (*VartypeCheck).SedCommands}
 	BtShellCommand           = &BasicType{"ShellCommand", nil}
 	BtShellCommands          = &BasicType{"ShellCommands", nil}

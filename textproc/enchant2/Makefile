@@ -1,10 +1,12 @@
-# $NetBSD: Makefile,v 1.1 2018/11/01 09:36:47 bsiegert Exp $
+# $NetBSD: Makefile,v 1.4 2018/11/22 15:06:09 nia Exp $
 #
 
 DISTNAME=		enchant-2.2.3
 PKGNAME=		enchant2-2.2.3
+PKGREVISION=		1
 CATEGORIES=		textproc
 MASTER_SITES=		${MASTER_SITE_GITHUB:=AbiWord/}
+GITHUB_PROJECT=		enchant
 GITHUB_RELEASE=		v${PKGVERSION_NOREV}
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
@@ -22,6 +24,12 @@ CFLAGS.SunOS+=		-D__EXTENSIONS__
 INSTALLATION_DIRS+=	share/examples
 MAKE_DIRS+=		${PREFIX}/share/enchant
 CONF_FILES=		${PREFIX}/share/examples/enchant.ordering ${PREFIX}/share/enchant/enchant.ordering
+
+# unsupported in pkgsrc - other dictionaries can be used instead
+# avoid PLIST problems
+CONFIGURE_ARGS+=	--without-hspell
+CONFIGURE_ARGS+=	--without-uspell
+CONFIGURE_ARGS+=	--without-voikko
 
 # XXX: needs unittest-cpp as a test dependency
 #TEST_TARGET=		check

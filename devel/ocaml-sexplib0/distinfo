@@ -1,4 +1,4 @@
-$NetBSD: distinfo,v 1.1 2018/05/09 14:18:13 jaapb Exp $
+$NetBSD: distinfo,v 1.3 2018/11/27 14:45:05 jaapb Exp $
 
 SHA1 (sexplib0-0.11.0.tar.gz) = 95db32a92858c5a2d5e10f24586e8df007ec4709
 RMD160 (sexplib0-0.11.0.tar.gz) = 6564f7f3b5032aeb8309a4c5c0c99078c744057f

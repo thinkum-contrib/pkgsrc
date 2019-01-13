@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.47 2018/08/22 09:42:58 wiz Exp $
+# $NetBSD: Makefile,v 1.49 2018/11/23 08:06:30 ryoon Exp $
 
+PKGREVISION= 1
 .include "../../multimedia/xine-lib/Makefile.common"
 
 PKGNAME=	${XINE_PKGNAME:S/lib/esound/}
-PKGREVISION=	8
 CATEGORIES=	audio
 COMMENT=	The esound audio output plugin for xine-lib
 

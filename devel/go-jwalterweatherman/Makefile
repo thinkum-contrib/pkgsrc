@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.7 2018/11/04 18:38:00 bsiegert Exp $
+# $NetBSD: Makefile,v 1.9 2018/12/19 15:47:07 bsiegert Exp $
 
-DISTNAME=	jWalterWeatherman-20170523
+DISTNAME=	jwalterweatherman-20181028
 PKGNAME=	go-${DISTNAME}
-PKGREVISION=	4
+PKGREVISION=	1
 MASTER_SITES=	${MASTER_SITE_GITHUB:=spf13/}
 CATEGORIES=	devel
-GITHUB_TAG=	0efa5202c04663c757d84f90f5219c1250baf94f
+GITHUB_TAG=	94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
 GITHUB_PROJECT= ${PKGBASE:S/^go-//}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
