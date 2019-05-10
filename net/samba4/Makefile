@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.58 2019/01/03 19:36:45 adam Exp $
+# $NetBSD: Makefile,v 1.66 2019/04/25 07:33:12 maya Exp $
 
-DISTNAME=	samba-4.9.4
-PKGREVISION=	2
+DISTNAME=	samba-4.10.2
+PKGREVISION=	1
 CATEGORIES=	net
 MASTER_SITES=	http://download.samba.org/pub/samba/stable/
 
@@ -11,6 +11,8 @@ COMMENT=	SMB/CIFS protocol server suite
 LICENSE=	gnu-gpl-v3
 
 CONFLICTS+=	ja-samba-[0-9]* winbind-[0-9]*
+
+PYTHON_VERSIONS_INCOMPATIBLE=	27
 
 GCC_REQD+=	4.4
 BUILD_DEPENDS+=	libxslt-[0-9]*:../../textproc/libxslt
@@ -100,6 +102,9 @@ CONFIGURE_ARGS+=	--without-gpgme
 # Depends on ncurses, explicitly disable for now.
 CONFIGURE_ARGS+=	--without-regedit
 
+PY_PATCHPLIST=		yes
+MAKE_FLAGS+=		WAF_BINARY=${PYTHONBIN}\ ${WRKSRC}/buildtools/bin/waf
+
 # for winbind option build.
 .if "${OPSYS}" != "Darwin" && "${OPSYS}" != "SunOS"
 LDFLAGS+=		-Wl,--allow-shlib-undefined
@@ -110,15 +115,14 @@ LDFLAGS+=		${COMPILER_RPATH_FLAG}${SMB_PRIVATELIB}
 CFLAGS.SunOS+=		-DHAVE_SOLARIS_GETGRENT_R
 # workaround https://bugzilla.samba.org/show_bug.cgi?id=12502 for now
 CFLAGS.SunOS+=		-DMSG_NOSIGNAL=0
+LDFLAGS.SunOS+=		-lsocket -lnsl
 
 .include "options.mk"
 
 .if ${SHLIB_TYPE} == "dylib"
 PLIST_SUBST+=	SOEXT=dylib
-SAMBA_LIBEXT=	dylib
 .else
 PLIST_SUBST+=	SOEXT=so
-SAMBA_LIBEXT=	so
 .endif
 
 .if !defined(PWD_MKDB)
@@ -128,14 +132,6 @@ MAKEFLAGS+=	PWD_MKDB=${PWD_MKDB:Q}
 .endif
 FILES_SUBST+=	MKTEMP=${MKTEMP:Q}
 FILES_SUBST+=	PWD_MKDB=${PWD_MKDB:Q}
-
-PLIST_VARS+=	64bit
-.if !empty(LP64PLATFORMS:@.PLAT.@${MACHINE_PLATFORM:M${.PLAT.}}@) || \
-	(defined(ABI) && ${ABI} == "64")
-PLIST.64bit=		yes
-.else
-CONFIGURE_ARGS+=	--without-ldb-lmdb
-.endif
 
 INSTALLATION_DIRS+=	${DOCDIR} ${EGDIR}
 
@@ -149,6 +145,7 @@ SUBST_CLASSES+=		docbook
 SUBST_MESSAGE.docbook=	Fixing docbook URLs.
 SUBST_FILES.docbook+=	buildtools/wafsamba/wafsamba.py
 SUBST_FILES.docbook+=	ctdb/doc/*.xml
+SUBST_FILES.docbook+=	docs-xml/build/DTD/samba-doc
 SUBST_FILES.docbook+=	docs-xml/xslt/*.xsl
 SUBST_FILES.docbook+=	lib/ldb/docs/builddocs.sh
 SUBST_FILES.docbook+=	librpc/tools/*.xml
@@ -209,19 +206,12 @@ REPLACE_PYTHON+=	buildtools/bin/waf
 REPLACE_PYTHON+=	source4/setup/wscript_build
 REPLACE_PYTHON+=	source4/scripting/bin/*
 
-PYTHON_VERSIONS_ACCEPTED=	27 # as of 4.3.2
-
-PY_PATCHPLIST=	yes
-.include "../../lang/python/application.mk"
-.include "../../lang/python/extension.mk"
-
 .if "${OPSYS}" == "Linux"
 .include "../../devel/libuuid/buildlink3.mk"
 .endif
 .include "../../archivers/libarchive/buildlink3.mk"
 .include "../../converters/libiconv/buildlink3.mk"
-.include "../../databases/lmdb/buildlink3.mk"
-.include "../../databases/tdb/buildlink3.mk"
+.include "../../databases/ldb/buildlink3.mk"
 .include "../../devel/cmocka/buildlink3.mk"
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/popt/buildlink3.mk"
@@ -230,6 +220,8 @@ BUILDLINK_API_DEPENDS.talloc+=	talloc>=2.1.9
 .include "../../devel/talloc/buildlink3.mk"
 .include "../../devel/tevent/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
+.include "../../lang/python/application.mk"
+.include "../../lang/python/extension.mk"
 .include "../../security/gnutls/buildlink3.mk"
 .include "../../security/libgcrypt/buildlink3.mk"
 .include "../../textproc/jansson/buildlink3.mk"

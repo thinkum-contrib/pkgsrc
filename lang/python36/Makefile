@@ -1,8 +1,9 @@
-# $NetBSD: Makefile,v 1.15 2018/07/03 03:52:41 adam Exp $
+# $NetBSD: Makefile,v 1.18 2019/04/25 15:59:54 roy Exp $
 
 .include "dist.mk"
 
 PKGNAME=	python36-${PY_DISTVERSION}
+PKGREVISION=	1
 CATEGORIES=	lang python
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
@@ -12,7 +13,7 @@ LICENSE=	python-software-foundation
 
 CONFLICTS+=	python-[0-9]*
 
-PLIST_AWK+=		-f ${PKGSRCDIR}/lang/python/plist-python.awk
+PLIST_AWK=		-f ${PKGSRCDIR}/lang/python/plist-python.awk
 PLIST_AWK_ENV+=		PYVERS=36
 PRINT_PLIST_AWK+=	/^[^@]/ && /[^\/]+\.pyc$$/ {
 PRINT_PLIST_AWK+=	sub(/__pycache__\//, "")
@@ -77,22 +78,17 @@ PLIST.oss=	yes
 CFLAGS+=		-I${OSX_SDK_PATH:Q}/usr/include
 .endif
 
-PLIST_VARS+=	dll nis no-nis
-.if ${OPSYS} == "IRIX"
-.  if ${ABI} == "64"
-PLIST.no-nis=	yes
-.  else
-PLIST.nis=	yes
+PLIST_VARS+=	nis
+.for incdir in ${_OPSYS_INCLUDE_DIRS}
+.  if (exists(${incdir}/rpc/rpc.h) || exists(${incdir}/tirpc/rpc/rpc.h))
+HAVE_RPC_H=	yes
 .  endif
-.else
-PLIST.dll=	yes
-.  if ${OPSYS} != "NetBSD" || exists(/usr/bin/ypcat)
-.    if "${OS_VARIANT}" != "chromeos"
-PLIST.nis=	yes
-.    endif
-.  else
-PLIST.no-nis=	yes
+.  if (exists(${incdir}/rpcsvc/yp_prot.h) || exists(${incdir}/nsl/rpcsvc/yp_prot.h))
+HAVE_YP_PROT_H=	yes
 .  endif
+.endfor
+.if (${HAVE_RPC_H:Uno} == yes && ${HAVE_YP_PROT_H:Uno} == yes)
+PLIST.nis=	yes
 .endif
 
 PLIST_SUBST+=	PY_VER_SUFFIX=${PY_VER_SUFFIX:Q}
@@ -152,25 +148,16 @@ REPLACE_FILES.python+=	Lib/turtledemo/yinyang.py
 REPLACE_FILES.python+=	Lib/uu.py
 REPLACE_FILES.python+=	Lib/webbrowser.py
 
+# XXX: It might be needed to add manually more paths like ${PREFIX}/qt5/lib
+# Test: python -c 'from ctypes.util import find_library; print(find_library("ffi"));'
 SUBST_CLASSES+=		findlib
-SUBST_MESSAGE.findlib=	Fixing find_library_file on Darwin.
+SUBST_MESSAGE.findlib=	Fixing find_library().
 SUBST_STAGE.findlib=	pre-configure
 SUBST_FILES.findlib=	Lib/ctypes/macholib/dyld.py
 SUBST_FILES.findlib+=	Lib/ctypes/util.py
 SUBST_FILES.findlib+=	Lib/distutils/unixccompiler.py
 SUBST_SED.findlib=	-e 's,/usr/local,${PREFIX},'
-
-# XXX: It might be needed to add manually more paths like ${PREFIX}/qt5/lib
-# Testing:
-# >>> from ctypes.util import find_library
-# >>> find_library("m")
-# 'libm.so.0'
-
-SUBST_CLASSES+=		pfindlib
-SUBST_MESSAGE.pfindlib=	Fixing find_library() on POSIX-like (excluding Darwin) systems.
-SUBST_STAGE.pfindlib=	pre-configure
-SUBST_FILES.pfindlib=	Lib/ctypes/util.py
-SUBST_SED.pfindlib=	-e "s!\('-Wl,-t', \)!'${COMPILER_RPATH_FLAG}${PREFIX}/lib', '-L${PREFIX}/lib', \1!"
+SUBST_SED.findlib+=	-e "s!\('-Wl,-t'\)!'${COMPILER_RPATH_FLAG}${PREFIX}/lib', '-L${PREFIX}/lib', \1!"
 
 .include "options.mk"
 

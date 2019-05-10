@@ -19,7 +19,8 @@ func (s *Suite) Test_Package_checkLinesBuildlink3Inclusion__file_but_not_package
 
 	t.CheckOutputLines(
 		"WARN: category/package/buildlink3.mk:3: " +
-			"category/dependency/buildlink3.mk is included by this file but not by the package.")
+			"../../category/dependency/buildlink3.mk is included by this file " +
+			"but not by the package.")
 }
 
 func (s *Suite) Test_Package_checkLinesBuildlink3Inclusion__package_but_not_file(c *check.C) {
@@ -27,7 +28,8 @@ func (s *Suite) Test_Package_checkLinesBuildlink3Inclusion__package_but_not_file
 
 	t.CreateFileLines("category/dependency/buildlink3.mk")
 	G.Pkg = NewPackage(t.File("category/package"))
-	G.Pkg.bl3["../../category/dependency/buildlink3.mk"] = t.NewMkLine("filename", 1, "")
+	G.Pkg.bl3["../../category/dependency/buildlink3.mk"] =
+		t.NewMkLine("../../category/dependency/buildlink3.mk", 1, "")
 	mklines := t.NewMkLines("category/package/buildlink3.mk",
 		MkRcsID)
 
@@ -39,7 +41,7 @@ func (s *Suite) Test_Package_checkLinesBuildlink3Inclusion__package_but_not_file
 	// for building other packages. These cannot be flagged as warnings.
 	t.CheckOutputLines(
 		"TRACE: + (*Package).checkLinesBuildlink3Inclusion()",
-		"TRACE: 1   ../../category/dependency/buildlink3.mk/buildlink3.mk "+
+		"TRACE: 1   ../../category/dependency/buildlink3.mk "+
 			"is included by the package but not by the buildlink3.mk file.",
 		"TRACE: - (*Package).checkLinesBuildlink3Inclusion()")
 }
@@ -47,31 +49,58 @@ func (s *Suite) Test_Package_checkLinesBuildlink3Inclusion__package_but_not_file
 func (s *Suite) Test_Package_pkgnameFromDistname(c *check.C) {
 	t := s.Init(c)
 
-	pkg := NewPackage(t.File("category/package"))
-	pkg.vars.Define("PKGNAME", t.NewMkLine("Makefile", 5, "PKGNAME=dummy"))
+	var once Once
+	test := func(pkgname, distname, expectedPkgname string, diagnostics ...string) {
+		t.SetUpPackage("category/package",
+			"PKGNAME=\t"+pkgname,
+			"DISTNAME=\t"+distname)
+		if once.FirstTime("called") {
+			t.FinishSetUp()
+		}
 
-	test := func(pkgname, distname, expectedPkgname string) {
-		c.Check(pkg.pkgnameFromDistname(pkgname, distname), equals, expectedPkgname)
+		pkg := NewPackage(t.File("category/package"))
+		pkg.loadPackageMakefile()
+		pkg.determineEffectivePkgVars()
+		t.Check(pkg.EffectivePkgname, equals, expectedPkgname)
+		t.CheckOutput(diagnostics)
 	}
 
 	test("pkgname-1.0", "whatever", "pkgname-1.0")
-	test("${DISTNAME}", "distname-1.0", "distname-1.0")
+
+	test("${DISTNAME}", "distname-1.0", "distname-1.0",
+		"NOTE: ~/category/package/Makefile:4: This assignment is probably redundant since PKGNAME is ${DISTNAME} by default.")
+
 	test("${DISTNAME:S/dist/pkg/}", "distname-1.0", "pkgname-1.0")
+
 	test("${DISTNAME:S|a|b|g}", "panama-0.13", "pbnbmb-0.13")
-	test("${DISTNAME:S|^lib||}", "libncurses", "ncurses")
-	test("${DISTNAME:S|^lib||}", "mylib", "mylib")
+
+	// The substitution succeeds, but the substituted value is missing
+	// the package version. Therefore it is discarded completely.
+	test("${DISTNAME:S|^lib||}", "libncurses", "")
+
+	// The substitution succeeds, but the substituted value is missing
+	// the package version. Therefore it is discarded completely.
+	test("${DISTNAME:S|^lib||}", "mylib", "")
+
 	test("${DISTNAME:tl:S/-/./g:S/he/-/1}", "SaxonHE9-5-0-1J", "saxon-9.5.0.1j")
-	test("${DISTNAME:C/beta/.0./}", "fspanel-0.8beta1", "${DISTNAME:C/beta/.0./}")
+
+	test("${DISTNAME:C/beta/.0./}", "fspanel-0.8beta1", "fspanel-0.8.0.1")
+
+	test("${DISTNAME:C/Gtk2/p5-gtk2/}", "Gtk2-1.0", "p5-gtk2-1.0")
+
 	test("${DISTNAME:S/-0$/.0/1}", "aspell-af-0.50-0", "aspell-af-0.50.0")
 
-	// FIXME: Should produce a parse error since the :S modifier is malformed; see Test_MkParser_MkTokens.
-	test("${DISTNAME:S,a,b,c,d}", "aspell-af-0.50-0", "bspell-af-0.50-0")
+	test("${DISTNAME:M*.tar.gz:C,\\..*,,}", "aspell-af-0.50-0", "")
+
+	test("${DISTNAME:S,a,b,c,d}", "aspell-af-0.50-0", "bspell-af-0.50-0",
+		"WARN: ~/category/package/Makefile:4: Invalid variable modifier \"c,d\" for \"DISTNAME\".")
+
+	test("${DISTFILE:C,\\..*,,}", "aspell-af-0.50-0", "")
 }
 
 func (s *Suite) Test_Package_CheckVarorder(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
 	pkg := NewPackage(t.File("x11/9term"))
 
 	pkg.CheckVarorder(t.NewMkLines("Makefile",
@@ -105,7 +134,6 @@ func (s *Suite) Test_Package_CheckVarorder(c *check.C) {
 func (s *Suite) Test_Package_CheckVarorder__comments_do_not_crash(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
 	pkg := NewPackage(t.File("x11/9term"))
 
 	pkg.CheckVarorder(t.NewMkLines("Makefile",
@@ -128,8 +156,6 @@ func (s *Suite) Test_Package_CheckVarorder__comments_do_not_crash(c *check.C) {
 func (s *Suite) Test_Package_CheckVarorder__comments_are_ignored(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
-
 	pkg := NewPackage(t.File("x11/9term"))
 
 	pkg.CheckVarorder(t.NewMkLines("Makefile",
@@ -148,8 +174,6 @@ func (s *Suite) Test_Package_CheckVarorder__comments_are_ignored(c *check.C) {
 
 func (s *Suite) Test_Package_CheckVarorder__skip_if_there_are_directives(c *check.C) {
 	t := s.Init(c)
-
-	t.SetupCommandLine("-Worder")
 
 	pkg := NewPackage(t.File("category/package"))
 
@@ -174,7 +198,6 @@ func (s *Suite) Test_Package_CheckVarorder__skip_if_there_are_directives(c *chec
 func (s *Suite) Test_Package_CheckVarorder__GITHUB_PROJECT_at_the_top(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
 	pkg := NewPackage(t.File("x11/9term"))
 
 	pkg.CheckVarorder(t.NewMkLines("Makefile",
@@ -195,7 +218,6 @@ func (s *Suite) Test_Package_CheckVarorder__GITHUB_PROJECT_at_the_top(c *check.C
 func (s *Suite) Test_Package_CheckVarorder__GITHUB_PROJECT_at_the_bottom(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
 	pkg := NewPackage(t.File("x11/9term"))
 
 	pkg.CheckVarorder(t.NewMkLines("Makefile",
@@ -216,27 +238,27 @@ func (s *Suite) Test_Package_CheckVarorder__GITHUB_PROJECT_at_the_bottom(c *chec
 func (s *Suite) Test_Package_CheckVarorder__license(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
-
 	t.CreateFileLines("mk/bsd.pkg.mk", "# dummy")
 	t.CreateFileLines("x11/Makefile", MkRcsID)
 	t.CreateFileLines("x11/9term/PLIST", PlistRcsID, "bin/9term")
-	t.CreateFileLines("x11/9term/distinfo", RcsID)
 	t.CreateFileLines("x11/9term/Makefile",
 		MkRcsID,
 		"",
-		"DISTNAME=9term-1.0",
-		"CATEGORIES=x11",
+		"DISTNAME=\t9term-1.0",
+		"CATEGORIES=\tx11",
 		"",
-		"COMMENT=Terminal",
+		"COMMENT=\tTerminal",
+		"",
+		"NO_CHECKSUM=\tyes",
 		"",
 		".include \"../../mk/bsd.pkg.mk\"")
 
-	t.SetupVartypes()
+	t.SetUpVartypes()
 
 	G.Check(t.File("x11/9term"))
 
 	// Since the error is grave enough, the warning about the correct position is suppressed.
+	// TODO: Knowing the correct position helps, though.
 	t.CheckOutputLines(
 		"ERROR: ~/x11/9term/Makefile: Each package must define its LICENSE.")
 }
@@ -245,7 +267,6 @@ func (s *Suite) Test_Package_CheckVarorder__license(c *check.C) {
 func (s *Suite) Test_Package_CheckVarorder__MASTER_SITES(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
 	pkg := NewPackage(t.File("category/package"))
 
 	pkg.CheckVarorder(t.NewMkLines("Makefile",
@@ -266,8 +287,7 @@ func (s *Suite) Test_Package_CheckVarorder__MASTER_SITES(c *check.C) {
 func (s *Suite) Test_Package_CheckVarorder__diagnostics(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Worder")
-	t.SetupVartypes()
+	t.SetUpVartypes()
 	pkg := NewPackage(t.File("category/package"))
 
 	pkg.CheckVarorder(t.NewMkLines("Makefile",
@@ -353,30 +373,80 @@ func (s *Suite) Test_Package_determineEffectivePkgVars__precedence(c *check.C) {
 func (s *Suite) Test_Package_determineEffectivePkgVars__same(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall,no-order")
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		"DISTNAME=\tdistname-1.0",
 		"PKGNAME=\tdistname-1.0")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
 	t.CheckOutputLines(
-		"NOTE: ~/category/package/Makefile:20: " +
+		"NOTE: ~/category/package/Makefile:4: " +
+			"This assignment is probably redundant since PKGNAME is ${DISTNAME} by default.")
+}
+
+func (s *Suite) Test_Package_determineEffectivePkgVars__simple_reference(c *check.C) {
+	t := s.Init(c)
+
+	pkg := t.SetUpPackage("category/package",
+		"DISTNAME=\tdistname-1.0",
+		"PKGNAME=\t${DISTNAME}")
+	t.FinishSetUp()
+
+	G.Check(pkg)
+
+	t.CheckOutputLines(
+		"NOTE: ~/category/package/Makefile:4: " +
 			"This assignment is probably redundant since PKGNAME is ${DISTNAME} by default.")
 }
 
 func (s *Suite) Test_Package_determineEffectivePkgVars__invalid_DISTNAME(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall,no-order")
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		"DISTNAME=\tpkgname-version")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
 	t.CheckOutputLines(
 		"WARN: ~/category/package/Makefile:3: " +
 			"As DISTNAME is not a valid package name, please define the PKGNAME explicitly.")
+}
+
+func (s *Suite) Test_Package_determineEffectivePkgVars__C_modifier(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("x11/p5-gtk2",
+		"DISTNAME=\tGtk2-1.0",
+		"PKGNAME=\t${DISTNAME:C:Gtk2:p5-gtk2:}")
+	t.FinishSetUp()
+	pkg := NewPackage(t.File("x11/p5-gtk2"))
+	files, mklines, allLines := pkg.load()
+
+	pkg.check(files, mklines, allLines)
+
+	t.Check(pkg.EffectivePkgname, equals, "p5-gtk2-1.0")
+}
+
+// In some cases the PKGNAME is derived from DISTNAME, and it seems as
+// if the :C modifier would not affect anything. This may nevertheless
+// be on purpose since the modifier may apply to future versions and
+// do things like replacing a "-1" with a ".1".
+func (s *Suite) Test_Package_determineEffectivePkgVars__ineffective_C_modifier(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		"DISTNAME=\tdistname-1.0",
+		"PKGNAME=\t${DISTNAME:C:does_not_match:replacement:}")
+	t.FinishSetUp()
+	pkg := NewPackage(t.File("category/package"))
+	files, mklines, allLines := pkg.load()
+
+	pkg.check(files, mklines, allLines)
+
+	t.Check(pkg.EffectivePkgname, equals, "distname-1.0")
+	t.CheckOutputEmpty()
 }
 
 func (s *Suite) Test_Package_checkPossibleDowngrade(c *check.C) {
@@ -406,9 +476,8 @@ func (s *Suite) Test_Package_checkPossibleDowngrade(c *check.C) {
 func (s *Suite) Test_Package_loadPackageMakefile__dump(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("--dumpmakefile")
-	t.SetupVartypes()
-	t.SetupPkgsrc()
+	t.SetUpCommandLine("--dumpmakefile")
+	t.SetUpPkgsrc()
 	t.CreateFileLines("category/Makefile")
 	t.CreateFileLines("category/package/PLIST",
 		PlistRcsID,
@@ -429,6 +498,7 @@ func (s *Suite) Test_Package_loadPackageMakefile__dump(c *check.C) {
 		"LICENSE=\t2-clause-bsd")
 	// TODO: There is no .include line at the end of the Makefile.
 	//  This should always be checked though.
+	t.FinishSetUp()
 
 	G.checkdirPackage(t.File("category/package"))
 
@@ -445,8 +515,8 @@ func (s *Suite) Test_Package_loadPackageMakefile__dump(c *check.C) {
 func (s *Suite) Test_Package__varuse_at_load_time(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupPkgsrc()
-	t.SetupTool("printf", "", AtRunTime)
+	t.SetUpPkgsrc()
+	t.SetUpTool("printf", "", AtRunTime)
 	t.CreateFileLines("licenses/2-clause-bsd",
 		"# dummy")
 	t.CreateFileLines("misc/Makefile")
@@ -510,16 +580,26 @@ func (s *Suite) Test_Package__varuse_at_load_time(c *check.C) {
 		"",
 		".include \"../../mk/bsd.pkg.mk\"")
 
-	t.SetupCommandLine("-q", "-Wall,no-space")
-	G.Pkgsrc.LoadInfrastructure()
+	t.SetUpCommandLine("-q", "-Wall,no-space")
+	t.FinishSetUp()
+
 	G.Check(t.File("category/pkgbase"))
 
 	t.CheckOutputLines(
+		"NOTE: ~/category/pkgbase/Makefile:14: Consider the :sh modifier instead of != for \"echo false=${FALSE:Q}\".",
 		"WARN: ~/category/pkgbase/Makefile:14: To use the tool ${FALSE} at load time, bsd.prefs.mk has to be included before.",
-		// TODO: "before including bsd.prefs.mk in line ###".
-		"WARN: ~/category/pkgbase/Makefile:15: To use the tool ${NICE} at load time, it has to be added to USE_TOOLS before including bsd.prefs.mk.",
+		"NOTE: ~/category/pkgbase/Makefile:15: Consider the :sh modifier instead of != for \"echo nice=${NICE:Q}\".",
+
+		// TODO: replace "at load time" with "before including bsd.prefs.mk in line ###".
+		// TODO: ${NICE} could be used at load time if it were added to USE_TOOLS earlier.
+		"WARN: ~/category/pkgbase/Makefile:15: The tool ${NICE} cannot be used at load time.",
+
+		"NOTE: ~/category/pkgbase/Makefile:16: Consider the :sh modifier instead of != for \"echo true=${TRUE:Q}\".",
 		"WARN: ~/category/pkgbase/Makefile:16: To use the tool ${TRUE} at load time, bsd.prefs.mk has to be included before.",
-		"WARN: ~/category/pkgbase/Makefile:25: To use the tool ${NICE} at load time, it has to be added to USE_TOOLS before including bsd.prefs.mk.")
+		"NOTE: ~/category/pkgbase/Makefile:24: Consider the :sh modifier instead of != for \"echo false=${FALSE:Q}\".",
+		"NOTE: ~/category/pkgbase/Makefile:25: Consider the :sh modifier instead of != for \"echo nice=${NICE:Q}\".",
+		"WARN: ~/category/pkgbase/Makefile:25: The tool ${NICE} cannot be used at load time.",
+		"NOTE: ~/category/pkgbase/Makefile:26: Consider the :sh modifier instead of != for \"echo true=${TRUE:Q}\".")
 }
 
 func (s *Suite) Test_Package_loadPackageMakefile(c *check.C) {
@@ -537,13 +617,39 @@ func (s *Suite) Test_Package_loadPackageMakefile(c *check.C) {
 
 	// Including a package Makefile directly is an error (in the last line),
 	// but that is checked later.
-	// A file including itself does not lead to an endless loop while parsing
-	// but may still produce unexpected warnings, such as redundant definitions.
+	// This test demonstrates that a file including itself does not lead to an
+	// endless loop while parsing. It might trigger an error in the future.
+	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_Package__relative_included_filenames_in_same_directory(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		"PKGNAME=\tpkgname-1.67",
+		"DISTNAME=\tdistfile_1_67",
+		".include \"../../category/package/other.mk\"")
+	t.CreateFileLines("category/package/other.mk",
+		MkRcsID,
+		"PKGNAME=\tpkgname-1.67",
+		"DISTNAME=\tdistfile_1_67",
+		".include \"../../category/package/other.mk\"")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	// TODO: Since other.mk is referenced via "../../category/package",
+	//  it would be nice if this relative path would be reflected in the output
+	//  instead of referring just to "other.mk".
+	//  This needs to be fixed somewhere near relpath.
+	//
+	// The notes are in reverse order because they are produced when checking
+	// other.mk, and there the relative order is correct (line 2 before line 3).
 	t.CheckOutputLines(
-		"NOTE: ~/category/package/Makefile:3: Definition of PKGNAME is redundant "+
-			"because of ../../category/package/Makefile:3.",
-		"NOTE: ~/category/package/Makefile:4: Definition of DISTNAME is redundant "+
-			"because of ../../category/package/Makefile:4.")
+		"NOTE: ~/category/package/Makefile:4: "+
+			"Definition of PKGNAME is redundant because of other.mk:2.",
+		"NOTE: ~/category/package/Makefile:3: "+
+			"Definition of DISTNAME is redundant because of other.mk:3.")
 }
 
 func (s *Suite) Test_Package_loadPackageMakefile__PECL_VERSION(c *check.C) {
@@ -564,9 +670,10 @@ func (s *Suite) Test_Package_loadPackageMakefile__PECL_VERSION(c *check.C) {
 		".if defined(USE_PHP_EXT_PATCHES)",
 		"PATCHDIR=       ${.CURDIR}/${PHPPKGSRCDIR}/patches",
 		".endif")
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		"PECL_VERSION=\t1.1.2",
 		".include \"../../lang/php/ext.mk\"")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 }
@@ -574,9 +681,8 @@ func (s *Suite) Test_Package_loadPackageMakefile__PECL_VERSION(c *check.C) {
 func (s *Suite) Test_Package_checkIncludeConditionally__conditional_and_unconditional_include(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupVartypes()
-	t.SetupOption("zlib", "")
-	t.SetupPackage("category/package",
+	t.SetUpOption("zlib", "")
+	t.SetUpPackage("category/package",
 		".include \"../../devel/zlib/buildlink3.mk\"",
 		".if ${OPSYS} == \"Linux\"",
 		".include \"../../sysutils/coreutils/buildlink3.mk\"",
@@ -592,6 +698,7 @@ func (s *Suite) Test_Package_checkIncludeConditionally__conditional_and_uncondit
 		".endif",
 		".include \"../../sysutils/coreutils/buildlink3.mk\"")
 	t.Chdir("category/package")
+	t.FinishSetUp()
 
 	G.checkdirPackage(".")
 
@@ -609,9 +716,9 @@ func (s *Suite) Test_Package_checkIncludeConditionally__conditional_and_uncondit
 func (s *Suite) Test_Package__include_without_exists(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupVartypes()
-	t.SetupPackage("category/package",
+	t.SetUpPackage("category/package",
 		".include \"options.mk\"")
+	t.FinishSetUp()
 
 	G.checkdirPackage(t.File("category/package"))
 
@@ -623,28 +730,27 @@ func (s *Suite) Test_Package__include_without_exists(c *check.C) {
 func (s *Suite) Test_Package__include_after_exists(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupVartypes()
-	t.SetupPackage("category/package",
+	t.SetUpPackage("category/package",
 		".if exists(options.mk)",
 		".  include \"options.mk\"",
 		".endif")
+	t.FinishSetUp()
 
 	G.checkdirPackage(t.File("category/package"))
 
-	// FIXME: This error message should not appear at all because of the .if exists before.
-	t.CheckOutputLines(
-		"ERROR: ~/category/package/Makefile:21: Relative path \"options.mk\" does not exist.")
+	// No error message at all because of the .if exists before.
+	t.CheckOutputEmpty()
 }
 
 // See https://github.com/rillig/pkglint/issues/1
 func (s *Suite) Test_Package_readMakefile__include_other_after_exists(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupVartypes()
-	t.SetupPackage("category/package",
+	t.SetUpPackage("category/package",
 		".if exists(options.mk)",
 		".  include \"another.mk\"",
 		".endif")
+	t.FinishSetUp()
 
 	G.checkdirPackage(t.File("category/package"))
 
@@ -656,11 +762,8 @@ func (s *Suite) Test_Package_readMakefile__include_other_after_exists(c *check.C
 func (s *Suite) Test_Package__redundant_master_sites(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupVartypes()
-	t.SetupMasterSite("MASTER_SITE_R_CRAN", "http://cran.r-project.org/src/")
-	t.CreateFileLines("mk/bsd.pkg.mk")
-	t.CreateFileLines("licenses/gnu-gpl-v2",
-		"The licenses for most software are designed to take away ...")
+	t.SetUpPkgsrc()
+	t.SetUpMasterSite("MASTER_SITE_R_CRAN", "http://cran.r-project.org/src/")
 	t.CreateFileLines("math/R/Makefile.extension",
 		MkRcsID,
 		"",
@@ -679,23 +782,32 @@ func (s *Suite) Test_Package__redundant_master_sites(c *check.C) {
 		"",
 		".include \"../../math/R/Makefile.extension\"",
 		".include \"../../mk/bsd.pkg.mk\"")
+	t.FinishSetUp()
 
 	// See Package.checkfilePackageMakefile
-	// See Scope.uncond
 	G.checkdirPackage(t.File("math/R-date"))
 
+	// The definition in Makefile:6 is redundant because the same definition
+	// occurs later in Makefile.extension:4.
+	//
+	// When a file includes another file, it's always the including file that
+	// is marked as redundant since the included file typically provides the
+	// generally useful value for several packages;
+	// see RedundantScope.handleVarassign, keyword includePath.
 	t.CheckOutputLines(
-		"NOTE: ~/math/R-date/Makefile:6: Definition of MASTER_SITES is redundant because of ../../math/R/Makefile.extension:4.")
+		"NOTE: ~/math/R-date/Makefile:6: " +
+			"Definition of MASTER_SITES is redundant " +
+			"because of ../../math/R/Makefile.extension:4.")
 }
 
 func (s *Suite) Test_Package_checkUpdate(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupPackage("category/pkg1",
+	t.SetUpPackage("category/pkg1",
 		"PKGNAME=                package1-1.0")
-	t.SetupPackage("category/pkg2",
+	t.SetUpPackage("category/pkg2",
 		"PKGNAME=                package2-1.0")
-	t.SetupPackage("category/pkg3",
+	t.SetUpPackage("category/pkg3",
 		"PKGNAME=                package3-5.0")
 	t.CreateFileLines("doc/TODO",
 		"Suggested package updates",
@@ -706,17 +818,17 @@ func (s *Suite) Test_Package_checkUpdate(c *check.C) {
 		"\t"+"o package1-1.0",
 		"\t"+"o package2-2.0 [nice new features]",
 		"\t"+"o package3-3.0 [security update]")
-
 	t.Chdir(".")
-	G.Main("pkglint", "-Wall,no-space,no-order", "category/pkg1", "category/pkg2", "category/pkg3")
+
+	t.Main("-Wall,no-space", "category/pkg1", "category/pkg2", "category/pkg3")
 
 	t.CheckOutputLines(
 		"WARN: category/pkg1/../../doc/TODO:3: Invalid line format \"\".",
 		"WARN: category/pkg1/../../doc/TODO:4: Invalid line format \"\\tO wrong bullet\".",
 		"WARN: category/pkg1/../../doc/TODO:5: Invalid package name \"package-without-version\".",
-		"NOTE: category/pkg1/Makefile:20: The update request to 1.0 from doc/TODO has been done.",
-		"WARN: category/pkg2/Makefile:20: This package should be updated to 2.0 ([nice new features]).",
-		"NOTE: category/pkg3/Makefile:20: This package is newer than the update request to 3.0 ([security update]).",
+		"NOTE: category/pkg1/Makefile:4: The update request to 1.0 from doc/TODO has been done.",
+		"WARN: category/pkg2/Makefile:4: This package should be updated to 2.0 ([nice new features]).",
+		"NOTE: category/pkg3/Makefile:4: This package is newer than the update request to 3.0 ([security update]).",
 		"0 errors and 4 warnings found.",
 		"(Run \"pkglint -e\" to show explanations.)")
 }
@@ -724,9 +836,10 @@ func (s *Suite) Test_Package_checkUpdate(c *check.C) {
 func (s *Suite) Test_NewPackage(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupPkgsrc()
+	t.SetUpPkgsrc()
 	t.CreateFileLines("category/Makefile",
 		MkRcsID)
+	t.FinishSetUp()
 
 	c.Check(
 		func() { NewPackage("category") },
@@ -742,8 +855,8 @@ func (s *Suite) Test_NewPackage(c *check.C) {
 func (s *Suite) Test__distinfo_from_other_package(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall,no-space")
-	t.SetupPkgsrc()
+	t.SetUpCommandLine("-Wall,no-space")
+	t.SetUpPkgsrc()
 	t.Chdir(".")
 	t.CreateFileLines("x11/gst-x11/Makefile",
 		MkRcsID,
@@ -759,6 +872,7 @@ func (s *Suite) Test__distinfo_from_other_package(c *check.C) {
 		RcsID,
 		"",
 		"SHA1 (patch-aa) = 1234")
+	t.FinishSetUp()
 
 	G.Check("x11/gst-x11")
 
@@ -772,10 +886,11 @@ func (s *Suite) Test__distinfo_from_other_package(c *check.C) {
 func (s *Suite) Test_Package_checkfilePackageMakefile__GNU_CONFIGURE(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall,no-space")
-	pkg := t.SetupPackage("category/package",
+	t.SetUpCommandLine("-Wall,no-space")
+	pkg := t.SetUpPackage("category/package",
 		"GNU_CONFIGURE=\tyes",
 		"USE_LANGUAGES=\t#")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
@@ -788,10 +903,11 @@ func (s *Suite) Test_Package_checkfilePackageMakefile__GNU_CONFIGURE(c *check.C)
 func (s *Suite) Test_Package_checkfilePackageMakefile__GNU_CONFIGURE_ok(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall,no-space")
-	pkg := t.SetupPackage("category/package",
+	t.SetUpCommandLine("-Wall,no-space")
+	pkg := t.SetUpPackage("category/package",
 		"GNU_CONFIGURE=\tyes",
 		"USE_LANGUAGES=\t# none, really")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
@@ -801,10 +917,11 @@ func (s *Suite) Test_Package_checkfilePackageMakefile__GNU_CONFIGURE_ok(c *check
 func (s *Suite) Test_Package_checkfilePackageMakefile__REPLACE_PERL(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall,no-space")
-	pkg := t.SetupPackage("category/package",
+	t.SetUpCommandLine("-Wall,no-space")
+	pkg := t.SetUpPackage("category/package",
 		"REPLACE_PERL=\t*.pl",
 		"NO_CONFIGURE=\tyes")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
@@ -815,22 +932,24 @@ func (s *Suite) Test_Package_checkfilePackageMakefile__REPLACE_PERL(c *check.C) 
 func (s *Suite) Test_Package_checkfilePackageMakefile__META_PACKAGE_with_distinfo(c *check.C) {
 	t := s.Init(c)
 
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		"META_PACKAGE=\tyes")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
 	t.CheckOutputLines(
 		"WARN: ~/category/package/distinfo: " +
-			"This file should not exist if NO_CHECKSUM or META_PACKAGE is set.")
+			"This file should not exist since NO_CHECKSUM or META_PACKAGE is set.")
 }
 
 func (s *Suite) Test_Package_checkfilePackageMakefile__USE_IMAKE_and_USE_X11(c *check.C) {
 	t := s.Init(c)
 
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		"USE_X11=\tyes",
 		"USE_IMAKE=\tyes")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
@@ -838,12 +957,162 @@ func (s *Suite) Test_Package_checkfilePackageMakefile__USE_IMAKE_and_USE_X11(c *
 		"NOTE: ~/category/package/Makefile:21: USE_IMAKE makes USE_X11 in line 20 redundant.")
 }
 
+func (s *Suite) Test_Package_checkGnuConfigureUseLanguages__no_C(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		"USE_LANGUAGES=\tfortran77",
+		"USE_LANGUAGES+=\tc++14",
+		"USE_LANGUAGES+=\tada",
+		"GNU_CONFIGURE=\tyes")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	t.CheckOutputLines(
+		"WARN: ~/category/package/Makefile:23: "+
+			"GNU_CONFIGURE almost always needs a C compiler, "+
+			"but \"c\" is not added to USE_LANGUAGES in line 20.",
+		"WARN: ~/category/package/Makefile:23: "+
+			"GNU_CONFIGURE almost always needs a C compiler, "+
+			"but \"c\" is not added to USE_LANGUAGES in line 21.",
+		"WARN: ~/category/package/Makefile:23: "+
+			"GNU_CONFIGURE almost always needs a C compiler, "+
+			"but \"c\" is not added to USE_LANGUAGES in line 22.")
+}
+
+func (s *Suite) Test_Package_checkGnuConfigureUseLanguages__C_in_the_middle(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		"USE_LANGUAGES=\tfortran77",
+		"USE_LANGUAGES+=\tc99",
+		"USE_LANGUAGES+=\tada",
+		"GNU_CONFIGURE=\tyes")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	// Until March 2019 pkglint wrongly warned that USE_LANGUAGES would not
+	// include c or c99, although c99 was added.
+	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_Package_checkGnuConfigureUseLanguages__realistic_compiler_mk(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		"USE_LANGUAGES=\tfortran77",
+		"USE_LANGUAGES+=\tc++",
+		"USE_LANGUAGES+=\tada",
+		"GNU_CONFIGURE=\tyes",
+		"",
+		".include \"../../mk/compiler.mk\"")
+	t.CreateFileLines("mk/compiler.mk",
+		MkRcsID,
+		".include \"bsd.prefs.mk\"",
+		"",
+		"USE_LANGUAGES?=\tc",
+		"USE_LANGUAGES+=\tc",
+		"USE_LANGUAGES+=\tc++")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	// The package defines several languages it needs, but C is not one of them.
+	// When the package is loaded, the included files are read in recursively, even
+	// when they come from the pkgsrc infrastructure.
+	//
+	// Up to March 2019, the USE_LANGUAGES definitions from mk/compiler.mk were
+	// loaded as if they were defined by the package, without taking the conditionals
+	// into account. Thereby "c" was added unconditionally to USE_LANGUAGES.
+	//
+	// Since March 2019 the infrastructure files are ignored when determining the value
+	// of USE_LANGUAGES.
+	t.CheckOutputLines(
+		"WARN: ~/category/package/Makefile:23: "+
+			"GNU_CONFIGURE almost always needs a C compiler, "+
+			"but \"c\" is not added to USE_LANGUAGES in line 20.",
+		"WARN: ~/category/package/Makefile:23: "+
+			"GNU_CONFIGURE almost always needs a C compiler, "+
+			"but \"c\" is not added to USE_LANGUAGES in line 21.",
+		"WARN: ~/category/package/Makefile:23: "+
+			"GNU_CONFIGURE almost always needs a C compiler, "+
+			"but \"c\" is not added to USE_LANGUAGES in line 22.")
+}
+
+func (s *Suite) Test_Package_checkGnuConfigureUseLanguages__only_GNU_CONFIGURE(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		"GNU_CONFIGURE=\tyes")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_Package_checkGnuConfigureUseLanguages__ok(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		"GNU_CONFIGURE=\tyes",
+		"USE_LANGUAGES=\tc++ objc")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_Package_checkUseLanguagesCompilerMk__too_late(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		".include \"../../mk/compiler.mk\"",
+		"USE_LANGUAGES=\tc c99 fortran ada c++14")
+	t.CreateFileLines("mk/compiler.mk",
+		MkRcsID)
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	t.CheckOutputLines(
+		"WARN: ~/category/package/Makefile:21: " +
+			"Modifying USE_LANGUAGES after including ../../mk/compiler.mk has no effect.")
+}
+
+func (s *Suite) Test_Package_checkUseLanguagesCompilerMk__compiler_mk(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		".include \"compiler.mk\"",
+		"USE_LANGUAGES=\tc c99 fortran ada c++14",
+		".include \"../../mk/compiler.mk\"",
+		"USE_LANGUAGES=\tc c99 fortran ada c++14")
+	t.CreateFileLines("category/package/compiler.mk",
+		MkRcsID)
+	t.CreateFileLines("mk/compiler.mk",
+		MkRcsID)
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	t.CheckOutputLines(
+		"NOTE: ~/category/package/Makefile:23: "+
+			"Definition of USE_LANGUAGES is redundant because of line 21.",
+		"WARN: ~/category/package/Makefile:23: "+
+			"Modifying USE_LANGUAGES after including ../../mk/compiler.mk has no effect.")
+}
+
 func (s *Suite) Test_Package_readMakefile__skipping(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall,no-space")
-	pkg := t.SetupPackage("category/package",
+	t.SetUpCommandLine("-Wall,no-space")
+	pkg := t.SetUpPackage("category/package",
 		".include \"${MYSQL_PKGSRCDIR:S/-client$/-server/}/buildlink3.mk\"")
+	t.FinishSetUp()
 
 	t.EnableTracingToLog()
 	G.Check(pkg)
@@ -872,10 +1141,11 @@ func (s *Suite) Test_Package_readMakefile__skipping(c *check.C) {
 func (s *Suite) Test_Package_readMakefile__not_found(c *check.C) {
 	t := s.Init(c)
 
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		".include \"../../devel/zlib/buildlink3.mk\"")
 	t.CreateFileLines("devel/zlib/buildlink3.mk",
 		".include \"../../enoent/enoent/buildlink3.mk\"")
+	t.FinishSetUp()
 
 	G.checkdirPackage(pkg)
 
@@ -888,32 +1158,93 @@ func (s *Suite) Test_Package_readMakefile__relative(c *check.C) {
 
 	t.CreateFileLines("category/package/extra.mk",
 		MkRcsID)
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		".include \"../package/extra.mk\"")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
-	// FIXME: One of the below warnings is redundant.
 	t.CheckOutputLines(
-		"WARN: ~/category/package/Makefile:20: "+
-			"References to other packages should look "+
-			"like \"../../category/package\", not \"../package\".",
-		"WARN: ~/category/package/Makefile:20: Invalid relative path \"../package/extra.mk\".")
+		"WARN: ~/category/package/Makefile:20: " +
+			"References to other packages should look " +
+			"like \"../../category/package\", not \"../package\".")
+}
+
+// When a buildlink3.mk file is included, the corresponding builtin.mk
+// file is included by the pkgsrc infrastructure. Therefore all variables
+// declared in the builtin.mk file become known in the package.
+func (s *Suite) Test_Package_readMakefile__builtin_mk(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpTool("echo", "ECHO", AtRunTime)
+	t.SetUpPackage("category/package",
+		".include \"../../category/lib1/buildlink3.mk\"",
+		"",
+		"show-var-from-builtin: .PHONY",
+		"\techo ${VAR_FROM_BUILTIN} ${OTHER_VAR}")
+	t.CreateFileDummyBuildlink3("category/lib1/buildlink3.mk")
+	t.CreateFileLines("category/lib1/builtin.mk",
+		MkRcsID,
+		"VAR_FROM_BUILTIN=\t# defined")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	t.CheckOutputLines(
+		"WARN: ~/category/package/Makefile:23: Please use \"${ECHO}\" instead of \"echo\".",
+		"WARN: ~/category/package/Makefile:23: OTHER_VAR is used but not defined.")
+}
+
+// Ensures that the paths in Package.included are indeed relative to the
+// package directory. This hadn't been the case until March 2019.
+func (s *Suite) Test_Package_readMakefile__included(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package",
+		".include \"../../devel/library/buildlink3.mk\"",
+		".include \"../../lang/language/module.mk\"")
+	t.SetUpPackage("devel/library")
+	t.CreateFileDummyBuildlink3("devel/library/buildlink3.mk")
+	t.CreateFileLines("devel/library/builtin.mk",
+		MkRcsID)
+	t.CreateFileLines("lang/language/module.mk",
+		MkRcsID,
+		".include \"version.mk\"")
+	t.CreateFileLines("lang/language/version.mk",
+		MkRcsID)
+	t.FinishSetUp()
+	pkg := NewPackage(t.File("category/package"))
+
+	pkg.loadPackageMakefile()
+
+	expected := []string{
+		"../../devel/library/buildlink3.mk",
+		"../../devel/library/builtin.mk",
+		"../../lang/language/module.mk",
+		"../../lang/language/version.mk",
+		"suppress-varorder.mk"}
+
+	seen := pkg.included
+	for _, filename := range expected {
+		if !seen.Seen(filename) {
+			c.Errorf("File %q is not seen.", filename)
+		}
+	}
+	t.Check(seen.seen, check.HasLen, 5)
 }
 
 func (s *Suite) Test_Package_checkLocallyModified(c *check.C) {
 	t := s.Init(c)
 
-	// no-order since SetupPackage doesn't place OWNER correctly.
-	t.SetupCommandLine("-Wall,no-order")
 	G.Username = "example-user"
 	t.CreateFileLines("category/package/CVS/Entries",
 		"/Makefile//modified//")
 
 	// In packages without specific MAINTAINER, everyone may commit changes.
 
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		"MAINTAINER=\tpkgsrc-users@NetBSD.org")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
@@ -921,7 +1252,7 @@ func (s *Suite) Test_Package_checkLocallyModified(c *check.C) {
 
 	// A package with a MAINTAINER may be edited with care.
 
-	t.SetupPackage("category/package",
+	t.SetUpPackage("category/package",
 		"MAINTAINER=\tmaintainer@example.org")
 
 	G.Check(pkg)
@@ -932,7 +1263,7 @@ func (s *Suite) Test_Package_checkLocallyModified(c *check.C) {
 
 	// A package with an OWNER may NOT be edited by others.
 
-	pkg = t.SetupPackage("category/package",
+	pkg = t.SetUpPackage("category/package",
 		"#MAINTAINER=\t# undefined",
 		"OWNER=\towner@example.org")
 
@@ -944,7 +1275,7 @@ func (s *Suite) Test_Package_checkLocallyModified(c *check.C) {
 
 	// In a package with both OWNER and MAINTAINER, OWNER wins.
 
-	pkg = t.SetupPackage("category/package",
+	pkg = t.SetUpPackage("category/package",
 		"MAINTAINER=\tmaintainer@example.org",
 		"OWNER=\towner@example.org")
 
@@ -963,4 +1294,183 @@ func (s *Suite) Test_Package_checkLocallyModified(c *check.C) {
 	G.Check(pkg)
 
 	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_Package_checkLocallyModified__directory(c *check.C) {
+	t := s.Init(c)
+
+	G.Username = "example-user"
+	t.CreateFileLines("category/package/CVS/Entries",
+		"/Makefile//modified//",
+		"D/patches////")
+	t.CreateFileDummyPatch("category/package/patches/patch-aa")
+
+	pkg := t.SetUpPackage("category/package",
+		"MAINTAINER=\tmaintainer@example.org")
+	t.CreateFileLines("category/package/distinfo",
+		RcsID,
+		"",
+		"SHA1 (patch-aa) = ebbf34b0641bcb508f17d5a27f2bf2a536d810ac")
+	t.FinishSetUp()
+
+	G.Check(pkg)
+
+	t.CheckOutputLines(
+		"NOTE: ~/category/package/Makefile: " +
+			"Please only commit changes that " +
+			"maintainer@example.org would approve.")
+}
+
+// In practice the distinfo file can always be autofixed since it has
+// just been read successfully and the corresponding patch file could
+// also be autofixed right before.
+func (s *Suite) Test_Package_AutofixDistinfo__missing_file(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPkgsrc()
+	G.Pkg = NewPackage(t.File("category/package"))
+	t.FinishSetUp()
+
+	G.Pkg.AutofixDistinfo("old", "new")
+
+	t.CheckOutputLines(
+		"ERROR: ~/category/package/distinfo: Cannot be read.")
+}
+
+func (s *Suite) Test_Package__using_common_Makefile_overriding_DISTINFO_FILE(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("security/pinentry")
+	t.CreateFileLines("security/pinentry/Makefile.common",
+		MkRcsID,
+		"DISTINFO_FILE=\t${.CURDIR}/../../security/pinentry/distinfo")
+	t.SetUpPackage("security/pinentry-fltk",
+		".include \"../../security/pinentry/Makefile.common\"",
+		"DISTINFO_FILE=\t${.CURDIR}/distinfo")
+	t.CreateFileDummyPatch("security/pinentry-fltk/patches/patch-aa")
+	t.CreateFileLines("security/pinentry-fltk/distinfo",
+		RcsID,
+		"",
+		"SHA1 (patch-aa) = ebbf34b0641bcb508f17d5a27f2bf2a536d810ac")
+	t.FinishSetUp()
+
+	G.Check(t.File("security/pinentry"))
+
+	t.CheckOutputEmpty()
+
+	G.Check(t.File("security/pinentry-fltk"))
+
+	// The DISTINFO_FILE definition from pinentry-fltk overrides
+	// the one from pinentry since it appears later.
+	// Therefore the patch is searched for at the right location.
+	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_Package__redundant_variable_in_unrelated_files(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("databases/py-trytond-ldap-authentication",
+		".include \"../../devel/py-trytond/Makefile.common\"",
+		".include \"../../lang/python/egg.mk\"")
+	t.CreateFileLines("devel/py-trytond/Makefile.common",
+		MkRcsID,
+		"PY_PATCHPLIST=\tyes")
+	t.CreateFileLines("lang/python/egg.mk",
+		MkRcsID,
+		"PY_PATCHPLIST=\tyes")
+	t.FinishSetUp()
+
+	G.Check(t.File("databases/py-trytond-ldap-authentication"))
+
+	// Since egg.mk and Makefile.common are unrelated, the definition of
+	// PY_PATCHPLIST is not redundant in these files.
+	t.CheckOutputEmpty()
+}
+
+// Pkglint loads some files from the pkgsrc infrastructure and skips others.
+//
+// When a buildlink3.mk file from the infrastructure is included, it should
+// be allowed to include its corresponding builtin.mk file in turn.
+//
+// This is necessary to load the correct variable assignments for the
+// redundancy check, in particular variable assignments that serve as
+// arguments to "procedure calls", such as mk/find-files.mk.
+func (s *Suite) Test_Package_readMakefile__include_infrastructure(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpCommandLine("--dumpmakefile")
+	t.SetUpPackage("category/package",
+		".include \"../../mk/dlopen.buildlink3.mk\"",
+		".include \"../../mk/pthread.buildlink3.mk\"")
+	t.CreateFileLines("mk/dlopen.buildlink3.mk",
+		".include \"dlopen.builtin.mk\"")
+	t.CreateFileLines("mk/dlopen.builtin.mk",
+		".include \"pthread.builtin.mk\"")
+	t.CreateFileLines("mk/pthread.buildlink3.mk",
+		".include \"pthread.builtin.mk\"")
+	t.CreateFileLines("mk/pthread.builtin.mk",
+		"# This should be included by pthread.buildlink3.mk")
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	t.CheckOutputLines(
+		"Whole Makefile (with all included files) follows:",
+		"~/category/package/Makefile:1: "+MkRcsID,
+		"~/category/package/Makefile:2: ",
+		"~/category/package/Makefile:3: DISTNAME=\tdistname-1.0",
+		"~/category/package/Makefile:4: #PKGNAME=\tpackage-1.0",
+		"~/category/package/Makefile:5: CATEGORIES=\tcategory",
+		"~/category/package/Makefile:6: MASTER_SITES=\t# none",
+		"~/category/package/Makefile:7: ",
+		"~/category/package/Makefile:8: MAINTAINER=\tpkgsrc-users@NetBSD.org",
+		"~/category/package/Makefile:9: HOMEPAGE=\t# none",
+		"~/category/package/Makefile:10: COMMENT=\tDummy package",
+		"~/category/package/Makefile:11: LICENSE=\t2-clause-bsd",
+		"~/category/package/Makefile:12: ",
+		"~/category/package/Makefile:13: .include \"suppress-varorder.mk\"",
+		"~/category/package/suppress-varorder.mk:1: "+MkRcsID,
+		"~/category/package/Makefile:14: # empty",
+		"~/category/package/Makefile:15: # empty",
+		"~/category/package/Makefile:16: # empty",
+		"~/category/package/Makefile:17: # empty",
+		"~/category/package/Makefile:18: # empty",
+		"~/category/package/Makefile:19: # empty",
+		"~/category/package/Makefile:20: .include \"../../mk/dlopen.buildlink3.mk\"",
+		"~/category/package/../../mk/dlopen.buildlink3.mk:1: .include \"dlopen.builtin.mk\"",
+		"~/mk/dlopen.builtin.mk:1: .include \"pthread.builtin.mk\"",
+		"~/category/package/Makefile:21: .include \"../../mk/pthread.buildlink3.mk\"",
+		"~/category/package/../../mk/pthread.buildlink3.mk:1: .include \"pthread.builtin.mk\"",
+		"~/mk/pthread.builtin.mk:1: # This should be included by pthread.buildlink3.mk",
+		"~/category/package/Makefile:22: ",
+		"~/category/package/Makefile:23: .include \"../../mk/bsd.pkg.mk\"")
+}
+
+// As of April 2019, there are only a few files in the whole pkgsrc tree
+// that are called Makefile.*, except Makefile.common, which occurs more
+// often.
+//
+// Using the file extension for variants of that Makefile is confusing,
+// therefore they should be renamed to *.mk.
+func (s *Suite) Test_Package__Makefile_files(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package")
+	t.CreateFileLines("category/package/Makefile.common",
+		MkRcsID)
+	t.CreateFileLines("category/package/Makefile.orig",
+		MkRcsID)
+	t.CreateFileLines("category/package/Makefile.php",
+		MkRcsID)
+	t.CreateFileLines("category/package/ext.mk",
+		MkRcsID)
+	t.FinishSetUp()
+
+	G.Check(t.File("category/package"))
+
+	// No warning for the Makefile.orig since the package is not
+	// being imported at the moment; see Pkglint.checkReg.
+	t.CheckOutputLines(
+		"NOTE: ~/category/package/Makefile.php: " +
+			"Consider renaming \"Makefile.php\" to \"php.mk\".")
 }

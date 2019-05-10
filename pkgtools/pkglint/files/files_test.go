@@ -47,7 +47,7 @@ func (s *Suite) Test_convertToLogicalLines__continuation_in_last_line(c *check.C
 func (s *Suite) Test_convertToLogicalLines__comments(c *check.C) {
 	t := s.Init(c)
 
-	mklines := t.SetupFileMkLines("comment.mk",
+	mklines := t.SetUpFileMkLines("comment.mk",
 		"# This is a comment",
 		"",
 		"#\\",
@@ -98,6 +98,20 @@ func (s *Suite) Test_convertToLogicalLines__comments(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
+func (s *Suite) Test_nextLogicalLine__commented_multi(c *check.C) {
+	t := s.Init(c)
+
+	mklines := t.SetUpFileMkLines("filename.mk",
+		"#COMMENTED= \\",
+		"#\tcontinuation 1 \\",
+		"#\tcontinuation 2")
+	mkline := mklines.mklines[0]
+
+	// The leading comments are stripped from the continuation lines as well.
+	t.Check(mkline.Value(), equals, "continuation 1 \tcontinuation 2")
+	t.Check(mkline.VarassignComment(), equals, "")
+}
+
 func (s *Suite) Test_convertToLogicalLines__missing_newline_at_eof(c *check.C) {
 	t := s.Init(c)
 
@@ -130,7 +144,7 @@ func (s *Suite) Test_convertToLogicalLines__missing_newline_at_eof_in_continuati
 func (s *Suite) Test_convertToLogicalLines__missing_newline_at_eof_with_source(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupCommandLine("-Wall", "--source")
+	t.SetUpCommandLine("-Wall", "--source")
 	rawText := "" +
 		"last line\\"
 
@@ -139,8 +153,8 @@ func (s *Suite) Test_convertToLogicalLines__missing_newline_at_eof_with_source(c
 	c.Check(lines.Len(), equals, 1)
 	c.Check(lines.Lines[0].String(), equals, "filename:1: last line\\")
 	t.CheckOutputLines(
-		// FIXME: linebreak is missing before ERROR.
-		">\tlast line\\ERROR: filename:1: File must end with a newline.")
+		">\tlast line\\",
+		"ERROR: filename:1: File must end with a newline.")
 }
 
 func (s *Suite) Test_matchContinuationLine(c *check.C) {

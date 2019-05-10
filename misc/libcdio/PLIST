@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.17 2014/10/09 11:55:22 adam Exp $
+@comment $NetBSD: PLIST,v 1.19 2019/04/29 17:22:04 adam Exp $
 bin/cd-drive
 bin/cd-info
 bin/cd-read

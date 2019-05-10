@@ -1,4 +1,4 @@
-<!-- $NetBSD: configuring.xml,v 1.53 2018/09/18 03:17:27 maya Exp $ -->
+<!-- $NetBSD: configuring.xml,v 1.55 2019/04/19 13:43:27 leot Exp $ -->
 
 <chapter id="configuring">
   <title>Configuring pkgsrc</title>
@@ -125,7 +125,7 @@ spelling mistakes) takes place.</para>
     <itemizedlist>
 	    <listitem><para><varname>PKGSRC_KEEP_BIN_PKGSRC</varname>:
                 By default, binary packages of built packages are
-                preserved in <varname>PACKAGES</varname>/All. Setting
+                preserved in <filename>${PACKAGES}/All</filename>. Setting
 		this variable to "no" prevents this.</para>
             </listitem>
     </itemizedlist>
@@ -285,7 +285,7 @@ uid=1000(myusername) gid=100(users) groups=100(users),0(wheel)
       </varlistentry>
 
       <varlistentry>
-	<term><varname>PYTHON_DEFAULT_VERSION</varname>:</term>
+	<term><varname>PYTHON_VERSION_DEFAULT</varname>:</term>
 	<listitem>
 	  <para>Specifies which version of python to use when several
 	  options are available.</para>

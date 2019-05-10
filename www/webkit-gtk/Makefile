@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.155 2018/12/14 15:51:13 leot Exp $
+# $NetBSD: Makefile,v 1.164 2019/04/26 14:12:49 maya Exp $
 
-DISTNAME=	webkitgtk-2.22.5
+DISTNAME=	webkitgtk-2.24.1
 PKGNAME=	${DISTNAME:S/webkitgtk/webkit-gtk/}
 PKGREVISION=	1
 CATEGORIES=	www
@@ -24,7 +24,8 @@ USE_TOOLS+=	automake bison flex gmake perl pkg-config msgfmt
 # Enabling -gdwarf-2 hits GNU ar limits on file size.
 CTF_SUPPORTED=	no
 
-GCC_REQD+=	6
+GCC_REQD+=		6
+USE_GCC_RUNTIME=	yes
 
 # Using ld.gold subverts Pkgsrc wrappers, and this package also crashes buggy
 # versions of ld.gold.
@@ -41,6 +42,7 @@ CMAKE_ARGS+=		-DENABLE_MINIBROWSER=ON
 CMAKE_ARGS+=		-DENABLE_GEOLOCATION=OFF
 CMAKE_ARGS+=		-DUSE_GSTREAMER_GL=OFF
 CMAKE_ARGS+=		-DUSE_LIBHYPHEN=OFF
+CMAKE_ARGS+=		-DUSE_OPENJPEG=OFF
 
 REPLACE_PERL+=	Source/JavaScriptCore/create_hash_table
 REPLACE_PERL+=	Source/WebCore/bindings/scripts/*.pl
@@ -81,7 +83,7 @@ TOOL_DEPENDS+=	${RUBY_BASE}>=${RUBY_VERSION}:${RUBY_SRCDIR}
 CMAKE_ARGS+=	-DRUBY_EXECUTABLE=${RUBY}
 
 PYTHON_FOR_BUILD_ONLY=	yes
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # not yet ported as of 2.22.5
+PYTHON_VERSIONS_INCOMPATIBLE=	36 37 # not yet ported as of 2.22.5
 .include "../../lang/python/application.mk"
 CMAKE_ARGS+=	-DPYTHON_EXECUTABLE=${PYTHONBIN}
 

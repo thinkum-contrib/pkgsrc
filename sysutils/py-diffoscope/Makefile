@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.7 2018/05/16 06:54:51 adam Exp $
+# $NetBSD: Makefile,v 1.10 2019/04/26 13:14:15 maya Exp $
 
-DISTNAME=	diffoscope-94
+DISTNAME=	diffoscope-110
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
+PKGREVISION=	1
 CATEGORIES=	sysutils python
 MASTER_SITES=	${MASTER_SITE_PYPI:=d/diffoscope/}
 
@@ -12,6 +13,7 @@ LICENSE=	gnu-gpl-v3
 
 DEPENDS+=	${PYPKGPREFIX}-libarchive-c-[0-9]*:../../archivers/py-libarchive-c
 DEPENDS+=	${PYPKGPREFIX}-magic-[0-9]*:../../sysutils/py-magic
+DEPENDS+=	${PYPKGPREFIX}-curses-[0-9]*:../../devel/py-curses
 DEPENDS+=	${PYPKGPREFIX}-tlsh-[0-9]*:../../devel/py-tlsh
 DEPENDS+=	colordiff-[0-9]*:../../devel/colordiff
 # for xxd
@@ -27,7 +29,7 @@ SUBST_FILES.gtar+=	tests/comparators/test_utils.py
 SUBST_MESSAGE.gtar=	Fix path to gtar.
 SUBST_STAGE.gtar=	post-configure
 
-PYTHON_VERSIONS_INCOMPATIBLE=	27 34
+PYTHON_VERSIONS_INCOMPATIBLE=	27
 
 post-install:
 	cd ${DESTDIR}${PREFIX}/bin && \

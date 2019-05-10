@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.79 2018/12/09 18:52:49 adam Exp $
+# $NetBSD: Makefile,v 1.82 2019/04/03 00:33:12 ryoon Exp $
 
-DISTNAME=	lighttpd-1.4.52
+DISTNAME=	lighttpd-1.4.53
 PKGREVISION=	1
 CATEGORIES=	www
 MASTER_SITES=	http://download.lighttpd.net/lighttpd/releases-1.4.x/
@@ -62,8 +62,6 @@ SUBST_FILES.path=	doc/config/lighttpd.conf doc/lighttpd.8
 SUBST_VARS.path=	LIGHTTPD_LOGDIR LIGHTTPD_STATEDIR LIGHTTPD_USER \
 			LIGHTTPD_CACHEDIR LIGHTTPD_HOMEDIR              \
 			LIGHTTPD_GROUP PKG_SYSCONFDIR VARBASE
-
-PLIST_VARS+=		gdbm geoip gssapi ldap lua memcached mysql ssl
 
 post-install:
 	set -e; cd ${WRKSRC}/doc;				\

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.11 2018/11/27 07:03:38 adam Exp $
+# $NetBSD: Makefile,v 1.14 2019/04/01 09:14:30 adam Exp $
 
-DISTNAME=	asyncssh-1.15.0
+DISTNAME=	asyncssh-1.16.1
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	security python
 MASTER_SITES=	${MASTER_SITE_PYPI:=a/asyncssh/}
@@ -12,7 +12,7 @@ LICENSE=	eclipse-license
 
 DEPENDS+=	${PYPKGPREFIX}-OpenSSL>=17.0.0:../../security/py-OpenSSL
 DEPENDS+=	${PYPKGPREFIX}-bcrypt>=3.1.3:../../security/py-bcrypt
-DEPENDS+=	${PYPKGPREFIX}-cryptography>=1.5:../../security/py-cryptography
+DEPENDS+=	${PYPKGPREFIX}-cryptography>=2.6.1:../../security/py-cryptography
 DEPENDS+=	${PYPKGPREFIX}-gssapi>=1.2.0:../../security/py-gssapi
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27

@@ -1,4 +1,4 @@
-# $NetBSD: mozilla-common.mk,v 1.122 2018/12/23 01:11:26 gutteridge Exp $
+# $NetBSD: mozilla-common.mk,v 1.131 2019/05/02 01:16:28 gutteridge Exp $
 #
 # common Makefile fragment for mozilla packages based on gecko 2.0.
 #
@@ -7,11 +7,10 @@
 
 .include "../../mk/bsd.prefs.mk"
 
-# Python 2.7 and Python 3.5 or later are required simultaneously.
+# Python 2.7 and Python 3.6 or later are required simultaneously.
 PYTHON_VERSIONS_ACCEPTED=	27
 PYTHON_FOR_BUILD_ONLY=		tool
-.if !empty(PYTHON_VERSION_DEFAULT:M37) || !empty(PYTHON_VERSION_DEFAULT:M36) \
-	|| !empty(PYTHON_VERSION_DEFAULT:M35)
+.if !empty(PYTHON_VERSION_DEFAULT:M37) || !empty(PYTHON_VERSION_DEFAULT:M36)
 TOOL_DEPENDS+=		python${PYTHON_VERSION_DEFAULT}-[0-9]*:../../lang/python${PYTHON_VERSION_DEFAULT}
 ALL_ENV+=	PYTHON3=${LOCALBASE}/bin/python${PYTHON_VERSION_DEFAULT:S/3/3./}
 .else
@@ -25,7 +24,7 @@ USE_TOOLS+=		pkg-config perl gmake autoconf213 unzip zip
 USE_LANGUAGES+=		c99 gnu++14
 UNLIMIT_RESOURCES+=	datasize
 
-TOOL_DEPENDS+=		cbindgen-[0-9]*:../../devel/cbindgen
+TOOL_DEPENDS+=		cbindgen>=0.6.8:../../devel/cbindgen
 .if ${MACHINE_ARCH} == "sparc64"
 CONFIGURE_ARGS+=	--disable-nodejs
 .else
@@ -34,9 +33,6 @@ TOOL_DEPENDS+=		nodejs-[0-9]*:../../lang/nodejs
 
 .if ${MACHINE_ARCH} == "i386" || ${MACHINE_ARCH} == "x86_64"
 BUILD_DEPENDS+=		yasm>=1.1:../../devel/yasm
-
-# Enable Google widevine CDM. This requires external libwidevinecdm.so.
-#CONFIGURE_ARGS+=	--enable-eme=widevine
 .endif
 
 # For rustc/cargo detection
@@ -79,15 +75,16 @@ CHECK_PORTABILITY_SKIP+=${MOZILLA_DIR}browser/extensions/loop/run-all-loop-tests
 
 CONFIGURE_ARGS+=	--enable-default-toolkit=cairo-gtk3
 CONFIGURE_ARGS+=	--enable-release
-CONFIGURE_ARGS+=	--enable-rust-simd
+# Disable Rust SIMD option to fix build with lang/rust-1.33.0
+# This should be enabled later again.
+#CONFIGURE_ARGS+=	--enable-rust-simd
 CONFIGURE_ARGS+=	--enable-webrender=build
 CONFIGURE_ARGS+=	--disable-tests
 # Mozilla Bug 1432751
 #CONFIGURE_ARGS+=	--enable-system-cairo
 CONFIGURE_ARGS+=	--enable-system-pixman
-CONFIGURE_ARGS+=	--with-system-libvpx
-# textproc/hunspell 1.3 is too old
-#CONFIGURE_ARGS+=	--enable-system-hunspell
+# webrtc option requires internal libvpx
+#CONFIGURE_ARGS+=	--with-system-libvpx
 CONFIGURE_ARGS+=	--enable-system-ffi
 CONFIGURE_ARGS+=	--with-system-icu
 CONFIGURE_ARGS+=	--with-system-nss
@@ -100,6 +97,7 @@ CONFIGURE_ARGS+=	--disable-crashreporter
 CONFIGURE_ARGS+=	--disable-necko-wifi
 CONFIGURE_ARGS+=	--enable-chrome-format=flat
 CONFIGURE_ARGS+=	--disable-libjpeg-turbo
+CONFIGURE_ARGS+=	--with-system-webp
 
 CONFIGURE_ARGS+=	--disable-gconf
 #CONFIGURE_ARGS+=	--enable-readline
@@ -135,15 +133,18 @@ OBJDIR=			../build
 CONFIGURE_DIRS=		${OBJDIR}
 CONFIGURE_SCRIPT=	${WRKSRC}/configure
 
-PLIST_VARS+=	sps vorbis tremor glskia throwwrapper mozglue avx86
+PLIST_VARS+=	sps vorbis tremor glskia throwwrapper mozglue ffvpx
 
 .include "../../mk/endian.mk"
 .if ${MACHINE_ENDIAN} == "little"
 PLIST.glskia=	yes
 .endif
 
-.if ${MACHINE_ARCH} == "i386" || ${MACHINE_ARCH} == "x86_64"
-PLIST.avx86=	yes	# see media/libav/README_MOZILLA: only used on x86
+.if ${MACHINE_ARCH} == "aarch64" || \
+    !empty(MACHINE_ARCH:M*arm*) || \
+    ${MACHINE_ARCH} == "i386" || \
+    ${MACHINE_ARCH} == "x86_64"
+PLIST.ffvpx=	yes	# see media/ffvpx/ffvpxcommon.mozbuild
 .endif
 
 .if ${MACHINE_ARCH} != "sparc64"
@@ -192,6 +193,8 @@ create-rm-wrapper:
 # The configure test for __thread succeeds, but later we end up with:
 # dist/bin/libxul.so: undefined reference to `__tls_get_addr'
 CONFIGURE_ENV.NetBSD+=	ac_cv_thread_keyword=no
+# In unspecified case, clock_gettime(CLOCK_MONOTONIC, ...) fails.
+CONFIGURE_ENV.NetBSD+=	ac_cv_clock_monotonic=
 
 .if ${OPSYS} == "SunOS"
 # native libbz2.so hides BZ2_crc32Table
@@ -220,14 +223,17 @@ BUILDLINK_API_DEPENDS.nss+=	nss>=3.40.1
 .include "../../graphics/MesaLib/buildlink3.mk"
 #BUILDLINK_API_DEPENDS.cairo+=	cairo>=1.10.2nb4
 #.include "../../graphics/cairo/buildlink3.mk"
+BUILDLINK_API_DEPENDS.libwebp+=	libwebp>=1.0.2
+.include "../../graphics/libwebp/buildlink3.mk"
 BUILDLINK_DEPMETHOD.clang=	build
 BUILDLINK_API_DEPENDS.clang+=	clang>=6.0.1nb1
 .include "../../lang/clang/buildlink3.mk"
 BUILDLINK_DEPMETHOD.rust=	build
-BUILDLINK_API_DEPENDS.rust+=	rust>=1.24.0
+BUILDLINK_API_DEPENDS.rust+=	rust>=1.31.0
 .include "../../lang/rust/buildlink3.mk"
-BUILDLINK_API_DEPENDS.libvpx+=	libvpx>=1.3.0
-.include "../../multimedia/libvpx/buildlink3.mk"
+# webrtc option requires internal libvpx
+#BUILDLINK_API_DEPENDS.libvpx+=	libvpx>=1.3.0
+#.include "../../multimedia/libvpx/buildlink3.mk"
 .include "../../net/libIDL/buildlink3.mk"
 # textproc/hunspell 1.3 is too old
 #.include "../../textproc/hunspell/buildlink3.mk"

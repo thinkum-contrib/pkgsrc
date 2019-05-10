@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.10 2018/12/13 19:51:51 adam Exp $
+# $NetBSD: Makefile,v 1.13 2019/04/25 07:32:54 maya Exp $
 
-DISTNAME=	ledger-3.1.1
-PKGREVISION=	9
+DISTNAME=	ledger-3.1.3
+PKGREVISION=	1
 CATEGORIES=	finance
 MASTER_SITES=	${MASTER_SITE_GITHUB:=ledger/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
@@ -14,6 +14,8 @@ LICENSE=	modified-bsd
 USE_CMAKE=	yes
 USE_LANGUAGES=	c++ c
 GCC_REQD+=	4.8
+
+CMAKE_ARGS+=	-DUSE_PYTHON27_COMPONENT=ON
 
 .include "options.mk"
 

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.180 2018/12/06 19:25:33 adam Exp $
+# $NetBSD: Makefile,v 1.184 2019/04/03 14:50:44 adam Exp $
 #
 
 COMMENT=	Clocks, calendars, daily planners and other time related applications
@@ -48,7 +48,9 @@ SUBDIR+=	libical
 SUBDIR+=	lmclock
 SUBDIR+=	logtime
 SUBDIR+=	memo
+SUBDIR+=	ntpsec
 SUBDIR+=	ocaml-calendar
+SUBDIR+=	ocaml-time_now
 SUBDIR+=	oclock
 SUBDIR+=	p5-Business-Hours
 SUBDIR+=	p5-Calendar-Simple
@@ -147,6 +149,7 @@ SUBDIR+=	py-mxDateTime
 SUBDIR+=	py-parsedatetime
 SUBDIR+=	py-pendulum
 SUBDIR+=	py-pytz
+SUBDIR+=	py-relativetimebuilder
 SUBDIR+=	py-rfc3339
 SUBDIR+=	py-tempora
 SUBDIR+=	py-trytond-calendar
@@ -169,6 +172,7 @@ SUBDIR+=	ruby-timers
 SUBDIR+=	ruby-tzinfo
 SUBDIR+=	ruby-tzinfo-data
 SUBDIR+=	ruby-tzinfo03
+SUBDIR+=	ruby-tzinfo1
 SUBDIR+=	saytime
 SUBDIR+=	sunclock
 SUBDIR+=	swisswatch

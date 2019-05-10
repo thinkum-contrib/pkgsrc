@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.31 2018/12/18 09:57:18 adam Exp $
+# $NetBSD: Makefile,v 1.33 2019/04/25 19:43:16 adam Exp $
 
 DISTNAME=	qtgraphicaleffects-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtgraphicaleffects-${QTVERSION}

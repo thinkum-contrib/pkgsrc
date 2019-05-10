@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3 2018/08/09 15:08:15 taca Exp $
+# $NetBSD: Makefile,v 1.5 2019/04/30 03:58:45 taca Exp $
 
 PLUGIN=		password
 

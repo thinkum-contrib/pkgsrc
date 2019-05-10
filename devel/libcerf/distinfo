@@ -1,6 +1,7 @@
-$NetBSD: distinfo,v 1.5 2018/11/21 17:09:33 adam Exp $
+$NetBSD: distinfo,v 1.7 2019/03/01 12:47:22 adam Exp $
 
-SHA1 (libcerf-1.7.tgz) = b24a609132860243134f447b73f21a6a71a549d7
-RMD160 (libcerf-1.7.tgz) = 6c06bf2d8f4f4d819c4c8519d1d3064e7b6485c1
-SHA512 (libcerf-1.7.tgz) = 5d0dfe474a89d3fa89138b9b107bdeb8eef85394707dab9b02f5b1bf4f1aeca4fc8a5dd924b454695c896e71ce3fed98b63e2e5cc3853124266226d8f3e32d9b
-Size (libcerf-1.7.tgz) = 58406 bytes
+SHA1 (libcerf-1.13.tgz) = e9c9fe8257774361b1f1e9de9d1bbb8057097a96
+RMD160 (libcerf-1.13.tgz) = 6bf9e6dea553fbd961f4ca02e3f047b7ea7f1c6f
+SHA512 (libcerf-1.13.tgz) = 4df711d3e9fd00de99959c3253a9565d1dc2c41f75a5800ced9c52f89cbd13185fbdca3ad75de788fd16c044082738ab345b7fb6a8820ac588edafe1812944aa
+Size (libcerf-1.13.tgz) = 61589 bytes
+SHA1 (patch-man_CMakeLists.txt) = 085f68b7acb1dbfa23a9d56cd31934db6d7152fb

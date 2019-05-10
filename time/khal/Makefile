@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.26 2018/12/01 16:42:08 wiz Exp $
+# $NetBSD: Makefile,v 1.28 2019/04/25 07:33:25 maya Exp $
 
-DISTNAME=		khal-0.9.10
+DISTNAME=		khal-0.10.1
+PKGREVISION=		1
 CATEGORIES=		time net
 MASTER_SITES=		${MASTER_SITE_PYPI:=k/khal/}
 
@@ -11,6 +12,7 @@ LICENSE=		mit
 
 DEPENDS+=		${PYPKGPREFIX}-atomicwrites-[0-9]*:../../devel/py-atomicwrites
 DEPENDS+=		${PYPKGPREFIX}-click>=3.2:../../devel/py-click
+DEPENDS+=		${PYPKGPREFIX}-click-log-[0-9]*:../../devel/py-click-log
 DEPENDS+=		${PYPKGPREFIX}-configobj-[0-9]*:../../devel/py-configobj
 DEPENDS+=		${PYPKGPREFIX}-dateutil-[0-9]*:../../time/py-dateutil
 DEPENDS+=		${PYPKGPREFIX}-icalendar>=3.9.2:../../time/py-icalendar

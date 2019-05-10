@@ -1,6 +1,10 @@
 package pkglint
 
-import "netbsd.org/pkglint/textproc"
+import (
+	"fmt"
+	"netbsd.org/pkglint/textproc"
+	"strings"
+)
 
 func CheckdirCategory(dir string) {
 	if trace.Tracing {
@@ -14,35 +18,35 @@ func CheckdirCategory(dir string) {
 
 	mklines.Check()
 
-	exp := NewMkExpecter(mklines)
-	for exp.AdvanceIfPrefix("#") {
+	mlex := NewMkLinesLexer(mklines)
+	for mlex.SkipPrefix("#") {
 	}
-	exp.ExpectEmptyLine()
+	mlex.SkipEmptyOrNote()
 
-	if exp.AdvanceIf(func(mkline MkLine) bool { return mkline.IsVarassign() && mkline.Varname() == "COMMENT" }) {
-		mkline := exp.PreviousMkLine()
+	if mlex.SkipIf(func(mkline MkLine) bool { return mkline.IsVarassign() && mkline.Varname() == "COMMENT" }) {
+		mkline := mlex.PreviousMkLine()
 
 		lex := textproc.NewLexer(mkline.Value())
 		valid := textproc.NewByteSet("--- '(),/0-9A-Za-z")
 		invalid := valid.Inverse()
-		uni := ""
+		var uni strings.Builder
 
 		for !lex.EOF() {
 			_ = lex.NextBytesSet(valid)
 			ch := lex.NextByteSet(invalid)
 			if ch != -1 {
-				uni += sprintf(" %U", ch)
+				_, _ = fmt.Fprintf(&uni, " %U", ch)
 			}
 		}
 
-		if uni != "" {
-			mkline.Warnf("%s contains invalid characters (%s).", mkline.Varname(), uni[1:])
+		if uni.Len() > 0 {
+			mkline.Warnf("%s contains invalid characters (%s).", mkline.Varname(), uni.String()[1:])
 		}
 
 	} else {
-		exp.CurrentLine().Errorf("COMMENT= line expected.")
+		mlex.CurrentLine().Errorf("COMMENT= line expected.")
 	}
-	exp.ExpectEmptyLine()
+	mlex.SkipEmptyOrNote()
 
 	type subdir struct {
 		name string
@@ -57,11 +61,11 @@ func CheckdirCategory(dir string) {
 	var mSubdirs []subdir
 
 	seen := make(map[string]MkLine)
-	for !exp.EOF() {
-		mkline := exp.CurrentMkLine()
+	for !mlex.EOF() {
+		mkline := mlex.CurrentMkLine()
 
 		if (mkline.IsVarassign() || mkline.IsCommentedVarassign()) && mkline.Varname() == "SUBDIR" {
-			exp.Advance()
+			mlex.Skip()
 
 			name := mkline.Value()
 			if mkline.IsCommentedVarassign() && mkline.VarassignComment() == "" {
@@ -113,7 +117,7 @@ func CheckdirCategory(dir string) {
 				if len(mRest) > 0 {
 					line = mRest[0].line.Line
 				} else {
-					line = exp.CurrentLine()
+					line = mlex.CurrentLine()
 				}
 
 				fix := line.Autofix()
@@ -123,7 +127,7 @@ func CheckdirCategory(dir string) {
 			}
 			fRest = fRest[1:]
 
-		} else if len(mRest) > 0 && (len(fRest) == 0 || mRest[0].name < fRest[0]) {
+		} else if len(fRest) == 0 || mRest[0].name < fRest[0] {
 			if !fCheck[mRest[0].name] {
 				fix := mRest[0].line.Autofix()
 				fix.Errorf("%q exists in the Makefile but not in the file system.", mRest[0].name)
@@ -141,10 +145,10 @@ func CheckdirCategory(dir string) {
 	// the pkgsrc-wip category Makefile defines its own targets for
 	// generating indexes and READMEs. Just skip them.
 	if !G.Wip {
-		exp.ExpectEmptyLine()
-		exp.ExpectText(".include \"../mk/misc/category.mk\"")
-		if !exp.EOF() {
-			exp.CurrentLine().Errorf("The file should end here.")
+		mlex.SkipEmptyOrNote()
+		mlex.SkipContainsOrWarn(".include \"../mk/misc/category.mk\"")
+		if !mlex.EOF() {
+			mlex.CurrentLine().Errorf("The file should end here.")
 		}
 	}
 

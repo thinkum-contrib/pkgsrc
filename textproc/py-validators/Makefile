@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.7 2018/11/13 16:05:52 adam Exp $
+# $NetBSD: Makefile,v 1.9 2019/04/25 07:25:56 adam Exp $
 
-DISTNAME=	validators-0.12.3
+DISTNAME=	validators-0.12.5
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	textproc python
 MASTER_SITES=	${MASTER_SITE_PYPI:=v/validators/}

@@ -66,6 +66,15 @@ func replaceAllFunc(s string, re regex.Pattern, repl func(string) string) string
 	return G.res.Compile(re).ReplaceAllStringFunc(s, repl)
 }
 
+// intern returns an independent copy of the given string.
+//
+// It should be called when only a small substring of a large string
+// is needed for the rest of the program's lifetime.
+//
+// All strings allocated here will stay in memory forever,
+// therefore it should only be used for long-lived strings.
+func intern(str string) string { return G.interner.Intern(str) }
+
 // trimHspace returns str, with leading and trailing space (U+0020)
 // and tab (U+0009) removed.
 //
@@ -80,6 +89,22 @@ func trimHspace(str string) string {
 		end--
 	}
 	return str[start:end]
+}
+
+func trimCommon(a, b string) (string, string) {
+	// trim common prefix
+	for len(a) > 0 && len(b) > 0 && a[0] == b[0] {
+		a = a[1:]
+		b = b[1:]
+	}
+
+	// trim common suffix
+	for len(a) > 0 && len(b) > 0 && a[len(a)-1] == b[len(b)-1] {
+		a = a[:len(a)-1]
+		b = b[:len(b)-1]
+	}
+
+	return a, b
 }
 
 func isHspace(ch byte) bool {
@@ -109,18 +134,22 @@ func imax(a, b int) int {
 	return b
 }
 
-func mustMatch(s string, re regex.Pattern) []string {
-	if m := G.res.Match(s, re); m != nil {
-		return m
+func assertNil(err error, format string, args ...interface{}) {
+	if err != nil {
+		panic("Pkglint internal error: " + sprintf(format, args...) + ": " + err.Error())
 	}
-	panic(sprintf("mustMatch %q %q", s, re))
 }
 
 func isEmptyDir(filename string) bool {
-	dirents, err := ioutil.ReadDir(filename)
-	if err != nil || hasSuffix(filename, "/CVS") {
+	if hasSuffix(filename, "/CVS") {
 		return true
 	}
+
+	dirents, err := ioutil.ReadDir(filename)
+	if err != nil {
+		return true
+	}
+
 	for _, dirent := range dirents {
 		name := dirent.Name()
 		if isIgnoredFilename(name) {
@@ -158,9 +187,23 @@ func isIgnoredFilename(filename string) bool {
 	return false
 }
 
+func dirglob(dirname string) []string {
+	infos, err := ioutil.ReadDir(dirname)
+	if err != nil {
+		return nil
+	}
+	var filenames []string
+	for _, info := range infos {
+		if !(isIgnoredFilename(info.Name())) {
+			filenames = append(filenames, cleanpath(dirname+"/"+info.Name()))
+		}
+	}
+	return filenames
+}
+
 // Checks whether a file is already committed to the CVS repository.
 func isCommitted(filename string) bool {
-	lines := loadCvsEntries(filename)
+	lines := G.loadCvsEntries(filename)
 	if lines == nil {
 		return false
 	}
@@ -176,7 +219,7 @@ func isCommitted(filename string) bool {
 func isLocallyModified(filename string) bool {
 	baseName := path.Base(filename)
 
-	lines := loadCvsEntries(filename)
+	lines := G.loadCvsEntries(filename)
 	if lines == nil {
 		return false
 	}
@@ -189,7 +232,7 @@ func isLocallyModified(filename string) bool {
 				return true
 			}
 
-			// According to http://cvsman.com/cvs-1.12.12/cvs_19.php, format both timestamps.
+			// Following http://cvsman.com/cvs-1.12.12/cvs_19.php, format both timestamps.
 			cvsModTime := fields[3]
 			fsModTime := st.ModTime().UTC().Format(time.ANSIC)
 			if trace.Tracing {
@@ -200,21 +243,6 @@ func isLocallyModified(filename string) bool {
 		}
 	}
 	return false
-}
-
-func loadCvsEntries(filename string) Lines {
-	dir := path.Dir(filename)
-	if dir == G.CvsEntriesDir {
-		return G.CvsEntriesLines
-	}
-
-	lines := Load(dir+"/CVS/Entries", 0)
-	if lines == nil {
-		return nil
-	}
-	G.CvsEntriesDir = dir
-	G.CvsEntriesLines = lines
-	return lines
 }
 
 // Returns the number of columns that a string occupies when printed with
@@ -232,24 +260,24 @@ func tabWidth(s string) int {
 }
 
 func detab(s string) string {
-	detabbed := ""
+	var detabbed strings.Builder
 	for _, r := range s {
 		if r == '\t' {
-			detabbed += "        "[:8-len(detabbed)%8]
+			detabbed.WriteString("        "[:8-detabbed.Len()%8])
 		} else {
-			detabbed += string(r)
+			detabbed.WriteString(string(r))
 		}
 	}
-	return detabbed
+	return detabbed.String()
 }
 
 func shorten(s string, maxChars int) string {
-	chars := 0
+	codePoints := 0
 	for i := range s {
-		if chars >= maxChars {
+		if codePoints >= maxChars {
 			return s[:i] + "..."
 		}
-		chars++
+		codePoints++
 	}
 	return s
 }
@@ -261,6 +289,7 @@ func varnameBase(varname string) string {
 	}
 	return varname
 }
+
 func varnameCanon(varname string) string {
 	dot := strings.IndexByte(varname, '.')
 	if dot > 0 {
@@ -268,36 +297,13 @@ func varnameCanon(varname string) string {
 	}
 	return varname
 }
+
 func varnameParam(varname string) string {
 	dot := strings.IndexByte(varname, '.')
 	if dot > 0 {
 		return varname[dot+1:]
 	}
 	return ""
-}
-
-// defineVar marks a variable as defined in both the current package and the current file.
-func defineVar(mkline MkLine, varname string) {
-	if G.Mk != nil {
-		G.Mk.vars.Define(varname, mkline)
-	}
-	if G.Pkg != nil {
-		G.Pkg.vars.Define(varname, mkline)
-	}
-}
-
-// varIsDefinedSimilar tests whether the variable (or its canonicalized form)
-// is defined in the current package or in the current file.
-func varIsDefinedSimilar(varname string) bool {
-	return G.Mk != nil && (G.Mk.vars.DefinedSimilar(varname) || G.Mk.forVars[varname]) ||
-		G.Pkg != nil && G.Pkg.vars.DefinedSimilar(varname)
-}
-
-// varIsUsedSimilar tests whether the variable (or its canonicalized form)
-// is used in the current package or in the current file.
-func varIsUsedSimilar(varname string) bool {
-	return G.Mk != nil && G.Mk.vars.UsedSimilar(varname) ||
-		G.Pkg != nil && G.Pkg.vars.UsedSimilar(varname)
 }
 
 func fileExists(filename string) bool {
@@ -317,25 +323,8 @@ func toInt(s string, def int) int {
 	return def
 }
 
-func dirglob(dirname string) []string {
-	fis, err := ioutil.ReadDir(dirname)
-	if err != nil {
-		return nil
-	}
-	var fnames []string
-	for _, fi := range fis {
-		if !(isIgnoredFilename(fi.Name())) {
-			fnames = append(fnames, cleanpath(dirname+"/"+fi.Name()))
-		}
-	}
-	return fnames
-}
-
-// Emulates make(1)'s :S substitution operator.
+// mkopSubst evaluates make(1)'s :S substitution operator.
 func mkopSubst(s string, left bool, from string, right bool, to string, flags string) string {
-	if trace.Tracing {
-		defer trace.Call(s, left, from, right, to, flags)()
-	}
 	re := regex.Pattern(ifelseStr(left, "^", "") + regexp.QuoteMeta(from) + ifelseStr(right, "$", ""))
 	done := false
 	gflag := contains(flags, "g")
@@ -348,27 +337,78 @@ func mkopSubst(s string, left bool, from string, right bool, to string, flags st
 	})
 }
 
-// relpath returns the relative path from `from` to `to`.
-func relpath(from, to string) string {
-	if hasPrefix(to, from) && len(to) > len(from)+1 && to[len(from)] == '/' {
-		return path.Clean(to[len(from)+1:])
+// relpath returns the relative path from the directory "from"
+// to the filesystem entry "to".
+//
+// The relative path is built by going from the "from" directory via the
+// pkgsrc root to the "to" filename. This produces the form
+// "../../category/package" that is found in DEPENDS and .include lines.
+//
+// Both from and to are interpreted relative to the current working directory,
+// unless they are absolute paths.
+//
+// This function should only be used if the relative path from one file to
+// another cannot be computed in another way. The preferred way is to take
+// the relative filenames directly from the .include or exists() where they
+// appear.
+//
+// TODO: Invent data types for all kinds of relative paths that occur in pkgsrc
+//  and pkglint. Make sure that these paths cannot be accidentally mixed.
+func relpath(from, to string) (result string) {
+
+	if trace.Tracing {
+		defer trace.Call(from, to, trace.Result(&result))()
 	}
 
-	absFrom := abspath(from)
-	absTo := abspath(to)
-	rel, err := filepath.Rel(absFrom, absTo)
-	G.Assertf(err == nil, "relpath %q %q.", from, to)
-	result := filepath.ToSlash(rel)
-	if trace.Tracing {
-		trace.Stepf("relpath from %q to %q = %q", from, to, result)
+	cfrom := cleanpath(from)
+	cto := cleanpath(to)
+
+	if cfrom == cto {
+		return "."
 	}
-	return result
+
+	// Take a shortcut for the common case from "dir" to "dir/subdir/...".
+	if hasPrefix(cto, cfrom) && len(cto) > len(cfrom)+1 && cto[len(cfrom)] == '/' {
+		return cleanpath(cto[len(cfrom)+1:])
+	}
+
+	// Take a shortcut for the common case from "category/package" to ".".
+	// This is the most common variant in a complete pkgsrc scan.
+	if cto == "." {
+		fromParts := strings.FieldsFunc(cfrom, func(r rune) bool { return r == '/' })
+		if len(fromParts) == 2 && !hasPrefix(fromParts[0], ".") && !hasPrefix(fromParts[1], ".") {
+			return "../.."
+		}
+	}
+
+	if cfrom == "." && !filepath.IsAbs(cto) {
+		return path.Clean(cto)
+	}
+
+	absFrom := abspath(cfrom)
+	absTopdir := abspath(G.Pkgsrc.topdir)
+	absTo := abspath(cto)
+
+	toTop, err := filepath.Rel(absFrom, absTopdir)
+	G.AssertNil(err, "relpath from %q to topdir %q", absFrom, absTopdir)
+
+	fromTop, err := filepath.Rel(absTopdir, absTo)
+	G.AssertNil(err, "relpath from topdir %q to %q", absTopdir, absTo)
+
+	result = cleanpath(filepath.ToSlash(toTop) + "/" + filepath.ToSlash(fromTop))
+
+	if trace.Tracing {
+		trace.Stepf("relpath from %q to %q = %q", cfrom, cto, result)
+	}
+	return
 }
 
 func abspath(filename string) string {
-	abs, err := filepath.Abs(filename)
-	G.Assertf(err == nil, "abspath %q.", filename)
-	return filepath.ToSlash(abs)
+	abs := filename
+	if !filepath.IsAbs(filename) {
+		abs = G.cwd + "/" + abs
+	}
+	return path.Clean(abs)
 }
 
 // Differs from path.Clean in that only "../../" is replaced, not "../".
@@ -383,14 +423,24 @@ func cleanpath(filename string) string {
 	for !lex.EOF() {
 		part := lex.NextBytesFunc(func(b byte) bool { return b != '/' })
 		parts = append(parts, part)
-		n := len(parts)
-		if n >= 5 && parts[n-1] == ".." && parts[n-2] == ".." && parts[n-3] != ".." && parts[n-4] != ".." {
-			parts = parts[:n-4]
-		}
 		if lex.SkipByte('/') {
 			for lex.SkipByte('/') || lex.SkipString("./") {
 			}
 		}
+	}
+
+	for len(parts) > 1 && parts[len(parts)-1] == "." {
+		parts = parts[:len(parts)-1]
+	}
+
+	for i := 2; i+3 < len(parts); /* nothing */ {
+		if parts[i] != ".." && parts[i+1] != ".." && parts[i+2] == ".." && parts[i+3] == ".." {
+			if i+4 == len(parts) || parts[i+4] != ".." {
+				parts = append(parts[:i], parts[i+4:]...)
+				continue
+			}
+		}
+		i++
 	}
 
 	if len(parts) == 0 {
@@ -408,7 +458,7 @@ func hasAlnumPrefix(s string) bool { return s != "" && textproc.AlnumU.Contains(
 // Once remembers with which arguments its FirstTime method has been called
 // and only returns true on each first call.
 type Once struct {
-	seen map[uint64]bool
+	seen map[uint64]struct{}
 }
 
 func (o *Once) FirstTime(what string) bool {
@@ -423,43 +473,84 @@ func (o *Once) FirstTimeSlice(whats ...string) bool {
 	return o.check(crc.Sum64())
 }
 
+func (o *Once) Seen(what string) bool {
+	_, seen := o.seen[crc64.Checksum([]byte(what), crc64.MakeTable(crc64.ECMA))]
+	return seen
+}
+
 func (o *Once) check(key uint64) bool {
 	if _, ok := o.seen[key]; ok {
 		return false
 	}
 	if o.seen == nil {
-		o.seen = make(map[uint64]bool)
+		o.seen = make(map[uint64]struct{})
 	}
-	o.seen[key] = true
+	o.seen[key] = struct{}{}
 	return true
 }
 
 // Scope remembers which variables are defined and which are used
 // in a certain scope, such as a package or a file.
+//
+// TODO: Decide whether the scope should consider variable assignments
+//  from the pkgsrc infrastructure. For Package.checkGnuConfigureUseLanguages
+//  it would be better to ignore them completely.
+//
+// TODO: Merge this code with Var, which defines essentially the
+//  same features.
 type Scope struct {
-	defined  map[string]MkLine
-	fallback map[string]string
-	used     map[string]MkLine
+	firstDef       map[string]MkLine // TODO: Can this be removed?
+	lastDef        map[string]MkLine
+	value          map[string]string
+	used           map[string]MkLine
+	usedAtLoadTime map[string]bool
+	fallback       map[string]string
 }
 
 func NewScope() Scope {
-	return Scope{make(map[string]MkLine), make(map[string]string), make(map[string]MkLine)}
+	return Scope{
+		make(map[string]MkLine),
+		make(map[string]MkLine),
+		make(map[string]string),
+		make(map[string]MkLine),
+		make(map[string]bool),
+		make(map[string]string)}
 }
 
 // Define marks the variable and its canonicalized form as defined.
 func (s *Scope) Define(varname string, mkline MkLine) {
-	if s.defined[varname] == nil {
-		s.defined[varname] = mkline
-		if trace.Tracing {
-			trace.Step2("Defining %q in %s", varname, mkline.String())
+	def := func(name string) {
+		if s.firstDef[name] == nil {
+			s.firstDef[name] = mkline
+			if trace.Tracing {
+				trace.Step2("Defining %q for the first time in %s", name, mkline.String())
+			}
+		} else if trace.Tracing {
+			trace.Step2("Defining %q in %s", name, mkline.String())
+		}
+
+		s.lastDef[name] = mkline
+
+		// In most cases the defining lines are indeed variable assignments.
+		// Exceptions are comments from documentation sections, which still mark
+		// it as defined so that it doesn't produce the "used but not defined" warning;
+		// see MkLines.collectDocumentedVariables.
+		if mkline.IsVarassign() {
+			switch mkline.Op() {
+			case opAssign, opAssignEval, opAssignShell:
+				s.value[name] = mkline.Value()
+			case opAssignAppend:
+				s.value[name] += " " + mkline.Value()
+			case opAssignDefault:
+				// No change to the value.
+			}
 		}
 	}
+
+	def(varname)
 	varcanon := varnameCanon(varname)
-	if varcanon != varname && s.defined[varcanon] == nil {
-		s.defined[varcanon] = mkline
-		if trace.Tracing {
-			trace.Step2("Defining %q in %s", varcanon, mkline.String())
-		}
+	if varcanon != varname {
+		def(varcanon)
 	}
 }
 
@@ -468,20 +559,29 @@ func (s *Scope) Fallback(varname string, value string) {
 }
 
 // Use marks the variable and its canonicalized form as used.
-func (s *Scope) Use(varname string, line MkLine) {
-	if s.used[varname] == nil {
-		s.used[varname] = line
-		if trace.Tracing {
-			trace.Step2("Using %q in %s", varname, line.String())
+func (s *Scope) Use(varname string, line MkLine, time vucTime) {
+	use := func(name string) {
+		if s.used[name] == nil {
+			s.used[name] = line
+			if trace.Tracing {
+				trace.Step2("Using %q in %s", name, line.String())
+			}
+		}
+		if time == vucTimeParse {
+			s.usedAtLoadTime[name] = true
 		}
 	}
-	varcanon := varnameCanon(varname)
-	if varcanon != varname && s.used[varcanon] == nil {
-		s.used[varcanon] = line
-		if trace.Tracing {
-			trace.Step2("Using %q in %s", varcanon, line.String())
-		}
-	}
+
+	use(varname)
+	use(varnameCanon(varname))
+}
+
+// Mentioned returns the first line in which the variable is either:
+//  - defined,
+//  - mentioned in a commented variable assignment,
+//  - mentioned in a documentation comment.
+func (s *Scope) Mentioned(varname string) MkLine {
+	return s.firstDef[varname]
 }
 
 // Defined tests whether the variable is defined.
@@ -490,19 +590,21 @@ func (s *Scope) Use(varname string, line MkLine) {
 // Even if Defined returns true, FirstDefinition doesn't necessarily return true
 // since the latter ignores the default definitions from vardefs.go, keyword dummyVardefMkline.
 func (s *Scope) Defined(varname string) bool {
-	return s.defined[varname] != nil
+	mkline := s.firstDef[varname]
+	return mkline != nil && mkline.IsVarassign()
 }
 
 // DefinedSimilar tests whether the variable or its canonicalized form is defined.
 func (s *Scope) DefinedSimilar(varname string) bool {
-	if s.defined[varname] != nil {
+	if s.Defined(varname) {
 		if trace.Tracing {
 			trace.Step1("Variable %q is defined", varname)
 		}
 		return true
 	}
+
 	varcanon := varnameCanon(varname)
-	if s.defined[varcanon] != nil {
+	if s.Defined(varcanon) {
 		if trace.Tracing {
 			trace.Step2("Variable %q (similar to %q) is defined", varcanon, varname)
 		}
@@ -525,22 +627,97 @@ func (s *Scope) UsedSimilar(varname string) bool {
 	return s.used[varnameCanon(varname)] != nil
 }
 
+// UsedAtLoadTime returns true if the variable is used at load time
+// somewhere.
+func (s *Scope) UsedAtLoadTime(varname string) bool {
+	return s.usedAtLoadTime[varname]
+}
+
 // FirstDefinition returns the line in which the variable has been defined first.
+//
 // Having multiple definitions is typical in the branches of "if" statements.
+//
+// Another typical case involves two files: the included file defines a default
+// value, and the including file later overrides that value. Or the other way
+// round: the including file sets a value first, and the included file then
+// assigns a default value using ?=.
 func (s *Scope) FirstDefinition(varname string) MkLine {
-	mkline := s.defined[varname]
+	mkline := s.firstDef[varname]
+	if mkline != nil && mkline.IsVarassign() {
+		lastLine := s.LastDefinition(varname)
+		if trace.Tracing && lastLine != mkline {
+			trace.Stepf("%s: FirstDefinition differs from LastDefinition in %s.",
+				mkline.String(), mkline.RefTo(lastLine))
+		}
+		return mkline
+	}
+	return nil // See NewPackage and G.Pkgsrc.UserDefinedVars
+}
+
+// LastDefinition returns the line in which the variable has been defined last.
+//
+// Having multiple definitions is typical in the branches of "if" statements.
+//
+// Another typical case involves two files: the included file defines a default
+// value, and the including file later overrides that value. Or the other way
+// round: the including file sets a value first, and the included file then
+// assigns a default value using ?=.
+func (s *Scope) LastDefinition(varname string) MkLine {
+	mkline := s.lastDef[varname]
 	if mkline != nil && mkline.IsVarassign() {
 		return mkline
 	}
 	return nil // See NewPackage and G.Pkgsrc.UserDefinedVars
 }
 
+// Commented returns whether the variable has only been defined in commented
+// variable assignments. These are ignored by bmake but used heavily in
+// mk/defaults/mk.conf for documentation.
+func (s *Scope) Commented(varname string) MkLine {
+	var mklines []MkLine
+	if first := s.firstDef[varname]; first != nil {
+		mklines = append(mklines, first)
+	}
+	if last := s.lastDef[varname]; last != nil {
+		mklines = append(mklines, last)
+	}
+
+	for _, mkline := range mklines {
+		if mkline != nil && mkline.IsVarassign() {
+			return nil
+		}
+	}
+
+	for _, mkline := range mklines {
+		if mkline != nil && mkline.IsCommentedVarassign() {
+			return mkline
+		}
+	}
+
+	return nil
+}
+
 func (s *Scope) FirstUse(varname string) MkLine {
 	return s.used[varname]
 }
 
-func (s *Scope) Value(varname string) (value string, found bool) {
-	mkline := s.FirstDefinition(varname)
+// LastValue returns the value from the last variable definition.
+//
+// If an empty string is returned this can mean either that the
+// variable value is indeed the empty string or that the variable
+// was not found. To distinguish these cases, call LastValueFound instead.
+func (s *Scope) LastValue(varname string) string {
+	value, _ := s.LastValueFound(varname)
+	return value
+}
+
+func (s *Scope) LastValueFound(varname string) (value string, found bool) {
+	value, found = s.value[varname]
+	if found {
+		return
+	}
+
+	mkline := s.LastDefinition(varname)
 	if mkline != nil {
 		return mkline.Value(), true
 	}
@@ -552,13 +729,14 @@ func (s *Scope) Value(varname string) (value string, found bool) {
 
 func (s *Scope) DefineAll(other Scope) {
 	var varnames []string
-	for varname := range other.defined {
+	for varname := range other.firstDef {
 		varnames = append(varnames, varname)
 	}
 	sort.Strings(varnames)
 
 	for _, varname := range varnames {
-		s.Define(varname, other.defined[varname])
+		s.Define(varname, other.firstDef[varname])
+		s.Define(varname, other.lastDef[varname])
 	}
 }
 
@@ -640,84 +818,6 @@ func naturalLess(str1, str2 string) bool {
 	return len1 < len2
 }
 
-// RedundantScope checks for redundant variable definitions and accidentally
-// overwriting variables. It tries to be as correct as possible by not flagging
-// anything that is defined conditionally. There may be some edge cases though
-// like defining PKGNAME, then evaluating it using :=, then defining it again.
-// This pattern is so error-prone that it should not appear in pkgsrc at all,
-// thus pkglint doesn't even expect it. (Well, except for the PKGNAME case,
-// but that's deep in the infrastructure and only affects the "nb13" extension.)
-type RedundantScope struct {
-	vars        map[string]*redundantScopeVarinfo
-	dirLevel    int
-	OnIgnore    func(old, new MkLine)
-	OnOverwrite func(old, new MkLine)
-}
-type redundantScopeVarinfo struct {
-	mkline MkLine
-	value  string
-}
-
-func NewRedundantScope() *RedundantScope {
-	return &RedundantScope{vars: make(map[string]*redundantScopeVarinfo)}
-}
-
-func (s *RedundantScope) Handle(mkline MkLine) {
-	switch {
-	case mkline.IsVarassign():
-		varname := mkline.Varname()
-		if s.dirLevel != 0 {
-			s.vars[varname] = nil
-			break
-		}
-
-		op := mkline.Op()
-		value := mkline.Value()
-		valueNovar := mkline.WithoutMakeVariables(value)
-		if op == opAssignEval && value == valueNovar {
-			op = opAssign // The two operators are effectively the same in this case.
-		}
-		existing, found := s.vars[varname]
-		if !found {
-			if op == opAssignShell || op == opAssignEval {
-				s.vars[varname] = nil // Won't be checked further.
-			} else {
-				if op == opAssignAppend {
-					value = " " + value
-				}
-				s.vars[varname] = &redundantScopeVarinfo{mkline, value}
-			}
-		} else if existing != nil {
-			if op == opAssign && existing.value == value {
-				op = opAssignDefault
-			}
-			switch op {
-			case opAssign:
-				if s.OnOverwrite != nil {
-					s.OnOverwrite(existing.mkline, mkline)
-				}
-				existing.value = value
-			case opAssignAppend:
-				existing.value += " " + value
-			case opAssignDefault:
-				if s.OnIgnore != nil {
-					s.OnIgnore(existing.mkline, mkline)
-				}
-			case opAssignShell, opAssignEval:
-				s.vars[varname] = nil // Won't be checked further.
-			}
-		}
-
-	case mkline.IsDirective():
-		switch mkline.Directive() {
-		case "for", "if", "ifdef", "ifndef":
-			s.dirLevel++
-		case "endfor", "endif":
-			s.dirLevel--
-		}
-	}
-}
-
 // IsPrefs returns whether the given file, when included, loads the user
 // preferences.
 func IsPrefs(filename string) bool {
@@ -731,15 +831,6 @@ func IsPrefs(filename string) bool {
 		return true
 	}
 	return false
-}
-
-func isalnum(s string) bool {
-	for _, ch := range []byte(s) {
-		if !textproc.AlnumU.Contains(ch) {
-			return false
-		}
-	}
-	return true
 }
 
 // FileCache reduces the IO load for commonly loaded files by about 50%,
@@ -861,17 +952,23 @@ func seeGuide(sectionName, sectionID string) string {
 		sectionName, sectionID)
 }
 
+// wrap performs automatic word wrapping on the given lines.
+//
+// Empty lines, indented lines and lines starting with "*" are kept as-is.
 func wrap(max int, lines ...string) []string {
 	var wrapped []string
-	var buf strings.Builder
-	nonSpace := textproc.Space.Inverse()
+	var sb strings.Builder
 
 	for _, line := range lines {
+
 		if line == "" || isHspace(line[0]) || line[0] == '*' {
-			if buf.Len() > 0 {
-				wrapped = append(wrapped, buf.String())
-				buf.Reset()
+
+			// Finish current paragraph.
+			if sb.Len() > 0 {
+				wrapped = append(wrapped, sb.String())
+				sb.Reset()
 			}
+
 			wrapped = append(wrapped, line)
 			continue
 		}
@@ -880,27 +977,25 @@ func wrap(max int, lines ...string) []string {
 		for !lexer.EOF() {
 			bol := len(lexer.Rest()) == len(line)
 			space := lexer.NextBytesSet(textproc.Space)
-			word := lexer.NextBytesSet(nonSpace)
+			word := lexer.NextBytesSet(notSpace)
 
-			if bol && space == "" && buf.Len() > 0 {
+			if bol && sb.Len() > 0 {
 				space = " "
 			}
 
-			if buf.Len() > 0 && buf.Len()+len(space)+len(word) > max {
-				wrapped = append(wrapped, buf.String())
-				buf.Reset()
-				if hasPrefix(space, " ") {
-					space = ""
-				}
+			if sb.Len() > 0 && sb.Len()+len(space)+len(word) > max {
+				wrapped = append(wrapped, sb.String())
+				sb.Reset()
+				space = ""
 			}
 
-			buf.WriteString(space)
-			buf.WriteString(word)
+			sb.WriteString(space)
+			sb.WriteString(word)
 		}
 	}
 
-	if buf.Len() > 0 {
-		wrapped = append(wrapped, buf.String())
+	if sb.Len() > 0 {
+		wrapped = append(wrapped, sb.String())
 	}
 
 	return wrapped
@@ -927,10 +1022,126 @@ func escapePrintable(s string) string {
 		case rune(byte(r)) == r && textproc.XPrint.Contains(byte(rest[j])):
 			escaped.WriteByte(byte(r))
 		case r == 0xFFFD && !hasPrefix(rest[j:], "\uFFFD"):
-			_, _ = fmt.Fprintf(&escaped, "<\\x%02X>", rest[j])
+			_, _ = fmt.Fprintf(&escaped, "<0x%02X>", rest[j])
 		default:
 			_, _ = fmt.Fprintf(&escaped, "<%U>", r)
 		}
 	}
 	return escaped.String()
+}
+
+func stringSliceLess(a, b []string) bool {
+	limit := len(a)
+	if len(b) < limit {
+		limit = len(b)
+	}
+
+	for i := 0; i < limit; i++ {
+		if a[i] != b[i] {
+			return a[i] < b[i]
+		}
+	}
+
+	return len(a) < len(b)
+}
+
+func joinSkipEmpty(sep string, elements ...string) string {
+	var nonempty []string
+	for _, element := range elements {
+		if element != "" {
+			nonempty = append(nonempty, element)
+		}
+	}
+	return strings.Join(nonempty, sep)
+}
+
+func joinSkipEmptyCambridge(conn string, elements ...string) string {
+	var nonempty []string
+	for _, element := range elements {
+		if element != "" {
+			nonempty = append(nonempty, element)
+		}
+	}
+
+	var sb strings.Builder
+	for i, element := range nonempty {
+		if i > 0 {
+			if i == len(nonempty)-1 {
+				sb.WriteRune(' ')
+				sb.WriteString(conn)
+				sb.WriteRune(' ')
+			} else {
+				sb.WriteString(", ")
+			}
+		}
+		sb.WriteString(element)
+	}
+
+	return sb.String()
+}
+
+func joinSkipEmptyOxford(conn string, elements ...string) string {
+	var nonempty []string
+	for _, element := range elements {
+		if element != "" {
+			nonempty = append(nonempty, element)
+		}
+	}
+
+	if lastIndex := len(nonempty) - 1; lastIndex >= 1 {
+		nonempty[lastIndex] = conn + " " + nonempty[lastIndex]
+	}
+
+	return strings.Join(nonempty, ", ")
+}
+
+// StringInterner collects commonly used strings to avoid wasting heap memory
+// by duplicated strings.
+type StringInterner struct {
+	strs map[string]string
+}
+
+func NewStringInterner() StringInterner {
+	return StringInterner{make(map[string]string)}
+}
+
+func (si *StringInterner) Intern(str string) string {
+	interned, found := si.strs[str]
+	if found {
+		return interned
+	}
+
+	// Ensure that the original string is never stored directly in the map
+	// since it might be a substring of a very large string. The interned
+	// strings must be completely independent of anything from the outside,
+	// so that the large source string can be freed afterwards.
+	var sb strings.Builder
+	sb.WriteString(str)
+	key := sb.String()
+
+	si.strs[key] = key
+	return key
+}
+
+// StringSets stores unique strings in insertion order.
+type StringSet struct {
+	Elements []string
+	seen     map[string]struct{}
+}
+
+func NewStringSet() StringSet {
+	return StringSet{nil, make(map[string]struct{})}
+}
+
+func (s *StringSet) Add(element string) {
+	if _, found := s.seen[element]; !found {
+		s.seen[element] = struct{}{}
+		s.Elements = append(s.Elements, element)
+	}
+}
+
+func (s *StringSet) AddAll(elements []string) {
+	for _, element := range elements {
+		s.Add(element)
+	}
 }

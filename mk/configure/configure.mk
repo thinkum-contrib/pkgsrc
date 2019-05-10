@@ -1,4 +1,4 @@
-# $NetBSD: configure.mk,v 1.26 2018/11/30 18:38:19 rillig Exp $
+# $NetBSD: configure.mk,v 1.29 2019/05/07 19:36:44 rillig Exp $
 #
 # = Package-settable variables =
 #
@@ -46,7 +46,8 @@
 
 _VARGROUPS+=		configure
 _USER_VARS.configure=	CONFIG_SHELL_FLAGS
-_PKG_VARS.configure=	CONFIGURE_ENV CONFIG_SHELL CONFIGURE_SCRIPT \
+_PKG_VARS.configure= \
+	CONFIGURE_DIRS CONFIGURE_ENV CONFIG_SHELL CONFIGURE_SCRIPT \
 	CONFIGURE_ARGS OVERRIDE_GNU_CONFIG_SCRIPTS HAS_CONFIGURE \
 	GNU_CONFIGURE PKGCONFIG_OVERRIDE USE_PKGLOCALEDIR \
 	CMAKE_ARGS CMAKE_ARG_PATH
@@ -98,7 +99,7 @@ _CONFIGURE_TARGETS+=	release-configure-lock
 
 .PHONY: configure
 .if !target(configure)
-.  if exists(${_COOKIE.configure})
+.  if exists(${_COOKIE.configure}) && !${_CLEANING}
 configure:
 	@${DO_NADA}
 .  elif defined(_PKGSRC_BARRIER)
@@ -112,7 +113,7 @@ configure: barrier
 acquire-configure-lock: acquire-lock
 release-configure-lock: release-lock
 
-.if exists(${_COOKIE.configure})
+.if exists(${_COOKIE.configure}) && !${_CLEANING}
 ${_COOKIE.configure}:
 	@${DO_NADA}
 .else
@@ -205,6 +206,9 @@ _CONFIGURE_SCRIPT_ENV+=	${CONFIGURE_ENV}
 .PHONY: do-configure-script
 do-configure-script:
 .for _dir_ in ${CONFIGURE_DIRS}
+.  if ${CONFIGURE_DIRS:[#]} != 1
+	${RUN} ${STEP_MSG} "Running "${CONFIGURE_SCRIPT:Q}" in "${_dir_:Q}
+.  endif
 	${RUN}${_ULIMIT_CMD}						\
 	cd ${WRKSRC} && cd ${_dir_} &&					\
 	${PKGSRC_SETENV} ${_CONFIGURE_SCRIPT_ENV}			\

@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.2 2019/01/01 00:32:10 leot Exp $
+$NetBSD: distinfo,v 1.4 2019/05/05 17:46:36 leot Exp $
 
-SHA1 (sfeed-0.9.7.tar.gz) = 065ffdacd391b8e502a3391da61fb42e5263ba75
-RMD160 (sfeed-0.9.7.tar.gz) = 253a640d5912fa4a2e7f4a4794ff7a79b2ee5651
-SHA512 (sfeed-0.9.7.tar.gz) = 5219bb686d841025875f1360567cde54f849cd8ba15c7b2c98b5482db34ed2d3385d7f1651a75a2adc5c0f4fdc27c27bee9fb6d301df1905572979142b2c12ca
-Size (sfeed-0.9.7.tar.gz) = 38021 bytes
+SHA1 (sfeed-0.9.10.tar.gz) = 0df793199339b0c8e8b0c6cd088f898ed428de7f
+RMD160 (sfeed-0.9.10.tar.gz) = c9ffe5a0a1ab804373900f79e61503d64b898053
+SHA512 (sfeed-0.9.10.tar.gz) = d3fa16feaef4cfbf77ff45e419649a1e478a150d69e60b2f453f8af38870eb0b8b99024bd2797ac4b592f1fa7239a8cfddd7467737efc26641d87c45d1c5d354
+Size (sfeed-0.9.10.tar.gz) = 40138 bytes

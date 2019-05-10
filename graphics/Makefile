@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.811 2019/01/01 16:31:55 wiz Exp $
+# $NetBSD: Makefile,v 1.816 2019/04/10 12:55:33 ryoon Exp $
 #
 
 COMMENT=	Graphics tools and libraries
@@ -146,7 +146,6 @@ SUBDIR+=	gdk-pixbuf2-jasper
 SUBDIR+=	gdk-pixbuf2-xlib
 SUBDIR+=	geeqie
 SUBDIR+=	gegl
-SUBDIR+=	gegl0.2
 SUBDIR+=	geomview
 SUBDIR+=	get_ds7
 SUBDIR+=	gexiv2
@@ -260,6 +259,7 @@ SUBDIR+=	ipe
 SUBDIR+=	ivtools
 SUBDIR+=	jasper
 SUBDIR+=	jbig2dec
+SUBDIR+=	jbig2enc
 SUBDIR+=	jbigkit
 SUBDIR+=	jhead
 SUBDIR+=	jpeg
@@ -347,6 +347,7 @@ SUBDIR+=	mate-backgrounds
 SUBDIR+=	mate-icon-theme
 SUBDIR+=	mate-icon-theme-faenza
 SUBDIR+=	mate-themes
+SUBDIR+=	materia-gtk-theme
 SUBDIR+=	metacam
 SUBDIR+=	mgl
 SUBDIR+=	mng
@@ -606,6 +607,8 @@ SUBDIR+=	tex-metaobj-doc
 SUBDIR+=	tex-metaplot
 SUBDIR+=	tex-metaplot-doc
 SUBDIR+=	tex-metapost
+SUBDIR+=	tex-metapost-colorbrewer
+SUBDIR+=	tex-metapost-colorbrewer-doc
 SUBDIR+=	tex-metapost-doc
 SUBDIR+=	tex-metauml
 SUBDIR+=	tex-metauml-doc
@@ -629,6 +632,8 @@ SUBDIR+=	tex-mptrees
 SUBDIR+=	tex-mptrees-doc
 SUBDIR+=	tex-pdfcrop
 SUBDIR+=	tex-pdfcrop-doc
+SUBDIR+=	tex-pgf-umlsd
+SUBDIR+=	tex-pgf-umlsd-doc
 SUBDIR+=	tex-pgfgantt
 SUBDIR+=	tex-pgfgantt-doc
 SUBDIR+=	tex-pictex

@@ -8,23 +8,30 @@ import (
 func (s *Suite) Test_ShTokenizer_ShAtom(c *check.C) {
 	t := s.Init(c)
 
-	// checkRest ensures that the given string is parsed to the expected
+	// testRest ensures that the given string is parsed to the expected
 	// atoms, and returns the remaining text.
-	checkRest := func(s string, expected ...*ShAtom) string {
+	testRest := func(s string, expectedAtoms []*ShAtom, expectedRest string) {
 		p := NewShTokenizer(dummyLine, s, false)
-		q := shqPlain
-		for _, exp := range expected {
-			c.Check(p.ShAtom(q), deepEquals, exp)
-			q = exp.Quoting
+
+		actualAtoms := p.ShAtoms()
+
+		t.Check(p.Rest(), equals, expectedRest)
+		c.Check(len(actualAtoms), equals, len(expectedAtoms))
+
+		for i, actualAtom := range actualAtoms {
+			if i < len(expectedAtoms) {
+				c.Check(actualAtom, deepEquals, expectedAtoms[i])
+			} else {
+				c.Check(actualAtom, deepEquals, nil)
+			}
 		}
-		return p.Rest()
 	}
+	atoms := func(atoms ...*ShAtom) []*ShAtom { return atoms }
 
 	// test ensures that the given string is parsed to the expected
 	// atoms, and that the text is completely consumed by the parser.
 	test := func(str string, expected ...*ShAtom) {
-		rest := checkRest(str, expected...)
-		c.Check(rest, equals, "")
+		testRest(str, expected, "")
 		t.CheckOutputEmpty()
 	}
 
@@ -52,31 +59,35 @@ func (s *Suite) Test_ShTokenizer_ShAtom(c *check.C) {
 	pipe := operator("|")
 	subshell := atom(shtSubshell, "$$(")
 
-	q := func(q ShQuoting, atom *ShAtom) *ShAtom {
-		return &ShAtom{atom.Type, atom.MkText, q, atom.data}
+	q := func(q ShQuoting) func(atom *ShAtom) *ShAtom {
+		return func(atom *ShAtom) *ShAtom {
+			return &ShAtom{atom.Type, atom.MkText, q, atom.data}
+		}
 	}
-	backt := func(atom *ShAtom) *ShAtom { return q(shqBackt, atom) }
-	dquot := func(atom *ShAtom) *ShAtom { return q(shqDquot, atom) }
-	squot := func(atom *ShAtom) *ShAtom { return q(shqSquot, atom) }
-	subsh := func(atom *ShAtom) *ShAtom { return q(shqSubsh, atom) }
-	backtDquot := func(atom *ShAtom) *ShAtom { return q(shqBacktDquot, atom) }
-	backtSquot := func(atom *ShAtom) *ShAtom { return q(shqBacktSquot, atom) }
-	dquotBackt := func(atom *ShAtom) *ShAtom { return q(shqDquotBackt, atom) }
-	subshDquot := func(atom *ShAtom) *ShAtom { return q(shqSubshDquot, atom) }
-	subshSquot := func(atom *ShAtom) *ShAtom { return q(shqSubshSquot, atom) }
-	dquotBacktDquot := func(atom *ShAtom) *ShAtom { return q(shqDquotBacktDquot, atom) }
-	dquotBacktSquot := func(atom *ShAtom) *ShAtom { return q(shqDquotBacktSquot, atom) }
+	backt := q(shqBackt)
+	dquot := q(shqDquot)
+	squot := q(shqSquot)
+	subsh := q(shqSubsh)
+	backtDquot := q(shqBacktDquot)
+	backtSquot := q(shqBacktSquot)
+	dquotBackt := q(shqDquotBackt)
+	subshDquot := q(shqSubshDquot)
+	subshSquot := q(shqSubshSquot)
+	subshBackt := q(shqSubshBackt)
+	dquotBacktDquot := q(shqDquotBacktDquot)
+	dquotBacktSquot := q(shqDquotBacktSquot)
 
 	// Ignore unused functions; useful for deleting some of the tests during debugging.
 	use := func(args ...interface{}) {}
-	use(checkRest, test)
+	use(testRest, test, atoms)
 	use(operator, comment, mkvar, text, whitespace)
-	use(space, semicolon, pipe, subshell)
+	use(space, semicolon, pipe, subshell, shvar)
 	use(backt, dquot, squot, subsh)
 	use(backtDquot, backtSquot, dquotBackt, subshDquot, subshSquot)
 	use(dquotBacktDquot, dquotBacktSquot)
 
-	test("" /* none */)
+	test("",
+		nil...)
 
 	test("$$var",
 		shvar("$$var", "var"))
@@ -94,8 +105,8 @@ func (s *Suite) Test_ShTokenizer_ShAtom(c *check.C) {
 		squot(text("single-quoted")),
 		text("'"))
 
-	rest := checkRest("\"" /* none */)
-	c.Check(rest, equals, "\"")
+	test("\"",
+		dquot(text("\"")))
 
 	test("$${file%.c}.o",
 		shvar("$${file%.c}", "file"),
@@ -279,15 +290,16 @@ func (s *Suite) Test_ShTokenizer_ShAtom(c *check.C) {
 		semicolon,
 		shvar("$$-", "-"))
 
-	rest = checkRest("COMMENT=\t\\Make $$$$ fast\"",
+	test("COMMENT=\t\\Make $$$$ fast\"",
+
 		text("COMMENT="),
 		whitespace("\t"),
 		text("\\Make"),
 		space,
 		shvar("$$$$", "$"),
 		space,
-		text("fast"))
-	c.Check(rest, equals, "\"")
+		text("fast"),
+		dquot(text("\"")))
 
 	test("var=`echo;echo|echo&echo||echo&&echo>echo`",
 		text("var="),
@@ -359,7 +371,7 @@ func (s *Suite) Test_ShTokenizer_ShAtom(c *check.C) {
 	test("$$(cat)",
 		subsh(subshell),
 		subsh(text("cat")),
-		text(")"))
+		operator(")"))
 
 	test("$$(cat 'file')",
 		subsh(subshell),
@@ -368,12 +380,12 @@ func (s *Suite) Test_ShTokenizer_ShAtom(c *check.C) {
 		subshSquot(text("'")),
 		subshSquot(text("file")),
 		subsh(text("'")),
-		text(")"))
+		operator(")"))
 
 	test("$$(# comment) arg",
 		subsh(subshell),
 		subsh(comment("# comment")),
-		text(")"),
+		operator(")"),
 		space,
 		text("arg"))
 
@@ -388,11 +400,22 @@ func (s *Suite) Test_ShTokenizer_ShAtom(c *check.C) {
 		subshSquot(text("'")),
 		subshSquot(text("second")),
 		subsh(text("'")),
-		text(")"))
+		operator(")"))
+
+	test("$$(echo `echo nested-subshell`)",
+		subsh(subshell),
+		subsh(text("echo")),
+		subsh(space),
+		subshBackt(text("`")),
+		subshBackt(text("echo")),
+		subshBackt(space),
+		subshBackt(text("nested-subshell")),
+		subsh(operator("`")),
+		operator(")"))
 }
 
 func (s *Suite) Test_ShTokenizer_ShAtom__quoting(c *check.C) {
-	checkQuotingChange := func(input, expectedOutput string) {
+	test := func(input, expectedOutput string) {
 		p := NewShTokenizer(dummyLine, input, false)
 		q := shqPlain
 		result := ""
@@ -411,18 +434,18 @@ func (s *Suite) Test_ShTokenizer_ShAtom__quoting(c *check.C) {
 		c.Check(p.Rest(), equals, "")
 	}
 
-	checkQuotingChange("hello, world", "hello, world")
-	checkQuotingChange("hello, \"world\"", "hello, \"[d]world\"[plain]")
-	checkQuotingChange("1 \"\" 2 '' 3 `` 4", "1 \"[d]\"[plain] 2 '[s]'[plain] 3 `[b]`[plain] 4")
-	checkQuotingChange("\"\"", "\"[d]\"[plain]")
-	checkQuotingChange("''", "'[s]'[plain]")
-	checkQuotingChange("``", "`[b]`[plain]")
-	checkQuotingChange("x\"x`x`x\"x'x\"x'", "x\"[d]x`[db]x`[d]x\"[plain]x'[s]x\"x'[plain]")
-	checkQuotingChange("x\"x`x'x'x`x\"", "x\"[d]x`[db]x'[dbs]x'[db]x`[d]x\"[plain]")
-	checkQuotingChange("x\\\"x\\'x\\`x\\\\", "x\\\"x\\'x\\`x\\\\")
-	checkQuotingChange("x\"x\\\"x\\'x\\`x\\\\", "x\"[d]x\\\"x\\'x\\`x\\\\")
-	checkQuotingChange("x'x\\\"x\\'x\\`x\\\\", "x'[s]x\\\"x\\'[plain]x\\`x\\\\")
-	checkQuotingChange("x`x\\\"x\\'x\\`x\\\\", "x`[b]x\\\"x\\'x\\`x\\\\")
+	test("hello, world", "hello, world")
+	test("hello, \"world\"", "hello, \"[d]world\"[plain]")
+	test("1 \"\" 2 '' 3 `` 4", "1 \"[d]\"[plain] 2 '[s]'[plain] 3 `[b]`[plain] 4")
+	test("\"\"", "\"[d]\"[plain]")
+	test("''", "'[s]'[plain]")
+	test("``", "`[b]`[plain]")
+	test("x\"x`x`x\"x'x\"x'", "x\"[d]x`[db]x`[d]x\"[plain]x'[s]x\"x'[plain]")
+	test("x\"x`x'x'x`x\"", "x\"[d]x`[db]x'[dbs]x'[db]x`[d]x\"[plain]")
+	test("x\\\"x\\'x\\`x\\\\", "x\\\"x\\'x\\`x\\\\")
+	test("x\"x\\\"x\\'x\\`x\\\\", "x\"[d]x\\\"x\\'x\\`x\\\\")
+	test("x'x\\\"x\\'x\\`x\\\\", "x'[s]x\\\"x\\'[plain]x\\`x\\\\")
+	test("x`x\\\"x\\'x\\`x\\\\", "x`[b]x\\\"x\\'x\\`x\\\\")
 }
 
 func (s *Suite) Test_ShTokenizer_ShToken(c *check.C) {
@@ -437,6 +460,7 @@ func (s *Suite) Test_ShTokenizer_ShToken(c *check.C) {
 		}
 		return p.Rest()
 	}
+
 	test := func(str string, expected ...string) {
 		p := NewShTokenizer(dummyLine, str, false)
 		for _, exp := range expected {
@@ -445,20 +469,19 @@ func (s *Suite) Test_ShTokenizer_ShToken(c *check.C) {
 		c.Check(p.Rest(), equals, "")
 		t.CheckOutputEmpty()
 	}
-	checkNil := func(str string) {
+
+	testNil := func(str string) {
 		p := NewShTokenizer(dummyLine, str, false)
 		c.Check(p.ShToken(), check.IsNil)
 		c.Check(p.Rest(), equals, "")
 		t.CheckOutputEmpty()
 	}
 
-	checkNil("")
-	checkNil(" ")
+	testNil("")
+	testNil(" ")
 	rest := testRest("\t\t\t\n\n\n\n\t ",
-		"\n",
-		"\n", // TODO: Why three separators? One should be enough. What does the grammar say?
-		"\n")
-	c.Check(rest, equals, "\n\t ") // TODO: Why is the newline still here?
+		"\n\n\n\n")
+	c.Check(rest, equals, "\t ")
 
 	test("echo",
 		"echo")
@@ -487,6 +510,9 @@ func (s *Suite) Test_ShTokenizer_ShToken(c *check.C) {
 		"env",
 		"PATH=${PATH:Q}",
 		"true")
+
+	test("id=$$(id)",
+		"id=$$(id)")
 
 	test("id=$$(${AWK} '{print}' < ${WRKSRC}/idfile)",
 		"id=$$(${AWK} '{print}' < ${WRKSRC}/idfile)")
@@ -545,77 +571,84 @@ func (s *Suite) Test_ShTokenizer_shVarUse(c *check.C) {
 	test("$${\\}", nil, "$${\\}")
 }
 
+// This test demonstrates that the shell tokenizer is not perfect yet.
+// There are still some corner cases that trigger a parse error.
+// To get 100% code coverage, they have been found using the fuzzer
+// and trimmed down to minimal examples.
 func (s *Suite) Test_ShTokenizer__examples_from_fuzzing(c *check.C) {
 	t := s.Init(c)
 
-	mklines := t.NewMkLines("fuzzing.mk",
-		MkRcsID,
-		"",
-		"pre-configure:",
+	test := func(input string, diagnostics ...string) {
+		mklines := t.NewMkLines("filename.mk",
+			MkRcsID,
+			"\t"+input)
+		mklines.Check()
+		t.CheckOutput(diagnostics)
+	}
 
-		// Covers shAtomBacktDquot: return nil.
-		// These are nested backticks with double quotes,
-		// which should be avoided since POSIX marks them as unspecified.
-		"\t"+"`\"`",
+	// Covers shAtomBacktDquot: return nil.
+	// These are nested backticks with double quotes,
+	// which should be avoided since POSIX marks them as unspecified.
+	test(
+		"`\"`",
+		"WARN: filename.mk:2: Internal pkglint error in ShTokenizer.ShAtom at \"`\" (quoting=bd).",
+		"WARN: filename.mk:2: Pkglint ShellLine.CheckShellCommand: splitIntoShellTokens couldn't parse \"`\\\"`\"")
 
-		// Covers shAtomBacktSquot: return nil
-		"\t"+"`'$`",
+	// Covers shAtomBacktSquot: return nil
+	test(
+		"`'$`",
+		"WARN: filename.mk:2: Internal pkglint error in ShTokenizer.ShAtom at \"$`\" (quoting=bs).",
+		"WARN: filename.mk:2: Pkglint ShellLine.CheckShellCommand: splitIntoShellTokens couldn't parse \"`'$`\"",
+		"WARN: filename.mk:2: Internal pkglint error in MkLine.Tokenize at \"$`\".")
 
-		// Covers shAtomDquotBacktSquot: return nil
-		"\t"+"\"`'`y",
+	// Covers shAtomDquotBacktSquot: return nil
+	test(
+		"\"`'`y",
+		"WARN: filename.mk:2: Pkglint ShellLine.CheckShellCommand: splitIntoShellTokens couldn't parse \"\\\"`'`y\"")
 
-		// Covers shAtomDquotBackt: return nil
-		// FIXME: Pkglint must parse unescaped dollar in the same way, everywhere.
-		"\t"+"\"`$|",
+	// Covers shAtomDquotBackt: return nil
+	// FIXME: Pkglint must parse unescaped dollar in the same way, everywhere.
+	test(
+		"\"`$|",
+		"WARN: filename.mk:2: Internal pkglint error in ShTokenizer.ShAtom at \"$|\" (quoting=db).",
+		"WARN: filename.mk:2: Pkglint ShellLine.CheckShellCommand: splitIntoShellTokens couldn't parse \"\\\"`$|\"",
+		"WARN: filename.mk:2: Internal pkglint error in MkLine.Tokenize at \"$|\".")
 
-		// Covers shAtomDquotBacktDquot: return nil
-		// FIXME: Pkglint must support unlimited nesting.
-		"\t"+"\"`\"`",
+	// Covers shAtomDquotBacktDquot: return nil
+	// FIXME: Pkglint must support unlimited nesting.
+	test(
+		"\"`\"`",
+		"WARN: filename.mk:2: Internal pkglint error in ShTokenizer.ShAtom at \"`\" (quoting=dbd).",
+		"WARN: filename.mk:2: Pkglint ShellLine.CheckShellCommand: splitIntoShellTokens couldn't parse \"\\\"`\\\"`\"")
 
-		// Covers shAtomSubshDquot: return nil
-		"\t"+"$$(\"'",
+	// Covers shAtomSubshDquot: return nil
+	test(
+		"$$(\"'",
+		"WARN: filename.mk:2: Invoking subshells via $(...) is not portable enough.")
 
-		// Covers shAtomSubsh: case lexer.AdvanceStr("`")
-		"\t"+"$$(`",
+	// Covers shAtomSubsh: case lexer.AdvanceStr("`")
+	test(
+		"$$(`",
+		"WARN: filename.mk:2: Invoking subshells via $(...) is not portable enough.")
 
-		// Covers shAtomSubshSquot: return nil
-		"\t"+"$$('$)",
+	// Covers shAtomSubshSquot: return nil
+	test(
+		"$$('$)",
+		"WARN: filename.mk:2: Internal pkglint error in ShTokenizer.ShAtom at \"$)\" (quoting=Ss).",
+		"WARN: filename.mk:2: Invoking subshells via $(...) is not portable enough.",
+		"WARN: filename.mk:2: Internal pkglint error in MkLine.Tokenize at \"$)\".")
 
-		// Covers shAtomDquotBackt: case lexer.AdvanceRegexp("^#[^`]*")
-		"\t"+"\"`# comment")
-
-	mklines.Check()
-
-	// Just good that these redundant error messages don't occur every day.
-	t.CheckOutputLines(
-		"WARN: fuzzing.mk:4: Internal pkglint error in ShTokenizer.ShAtom at \"`\" (quoting=bd).",
-		"WARN: fuzzing.mk:4: Pkglint ShellLine.CheckShellCommand: parse error at []string{\"\"}",
-
-		"WARN: fuzzing.mk:5: Internal pkglint error in ShTokenizer.ShAtom at \"$`\" (quoting=bs).",
-		"WARN: fuzzing.mk:5: Pkglint ShellLine.CheckShellCommand: parse error at []string{\"\"}",
-		"WARN: fuzzing.mk:5: Internal pkglint error in MkLine.Tokenize at \"$`\".",
-
-		"WARN: fuzzing.mk:6: Pkglint ShellLine.CheckShellCommand: parse error at []string{\"\"}",
-
-		"WARN: fuzzing.mk:7: Internal pkglint error in ShTokenizer.ShAtom at \"$|\" (quoting=db).",
-		"WARN: fuzzing.mk:7: Pkglint ShellLine.CheckShellCommand: parse error at []string{\"\"}",
-		"WARN: fuzzing.mk:7: Internal pkglint error in MkLine.Tokenize at \"$|\".",
-
-		"WARN: fuzzing.mk:8: Internal pkglint error in ShTokenizer.ShAtom at \"`\" (quoting=dbd).",
-		"WARN: fuzzing.mk:8: Pkglint ShellLine.CheckShellCommand: parse error at []string{\"\"}",
-
-		"WARN: fuzzing.mk:9: Invoking subshells via $(...) is not portable enough.",
-
-		"WARN: fuzzing.mk:10: Internal pkglint error in ShTokenizer.ShAtom at \"`\" (quoting=S).",
-		"WARN: fuzzing.mk:10: Invoking subshells via $(...) is not portable enough.",
-
-		"WARN: fuzzing.mk:11: Internal pkglint error in ShTokenizer.ShAtom at \"$)\" (quoting=Ss).",
-		"WARN: fuzzing.mk:11: Invoking subshells via $(...) is not portable enough.",
-		"WARN: fuzzing.mk:11: Internal pkglint error in MkLine.Tokenize at \"$)\".",
-
-		"WARN: fuzzing.mk:12: Pkglint ShellLine.CheckShellCommand: parse error at []string{\"\"}")
+	// Covers shAtomDquotBackt: case lexer.AdvanceRegexp("^#[^`]*")
+	test(
+		"\"`# comment",
+		"WARN: filename.mk:2: Pkglint ShellLine.CheckShellCommand: splitIntoShellTokens couldn't parse \"\\\"`# comment\"")
 }
 
+// In order to get 100% code coverage for the shell tokenizer, a panic() statement has been
+// added to each uncovered basic block. After that, this fuzzer quickly found relatively
+// small example programs that led to the uncovered code.
+//
+// This test is not useful as-is.
 func (s *Suite) Test_ShTokenizer__fuzzing(c *check.C) {
 	t := s.Init(c)
 
@@ -627,7 +660,7 @@ func (s *Suite) Test_ShTokenizer__fuzzing(c *check.C) {
 	for i := 0; i < 1000; i++ {
 		tokenizer := NewShTokenizer(dummyLine, fuzzer.Generate(50), false)
 		tokenizer.ShAtoms()
-		t.Output() // Discard the output, only react on fatal errors.
+		t.Output() // Discard the output, only react on panics.
 	}
 	fuzzer.Ok()
 }

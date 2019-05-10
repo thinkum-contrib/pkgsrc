@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.49 2018/12/24 14:45:50 tsutsui Exp $
+# $NetBSD: Makefile,v 1.53 2019/04/17 10:01:05 wiz Exp $
 
-DISTNAME=	vala-0.42.3
-PKGREVISION=	2
+DISTNAME=	vala-0.44.3
 CATEGORIES=	lang gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/vala/${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.xz
@@ -11,6 +10,8 @@ HOMEPAGE=	https://wiki.gnome.org/Projects/Vala
 COMMENT=	Compiler for the GObject type system
 LICENSE=	gnu-lgpl-v2.1
 
+BUILD_DEPENDS+=	libxslt-[0-9]*:../../textproc/libxslt
+
 GNU_CONFIGURE=		yes
 USE_LIBTOOL=		yes
 USE_TOOLS+=		bison flex gmake pkg-config
@@ -19,7 +20,6 @@ PKGCONFIG_OVERRIDE+=	libvala.pc.in
 PKGCONFIG_OVERRIDE+=	vapigen/vapigen.pc.in
 
 BUILDLINK_API_DEPENDS.glib2+=	glib2>=2.40.0
-
 .include "../../devel/glib2/buildlink3.mk"
 .include "../../devel/libltdl/buildlink3.mk"
 .include "../../graphics/graphviz/buildlink3.mk"

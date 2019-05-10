@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.503 2018/12/31 17:42:30 leot Exp $
+# $NetBSD: Makefile,v 1.507 2019/03/23 10:55:06 tsutsui Exp $
 #
 
 COMMENT=	Miscellaneous utilities
@@ -166,6 +166,7 @@ SUBDIR+=	libmateweather
 SUBDIR+=	libquantum
 SUBDIR+=	libreoffice
 SUBDIR+=	libreoffice5-bin
+SUBDIR+=	libreoffice6-bin
 SUBDIR+=	libutf
 SUBDIR+=	lile
 SUBDIR+=	linux-words
@@ -292,6 +293,7 @@ SUBDIR+=	rpm
 SUBDIR+=	ruby-ansi
 SUBDIR+=	ruby-args_parser
 SUBDIR+=	ruby-bundler
+SUBDIR+=	ruby-bundler1
 SUBDIR+=	ruby-colorator
 SUBDIR+=	ruby-colorize
 SUBDIR+=	ruby-columnize
@@ -317,7 +319,6 @@ SUBDIR+=	ruby-rainbow
 SUBDIR+=	ruby-slop
 SUBDIR+=	ruby-sprockets
 SUBDIR+=	ruby-sprockets-rails
-SUBDIR+=	ruby-sprockets22
 SUBDIR+=	ruby-systemu
 SUBDIR+=	ruby-thread_safe
 SUBDIR+=	ruby-transaction-simple
@@ -335,6 +336,7 @@ SUBDIR+=	splitvt
 SUBDIR+=	starplot
 SUBDIR+=	stellarium
 SUBDIR+=	step
+SUBDIR+=	sunwait
 SUBDIR+=	superkaramba
 SUBDIR+=	sweeper
 SUBDIR+=	sword

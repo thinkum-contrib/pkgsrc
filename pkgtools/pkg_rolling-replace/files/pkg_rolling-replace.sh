@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $NetBSD: pkg_rolling-replace.sh,v 1.36 2018/05/06 18:06:18 gdt Exp $
+# $NetBSD: pkg_rolling-replace.sh,v 1.38 2019/04/26 18:14:15 gdt Exp $
 #<license>
 # Copyright (c) 2006 BBN Technologies Corp.  All rights reserved.
 #
@@ -419,7 +419,7 @@ while [ -n "$REPLACE_TODO" ]; do
     for pkg in $TSORTED; do
         if is_member $pkg $REPLACE_TODO; then
 	    pkgdir=$(${PKG_INFO} -Q PKGPATH $pkg)
-	    [ -n "$pkgdir" ] || abort "Couldn't extract PKGPATH from installed package $pkg"
+	    [ -n "$pkgdir" ] || error "Couldn't extract PKGPATH from installed package $pkg"
             break;
         fi
     done
@@ -463,8 +463,9 @@ while [ -n "$REPLACE_TODO" ]; do
 	NEW_DEPENDS=
 	cd "$PKGSRCDIR/$pkgdir"
 	bdeps=$(@SETENV@ ${MAKE_SET_VARS} ${MAKE} show-depends VARNAME=BUILD_DEPENDS)
+	tdeps=$(@SETENV@ ${MAKE_SET_VARS} ${MAKE} show-depends VARNAME=TOOL_DEPENDS)
 	rdeps=$(@SETENV@ ${MAKE_SET_VARS} ${MAKE} show-depends)
-	for depver in $bdeps $rdeps; do
+	for depver in $bdeps $tdeps $rdeps; do
 	    dep=$(echo $depver | sed -e 's/[:[].*$/0/' -e 's/[<>]=/-/' \
 		-e 's/-[0-9][^-]*$//')
 	    if ! is_member $dep $OLD_DEPENDS $NEW_DEPENDS; then

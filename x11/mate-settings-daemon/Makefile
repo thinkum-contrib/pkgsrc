@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.18 2018/11/29 11:22:00 prlw1 Exp $
+# $NetBSD: Makefile,v 1.25 2019/05/05 22:49:53 ryoon Exp $
 
-PKGREVISION= 4
+PKGREVISION= 2
 .include "../../meta-pkgs/mate/Makefile.common"
 
-DISTNAME=	mate-settings-daemon-${VERSION:R}.1
+DISTNAME=	mate-settings-daemon-${VERSION}
 CATEGORIES=	x11
 
 COMMENT=	MATE settings daemon
@@ -11,6 +11,14 @@ COMMENT=	MATE settings daemon
 PKGCONFIG_OVERRIDE+=	data/mate-settings-daemon.pc.in
 
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR}
+
+PLIST_VARS+=		rfkill
+
+.if ${OPSYS} != "Linux"
+CONFIGURE_ARGS+=	--disable-rfkill
+.else
+PLIST.rfkill=		yes
+.endif
 
 .include "options.mk"
 
@@ -31,6 +39,7 @@ CONF_FILES+=	${PREFIX}/share/examples/mate-settings-daemon/xdg/autostart/mate-se
 .include "../../devel/glib2/buildlink3.mk"
 .include "../../devel/dconf/buildlink3.mk"
 .include "../../fonts/fontconfig/buildlink3.mk"
+.include "../../security/gnome-keyring/buildlink3.mk"
 .include "../../sysutils/dbus-glib/buildlink3.mk"
 .include "../../sysutils/libnotify/buildlink3.mk"
 .include "../../x11/xorgproto/buildlink3.mk"

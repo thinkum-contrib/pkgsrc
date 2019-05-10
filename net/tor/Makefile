@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.136 2019/01/08 08:39:55 adam Exp $
+# $NetBSD: Makefile,v 1.140 2019/05/03 08:45:51 wiz Exp $
 
-DISTNAME=	tor-0.3.5.7
+DISTNAME=	tor-0.4.0.5
 CATEGORIES=	net security
 MASTER_SITES=	https://dist.torproject.org/
 
@@ -11,14 +11,12 @@ LICENSE=	modified-bsd
 
 USE_LANGUAGES=		c99
 USE_PKGLOCALEDIR=	yes
-USE_TOOLS+=		perl:test
+USE_TOOLS+=		perl:test pkg-config
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--localstatedir=${VARBASE}
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFBASEDIR}
 CONFIGURE_ENV+=		CPP=${CPP:Q}
 
-# one test failure in 0.3.0.10
-# https://trac.torproject.org/projects/tor/ticket/23250
 TEST_TARGET=		check
 
 TOR_USER?=		tor
@@ -52,20 +50,19 @@ INSTALL_MAKE_FLAGS+=	sysconfdir=${PREFIX}/share/examples
 
 CHECK_PORTABILITY_SKIP+=contrib/*
 
+.include "options.mk"
+
 .include "../../mk/bsd.prefs.mk"
 
 .if !empty(PKGSRC_COMPILER:Mmipspro)
 CFLAGS+=		-c99
 .endif
 
+.include "../../archivers/zstd/buildlink3.mk"
 BUILDLINK_API_DEPENDS.libevent+= libevent>=2.0
 .include "../../devel/libevent/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
 BUILDLINK_API_DEPENDS.openssl+=	openssl>=1.0
 .include "../../security/openssl/buildlink3.mk"
 .include "../../mk/pthread.buildlink3.mk"
-
-## We include this after other b3.mk files since we use PTHREAD_TYPE.
-.include "options.mk"
-
 .include "../../mk/bsd.pkg.mk"

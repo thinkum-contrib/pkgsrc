@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -29,10 +30,10 @@ type Suite struct {
 // Init creates and returns a test helper that allows to:
 //
 // * create files for the test:
-// CreateFileLines, SetupPkgsrc, SetupPackage
+// CreateFileLines, SetUpPkgsrc, SetUpPackage
 //
 // * load these files into Line and MkLine objects (for tests spanning multiple files):
-// SetupFileLines, SetupFileMkLines
+// SetUpFileLines, SetUpFileMkLines
 //
 // * create new in-memory Line and MkLine objects (for simple tests):
 // NewLine, NewLines, NewMkLine, NewMkLines
@@ -40,7 +41,7 @@ type Suite struct {
 // * check the files that have been changed by the --autofix feature:
 // CheckFileLines
 //
-// * check the pkglint diagnostics: CheckLinesEmpty, CheckLinesOutput
+// * check the pkglint diagnostics: CheckOutputEmpty, CheckOutputLines
 func (s *Suite) Init(c *check.C) *Tester {
 
 	// Note: the check.C object from SetUpTest cannot be used here,
@@ -56,7 +57,7 @@ func (s *Suite) Init(c *check.C) *Tester {
 }
 
 func (s *Suite) SetUpTest(c *check.C) {
-	t := Tester{c: c}
+	t := Tester{c: c, testName: c.TestName()}
 	s.Tester = &t
 
 	G = NewPkglint()
@@ -70,7 +71,7 @@ func (s *Suite) SetUpTest(c *check.C) {
 	G.Pkgsrc = NewPkgsrc(t.File("."))
 
 	t.c = c
-	t.SetupCommandLine("-Wall") // To catch duplicate warnings
+	t.SetUpCommandLine("-Wall") // To catch duplicate warnings
 	t.c = nil
 
 	// To improve code coverage and ensure that trace.Result works
@@ -89,10 +90,13 @@ func (s *Suite) TearDownTest(c *check.C) {
 	t.c = nil // No longer usable; see https://github.com/go-check/check/issues/22
 
 	if err := os.Chdir(t.prevdir); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Cannot chdir back to previous dir: %s", err)
+		t.Errorf("Cannot chdir back to previous dir: %s", err)
 	}
 
-	G = Pkglint{} // unusable because of missing Logger.out and Logger.err
+	if t.seenSetupPkgsrc > 0 && !t.seenFinish && !t.seenMain {
+		t.Errorf("After t.SetupPkgsrc(), t.FinishSetUp() or t.Main() must be called.")
+	}
+
 	if out := t.Output(); out != "" {
 		var msg strings.Builder
 		msg.WriteString("\n")
@@ -106,8 +110,11 @@ func (s *Suite) TearDownTest(c *check.C) {
 		_, _ = fmt.Fprintf(&msg, "\n")
 		_, _ = os.Stderr.WriteString(msg.String())
 	}
+
 	t.tmpdir = ""
 	t.DisableTracing()
+
+	G = Pkglint{} // unusable because of missing Logger.out and Logger.err
 }
 
 var _ = check.Suite(new(Suite))
@@ -119,20 +126,26 @@ func Test(t *testing.T) { check.TestingT(t) }
 // all the test methods, which makes it difficult to find
 // a method by auto-completion.
 type Tester struct {
+	c        *check.C // Only usable during the test method itself
+	testName string
+
 	stdout  bytes.Buffer
 	stderr  bytes.Buffer
 	tmpdir  string
-	c       *check.C // Only usable during the test method itself
-	prevdir string   // The current working directory before the test started
-	relCwd  string   // See Tester.Chdir
+	prevdir string // The current working directory before the test started
+	relCwd  string // See Tester.Chdir
+
+	seenSetupPkgsrc int
+	seenFinish      bool
+	seenMain        bool
 }
 
-// SetupCommandLine simulates a command line for the remainder of the test.
+// SetUpCommandLine simulates a command line for the remainder of the test.
 // See Pkglint.ParseCommandLine.
 //
-// If SetupCommandLine is not called explicitly in a test, the command line
+// If SetUpCommandLine is not called explicitly in a test, the command line
 // "-Wall" is used, to provide a high code coverage in the tests.
-func (t *Tester) SetupCommandLine(args ...string) {
+func (t *Tester) SetUpCommandLine(args ...string) {
 
 	// Prevent tracing from being disabled; see EnableSilentTracing.
 	prevTracing := trace.Tracing
@@ -152,59 +165,96 @@ func (t *Tester) SetupCommandLine(args ...string) {
 	G.Logger.Opts.LogVerbose = true
 }
 
-// SetupVartypes registers a few hundred variables like MASTER_SITES,
+// SetUpVartypes registers a few hundred variables like MASTER_SITES,
 // WRKSRC, SUBST_SED.*, so that their data types are known to pkglint.
 //
 // Without calling this, there will be many warnings about undefined
 // or unused variables, or unknown shell commands.
 //
-// See SetupTool for registering tools like echo, awk, perl.
-func (t *Tester) SetupVartypes() {
-	G.Pkgsrc.InitVartypes()
+// See SetUpTool for registering tools like echo, awk, perl.
+func (t *Tester) SetUpVartypes() {
+	G.Pkgsrc.vartypes.Init(&G.Pkgsrc)
 }
 
-func (t *Tester) SetupMasterSite(varname string, urls ...string) {
+func (t *Tester) SetUpMasterSite(varname string, urls ...string) {
+	if !G.Pkgsrc.vartypes.DefinedExact(varname) {
+		G.Pkgsrc.vartypes.DefineParse(varname, BtFetchURL,
+			List|SystemProvided,
+			"buildlink3.mk: none",
+			"*: use")
+	}
+
 	for _, url := range urls {
 		G.Pkgsrc.registerMasterSite(varname, url)
 	}
 }
 
-// SetupOption pretends that the package option is defined in mk/defaults/options.description.
-func (t *Tester) SetupOption(name, description string) {
+// SetUpOption pretends that the package option is defined in mk/defaults/options.description.
+func (t *Tester) SetUpOption(name, description string) {
 	G.Pkgsrc.PkgOptions[name] = description
 }
 
-func (t *Tester) SetupTool(name, varname string, validity Validity) *Tool {
-	return G.Pkgsrc.Tools.def(name, varname, false, validity)
+func (t *Tester) SetUpTool(name, varname string, validity Validity) *Tool {
+	return G.Pkgsrc.Tools.def(name, varname, false, validity, nil)
 }
 
-// SetupFileLines creates a temporary file and writes the given lines to it.
+// SetUpFileLines creates a temporary file and writes the given lines to it.
 // The file is then read in, without interpreting line continuations.
 //
-// See SetupFileMkLines for loading a Makefile fragment.
-func (t *Tester) SetupFileLines(relativeFileName string, lines ...string) Lines {
+// See SetUpFileMkLines for loading a Makefile fragment.
+func (t *Tester) SetUpFileLines(relativeFileName string, lines ...string) Lines {
 	filename := t.CreateFileLines(relativeFileName, lines...)
 	return Load(filename, MustSucceed)
 }
 
-// SetupFileLines creates a temporary file and writes the given lines to it.
+// SetUpFileLines creates a temporary file and writes the given lines to it.
 // The file is then read in, handling line continuations for Makefiles.
 //
-// See SetupFileLines for loading an ordinary file.
-func (t *Tester) SetupFileMkLines(relativeFileName string, lines ...string) MkLines {
+// See SetUpFileLines for loading an ordinary file.
+func (t *Tester) SetUpFileMkLines(relativeFileName string, lines ...string) MkLines {
 	filename := t.CreateFileLines(relativeFileName, lines...)
 	return LoadMk(filename, MustSucceed)
 }
 
-// SetupPkgsrc sets up a minimal but complete pkgsrc installation in the
+// LoadMkInclude loads the given Makefile fragment and all the files it includes,
+// merging all the lines into a single MkLines object.
+//
+// This is useful for testing code related to Package.readMakefile.
+func (t *Tester) LoadMkInclude(relativeFileName string) MkLines {
+	var lines []Line
+
+	// TODO: Include files with multiple-inclusion guard only once.
+	// TODO: Include files without multiple-inclusion guard as often as needed.
+	// TODO: Set an upper limit, to prevent denial of service.
+
+	var load func(filename string)
+	load = func(filename string) {
+		for _, mkline := range NewMkLines(Load(filename, MustSucceed)).mklines {
+			lines = append(lines, mkline.Line)
+
+			if mkline.IsInclude() {
+				included := cleanpath(path.Dir(filename) + "/" + mkline.IncludedFile())
+				load(included)
+			}
+		}
+	}
+
+	load(t.File(relativeFileName))
+
+	// This assumes that the test files do not contain parse errors.
+	// Otherwise the diagnostics would appear twice.
+	return NewMkLines(NewLines(t.File(relativeFileName), lines))
+}
+
+// SetUpPkgsrc sets up a minimal but complete pkgsrc installation in the
 // temporary folder, so that pkglint runs without any errors.
-// Individual files may be overwritten by calling other Setup* methods.
+// Individual files may be overwritten by calling other SetUp* methods.
 //
 // This setup is especially interesting for testing Pkglint.Main.
 //
 // If the test works on a lower level than Pkglint.Main,
 // LoadInfrastructure must be called to actually load the infrastructure files.
-func (t *Tester) SetupPkgsrc() {
+func (t *Tester) SetUpPkgsrc() {
 
 	// This file is needed to locate the pkgsrc root directory.
 	// See findPkgsrcTopdir.
@@ -228,6 +278,8 @@ func (t *Tester) SetupPkgsrc() {
 
 	// The various MASTER_SITE_* variables for use in the
 	// MASTER_SITES are defined in this file.
+	//
+	// To define a MASTER_SITE for a pkglint test, call t.SetUpMasterSite.
 	//
 	// See Pkgsrc.loadMasterSites.
 	t.CreateFileLines("mk/fetch/sites.mk",
@@ -257,14 +309,18 @@ func (t *Tester) SetupPkgsrc() {
 	// used at load time by packages.
 	t.CreateFileLines("mk/bsd.prefs.mk",
 		MkRcsID)
+	t.CreateFileLines("mk/bsd.fast.prefs.mk",
+		MkRcsID)
 
 	// Category Makefiles require this file for the common definitions.
 	t.CreateFileLines("mk/misc/category.mk")
+
+	t.seenSetupPkgsrc++
 }
 
-// SetupCategory makes the given category valid by creating a dummy Makefile.
+// SetUpCategory makes the given category valid by creating a dummy Makefile.
 // After that, it can be mentioned in the CATEGORIES variable of a package.
-func (t *Tester) SetupCategory(name string) {
+func (t *Tester) SetUpCategory(name string) {
 	G.Assertf(!contains(name, "/"), "Category must not contain a slash.")
 
 	if _, err := os.Stat(t.File(name + "/Makefile")); os.IsNotExist(err) {
@@ -273,7 +329,7 @@ func (t *Tester) SetupCategory(name string) {
 	}
 }
 
-// SetupPackage sets up all files for a package (including the pkgsrc
+// SetUpPackage sets up all files for a package (including the pkgsrc
 // infrastructure) so that it does not produce any warnings.
 //
 // The given makefileLines start in line 20. Except if they are variable
@@ -282,31 +338,49 @@ func (t *Tester) SetupCategory(name string) {
 // Returns the path to the package, ready to be used with Pkglint.Check.
 //
 // After calling this method, individual files can be overwritten as necessary.
-// Then, G.Pkgsrc.LoadInfrastructure should be called to load all the files.
-func (t *Tester) SetupPackage(pkgpath string, makefileLines ...string) string {
-	category := path.Dir(pkgpath)
+// At the end of the setup phase, t.FinishSetUp() must be called to load all
+// the files.
+func (t *Tester) SetUpPackage(pkgpath string, makefileLines ...string) string {
 
-	t.SetupPkgsrc()
-	t.SetupVartypes()
-	t.SetupCategory(category)
+	category := path.Dir(pkgpath)
+	if category == "wip" {
+		// To avoid boilerplate CATEGORIES definitions for wip packages.
+		category = "local"
+	}
+
+	t.SetUpPkgsrc()
+	t.SetUpCategory(category)
 
 	t.CreateFileLines(pkgpath+"/DESCR",
 		"Package description")
 	t.CreateFileLines(pkgpath+"/PLIST",
 		PlistRcsID,
 		"bin/program")
+
+	// Because the package Makefile includes this file, the check for the
+	// correct ordering of variables is skipped. As of February 2019, the
+	// SetupPackage function does not insert the custom variables in the
+	// correct position. To prevent the tests from having to mention the
+	// unrelated warnings about the variable order, that check is suppressed
+	// here.
+	t.CreateFileLines(pkgpath+"/suppress-varorder.mk",
+		MkRcsID)
+
+	// This distinfo file contains dummy hashes since pkglint cannot check the
+	// distfiles hashes anyway. It can only check the hashes for the patches.
 	t.CreateFileLines(pkgpath+"/distinfo",
 		RcsID,
 		"",
-		"SHA1 (distfile-1.0.tar.gz) = 12341234...",
-		"RMD160 (distfile-1.0.tar.gz) = 12341234...",
-		"SHA512 (distfile-1.0.tar.gz) = 12341234...",
+		"SHA1 (distfile-1.0.tar.gz) = 12341234",
+		"RMD160 (distfile-1.0.tar.gz) = 12341234",
+		"SHA512 (distfile-1.0.tar.gz) = 12341234",
 		"Size (distfile-1.0.tar.gz) = 12341234")
 
 	mlines := []string{
 		MkRcsID,
 		"",
 		"DISTNAME=\tdistname-1.0",
+		"#PKGNAME=\tpackage-1.0",
 		"CATEGORIES=\t" + category,
 		"MASTER_SITES=\t# none",
 		"",
@@ -314,7 +388,8 @@ func (t *Tester) SetupPackage(pkgpath string, makefileLines ...string) string {
 		"HOMEPAGE=\t# none",
 		"COMMENT=\tDummy package",
 		"LICENSE=\t2-clause-bsd",
-		""}
+		"",
+		".include \"suppress-varorder.mk\""}
 	for len(mlines) < 19 {
 		mlines = append(mlines, "# empty")
 	}
@@ -322,7 +397,7 @@ func (t *Tester) SetupPackage(pkgpath string, makefileLines ...string) string {
 line:
 	for _, line := range makefileLines {
 		if m, prefix := match1(line, `^#?(\w+=)`); m {
-			for i, existingLine := range mlines {
+			for i, existingLine := range mlines[:19] {
 				if hasPrefix(strings.TrimPrefix(existingLine, "#"), prefix) {
 					mlines[i] = line
 					continue line
@@ -380,7 +455,7 @@ func (t *Tester) CreateFileDummyPatch(relativeFileName string) {
 		"+new")
 }
 
-func (t *Tester) CreateFileDummyBuildlink3(relativeFileName string) {
+func (t *Tester) CreateFileDummyBuildlink3(relativeFileName string, customLines ...string) {
 	dir := path.Dir(relativeFileName)
 	lower := path.Base(dir)
 	upper := strings.ToUpper(lower)
@@ -395,20 +470,27 @@ func (t *Tester) CreateFileDummyBuildlink3(relativeFileName string) {
 		return msg
 	}
 
-	t.CreateFileLines(relativeFileName,
+	var lines []string
+	lines = append(lines,
 		MkRcsID,
-		sprintf(""),
+		"",
 		sprintf("BUILDLINK_TREE+=\t%s", lower),
-		sprintf(""),
+		"",
 		sprintf(".if !defined(%s_BUILDLINK3_MK)", upper),
 		sprintf("%s_BUILDLINK3_MK:=", upper),
-		sprintf(""),
+		"",
 		aligned("BUILDLINK_API_DEPENDS.%s+=", lower)+sprintf("%s>=0", lower),
 		aligned("BUILDLINK_PKGSRCDIR.%s?=", lower)+sprintf("../../%s", dir),
 		aligned("BUILDLINK_DEPMETHOD.%s?=", lower)+"build",
+		"")
+	lines = append(lines, customLines...)
+	lines = append(lines,
+		"",
 		sprintf(".endif # %s_BUILDLINK3_MK", upper),
-		sprintf(""),
+		"",
 		sprintf("BUILDLINK_TREE+=\t-%s", lower))
+
+	t.CreateFileLines(relativeFileName, lines...)
 }
 
 // File returns the absolute path to the given file in the
@@ -424,11 +506,19 @@ func (t *Tester) File(relativeFileName string) string {
 	return path.Clean(t.tmpdir + "/" + relativeFileName)
 }
 
+// Copy copies a file inside the temporary directory.
+func (t *Tester) Copy(relativeSrc, relativeDst string) {
+	data, err := ioutil.ReadFile(t.File(relativeSrc))
+	G.AssertNil(err, "Copy.Read")
+	err = ioutil.WriteFile(t.File(relativeDst), data, 0777)
+	G.AssertNil(err, "Copy.Write")
+}
+
 // Chdir changes the current working directory to the given subdirectory
 // of the temporary directory, creating it if necessary.
 //
 // After this call, all files loaded from the temporary directory via
-// SetupFileLines or CreateFileLines or similar methods will use path names
+// SetUpFileLines or CreateFileLines or similar methods will use path names
 // relative to this directory.
 //
 // After the test, the previous working directory is restored, so that
@@ -445,11 +535,13 @@ func (t *Tester) Chdir(relativeDirName string) {
 		t.c.Fatalf("Chdir must only be called once per test; already in %q.", t.relCwd)
 	}
 
-	_ = os.MkdirAll(t.File(relativeDirName), 0700)
-	if err := os.Chdir(t.File(relativeDirName)); err != nil {
+	absDirName := t.File(relativeDirName)
+	_ = os.MkdirAll(absDirName, 0700)
+	if err := os.Chdir(absDirName); err != nil {
 		t.c.Fatalf("Cannot chdir: %s", err)
 	}
 	t.relCwd = relativeDirName
+	G.cwd = absDirName
 }
 
 // Remove removes the file from the temporary directory. The file must exist.
@@ -460,11 +552,156 @@ func (t *Tester) Remove(relativeFileName string) {
 	G.fileCache.Evict(filename)
 }
 
+// SetUpHierarchy provides a function for creating hierarchies of MkLines
+// that include each other.
+// The hierarchy is created only in memory, nothing is written to disk.
+//
+//  include, get := t.SetUpHierarchy()
+//
+//  include("including.mk",
+//      include("other.mk",
+//          "VAR= other"),
+//      include("subdir/module.mk",
+//          "VAR= module",
+//          include("subdir/version.mk",
+//              "VAR= version"),
+//          include("subdir/env.mk",
+//              "VAR= env")))
+//
+//  mklines := get("including.mk")
+//  module := get("subdir/module.mk")
+//
+// The filenames passed to the include function are all relative to the
+// same location, but that location is irrelevant in practice. The generated
+// .include lines take the relative paths into account. For example, when
+// subdir/module.mk includes subdir/version.mk, the include line is just:
+//  .include "version.mk"
+func (t *Tester) SetUpHierarchy() (
+	include func(filename string, args ...interface{}) MkLines,
+	get func(string) MkLines) {
+
+	files := map[string]MkLines{}
+
+	include = func(filename string, args ...interface{}) MkLines {
+		var lines []Line
+		lineno := 1
+
+		addLine := func(text string) {
+			lines = append(lines, t.NewLine(filename, lineno, text))
+			lineno++
+		}
+
+		for _, arg := range args {
+			switch arg := arg.(type) {
+			case string:
+				addLine(arg)
+			case MkLines:
+				text := sprintf(".include %q", relpath(path.Dir(filename), arg.lines.FileName))
+				addLine(text)
+				lines = append(lines, arg.lines.Lines...)
+			default:
+				panic("invalid type")
+			}
+		}
+
+		mklines := NewMkLines(NewLines(filename, lines))
+		G.Assertf(files[filename] == nil, "MkLines with name %q already exists.", filename)
+		files[filename] = mklines
+		return mklines
+	}
+
+	get = func(filename string) MkLines {
+		G.Assertf(files[filename] != nil, "MkLines with name %q doesn't exist.", filename)
+		return files[filename]
+	}
+
+	return
+}
+
+// Demonstrates that Tester.SetUpHierarchy uses relative paths for the
+// .include directives.
+func (s *Suite) Test_Tester_SetUpHierarchy(c *check.C) {
+	t := s.Init(c)
+
+	include, get := t.SetUpHierarchy()
+	include("including.mk",
+		include("other.mk",
+			"VAR= other"),
+		include("subdir/module.mk",
+			"VAR= module",
+			include("subdir/version.mk",
+				"VAR= version"),
+			include("subdir/env.mk",
+				"VAR= env")))
+
+	mklines := get("including.mk")
+
+	mklines.ForEach(func(mkline MkLine) { mkline.Notef("Text is: %s", mkline.Text) })
+
+	t.CheckOutputLines(
+		"NOTE: including.mk:1: Text is: .include \"other.mk\"",
+		"NOTE: other.mk:1: Text is: VAR= other",
+		"NOTE: including.mk:2: Text is: .include \"subdir/module.mk\"",
+		"NOTE: subdir/module.mk:1: Text is: VAR= module",
+		"NOTE: subdir/module.mk:2: Text is: .include \"version.mk\"",
+		"NOTE: subdir/version.mk:1: Text is: VAR= version",
+		"NOTE: subdir/module.mk:3: Text is: .include \"env.mk\"",
+		"NOTE: subdir/env.mk:1: Text is: VAR= env")
+}
+
+func (t *Tester) FinishSetUp() {
+	if t.seenSetupPkgsrc == 0 {
+		t.Errorf("Unnecessary t.FinishSetUp() since t.SetUpPkgsrc() has not been called.")
+	}
+
+	if !t.seenFinish {
+		t.seenFinish = true
+		G.Pkgsrc.LoadInfrastructure()
+	} else {
+		t.Errorf("Redundant t.FinishSetup() since it was called multiple times.")
+	}
+}
+
+// Main runs the pkglint main program with the given command line arguments.
+//
+// Arguments that name existing files or directories in the temporary test
+// directory are transformed to their actual paths.
+func (t *Tester) Main(args ...string) int {
+	if t.seenFinish && !t.seenMain {
+		t.Errorf("Calling t.FinishSetup() before t.Main() is redundant " +
+			"since t.Main() loads the pkgsrc infrastructure.")
+	}
+
+	t.seenMain = true
+
+	// Reset the logger, for tests where t.Main is called multiple times.
+	G.errors = 0
+	G.warnings = 0
+	G.logged = Once{}
+
+	argv := []string{"pkglint"}
+	for _, arg := range args {
+		fileArg := t.File(arg)
+		_, err := os.Lstat(fileArg)
+		if err == nil {
+			argv = append(argv, fileArg)
+		} else {
+			argv = append(argv, arg)
+		}
+	}
+
+	return G.Main(argv...)
+}
+
 // Check delegates a check to the check.Check function.
 // Thereby, there is no need to distinguish between c.Check and t.Check
 // in the test code.
 func (t *Tester) Check(obj interface{}, checker check.Checker, args ...interface{}) bool {
 	return t.c.Check(obj, checker, args...)
+}
+
+func (t *Tester) Errorf(format string, args ...interface{}) {
+	_, _ = fmt.Fprintf(os.Stderr, "In %s: %s\n", t.testName, sprintf(format, args...))
 }
 
 // ExpectFatal runs the given action and expects that this action calls
@@ -503,7 +740,8 @@ func (t *Tester) ExpectFatalMatches(action func(), expected regex.Pattern) {
 		if r == nil {
 			panic("Expected a pkglint fatal error but didn't get one.")
 		} else if _, ok := r.(pkglintFatal); ok {
-			t.Check(t.Output(), check.Matches, string(expected))
+			pattern := `^(?:` + string(expected) + `)$`
+			t.Check(t.Output(), check.Matches, pattern)
 		} else {
 			panic(r)
 		}
@@ -558,23 +796,31 @@ func (t *Tester) NewLine(filename string, lineno int, text string) Line {
 
 // NewMkLine creates an in-memory line in the Makefile format with the given text.
 func (t *Tester) NewMkLine(filename string, lineno int, text string) MkLine {
-	return NewMkLine(t.NewLine(filename, lineno, text))
+	basename := path.Base(filename)
+	G.Assertf(
+		hasSuffix(basename, ".mk") ||
+			basename == "Makefile" ||
+			hasPrefix(basename, "Makefile.") ||
+			basename == "mk.conf",
+		"filename %q must be realistic, otherwise the variable permissions are wrong", filename)
+
+	return MkLineParser{}.Parse(t.NewLine(filename, lineno, text))
 }
 
-func (t *Tester) NewShellLine(filename string, lineno int, text string) *ShellLine {
-	return NewShellLine(t.NewMkLine(filename, lineno, text))
+func (t *Tester) NewShellLineChecker(mklines MkLines, filename string, lineno int, text string) *ShellLineChecker {
+	return NewShellLineChecker(mklines, t.NewMkLine(filename, lineno, text))
 }
 
 // NewLines returns a list of simple lines that belong together.
 //
-// To work with line continuations like in Makefiles, use SetupFileMkLines.
+// To work with line continuations like in Makefiles, use SetUpFileMkLines.
 func (t *Tester) NewLines(filename string, lines ...string) Lines {
 	return t.NewLinesAt(filename, 1, lines...)
 }
 
 // NewLinesAt returns a list of simple lines that belong together.
 //
-// To work with line continuations like in Makefiles, use SetupFileMkLines.
+// To work with line continuations like in Makefiles, use SetUpFileMkLines.
 func (t *Tester) NewLinesAt(filename string, firstLine int, texts ...string) Lines {
 	lines := make([]Line, len(texts))
 	for i, text := range texts {
@@ -588,8 +834,13 @@ func (t *Tester) NewLinesAt(filename string, firstLine int, texts ...string) Lin
 // taking continuation lines into account.
 //
 // No actual file is created for the lines;
-// see SetupFileMkLines for loading Makefile fragments with line continuations.
+// see SetUpFileMkLines for loading Makefile fragments with line continuations.
 func (t *Tester) NewMkLines(filename string, lines ...string) MkLines {
+	basename := path.Base(filename)
+	G.Assertf(
+		hasSuffix(basename, ".mk") || basename == "Makefile" || hasPrefix(basename, "Makefile."),
+		"filename %q must be realistic, otherwise the variable permissions are wrong", filename)
+
 	var rawText strings.Builder
 	for _, line := range lines {
 		rawText.WriteString(line)
@@ -607,13 +858,18 @@ func (t *Tester) Output() string {
 	t.stdout.Reset()
 	t.stderr.Reset()
 	G.Logger.logged = Once{}
-
-	output := stdout + stderr
-	if t.tmpdir != "" {
-		output = strings.Replace(output, t.tmpdir, "~", -1)
-	} else {
-		panic("asdfgsfas")
+	if G.Logger.out != nil { // Necessary because Main resets the G variable.
+		G.Logger.out.state = 0 // Prevent an empty line at the beginning of the next output.
+		G.Logger.err.state = 0
 	}
+
+	G.Assertf(t.tmpdir != "", "Tester must be initialized before checking the output.")
+	output := stdout + stderr
+	// TODO: The explanations are wrapped. Because of this it can happen
+	//  that t.tmpdir is spread among multiple lines if that directory
+	//  name contains spaces, which is common on Windows. A temporary
+	//  workaround is to set TMP=/path/without/spaces.
+	output = strings.Replace(output, t.tmpdir, "~", -1)
 	return output
 }
 
@@ -621,11 +877,7 @@ func (t *Tester) Output() string {
 //
 // See CheckOutputLines.
 func (t *Tester) CheckOutputEmpty() {
-	output := t.Output()
-
-	actualLines := strings.Split(output, "\n")
-	actualLines = actualLines[:len(actualLines)-1]
-	t.Check(emptyToNil(actualLines), deepEquals, emptyToNil(nil))
+	t.CheckOutput(nil)
 }
 
 // CheckOutputLines checks that the output up to now equals the given lines.
@@ -635,7 +887,60 @@ func (t *Tester) CheckOutputEmpty() {
 // See CheckOutputEmpty.
 func (t *Tester) CheckOutputLines(expectedLines ...string) {
 	G.Assertf(len(expectedLines) > 0, "To check empty lines, use CheckLinesEmpty instead.")
+	t.CheckOutput(expectedLines)
+}
 
+// CheckOutputMatches checks that the output up to now matches the given lines.
+// Each line may either be an exact string or a regular expression.
+// By convention, regular expressions are written in backticks.
+//
+// After the comparison, the output buffers are cleared so that later
+// calls only check against the newly added output.
+//
+// See CheckOutputEmpty.
+func (t *Tester) CheckOutputMatches(expectedLines ...regex.Pattern) {
+	output := t.Output()
+	actualLines := strings.Split(output, "\n")
+	actualLines = actualLines[:len(actualLines)-1]
+
+	ok := func(actualLine string, expectedLine regex.Pattern) bool {
+		if actualLine == string(expectedLine) {
+			return true
+		}
+
+		pattern := `^(?:` + string(expectedLine) + `)$`
+		re, err := regexp.Compile(pattern)
+		if err != nil {
+			return false
+		}
+
+		return re.MatchString(actualLine)
+	}
+
+	// If a line matches the corresponding pattern, make them equal in the
+	// comparison output, in order to concentrate on the lines that don't match.
+	var patterns []string
+	for i, expectedLine := range expectedLines {
+		if i < len(actualLines) && ok(actualLines[i], expectedLine) {
+			patterns = append(patterns, actualLines[i])
+		} else {
+			patterns = append(patterns, string(expectedLine))
+		}
+	}
+
+	t.Check(emptyToNil(actualLines), deepEquals, emptyToNil(patterns))
+}
+
+// CheckOutput checks that the output up to now equals the given lines.
+// After the comparison, the output buffers are cleared so that later
+// calls only check against the newly added output.
+//
+// The expectedLines can be either empty or non-empty.
+//
+// When the output is always empty, use CheckOutputEmpty instead.
+// When the output always contain some lines, use CheckOutputLines instead.
+// This variant should only be used when the expectedLines are generated dynamically.
+func (t *Tester) CheckOutput(expectedLines []string) {
 	output := t.Output()
 	actualLines := strings.Split(output, "\n")
 	actualLines = actualLines[:len(actualLines)-1]
@@ -648,10 +953,7 @@ func (t *Tester) CheckOutputLines(expectedLines ...string) {
 // where they are shown together with the trace log.
 //
 // This is useful when stepping through the code, especially
-// in combination with SetupCommandLine("--debug").
-//
-// In JetBrains GoLand, the tracing output is suppressed after the first
-// failed check, see https://youtrack.jetbrains.com/issue/GO-6154.
+// in combination with SetUpCommandLine("--debug").
 func (t *Tester) EnableTracing() {
 	G.out = NewSeparatorWriter(io.MultiWriter(os.Stdout, &t.stdout))
 	trace.Out = os.Stdout
@@ -661,8 +963,9 @@ func (t *Tester) EnableTracing() {
 // EnableTracingToLog enables the tracing and writes the tracing output
 // to the test log that can be examined with Tester.Output.
 func (t *Tester) EnableTracingToLog() {
-	t.EnableTracing()
+	G.out = NewSeparatorWriter(&t.stdout)
 	trace.Out = &t.stdout
+	trace.Tracing = true
 }
 
 // EnableSilentTracing enables tracing mode but discards any tracing output.
@@ -709,4 +1012,12 @@ func (t *Tester) CheckFileLinesDetab(relativeFileName string, lines ...string) {
 	}
 
 	t.Check(detabbedLines, deepEquals, lines)
+}
+
+// Use marks all passed functions as used for the Go compiler.
+//
+// This means that the test cases that follow do not have to use each of them,
+// and this in turn allows uninteresting test cases to be deleted during
+// development.
+func (t *Tester) Use(functions ...interface{}) {
 }

@@ -1,6 +1,14 @@
-$NetBSD: distinfo,v 1.3 2018/05/14 12:50:13 youri Exp $
+$NetBSD: distinfo,v 1.7 2019/05/08 01:36:06 gutteridge Exp $
 
-SHA1 (mate-applets-1.20.1.tar.xz) = 9412db25137f489e0770107aacd5dfa514b84170
-RMD160 (mate-applets-1.20.1.tar.xz) = 51ba2efb23548cd0a95aa3eb1a14b1a2b1fafaa7
-SHA512 (mate-applets-1.20.1.tar.xz) = 4d7c423a48d22de40c4907d9b0e471e6886e03bfd31f9a1eab2687d1683f97b0c44a5301b512af935e3098b8b0ef7efded0674ed84878ae2dc879ef1cc227dc1
-Size (mate-applets-1.20.1.tar.xz) = 7022772 bytes
+SHA1 (mate-applets-1.22.1.tar.xz) = e834797d917d633448bb1cb9dbfbe3b98a7ee834
+RMD160 (mate-applets-1.22.1.tar.xz) = 3cf112a512914cfefb83719e7b13bb27bcc19ab0
+SHA512 (mate-applets-1.22.1.tar.xz) = d132c8b5e433a557785745032235a5792d04edd7c249269d9a4066fb345b76955bdca71164f7b321f41f566803694d85d9cd7690fbd699daa54788572f0eb986
+Size (mate-applets-1.22.1.tar.xz) = 7602112 bytes
+SHA1 (patch-configure) = 6c3149ed460ad833c076ac370d2cdd497fb123d8
+SHA1 (patch-cpufreq_src_Makefile.in) = 60f1172449394e1079a38ea3242983e7fc17e491
+SHA1 (patch-cpufreq_src_cpufreq-monitor-cpuinfo.c) = f19ddbf7e6ad764ae14f0adabc3b4c689e338e1b
+SHA1 (patch-cpufreq_src_cpufreq-monitor-factory.c) = 7b5e992b4481af2376f17e7da1d0fe91f90dda0c
+SHA1 (patch-cpufreq_src_cpufreq-monitor-sysctl.c) = 430a6bf29c638d6cd4b4ce3e54a3bed747337712
+SHA1 (patch-cpufreq_src_cpufreq-monitor-sysctl.h) = b079bc3e40ce1f960096fcb1b4568b18d01a1121
+SHA1 (patch-cpufreq_src_cpufreq-selector.c) = b9aef12a3ef9703a35bfa350b44891d98a1eaa31
+SHA1 (patch-cpufreq_src_cpufreq-utils.c) = 2d420ee31fa114a397062463b6762020cbc6ece8

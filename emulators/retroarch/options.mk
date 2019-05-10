@@ -1,22 +1,23 @@
-# $NetBSD: options.mk,v 1.7 2018/10/06 23:44:28 nia Exp $
+# $NetBSD: options.mk,v 1.10 2019/05/08 12:51:54 nia Exp $
+
+.include "../../mk/bsd.fast.prefs.mk"
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.retroarch
 
-PKG_SUPPORTED_OPTIONS+=		sdl2 ffmpeg freetype qt5 x11 caca
-PKG_SUPPORTED_OPTIONS+=		alsa jack openal pulseaudio libusb-1
-PKG_SUPPORTED_OPTIONS+=		libxml2 # Deprecated
-PKG_SUGGESTED_OPTIONS+=		sdl2 freetype x11
+PKG_SUPPORTED_OPTIONS+=		libdrm sdl2 sixel qt5 x11 caca
+PKG_SUPPORTED_OPTIONS+=		ffmpeg freetype mbedtls
+PKG_SUPPORTED_OPTIONS+=		alsa jack openal pulseaudio
 
 .if ${OPSYS} == "Linux"
 PKG_SUPPORTED_OPTIONS+=		udev
 .endif
 
-PKG_SUGGESTED_OPTIONS.Linux+=	alsa pulseaudio udev
+PKG_SUGGESTED_OPTIONS+=		sdl2 freetype x11
+PKG_SUGGESTED_OPTIONS.Linux+=	alsa libdrm pulseaudio mbedtls udev
+PKG_SUGGESTED_OPTIONS.NetBSD+=	mbedtls
 
 PKG_OPTIONS_OPTIONAL_GROUPS+=	gl
 PKG_OPTIONS_GROUP.gl+=		opengl
-
-.include "../../mk/bsd.fast.prefs.mk"
 
 .if !empty(MACHINE_ARCH:M*arm*)
 CONFIGURE_ARGS+=		--enable-floathard
@@ -40,12 +41,32 @@ CONFIGURE_ARGS+=	--disable-neon
 .  endif
 .endif
 
+.if !empty(PKG_OPTIONS:Mlibdrm)
+CONFIGURE_ARGS+=	--enable-plain_drm
+.include "../../x11/libdrm/buildlink3.mk"
+.endif
+
+.if !empty(PKG_OPTIONS:Msixel)
+CONFIGURE_ARGS+=	--enable-sixel
+.include "../../graphics/libsixel/buildlink3.mk"
+.else
+CONFIGURE_ARGS+=	--disable-sixel
+.endif
+
+.if !empty(PKG_OPTIONS:Mmbedtls)
+CONFIGURE_ARGS+=	--enable-ssl
+.include "../../security/mbedtls/buildlink3.mk"
+.else
+CONFIGURE_ARGS+=	--disable-ssl
+.endif
+
 .if !empty(PKG_OPTIONS:Mx11)
 CONFIGURE_ARGS+=	--enable-x11
 .include "../../x11/libX11/buildlink3.mk"
 .include "../../x11/libXext/buildlink3.mk"
 .include "../../x11/libXxf86vm/buildlink3.mk"
 .include "../../x11/libXinerama/buildlink3.mk"
+.include "../../x11/libXv/buildlink3.mk"
 .include "../../x11/libxcb/buildlink3.mk"
 .include "../../x11/libxkbcommon/buildlink3.mk"
 .else
@@ -141,8 +162,11 @@ CONFIGURE_ARGS+=	--disable-pulse
 .endif
 
 .if !empty(PKG_OPTIONS:Mqt5)
-CONFIGURE_ARGS+=	--enable-qt
 .include "../../x11/qt5-qtbase/buildlink3.mk"
+# error: "You must build your code with position independent code if Qt was built with -reduce-relocations."
+CFLAGS+=		-fPIC
+CONFIGURE_ENV+=		MOC=${QTDIR}/bin/moc
+CONFIGURE_ARGS+=	--enable-qt
 .else
 CONFIGURE_ARGS+=	--disable-qt
 .endif
@@ -152,18 +176,4 @@ CONFIGURE_ARGS+=	--enable-caca
 .include "../../graphics/libcaca/buildlink3.mk"
 .else
 CONFIGURE_ARGS+=	--disable-caca
-.endif
-
-.if !empty(PKG_OPTIONS:Mlibxml2)
-CONFIGURE_ARGS+=	--enable-libxml2
-.include "../../textproc/libxml2/buildlink3.mk"
-.else
-CONFIGURE_ARGS+=	--disable-libxml2
-.endif
-
-.if !empty(PKG_OPTIONS:Mlibusb-1)
-CONFIGURE_ARGS+=	--enable-libusb
-.include "../../devel/libusb1/buildlink3.mk"
-.else
-CONFIGURE_ARGS+=	--disable-libusb
 .endif

@@ -1,4 +1,4 @@
-# $NetBSD: replace.mk,v 1.285 2018/10/17 08:22:19 jperkin Exp $
+# $NetBSD: replace.mk,v 1.289 2019/04/03 18:37:24 rillig Exp $
 #
 # Copyright (c) 2005 The NetBSD Foundation, Inc.
 # All rights reserved.
@@ -373,7 +373,7 @@ MAKEFLAGS+=			TOOLS_IGNORE.flex=
 .  elif !empty(_TOOLS_USE_PKGSRC.flex:M[yY][eE][sS])
 .    include "../../devel/flex/buildlink3.mk"
 _TOOLS_DEPENDS.flex=		# empty
-.    for _dep_ in ${BUILDLINK_API_DEPENDS.flex}
+.    for _dep_ in ${BUILDLINK_API_DEPENDS.flex} ${FLEX_REQD:S,^,flex>=,}
 _TOOLS_DEPENDS.flex+=		${_dep_}:${BUILDLINK_PKGSRCDIR.flex}
 .    endfor
 TOOLS_DEPENDS.flex?=		${_TOOLS_DEPENDS.flex}
@@ -639,7 +639,7 @@ TOOLS_PATH.openssl=		${LOCALBASE}/bin/openssl
 .endif
 
 .if !defined(TOOLS_IGNORE.patch) && !empty(_USE_TOOLS:Mpatch)
-.  if !empty(PKGPATH:Mdevel/patch)
+.  if !empty(PKGPATH:Mdevel/nbpatch)
 MAKEFLAGS+=			TOOLS_IGNORE.patch=
 .  elif !empty(_TOOLS_USE_PKGSRC.patch:M[yY][eE][sS])
 TOOLS_DEPENDS.patch?=		nbpatch-[0-9]*:../../devel/nbpatch
@@ -1105,8 +1105,7 @@ MAKEVARS+=			TOOLS_DEPENDS.ghostscript
 
 .for _t_ in ${_TOOLS.ghostscript}
 .  if !defined(TOOLS_IGNORE.${_t_}) && !empty(_USE_TOOLS:M${_t_})
-.    if !empty(PKGPATH:Mprint/ghostscript) || \
-        !empty(PKGPATH:Mprint/ghostscript-esp)
+.    if !empty(PKGPATH:Mprint/ghostscript)
 MAKEFLAGS+=		TOOLS_IGNORE.${_t_}=
 .    elif !empty(_TOOLS_USE_PKGSRC.${_t_}:M[yY][eE][sS])
 TOOLS_DEPENDS.${_t_}?=	${TOOLS_DEPENDS.ghostscript}
@@ -1135,14 +1134,14 @@ TOOLS_PATH.iceauth=		${LOCALBASE}/bin/iceauth
 .endif
 
 .if !defined(TOOLS_IGNORE.mkfontdir) && !empty(_USE_TOOLS:Mmkfontdir)
-.  if !empty(PKGPATH:Mfonts/mkfontdir)
+.  if !empty(PKGPATH:Mfonts/mkfontscale)
 MAKEFLAGS+=		TOOLS_IGNORE.mkfontdir=
 .  elif !empty(_TOOLS_USE_PKGSRC.mkfontdir:M[yY][eE][sS])
 TOOLS_CREATE+=			mkfontdir
 .    if !empty(X11_TYPE:Mnative)
 TOOLS_PATH.mkfontdir=	${X11BASE}/bin/mkfontdir
 .    else
-TOOLS_DEPENDS.mkfontdir?=	mkfontdir-[0-9]*:../../fonts/mkfontdir
+TOOLS_DEPENDS.mkfontdir?=	mkfontscale>=1.2:../../fonts/mkfontscale
 TOOLS_PATH.mkfontdir=		${LOCALBASE}/bin/mkfontdir
 .    endif
 .  endif

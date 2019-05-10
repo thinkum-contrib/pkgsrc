@@ -1,4 +1,4 @@
-# $NetBSD: u-boot.mk,v 1.12 2018/09/27 22:52:01 tnn Exp $
+# $NetBSD: u-boot.mk,v 1.16 2019/05/08 05:02:35 thorpej Exp $
 
 .include "../../sysutils/u-boot/u-boot-version.mk"
 
@@ -31,6 +31,10 @@ REPLACE_FILES.python2=	scripts/fill_scrapyard.py \
 			tools/genboardscfg.py \
 			tools/moveconfig.py
 
+.if defined(PKGREVISION) && !empty(PKGREVISION) && (${PKGREVISION} != "0")
+UBOOT_ENV+=	UBOOT_PKGREVISION=nb${PKGREVISION}
+.endif
+
 MAKE_ENV+=	${UBOOT_ENV}
 
 post-patch:
@@ -43,7 +47,7 @@ do-configure:
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} ${MAKE_PROGRAM} ${UBOOT_CONFIG}
 
 do-build:
-	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} ${MAKE_PROGRAM}
+	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} ${MAKE_PROGRAM} ${_MAKE_JOBS}
 
 do-install:
 	${INSTALL_DATA_DIR} ${DESTDIR}${PREFIX}/share/u-boot/${UBOOT_TARGET}
@@ -51,5 +55,9 @@ do-install:
 	${INSTALL_DATA} ${WRKSRC}/${bin} \
 	    ${DESTDIR}${PREFIX}/share/u-boot/${UBOOT_TARGET}
 .endfor
+.if defined(UBOOT_INSTALLBOOT_PLIST)
+	${INSTALL_DATA} ${.CURDIR}/files/${UBOOT_INSTALLBOOT_PLIST} \
+	    ${DESTDIR}${PREFIX}/share/u-boot/${UBOOT_TARGET}/installboot.plist
+.endif
 
 .include "../../lang/python/tool.mk"

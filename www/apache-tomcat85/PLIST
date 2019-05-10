@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.4 2018/03/23 13:19:13 ryoon Exp $
+@comment $NetBSD: PLIST,v 1.6 2019/03/26 20:57:51 ryoon Exp $
 share/doc/tomcat/LICENSE
 share/doc/tomcat/NOTICE
 share/doc/tomcat/RELEASE-NOTES
@@ -10,6 +10,9 @@ share/examples/tomcat/logging.properties
 share/examples/tomcat/server.xml
 share/examples/tomcat/tomcat-users.xml
 share/examples/tomcat/web.xml
+share/tomcat/BUILDING.txt
+share/tomcat/CONTRIBUTING.md
+share/tomcat/README.md
 share/tomcat/bin/bootstrap.jar
 share/tomcat/bin/catalina-tasks.xml
 share/tomcat/bin/catalina.sh
@@ -47,6 +50,7 @@ share/tomcat/lib/tomcat-dbcp.jar
 share/tomcat/lib/tomcat-i18n-es.jar
 share/tomcat/lib/tomcat-i18n-fr.jar
 share/tomcat/lib/tomcat-i18n-ja.jar
+share/tomcat/lib/tomcat-i18n-ru.jar
 share/tomcat/lib/tomcat-jdbc.jar
 share/tomcat/lib/tomcat-jni.jar
 share/tomcat/lib/tomcat-util-scan.jar
@@ -287,8 +291,6 @@ share/tomcat/webapps/examples/WEB-INF/classes/examples/FooTagExtraInfo.class
 share/tomcat/webapps/examples/WEB-INF/classes/examples/FooTagExtraInfo.java
 share/tomcat/webapps/examples/WEB-INF/classes/examples/LogTag.class
 share/tomcat/webapps/examples/WEB-INF/classes/examples/LogTag.java
-share/tomcat/webapps/examples/WEB-INF/classes/examples/ShowSource.class
-share/tomcat/webapps/examples/WEB-INF/classes/examples/ShowSource.java
 share/tomcat/webapps/examples/WEB-INF/classes/examples/ValuesTag.class
 share/tomcat/webapps/examples/WEB-INF/classes/examples/ValuesTag.java
 share/tomcat/webapps/examples/WEB-INF/classes/filters/ExampleFilter.class
@@ -561,8 +563,6 @@ share/tomcat/webapps/examples/jsp/simpletag/foo.jsp.html
 share/tomcat/webapps/examples/jsp/snp/snoop.html
 share/tomcat/webapps/examples/jsp/snp/snoop.jsp
 share/tomcat/webapps/examples/jsp/snp/snoop.jsp.html
-share/tomcat/webapps/examples/jsp/source.jsp
-share/tomcat/webapps/examples/jsp/source.jsp.html
 share/tomcat/webapps/examples/jsp/tagplugin/choose.html
 share/tomcat/webapps/examples/jsp/tagplugin/choose.jsp
 share/tomcat/webapps/examples/jsp/tagplugin/choose.jsp.html

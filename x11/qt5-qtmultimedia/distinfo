@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.9 2018/12/18 09:57:19 adam Exp $
+$NetBSD: distinfo,v 1.11 2019/04/25 19:43:16 adam Exp $
 
-SHA1 (qtmultimedia-everywhere-src-5.12.0.tar.xz) = e71c0bcab91277d3db40b1f130d3575809ca5049
-RMD160 (qtmultimedia-everywhere-src-5.12.0.tar.xz) = e56e7d38cb9ca5f3b429ff9451162b00b1b7027c
-SHA512 (qtmultimedia-everywhere-src-5.12.0.tar.xz) = b16e657c73e57a8e5588697fda0e902834df10edd52704edcb7deb74fc45054ff9840344309ba720998d8afa6a5f315ce2bd46393ff8db6492694cfce0543692
-Size (qtmultimedia-everywhere-src-5.12.0.tar.xz) = 3716764 bytes
+SHA1 (qtmultimedia-everywhere-src-5.12.3.tar.xz) = 18a9d669bc316499ebb0ef634157ed88e627702f
+RMD160 (qtmultimedia-everywhere-src-5.12.3.tar.xz) = 9888ec63ecba62b79b0c38fd5d418c97523f650b
+SHA512 (qtmultimedia-everywhere-src-5.12.3.tar.xz) = 4f10e40aaf73dda2d70502e6a1441149c2b4389e9c7de72245c850d926c3ecb57ca6b09c63d208eff4b9ec63b7f9845eb2740cd0df4e4b7eee8f51746a6d3963
+Size (qtmultimedia-everywhere-src-5.12.3.tar.xz) = 3742244 bytes

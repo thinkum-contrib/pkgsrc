@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.35 2018/11/22 11:53:33 adam Exp $
+# $NetBSD: Makefile,v 1.37 2019/04/30 17:20:23 abs Exp $
 
 PKGNAME=	${DISTNAME:S/-/-server-/}
+PKGREVISION=	1
 COMMENT=	MySQL 5, a free SQL database (server)
 
 CONFLICTS=	mysql3-server-[0-9]*
@@ -77,8 +78,8 @@ REPLACE_SH+=		mysql-test/t/long_tmpdir-master.sh
 REPLACE_SH+=		mysql-test/t/lowercase_mixed_tmpdir-master.sh
 REPLACE_SH+=		mysql-test/t/lowercase_mixed_tmpdir_innodb-master.sh
 
-CHECK_INTERPRETER_SKIP+=share/mysql/test/std_data/dtrace.d \
-			share/mysql/test/suite/opt_trace/validate_json.py
+CHECK_INTERPRETER_SKIP+=	share/mysql/test/std_data/dtrace.d
+CHECK_INTERPRETER_SKIP+=	share/mysql/test/suite/opt_trace/validate_json.py
 
 # Replace interpreter without pulling in Python dependecy
 # Update when PYTHON_VERSION_DEFAULT changes!

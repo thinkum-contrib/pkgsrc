@@ -1,7 +1,7 @@
-# $NetBSD: options.mk,v 1.4 2018/03/19 09:28:04 adam Exp $
+# $NetBSD: options.mk,v 1.7 2019/04/29 03:28:39 dholland Exp $
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.py-uwsgi
-PKG_SUPPORTED_OPTIONS=	debug openssl pcre uuid yaml
+PKG_SUPPORTED_OPTIONS=	debug openssl pcre uuid uwsgi-sse_offload yaml
 PKG_SUGGESTED_OPTIONS+=	libxml2 openssl pcre
 
 PKG_OPTIONS_OPTIONAL_GROUPS+=	json xml
@@ -31,7 +31,6 @@ UWSGI_JSON=			json=jansson
 .elif !empty(PKG_OPTIONS:Myajl)
 .include "../../devel/yajl/buildlink3.mk"
 UWSGI_JSON=			json=yajl
-BROKEN=		The yajl option requires a yajl.pc file which that package doesn't have.
 .else
 UWSGI_JSON=			json=false
 .endif
@@ -48,6 +47,21 @@ UWSGI_SSL=                     ssl=false
 UWSGI_PCRE=                    pcre=true
 .else
 UWSGI_PCRE=                    pcre=false
+.endif
+
+.if !empty(PKG_OPTIONS:Muwsgi-sse_offload)
+SSE_REVISION=			8253573a0db1c7d7b9d968d55669e70e40355bed
+SSE_DISTNAME=			${SSE_REVISION}.zip
+SITES.${SSE_DISTNAME}=		https://github.com/unbit/uwsgi-sse-offload/archive/
+DISTFILES+=			${SSE_DISTNAME}
+UWSGI_SSE=			sse_offload=true
+INSTALL_ENV+=			UWSGI_EMBED_PLUGINS=sse_offload
+
+post-extract: post-extract-sse
+post-extract-sse:
+	mv ${WRKDIR}/uwsgi-sse-offload-${SSE_REVISION} ${WRKSRC}/plugins/sse_offload
+.else
+UWSGI_SSE=			sse_offload=false
 .endif
 
 .if !empty(PKG_OPTIONS:Muuid)

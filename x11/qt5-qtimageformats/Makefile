@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.34 2018/12/18 09:57:18 adam Exp $
+# $NetBSD: Makefile,v 1.36 2019/04/25 19:43:16 adam Exp $
 
 DISTNAME=	qtimageformats-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtimageformats-${QTVERSION}

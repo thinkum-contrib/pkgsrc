@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.161 2018/12/09 18:52:50 adam Exp $
+# $NetBSD: Makefile,v 1.166 2019/05/05 22:49:53 ryoon Exp $
 
 DISTNAME=		gnome-applets-2.32.1.1
-PKGREVISION=		64
+PKGREVISION=		67
 CATEGORIES=		x11 gnome
 MASTER_SITES=		${MASTER_SITE_GNOME:=sources/gnome-applets/2.32/}
 EXTRACT_SUFX=		.tar.bz2
@@ -15,7 +15,7 @@ USE_TOOLS+=		gmake intltool msgfmt pkg-config
 USE_PKGLOCALEDIR=	yes
 USE_LIBTOOL=		yes
 
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # py-ORBit via py-gnome2
+PYTHON_VERSIONS_INCOMPATIBLE=	36 37 # py-ORBit via py-gnome2
 
 .include "options.mk"
 

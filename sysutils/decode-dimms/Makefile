@@ -1,9 +1,11 @@
-# $NetBSD: Makefile,v 1.11 2018/12/28 21:23:53 pgoyette Exp $
+# $NetBSD: Makefile,v 1.14 2019/04/08 00:16:06 pgoyette Exp $
 
 # no Release yet
-GIT_COMMIT=	de9a30178603ae7ebdcaf6ed3e5880e0061b6f51
+_DATE=		20190405
+PKGREVISION=	1
+GIT_COMMIT=	cea0000657a2dde506df91ecce6b18ac2d7224db
 DISTNAME=	i2c-tools-${GIT_COMMIT}
-PKGNAME=	decode-dimms-0.0.20181123
+PKGNAME=	decode-dimms-0.0.${_DATE}
 CATEGORIES=	sysutils
 MASTER_SITES=	https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/snapshot/
 
@@ -18,7 +20,7 @@ REPLACE_PERL=	eeprom/decode-dimms
 SUBST_CLASSES+=		rev
 SUBST_STAGE.rev=	pre-patch
 SUBST_FILES.rev=        eeprom/decode-dimms
-SUBST_SED.rev=          -e 's/^$$revision = .*;/$$revision = "20181123-${GIT_COMMIT}";/'
+SUBST_SED.rev=          -e 's/^$$revision = .*;/$$revision = "${_DATE}-${GIT_COMMIT}";/'
 SUBST_SED.rev+=		-e '/^$$revision =~/d'
 
 NO_BUILD=	yes

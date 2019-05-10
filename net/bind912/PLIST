@@ -1,8 +1,9 @@
-@comment $NetBSD: PLIST,v 1.1 2018/09/09 13:16:01 taca Exp $
+@comment $NetBSD: PLIST,v 1.3 2019/04/30 02:46:16 taca Exp $
 bin/arpaname
 bin/bind9-config
 bin/delv
 bin/dig
+${PLIST.dnstap}bin/dnstap-read
 bin/host
 bin/isc-config.sh
 bin/mdig
@@ -35,6 +36,7 @@ include/dns/dns64.h
 include/dns/dnsrps.h
 include/dns/dnssec.h
 include/dns/dnstap.h
+${PLIST.dnstap}include/dns/dnstap.pb-c.h
 include/dns/ds.h
 include/dns/dsdigest.h
 include/dns/dyndb.h
@@ -281,6 +283,7 @@ man/man1/arpaname.1
 man/man1/bind9-config.1
 man/man1/delv.1
 man/man1/dig.1
+${PLIST.dnstap}man/man1/dnstap-read.1
 man/man1/host.1
 man/man1/isc-config.sh.1
 man/man1/mdig.1

@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.2 2018/12/19 15:47:12 bsiegert Exp $
+# $NetBSD: Makefile,v 1.6 2019/04/16 18:41:21 bsiegert Exp $
 
 DISTNAME=	go-tocss-0.5.0
 MASTER_SITES=	${MASTER_SITE_GITHUB:=bep/}
-PKGREVISION=	1
+PKGREVISION=	5
 CATEGORIES=	www
 GITHUB_PROJECT=	go-tocss
 GITHUB_TAG=	v${PKGVERSION_NOREV}

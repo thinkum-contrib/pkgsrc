@@ -1,7 +1,6 @@
-$NetBSD: distinfo,v 1.2 2019/01/05 19:33:24 bsiegert Exp $
+$NetBSD: distinfo,v 1.4 2019/03/19 22:42:39 leot Exp $
 
-SHA1 (nnn-2.2.tar.gz) = a20b8a660bb8843ce8b85e4c9ee1ea01707481d4
-RMD160 (nnn-2.2.tar.gz) = 29231e10d4de0c8d04163cc94eae8fd0573fa381
-SHA512 (nnn-2.2.tar.gz) = 0144c9f9c29c2ff3818cf14532354e8182f872580ce7c5a06ab8595b4354edc3a4ede3afc667cd0561a3de4d2f34965a9c057f7ac9555d86feff83abaaca5793
-Size (nnn-2.2.tar.gz) = 50955 bytes
-SHA1 (patch-Makefile) = df888894fd091e6a57ceb46aeb3443a369e1c79d
+SHA1 (nnn-2.4.tar.gz) = 3134355c9f283fef98a175c1909f6bdec8c37cff
+RMD160 (nnn-2.4.tar.gz) = 14946e35fdae44e610ff6cfb4c15a39a40d738a0
+SHA512 (nnn-2.4.tar.gz) = b285b14bb73e81a8480b19be7adf0b6efebc632cae82cddf9f040e644dd07dfef4e5c27df2e318aaa21eb1ac4d9e20b6d89f66b8e9b481160bc49f1302806722
+Size (nnn-2.4.tar.gz) = 62510 bytes

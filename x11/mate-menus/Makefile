@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.9 2018/11/14 22:22:47 kleink Exp $
+# $NetBSD: Makefile,v 1.11 2019/04/25 07:33:31 maya Exp $
 
-PKGREVISION= 2
+PKGREVISION= 1
 .include "../../meta-pkgs/mate/Makefile.common"
 
 DISTNAME=	mate-menus-${VERSION}
@@ -11,8 +11,7 @@ COMMENT=	Implementation of the desktop menu specification for MATE
 PKGCONFIG_OVERRIDE+=	libmenu/libmate-menu.pc.in
 
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR}
-
-.include "options.mk"
+CONFIGURE_ARGS+=	--enable-introspection
 
 INSTALL_MAKE_FLAGS+=	sysconfdir=${PREFIX}/share/examples/mate-menus
 
@@ -23,4 +22,5 @@ CONF_FILES+=	${PREFIX}/share/examples/mate-menus/xdg/menus/mate-settings.menu \
 		${PKG_SYSCONFDIR}/xdg/menus/mate-settings.menu
 
 .include "../../devel/glib2/buildlink3.mk"
+.include "../../devel/gobject-introspection/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

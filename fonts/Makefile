@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.322 2019/01/10 14:58:10 tnn Exp $
+# $NetBSD: Makefile,v 1.326 2019/05/02 22:11:32 wiz Exp $
 #
 
 COMMENT=	Fonts
@@ -18,16 +18,6 @@ SUBDIR+=	SDL2_ttf
 SUBDIR+=	TextFonts-ttf
 SUBDIR+=	Xft2
 SUBDIR+=	Xg
-SUBDIR+=	acroread7-chsfont
-SUBDIR+=	acroread7-chtfont
-SUBDIR+=	acroread7-font-share
-SUBDIR+=	acroread7-jpnfont
-SUBDIR+=	acroread7-korfont
-SUBDIR+=	acroread9-chsfont
-SUBDIR+=	acroread9-chtfont
-SUBDIR+=	acroread9-font-share
-SUBDIR+=	acroread9-jpnfont
-SUBDIR+=	acroread9-korfont
 SUBDIR+=	adobe-cidfonts
 SUBDIR+=	adobe-cmaps
 SUBDIR+=	ae-mono-ttf
@@ -168,7 +158,6 @@ SUBDIR+=	mglfonts
 SUBDIR+=	migu-ttf
 SUBDIR+=	misaki-fonts
 SUBDIR+=	mkfontalias
-SUBDIR+=	mkfontdir
 SUBDIR+=	mkfontscale
 SUBDIR+=	mminstance
 SUBDIR+=	monafonts
@@ -185,6 +174,7 @@ SUBDIR+=	noto-ttf
 SUBDIR+=	ohruri-ttf
 SUBDIR+=	otf2bdf
 SUBDIR+=	oto
+SUBDIR+=	overpass
 SUBDIR+=	oxygen-fonts
 SUBDIR+=	p5-Font-AFM
 SUBDIR+=	p5-Font-FreeType
@@ -196,6 +186,7 @@ SUBDIR+=	pixel-sagas-startrek
 SUBDIR+=	profont
 SUBDIR+=	proggy-fonts
 SUBDIR+=	ps2pkm
+SUBDIR+=	public-sans
 SUBDIR+=	py-TTFQuery
 SUBDIR+=	py-fonttools
 SUBDIR+=	raleway-ttf

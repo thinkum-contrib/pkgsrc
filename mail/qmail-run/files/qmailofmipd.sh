@@ -1,6 +1,6 @@
 #!@RCD_SCRIPTS_SHELL@
 #
-# $NetBSD: qmailofmipd.sh,v 1.23 2018/12/16 05:32:07 schmonz Exp $
+# $NetBSD: qmailofmipd.sh,v 1.25 2019/03/21 15:33:06 schmonz Exp $
 #
 # @PKGNAME@ script to control ofmipd (SMTP submission service).
 #
@@ -11,12 +11,12 @@
 name="qmailofmipd"
 
 # User-settable rc.conf variables and their default values:
-: ${qmailofmipd_postenv:="SSL_UID=$(@ID@ -u @UCSPI_SSL_USER@) SSL_GID=$(@ID@ -g @UCSPI_SSL_GROUP@)"}
+: ${qmailofmipd_postenv:=""}
 : ${qmailofmipd_datalimit:="360000000"}
 : ${qmailofmipd_pretcpserver:=""}
 : ${qmailofmipd_tcpserver:="@PREFIX@/bin/sslserver"}
 : ${qmailofmipd_tcpflags:="-ne -vRl0"}
-: ${qmailofmipd_tcphost:="0"}
+: ${qmailofmipd_tcphost:=":0"}
 : ${qmailofmipd_tcpport:="587"}
 : ${qmailofmipd_tcprules:="@PKG_SYSCONFDIR@/control/tcprules/ofmip"}
 : ${qmailofmipd_autocdb:="YES"}
@@ -32,6 +32,7 @@ name="qmailofmipd"
 : ${qmailofmipd_tls_dhparams:="@PKG_SYSCONFDIR@/control/dh2048.pem"}
 : ${qmailofmipd_tls_cert:="@PKG_SYSCONFDIR@/control/servercert.pem"}
 : ${qmailofmipd_tls_key:=""}
+: ${qmailofmipd_tls_ciphers:=""}
 
 if [ -f /etc/rc.subr ]; then
 	. /etc/rc.subr
@@ -69,14 +70,19 @@ qmailofmipd_configure_tls() {
 }
 
 qmailofmipd_disable_tls() {
-	qmailofmipd_postenv="${qmailofmipd_postenv} DISABLETLS=1"
+	qmailofmipd_postenv="DISABLETLS=1 ${qmailofmipd_postenv}"
 }
 
 qmailofmipd_enable_tls() {
-	qmailofmipd_postenv="${qmailofmipd_postenv} DHFILE=${qmailofmipd_tls_dhparams}"
-	qmailofmipd_postenv="${qmailofmipd_postenv} CERTFILE=${qmailofmipd_tls_cert}"
+	qmailofmipd_postenv="SSL_UID=$(@ID@ -u @UCSPI_SSL_USER@) ${qmailofmipd_postenv}"
+	qmailofmipd_postenv="SSL_GID=$(@ID@ -g @UCSPI_SSL_GROUP@) ${qmailofmipd_postenv}"
+	qmailofmipd_postenv="DHFILE=${qmailofmipd_tls_dhparams} ${qmailofmipd_postenv}"
+	qmailofmipd_postenv="CERTFILE=${qmailofmipd_tls_cert} ${qmailofmipd_postenv}"
 	if [ -f "${qmailofmipd_tls_key}" ]; then
-		qmailofmipd_postenv="${qmailofmipd_postenv} KEYFILE=${qmailofmipd_tls_key}"
+		qmailofmipd_postenv="KEYFILE=${qmailofmipd_tls_key} ${qmailofmipd_postenv}"
+	fi
+	if [ -n "${qmailofmipd_tls_ciphers}" ]; then
+		qmailofmipd_postenv="CIPHERS=${qmailofmipd_tls_ciphers} ${qmailofmipd_postenv}"
 	fi
 }
 
@@ -134,7 +140,7 @@ qmailofmipd_needcdb() {
 }
 
 qmailofmipd_cdb() {
-	@ECHO@ "Reloading ${qmailofmipd_tcprules}"
+	@ECHO@ "Reloading ${qmailofmipd_tcprules}."
 	@PREFIX@/bin/tcprules ${qmailofmipd_tcprules}.cdb ${qmailofmipd_tcprules}.tmp < ${qmailofmipd_tcprules}
 	@CHMOD@ 644 ${qmailofmipd_tcprules}.cdb
 }

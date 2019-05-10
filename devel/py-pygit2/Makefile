@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.4 2018/12/01 20:23:35 wiz Exp $
+# $NetBSD: Makefile,v 1.7 2019/05/01 07:23:53 wiz Exp $
 
-DISTNAME=	pygit2-0.27.2
+DISTNAME=	pygit2-0.28.1
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_PYPI:=p/pygit2/}
@@ -13,8 +13,14 @@ LICENSE=	gnu-gpl-v2
 DEPENDS+=	${PYPKGPREFIX}-cffi-[0-9]*:../../devel/py-cffi
 DEPENDS+=	${PYPKGPREFIX}-cparser-[0-9]*:../../devel/py-cparser
 DEPENDS+=	${PYPKGPREFIX}-six-[0-9]*:../../lang/py-six
+TEST_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
 
 USE_LANGUAGES=	c
+
+# needs 'make install'
+# 20 failed in 0.28.0
+do-test:
+	cd ${WRKSRC}/test && pytest-${PYVERSSUFFIX}
 
 BUILDLINK_API_DEPENDS.libgit2+=	libgit2>=0.27.0
 .include "../../devel/libgit2/buildlink3.mk"

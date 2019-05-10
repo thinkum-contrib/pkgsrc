@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.53 2018/12/09 18:52:06 adam Exp $
+# $NetBSD: Makefile,v 1.55 2019/04/03 00:32:59 ryoon Exp $
 
-PKGREVISION= 8
+PKGREVISION= 1
 .include "Makefile.common"
 
 # introspection Makefile uses GNUisms

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.4 2018/12/21 06:21:20 wen Exp $
+# $NetBSD: Makefile,v 1.6 2019/04/07 13:04:10 wen Exp $
 
 CATEGORIES=	devel
 
@@ -9,9 +9,10 @@ LICENSE=	gnu-gpl-v3
 
 DEPENDS+=	R-htmltools-[0-9]*:../../textproc/R-htmltools
 DEPENDS+=	R-base64enc-[0-9]*:../../converters/R-base64enc
+DEPENDS+=	R-jsonlite>=0:../../textproc/R-jsonlite
 
 R_PKGNAME=	repr
-R_PKGVER=	0.18
+R_PKGVER=	0.19.2
 
 USE_LANGUAGES=	# none
 

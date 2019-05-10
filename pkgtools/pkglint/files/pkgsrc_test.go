@@ -44,14 +44,14 @@ func (s *Suite) Test_Pkgsrc_parseSuggestedUpdates(c *check.C) {
 	todo := G.Pkgsrc.parseSuggestedUpdates(lines)
 
 	c.Check(todo, check.DeepEquals, []SuggestedUpdate{
-		{lines.Lines[5], "CSP", "0.34", ""},
-		{lines.Lines[6], "freeciv-client", "2.5.0", "(urgent)"}})
+		{lines.Lines[5].Location, "CSP", "0.34", ""},
+		{lines.Lines[6].Location, "freeciv-client", "2.5.0", "(urgent)"}})
 }
 
 func (s *Suite) Test_Pkgsrc_checkToplevelUnusedLicenses(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupPkgsrc()
+	t.SetUpPkgsrc()
 	t.CreateFileLines("mk/misc/category.mk")
 	t.CreateFileLines("licenses/2-clause-bsd")
 	t.CreateFileLines("licenses/gnu-gpl-v3")
@@ -68,15 +68,61 @@ func (s *Suite) Test_Pkgsrc_checkToplevelUnusedLicenses(c *check.C) {
 		"",
 		".include \"../mk/misc/category.mk\"")
 
-	t.SetupPackage("category/package",
+	t.SetUpPackage("category/package",
 		"LICENSE=\t2-clause-bsd")
 
-	G.Main("pkglint", "-r", "-Cglobal", t.File("."))
+	t.Main("-r", "-Cglobal", t.File("."))
 
 	t.CheckOutputLines(
-		"WARN: ~/licenses/gnu-gpl-v2: This license seems to be unused.", // Added by Tester.SetupPkgsrc
+		"WARN: ~/licenses/gnu-gpl-v2: This license seems to be unused.", // Added by Tester.SetUpPkgsrc
 		"WARN: ~/licenses/gnu-gpl-v3: This license seems to be unused.",
 		"0 errors and 2 warnings found.")
+}
+
+func (s *Suite) Test_Pkgsrc_loadUntypedVars(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPkgsrc()
+	t.SetUpTool("echo", "ECHO", AtRunTime)
+	t.CreateFileLines("mk/infra.mk",
+		MkRcsID,
+		"#",
+		"# System-provided variables:",
+		"#",
+		"# DOCUMENTED",
+		"#\tThis variable is not actually defined but still documented.",
+		"#\tThis may be because its definition is evaluated dynamically.",
+		"",
+		".if !defined(INFRA_MK)",
+		"INFRA_MK:=",
+		"",
+		"UNTYPED.one=\tone",
+		"UNTYPED.two=\ttwo",
+		"ECHO=\t\techo",
+		"_UNTYPED=\tinfrastructure only",
+		".for p in param",
+		"PARAMETERIZED.${p}=\tparameterized",
+		"INDIRECT_${p}=\tindirect",
+		".endfor",
+		"#COMMENTED=\tcommented",
+		".endif")
+	t.FinishSetUp()
+
+	mklines := t.NewMkLines("filename.mk",
+		MkRcsID,
+		"",
+		"do-build:",
+		"\t: ${INFRA_MK} ${UNTYPED.three} ${ECHO}",
+		"\t: ${_UNTYPED} ${PARAMETERIZED.param}",
+		"\t: ${INDIRECT_param}",
+		"\t: ${DOCUMENTED} ${COMMENTED}")
+
+	mklines.Check()
+
+	t.CheckOutputLines(
+		"WARN: filename.mk:4: INFRA_MK is used but not defined.",
+		"WARN: filename.mk:5: _UNTYPED is used but not defined.",
+		"WARN: filename.mk:6: INDIRECT_param is used but not defined.")
 }
 
 func (s *Suite) Test_Pkgsrc_loadTools(c *check.C) {
@@ -124,7 +170,7 @@ func (s *Suite) Test_Pkgsrc_loadTools(c *check.C) {
 	t.DisableTracing()
 
 	t.CheckOutputLines(
-		"TRACE: + (*Tools).Trace(\"Pkgsrc\")",
+		"TRACE: + (*Tools).Trace()",
 		"TRACE: 1   tool bzcat:::Nowhere",
 		"TRACE: 1   tool bzip2:::Nowhere",
 		"TRACE: 1   tool chown:CHOWN::Nowhere",
@@ -133,35 +179,55 @@ func (s *Suite) Test_Pkgsrc_loadTools(c *check.C) {
 		"TRACE: 1   tool false:FALSE:var:AtRunTime",
 		"TRACE: 1   tool gawk:AWK::Nowhere",
 		"TRACE: 1   tool m4:::AfterPrefsMk",
-		"TRACE: 1   tool msgfmt:::Nowhere",
+		"TRACE: 1   tool msgfmt:::AtRunTime",
 		"TRACE: 1   tool mv:MV::AtRunTime",
 		"TRACE: 1   tool pwd:PWD::AfterPrefsMk",
-		"TRACE: 1   tool strip:::Nowhere",
+		"TRACE: 1   tool strip:::AtRunTime",
 		"TRACE: 1   tool test:TEST:var:AfterPrefsMk",
 		"TRACE: 1   tool true:TRUE:var:AfterPrefsMk",
-		"TRACE: - (*Tools).Trace(\"Pkgsrc\")")
+		"TRACE: - (*Tools).Trace()")
 }
 
 // As a side-benefit, loadTools also loads the _BUILD_DEFS.
 func (s *Suite) Test_Pkgsrc_loadTools__BUILD_DEFS(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupTool("echo", "ECHO", AtRunTime)
-	pkg := t.SetupPackage("category/package",
+	t.SetUpTool("echo", "ECHO", AtRunTime)
+	pkg := t.SetUpPackage("category/package",
 		"pre-configure:",
 		"\t@${ECHO} ${PKG_SYSCONFDIR} ${VARBASE}")
 	t.CreateFileLines("mk/bsd.pkg.mk",
 		MkRcsID,
 		"_BUILD_DEFS+=\tPKG_SYSCONFBASEDIR PKG_SYSCONFDIR")
-	G.Pkgsrc.LoadInfrastructure()
+	t.CreateFileLines("mk/defaults/mk.conf",
+		MkRcsID,
+		"",
+		"VARBASE=\t\t/var/pkg",
+		"PKG_SYSCONFBASEDIR=\t/usr/pkg/etc",
+		"PKG_SYSCONFDIR=\t/usr/pkg/etc")
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
 	c.Check(G.Pkgsrc.IsBuildDef("PKG_SYSCONFDIR"), equals, true)
 	c.Check(G.Pkgsrc.IsBuildDef("VARBASE"), equals, false)
 
-	// FIXME: There should be a warning for VARBASE, but G.Pkgsrc.UserDefinedVars
-	// does not contain anything at mklinechecker.go:/UserDefinedVars/.
+	t.CheckOutputLines(
+		"WARN: ~/category/package/Makefile:21: " +
+			"The user-defined variable VARBASE is used but not added to BUILD_DEFS.")
+}
+
+func (s *Suite) Test_Pkgsrc_loadDocChanges__not_found(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPkgsrc()
+	t.Remove("doc/CHANGES-2018")
+	t.Remove("doc/TODO")
+	t.Remove("doc")
+
+	t.ExpectFatal(
+		t.FinishSetUp,
+		"FATAL: ~/doc: Cannot be read for loading the package changes.")
 }
 
 func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile(c *check.C) {
@@ -184,31 +250,25 @@ func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile(c *check.C) {
 	changes := G.Pkgsrc.loadDocChangesFromFile(t.File("doc/CHANGES-2018"))
 
 	c.Assert(len(changes), equals, 7)
-	c.Check(*changes[0], equals, Change{changes[0].Line, "Added", "category/package", "1.0", "author1", "2015-01-01"})
-	c.Check(*changes[1], equals, Change{changes[1].Line, "Updated", "category/package", "1.5", "author2", "2018-01-02"})
-	c.Check(*changes[2], equals, Change{changes[2].Line, "Renamed", "category/package", "", "author3", "2018-01-03"})
-	c.Check(*changes[3], equals, Change{changes[3].Line, "Moved", "category/package", "", "author4", "2018-01-04"})
-	c.Check(*changes[4], equals, Change{changes[4].Line, "Removed", "category/package", "", "author5", "2018-01-09"})
-	c.Check(*changes[5], equals, Change{changes[5].Line, "Removed", "category/package", "", "author6", "2018-01-06"})
-	c.Check(*changes[6], equals, Change{changes[6].Line, "Downgraded", "category/package", "1.2", "author7", "2018-01-07"})
+	c.Check(*changes[0], equals, Change{changes[0].Location,
+		"Added", "category/package", "1.0", "author1", "2015-01-01"})
+	c.Check(*changes[1], equals, Change{changes[1].Location,
+		"Updated", "category/package", "1.5", "author2", "2018-01-02"})
+	c.Check(*changes[2], equals, Change{changes[2].Location,
+		"Renamed", "category/package", "", "author3", "2018-01-03"})
+	c.Check(*changes[3], equals, Change{changes[3].Location,
+		"Moved", "category/package", "", "author4", "2018-01-04"})
+	c.Check(*changes[4], equals, Change{changes[4].Location,
+		"Removed", "category/package", "", "author5", "2018-01-09"})
+	c.Check(*changes[5], equals, Change{changes[5].Location,
+		"Removed", "category/package", "", "author6", "2018-01-06"})
+	c.Check(*changes[6], equals, Change{changes[6].Location,
+		"Downgraded", "category/package", "1.2", "author7", "2018-01-07"})
 
 	t.CheckOutputLines(
 		"WARN: ~/doc/CHANGES-2018:1: Year 2015 for category/package does not match the filename ~/doc/CHANGES-2018.",
-		"WARN: ~/doc/CHANGES-2018:6: Date 2018-01-06 for category/package is earlier than 2018-01-09 for category/package.",
+		"WARN: ~/doc/CHANGES-2018:6: Date 2018-01-06 for category/package is earlier than 2018-01-09 in line 5.",
 		"WARN: ~/doc/CHANGES-2018:12: Unknown doc/CHANGES line: \tAdded another [new package]")
-}
-
-func (s *Suite) Test_Pkgsrc_loadDocChanges__not_found(c *check.C) {
-	t := s.Init(c)
-
-	t.SetupPkgsrc()
-	t.Remove("doc/CHANGES-2018")
-	t.Remove("doc/TODO")
-	t.Remove("doc")
-
-	t.ExpectFatal(
-		G.Pkgsrc.loadDocChanges,
-		"FATAL: ~/doc: Cannot be read for loading the package changes.")
 }
 
 func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__not_found(c *check.C) {
@@ -219,31 +279,97 @@ func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__not_found(c *check.C) {
 		"FATAL: ~/doc/CHANGES-2018: Cannot be read.")
 }
 
-func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__wip(c *check.C) {
+// Since package authors for pkgsrc-wip cannot necessarily commit to
+// main pkgsrc, don't warn about unsorted doc/CHANGES lines.
+// Only pkgsrc main committers can fix these.
+func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__wip_suppresses_warnings(c *check.C) {
 	t := s.Init(c)
 
-	pkg := t.SetupPackage("wip/package",
-		"DISTNAME=\tpackage-1.11",
-		"CATEGORIES=\tlocal")
+	t.SetUpPackage("wip/package")
+	t.CreateFileLines("doc/CHANGES-2018",
+		RcsID,
+		"",
+		"Changes to the packages collection and infrastructure in 2018:",
+		"",
+		"\tUpdated sysutils/checkperms to 1.10 [rillig 2018-01-05]",
+		"\tUpdated sysutils/checkperms to 1.11 [rillig 2018-01-01]")
+
+	t.Main(t.File("wip/package"))
+
+	t.CheckOutputLines(
+		"Looks fine.")
+}
+
+func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__wrong_indentation(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package")
+	t.CreateFileLines("doc/CHANGES-2018",
+		RcsID,
+		"",
+		"Changes to the packages collection and infrastructure in 2018:",
+		"",
+		"        Updated sysutils/checkperms to 1.10 [rillig 2018-01-05]",
+		"    \tUpdated sysutils/checkperms to 1.11 [rillig 2018-01-01]")
+
+	t.Main(t.File("category/package"))
+
+	t.CheckOutputLines(
+		"WARN: ~/doc/CHANGES-2018:5: Package changes should be indented using a single tab, not \"        \".",
+		"WARN: ~/doc/CHANGES-2018:6: Package changes should be indented using a single tab, not \"    \\t\".",
+		"0 errors and 2 warnings found.",
+		"(Run \"pkglint -e\" to show explanations.)")
+}
+
+// Once or twice in a decade, changes to the pkgsrc infrastructure are also
+// documented in doc/CHANGES. These entries typically span multiple lines.
+func (s *Suite) Test_Pkgsrc_loadDocChangesFromFile__infrastructure(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpPackage("category/package")
+	t.CreateFileLines("doc/CHANGES-2018",
+		RcsID,
+		"",
+		"Changes to the packages collection and infrastructure in 2018:",
+		"",
+		"\tmk/bsd.pkg.mk: Added new framework for handling packages",
+		"\t\twith multiple MASTER_SITES while fetching the main",
+		"\t\tdistfile directly from GitHub [rillig 2018-01-01]",
+		"\tmk/bsd.pkg.mk: Another infrastructure change [rillig 2018-01-02]")
+
+	t.Main(t.File("category/package"))
+
+	// For pkglint's purpose, the infrastructure entries are simply ignored
+	// since they do not belong to a single package.
+	t.CheckOutputLines(
+		"Looks fine.")
+}
+
+func (s *Suite) Test_Pkgsrc_parseSuggestedUpdates__wip(c *check.C) {
+	t := s.Init(c)
+
+	pkg := t.SetUpPackage("wip/package",
+		"DISTNAME=\tpackage-1.11")
 	t.CreateFileLines("wip/TODO",
 		RcsID,
 		"",
 		"Suggested package updates",
 		"",
 		"\to package-1.13 [cool new features]")
-	G.Pkgsrc.LoadInfrastructure()
+	t.FinishSetUp()
 
 	G.Check(pkg)
 
 	t.CheckOutputLines(
-		"WARN: ~/wip/package/Makefile:3: This package should be updated to 1.13 ([cool new features]).")
+		"WARN: ~/wip/package/Makefile:3: " +
+			"This package should be updated to 1.13 ([cool new features]).")
 }
 
 func (s *Suite) Test_Pkgsrc__deprecated(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupTool("echo", "ECHO", AtRunTime)
-	t.SetupVartypes()
+	t.SetUpTool("echo", "ECHO", AtRunTime)
+	t.SetUpVartypes()
 	G.Pkgsrc.initDeprecatedVars()
 	mklines := t.NewMkLines("Makefile",
 		MkRcsID,
@@ -254,9 +380,12 @@ func (s *Suite) Test_Pkgsrc__deprecated(c *check.C) {
 	mklines.Check()
 
 	t.CheckOutputLines(
-		"WARN: Makefile:2: Definition of USE_PERL5 is deprecated. Use USE_TOOLS+=perl or USE_TOOLS+=perl:run instead.",
-		"WARN: Makefile:3: Definition of SUBST_POSTCMD.class is deprecated. Has been removed, as it seemed unused.",
-		"WARN: Makefile:4: Use of \"PKG_JVM\" is deprecated. Use PKG_DEFAULT_JVM instead.")
+		"WARN: Makefile:2: Definition of USE_PERL5 is deprecated. "+
+			"Use USE_TOOLS+=perl or USE_TOOLS+=perl:run instead.",
+		"WARN: Makefile:3: Definition of SUBST_POSTCMD.class is deprecated. "+
+			"Has been removed, as it seemed unused.",
+		"WARN: Makefile:4: Use of \"PKG_JVM\" is deprecated. "+
+			"Use PKG_DEFAULT_JVM instead.")
 }
 
 func (s *Suite) Test_Pkgsrc_ListVersions__no_basedir(c *check.C) {
@@ -313,7 +442,7 @@ func (s *Suite) Test_Pkgsrc__caching(c *check.C) {
 	c.Check(cached, equals, "../../lang/python27")
 }
 
-func (s *Suite) Test_Pkgsrc_Latest__multi(c *check.C) {
+func (s *Suite) Test_Pkgsrc_Latest__multiple_candidates(c *check.C) {
 	t := s.Init(c)
 
 	t.CreateFileLines("lang/Makefile")
@@ -357,6 +486,50 @@ func (s *Suite) Test_Pkgsrc_ListVersions__postgresql(c *check.C) {
 		"postgresql97",
 		"postgresql10",
 		"postgresql11"})
+}
+
+func (s *Suite) Test_Pkgsrc_ListVersions__ensure_transitive(c *check.C) {
+	names := []string{
+		"base",
+		"base0",
+		"base000",
+		"base-client",
+		"base1",
+		"base01",
+		"base-client1",
+		"base5",
+		"base10"}
+
+	keys := make(map[string]int)
+	for _, name := range names {
+		if m, _, versionStr := match2(name, `^(\D+)(\d+)$`); m {
+			keys[name] = toInt(versionStr, 0)
+		}
+	}
+
+	less := func(a, b string) bool {
+		if keyI, keyJ := keys[a], keys[b]; keyI != keyJ {
+			return keyI < keyJ
+		}
+		return naturalLess(a, b)
+	}
+
+	test := func(i int, j int) {
+		actual := less(names[i], names[j])
+		expected := i < j
+		if actual != expected {
+			c.Check(
+				[]interface{}{names[i], ifelseStr(actual, "<", "!<"), names[j]},
+				check.DeepEquals,
+				[]interface{}{names[i], ifelseStr(expected, "<", "!<"), names[j]})
+		}
+	}
+
+	for i := range names {
+		for j := range names {
+			test(i, j)
+		}
+	}
 }
 
 func (s *Suite) Test_Pkgsrc_ListVersions__numeric_multiple_numbers(c *check.C) {
@@ -417,9 +590,12 @@ func (s *Suite) Test_Pkgsrc_loadPkgOptions(c *check.C) {
 		"===== Merge conflict",
 		">>>>> Merge conflict")
 
-	t.ExpectFatal(
-		G.Pkgsrc.loadPkgOptions,
-		"FATAL: ~/mk/defaults/options.description:2: Unknown line format: <<<<< Merge conflict")
+	G.Pkgsrc.loadPkgOptions()
+
+	t.CheckOutputLines(
+		"ERROR: ~/mk/defaults/options.description:2: Invalid line format: <<<<< Merge conflict",
+		"ERROR: ~/mk/defaults/options.description:3: Invalid line format: ===== Merge conflict",
+		"ERROR: ~/mk/defaults/options.description:4: Invalid line format: >>>>> Merge conflict")
 }
 
 func (s *Suite) Test_Pkgsrc_loadTools__no_tools_found(c *check.C) {
@@ -447,10 +623,10 @@ func (s *Suite) Test_Pkgsrc_loadTools__no_tools_found(c *check.C) {
 func (s *Suite) Test_Pkgsrc_VariableType(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupVartypes()
+	t.SetUpVartypes()
 
-	checkType := func(varname string, vartype string) {
-		actualType := G.Pkgsrc.VariableType(varname)
+	test := func(varname string, vartype string) {
+		actualType := G.Pkgsrc.VariableType(nil, varname)
 		if vartype == "" {
 			c.Check(actualType, check.IsNil)
 		} else {
@@ -460,34 +636,34 @@ func (s *Suite) Test_Pkgsrc_VariableType(c *check.C) {
 		}
 	}
 
-	checkType("_PERL5_PACKLIST_AWK_STRIP_DESTDIR", "")
-	checkType("SOME_DIR", "Pathname (guessed)")
-	checkType("SOMEDIR", "Pathname (guessed)")
-	checkType("SEARCHPATHS", "List of Pathname (guessed)")
-	checkType("MYPACKAGE_USER", "UserGroupName (guessed)")
-	checkType("MYPACKAGE_GROUP", "UserGroupName (guessed)")
-	checkType("MY_CMD_ENV", "List of ShellWord (guessed)")
-	checkType("MY_CMD_ARGS", "List of ShellWord (guessed)")
-	checkType("MY_CMD_CFLAGS", "List of CFlag (guessed)")
-	checkType("MY_CMD_LDFLAGS", "List of LdFlag (guessed)")
-	checkType("PLIST.abcde", "Yes")
+	test("_PERL5_PACKLIST_AWK_STRIP_DESTDIR", "")
+	test("SOME_DIR", "Pathname (guessed)")
+	test("SOMEDIR", "Pathname (guessed)")
+	test("SEARCHPATHS", "Pathname (list, guessed)")
+	test("MYPACKAGE_USER", "UserGroupName (guessed)")
+	test("MYPACKAGE_GROUP", "UserGroupName (guessed)")
+	test("MY_CMD_ENV", "ShellWord (list, guessed)")
+	test("MY_CMD_ARGS", "ShellWord (list, guessed)")
+	test("MY_CMD_CFLAGS", "CFlag (list, guessed)")
+	test("MY_CMD_LDFLAGS", "LdFlag (list, guessed)")
+	test("PLIST.abcde", "Yes (package-settable)")
 }
 
 // Guessing the variable type works for both plain and parameterized variable names.
 func (s *Suite) Test_Pkgsrc_VariableType__varparam(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupVartypes()
+	t.SetUpVartypes()
 
-	t1 := G.Pkgsrc.VariableType("FONT_DIRS")
+	t1 := G.Pkgsrc.VariableType(nil, "FONT_DIRS")
 
 	c.Assert(t1, check.NotNil)
-	c.Check(t1.String(), equals, "List of PathMask (guessed)")
+	c.Check(t1.String(), equals, "PathMask (list, guessed)")
 
-	t2 := G.Pkgsrc.VariableType("FONT_DIRS.ttf")
+	t2 := G.Pkgsrc.VariableType(nil, "FONT_DIRS.ttf")
 
 	c.Assert(t2, check.NotNil)
-	c.Check(t2.String(), equals, "List of PathMask (guessed)")
+	c.Check(t2.String(), equals, "PathMask (list, guessed)")
 }
 
 // Guessing the variable type also works for variables that are
@@ -500,30 +676,29 @@ func (s *Suite) Test_Pkgsrc_VariableType__from_mk(c *check.C) {
 	// but it is a known variable since the pkgsrc infrastructure uses
 	// it. But still, its type is unknown.
 
-	t.SetupPkgsrc()
+	t.SetUpPkgsrc()
 	t.CreateFileLines("mk/sys-vars.mk",
 		MkRcsID,
 		"",
 		"PKGSRC_MAKE_ENV?=\t# none",
 		"CPPPATH?=\tcpp",
 		"OSNAME.Linux?=\tLinux")
-
-	pkg := t.SetupPackage("category/package",
+	pkg := t.SetUpPackage("category/package",
 		"PKGSRC_MAKE_ENV+=\tCPP=${CPPPATH:Q}",
 		"PKGSRC_UNKNOWN_ENV+=\tCPP=${ABCPATH:Q}",
 		"OSNAME.SunOS=\t\t${OSNAME.Other}")
 
-	G.Main("pkglint", "-Wall", pkg)
+	t.Main("-Wall", pkg)
 
-	if typ := G.Pkgsrc.VariableType("PKGSRC_MAKE_ENV"); c.Check(typ, check.NotNil) {
-		c.Check(typ.String(), equals, "List of ShellWord (guessed)")
+	if typ := G.Pkgsrc.VariableType(nil, "PKGSRC_MAKE_ENV"); c.Check(typ, check.NotNil) {
+		c.Check(typ.String(), equals, "ShellWord (list, guessed)")
 	}
 
-	if typ := G.Pkgsrc.VariableType("CPPPATH"); c.Check(typ, check.NotNil) {
+	if typ := G.Pkgsrc.VariableType(nil, "CPPPATH"); c.Check(typ, check.NotNil) {
 		c.Check(typ.String(), equals, "Pathlist (guessed)")
 	}
 
-	if typ := G.Pkgsrc.VariableType("OSNAME.Other"); c.Check(typ, check.NotNil) {
+	if typ := G.Pkgsrc.VariableType(nil, "OSNAME.Other"); c.Check(typ, check.NotNil) {
 		c.Check(typ.String(), equals, "Unknown")
 	}
 
@@ -534,5 +709,34 @@ func (s *Suite) Test_Pkgsrc_VariableType__from_mk(c *check.C) {
 	t.CheckOutputLines(
 		"WARN: ~/category/package/Makefile:21: PKGSRC_UNKNOWN_ENV is defined but not used.",
 		"WARN: ~/category/package/Makefile:21: ABCPATH is used but not defined.",
-		"0 errors and 2 warnings found.")
+		"0 errors and 2 warnings found.",
+		"(Run \"pkglint -e\" to show explanations.)")
+}
+
+func (s *Suite) Test_Pkgsrc_guessVariableType__SKIP(c *check.C) {
+	t := s.Init(c)
+
+	mklines := t.NewMkLines("filename.mk",
+		MkRcsID,
+		"MY_CHECK_SKIP=\t*.c \"bad*pathname\"",
+		"MY_CHECK_SKIP+=\t*.cpp",
+		".if ${MY_CHECK_SKIP}",
+		".endif")
+
+	mklines.Check()
+
+	vartype := G.Pkgsrc.VariableType(mklines, "MY_CHECK_SKIP")
+	t.Check(vartype.Guessed(), equals, true)
+	t.Check(vartype.EffectivePermissions("filename.mk"), equals, aclpAllRuntime)
+
+	// The permissions for MY_CHECK_SKIP say aclpAllRuntime, which excludes
+	// aclpUseLoadtime. Therefore there should be a warning about the VarUse in
+	// the .if line. As of March 2019, pkglint skips the permissions check for
+	// guessed variables since that variable might have an entirely different
+	// meaning; see MkLineChecker.checkVarusePermissions.
+	//
+	// There is no warning for the += operator in line 3 since the variable type
+	// (although guessed) is a list of things, and lists may be appended to.
+	t.CheckOutputLines(
+		"WARN: filename.mk:2: \"\\\"bad*pathname\\\"\" is not a valid pathname mask.")
 }

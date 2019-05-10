@@ -1,9 +1,8 @@
-# $NetBSD: Makefile,v 1.75 2018/09/28 11:01:37 adam Exp $
+# $NetBSD: Makefile,v 1.80 2019/04/25 15:59:54 roy Exp $
 
 .include "dist.mk"
 
 PKGNAME=	python27-${PY_DISTVERSION}
-PKGREVISION=	1
 CATEGORIES=	lang python
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
@@ -22,7 +21,7 @@ CONFIGURE_ARGS+=	--with-dbmliborder=ndbm:bdb
 CONFIGURE_ARGS+=	--with-system-ffi
 CONFIGURE_ARGS+=	--with-threads
 CONFIGURE_ENV+=		MKDIR_P=${MKDIR:Q}
-CONFIGURE_ENV+=		OPT=${CFLAGS:Q}
+CONFIGURE_ENV+=		OPT=${CFLAGS:M*:Q}
 PKGCONFIG_OVERRIDE+=	Misc/python.pc.in
 
 LDFLAGS+=		-L${WRKSRC}
@@ -81,7 +80,7 @@ IS_64BIT_PLATFORM?=	yes
 IS_64BIT_PLATFORM?=	no
 .endif
 
-PLIST_VARS+=	dl dll extra-so nis no-nis qt
+PLIST_VARS+=	dl dll extra-so nis qt
 
 # the dl module isn't built for 64 bit archs
 .if empty(IS_64BIT_PLATFORM:M[yY][eE][sS])
@@ -104,21 +103,20 @@ PLIST.qt=	yes
 .  endif
 .endif
 
-.if ${OPSYS} == "IRIX"
-.  if ${ABI} == "64"
-PLIST.no-nis=	yes
-.  else
-PLIST.nis=	yes
-.  endif
-.else
+.if ${OPSYS} != "IRIX"
 PLIST.dll=	yes
-.  if ${OPSYS} == "MirBSD" || "${OS_VARIANT}" == "chromeos"
-# neither nis nor no-nis
-.  elif ${OPSYS} != "NetBSD" || exists(/usr/bin/ypcat)
-PLIST.nis=	yes
-.  else
-PLIST.no-nis=	yes
+.endif
+
+.for incdir in ${_OPSYS_INCLUDE_DIRS}
+.  if (exists(${incdir}/rpc/rpc.h) || exists(${incdir}/tirpc/rpc/rpc.h))
+HAVE_RPC_H=	yes
 .  endif
+.  if (exists(${incdir}/rpcsvc/yp_prot.h) || exists(${incdir}/nsl/rpcsvc/yp_prot.h))
+HAVE_YP_PROT_H=	yes
+.  endif
+.endfor
+.if (${HAVE_RPC_H:Uno} == yes && ${HAVE_YP_PROT_H:Uno} == yes)
+PLIST.nis=	yes
 .endif
 
 # configure complains about buggy getaddrinfo()
@@ -155,7 +153,7 @@ REPLACE_FILES.py27+=	Lib/smtpd.py
 REPLACE_FILES.py27+=	Lib/smtplib.py
 REPLACE_FILES.py27+=	Lib/symbol.py
 REPLACE_FILES.py27+=	Lib/tabnanny.py
-REPLACE_FILES.py27+=	Lib/test/bisect.py
+REPLACE_FILES.py27+=	Lib/test/bisect_cmd.py
 REPLACE_FILES.py27+=	Lib/test/curses_tests.py
 REPLACE_FILES.py27+=	Lib/test/re_tests.py
 REPLACE_FILES.py27+=	Lib/test/pystone.py
@@ -171,23 +169,16 @@ SUBST_STAGE.libffi=	pre-configure
 SUBST_FILES.libffi=	setup.py
 SUBST_SED.libffi=	-e 's,/usr/include/ffi,${BUILDLINK_PREFIX.libffi}/include,'
 
-SUBST_CLASSES+=		findlib
-SUBST_MESSAGE.findlib=	Fixing find_library_file on Darwin.
-SUBST_STAGE.findlib=	pre-configure
-SUBST_FILES.findlib=	Lib/distutils/unixccompiler.py
-SUBST_SED.findlib=	-e 's,/usr/local,${PREFIX},'
-
 # XXX: It might be needed to add manually more paths like ${PREFIX}/qt5/lib
-# Testing:
-# >>> from ctypes.util import find_library
-# >>> find_library("m")
-# 'libm.so.0'
-
-SUBST_CLASSES+=		pfindlib
-SUBST_MESSAGE.pfindlib=	Fixing find_library() on POSIX-like (excluding Darwin) systems.
-SUBST_STAGE.pfindlib=	pre-configure
-SUBST_FILES.pfindlib=	Lib/ctypes/util.py
-SUBST_SED.pfindlib=	-e 's!\(-Wl,-t -o\)!${COMPILER_RPATH_FLAG}${PREFIX}/lib -L${PREFIX}/lib \1!'
+# Test: python -c 'from ctypes.util import find_library; print(find_library("ffi"));'
+SUBST_CLASSES+=		findlib
+SUBST_MESSAGE.findlib=	Fixing find_library().
+SUBST_STAGE.findlib=	pre-configure
+SUBST_FILES.findlib=	Lib/ctypes/macholib/dyld.py
+SUBST_FILES.findlib+=	Lib/ctypes/util.py
+SUBST_FILES.findlib+=	Lib/distutils/unixccompiler.py
+SUBST_SED.findlib=	-e 's,/usr/local,${PREFIX},'
+SUBST_SED.findlib+=	-e 's!\(-Wl,-t -o\)!${COMPILER_RPATH_FLAG}${PREFIX}/lib -L${PREFIX}/lib \1!'
 
 .include "options.mk"
 
@@ -201,7 +192,7 @@ SUBST_CLASSES+=		cacert
 SUBST_MESSAGE.cacert=	Configuring location of default CA certificate file.
 SUBST_STAGE.cacert=	pre-configure
 SUBST_FILES.cacert=	Modules/_ssl.c
-SUBST_SED.cacert=	-e 's,@PREFIX@,${PREFIX},'
+SUBST_VARS.cacert=	PREFIX
 
 post-extract:
 	${LN} -s ${WRKSRC}/Lib/smtpd.py ${WRKSRC}/Tools/scripts/smtpd${PY_VER_SUFFIX}.py

@@ -1,11 +1,9 @@
-# $NetBSD: Makefile,v 1.66 2018/12/09 17:11:43 adam Exp $
+# $NetBSD: Makefile,v 1.71 2019/03/20 05:43:20 adam Exp $
 
-DISTNAME=	libgpg-error-1.33
+DISTNAME=	libgpg-error-1.36
 CATEGORIES=	security
 MASTER_SITES=	ftp://ftp.gnupg.org/gcrypt/libgpg-error/
 MASTER_SITES+=	ftp://ftp.ring.gr.jp/pub/net/gnupg/libgpg-error/
-MASTER_SITES+=	ftp://mirror.switch.ch/mirror/gnupg/libgpg-error/
-MASTER_SITES+=	ftp://ftp.freenet.de/pub/ftp.gnupg.org/gcrypt/libgpg-error/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	minskim@NetBSD.org
@@ -17,7 +15,6 @@ USE_LIBTOOL=		yes
 USE_PKGLOCALEDIR=	yes
 USE_TOOLS+=		gmake
 GNU_CONFIGURE=		yes
-MAKE_ENV+=		LC_ALL="C"
 INFO_FILES=		yes
 TEST_TARGET=		check
 

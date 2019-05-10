@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.34 2018/09/05 13:19:40 adam Exp $
+# $NetBSD: Makefile,v 1.43 2019/04/26 15:28:17 gavan Exp $
 
 DISTNAME=	ghostscript-${GS_VERSION}
 PKGNAME=	${DISTNAME:S/ghostscript/ghostscript-agpl/}
@@ -11,24 +11,28 @@ EXTRACT_SUFX=	.tar.xz
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://ghostscript.com/
 COMMENT=	Postscript interpreter
+
+# Upstream calls this "GPL Ghostscript", which is confusing;
+# see https://bugs.ghostscript.com/show_bug.cgi?id=700877
 # Plus adobe verbatim for Resources/CMap.
 LICENSE=	gnu-agpl-v3
 
+.include	"Makefile.common"
+
 DEPENDS+=		ghostscript-fonts>=6.0:../../fonts/ghostscript-fonts
 
-.include "Makefile.common"
-
-USE_LANGUAGES=		c c++
+USE_LANGUAGES+=		c c++
 USE_TOOLS+=		gmake perl:run lex pkg-config
 GNU_CONFIGURE=		yes
-CONFIGURE_ARGS+=	--with-system-libtiff
-CONFIGURE_ARGS+=	--disable-cups
-CONFIGURE_ENV+=		LPLIBDIR=${PREFIX}/lib
-CONFIGURE_ENV.HPUX+=	ac_cv_func_fopen64=no
 UNLIMIT_RESOURCES+=	datasize	# gsromfs1.c
 
 BUILD_TARGET=		so
 INSTALL_TARGET=		soinstall
+
+CONFIGURE_ARGS+=	--enable-openjpeg
+CONFIGURE_ARGS+=	--with-system-libtiff
+CONFIGURE_ENV+=		LPLIBDIR=${PREFIX}/lib
+CONFIGURE_ENV.HPUX+=	ac_cv_func_fopen64=no
 
 REPLACE_PERL+=		toolbin/localcluster/clusterpush.pl
 REPLACE_PERL+=		toolbin/checkdeps.pl
@@ -45,7 +49,9 @@ MESSAGE_SUBST+=		GS_RESOURCEDIR=${GS_RESOURCEDIR}
 .include "../../mk/bsd.prefs.mk"
 .include "../../mk/compiler.mk"
 
+# \todo Remove "a4" as that is not valid according to pkglint.
 .if defined(PAPERSIZE) && (${PAPERSIZE} == "A4" || ${PAPERSIZE} == "a4")
+BUILD_DEFS+=		PAPERSIZE
 CFLAGS+=		-DA4
 .endif
 
@@ -85,6 +91,7 @@ post-extract:
 	${RM} -rf ${WRKSRC}/jpeg
 	${RM} -rf ${WRKSRC}/lcms2
 	${RM} -rf ${WRKSRC}/libpng
+	${RM} -rf ${WRKSRC}/openjpeg
 	${RM} -rf ${WRKSRC}/tiff
 	${RM} -rf ${WRKSRC}/zlib
 
@@ -99,10 +106,11 @@ post-install:
 
 .include "../../devel/libidn/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
+BUILDLINK_API_DEPENDS.freetype2+=	freetype2>=2.10.0
 .include "../../graphics/freetype2/buildlink3.mk"
 .include "../../graphics/jbig2dec/buildlink3.mk"
 .include "../../graphics/lcms2/buildlink3.mk"
-#.include "../../graphics/openjpeg15/buildlink3.mk"
+.include "../../graphics/openjpeg/buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
 .include "../../graphics/tiff/buildlink3.mk"
 .include "../../print/libpaper/buildlink3.mk"

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.60 2018/12/31 12:10:44 adam Exp $
+# $NetBSD: Makefile,v 1.63 2019/05/02 09:27:09 adam Exp $
 
-DISTNAME=	Sphinx-1.8.3
+DISTNAME=	Sphinx-1.8.5
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:tl}
 CATEGORIES=	textproc python
 MASTER_SITES=	${MASTER_SITE_PYPI:=S/Sphinx/}
@@ -24,7 +24,7 @@ DEPENDS+=	${PYPKGPREFIX}-sphinxcontrib-websupport-[0-9]*:../../textproc/py-sphin
 DEPENDS+=	${PYPKGPREFIX}-six>=1.5:../../lang/py-six
 
 .include "../../lang/python/pyversion.mk"
-.if "${PYPKGPREFIX}" == "py27" || "${PYPKGPREFIX}" == "py34"
+.if ${_PYTHON_VERSION} == 27
 DEPENDS+=	${PYPKGPREFIX}-typing-[0-9]*:../../devel/py-typing
 .endif
 

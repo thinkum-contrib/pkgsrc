@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.7 2018/12/19 15:47:02 bsiegert Exp $
+# $NetBSD: Makefile,v 1.11 2019/04/16 18:41:11 bsiegert Exp $
 
 DISTNAME=	sftp-1.0.0
 PKGNAME=	go-${DISTNAME}
-PKGREVISION=	5
+PKGREVISION=	9
 MASTER_SITES=	${MASTER_SITE_GITHUB:=pkg/}
 CATEGORIES=	security
 GITHUB_TAG=     ${PKGVERSION_NOREV}

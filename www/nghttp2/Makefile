@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.47 2019/01/04 14:52:43 gdt Exp $
+# $NetBSD: Makefile,v 1.52 2019/04/25 07:33:27 maya Exp $
 
-DISTNAME=	nghttp2-1.35.1
+DISTNAME=	nghttp2-1.38.0
 PKGREVISION=	1
 CATEGORIES=	www
 MASTER_SITES=	${MASTER_SITE_GITHUB:=tatsuhiro-t/}
@@ -12,8 +12,12 @@ HOMEPAGE=	https://nghttp2.org/
 COMMENT=	Implementation of HTTP/2 in C
 LICENSE=	mit
 
-USE_LANGUAGES=		c c++14
-GCC_REQD+=		6
+# Upstream documents that c++14 is required for C++ parts of the code;
+# the base package does not use C++.
+USE_LANGUAGES=		c
+# Upstream documents that gcc>=6 or clang >= 6 is required, but this
+# appears not to be true for the C parts.
+# https://github.com/nghttp2/nghttp2/issues/1293
 
 USE_LIBTOOL=		yes
 USE_TOOLS+=		gmake pkg-config

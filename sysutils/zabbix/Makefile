@@ -1,6 +1,5 @@
-# $NetBSD: Makefile,v 1.19 2018/12/18 13:27:54 jperkin Exp $
+# $NetBSD: Makefile,v 1.24 2019/04/10 17:49:59 jperkin Exp $
 
-PKGREVISION= 2
 .include "Makefile.common"
 
 COMMENT=	Enterprise-class Monitoring Solution for Everyone
@@ -46,6 +45,11 @@ ZABBIX_USER?=		zabbix
 PKG_GROUPS+=		${ZABBIX_GROUP}
 PKG_USERS+=		${ZABBIX_USER}:${ZABBIX_GROUP}
 PKG_GECOS.${ZABBIX_USER}=Zabbix user
+
+FILES_SUBST+=		ZABBIX_USER=${ZABBIX_USER}
+FILES_SUBST+=		ZABBIX_GROUP=${ZABBIX_GROUP}
+
+SMF_INSTANCES=		agent proxy server
 
 post-install:
 	cd ${WRKSRC}/database/${ZABBIX_DB_TYPE}; \

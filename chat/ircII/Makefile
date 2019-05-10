@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.80 2018/09/26 10:38:26 mrg Exp $
+# $NetBSD: Makefile,v 1.83 2019/04/26 00:13:34 mrg Exp $
 
 DISTNAME=		ircii-${VERS}
 PKGNAME=		ircII-${VERS}
+PKGREVISION=		1
 CATEGORIES=		chat
 MASTER_SITES=		http://ircii.warped.com/
 EXTRACT_SUFX=		.tar.bz2
-PKGREVISION=		2
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
 HOMEPAGE=		http://www.eterna.com.au/ircii/
@@ -14,7 +14,7 @@ LICENSE=		modified-bsd
 
 CONFLICTS=		blackened-[0-9]*
 
-VERS=			20170704
+VERS=			20190117
 PLIST_SUBST+=	VERS=${VERS:Q}
 
 .include "../../mk/bsd.prefs.mk"

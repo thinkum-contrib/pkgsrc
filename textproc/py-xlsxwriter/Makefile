@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.24 2018/10/23 08:02:49 adam Exp $
+# $NetBSD: Makefile,v 1.29 2019/05/06 08:21:52 adam Exp $
 
-DISTNAME=	XlsxWriter-1.1.2
+DISTNAME=	XlsxWriter-1.1.8
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:tl}
 CATEGORIES=	textproc python
 MASTER_SITES=	${MASTER_SITE_PYPI:=X/XlsxWriter/}

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.197 2018/12/13 19:51:50 adam Exp $
+# $NetBSD: Makefile,v 1.207 2019/04/27 18:00:46 kamil Exp $
 
-DISTNAME=	qemu-3.1.0
-PKGREVISION=	1
+DISTNAME=	qemu-4.0.0
+PKGREVISION=	5
 CATEGORIES=	emulators
 MASTER_SITES=	https://download.qemu.org/
 EXTRACT_SUFX=	.tar.xz
@@ -13,18 +13,26 @@ LICENSE=	gnu-gpl-v2 AND gnu-lgpl-v2.1 AND mit AND modified-bsd
 
 USE_CURSES=		resize_term wide
 USE_LANGUAGES+=		c c++
-USE_TOOLS+=		bison flex gmake makeinfo perl:build pkg-config
+USE_TOOLS+=		bison flex gmake makeinfo perl:build pod2man pkg-config
 FAKE_NCURSES=		yes
 UNLIMIT_RESOURCES=	datasize
 HAS_CONFIGURE=		yes
 
-BUILD_DEPENDS+=		texi2html-[0-9]*:../../textproc/texi2html
+TOOL_DEPENDS+=		${PYPKGPREFIX}-sphinx-[0-9]*:../../textproc/py-sphinx
 
 SUBST_CLASSES+=			prefix
 SUBST_STAGE.prefix=		pre-configure
 SUBST_MESSAGE.prefix=		Setting PREFIX
 SUBST_FILES.prefix+=		configure
 SUBST_VARS.prefix+=		PREFIX
+
+SUBST_CLASSES+=			sphinx-build
+SUBST_STAGE.sphinx-build=	pre-configure
+SUBST_MESSAGE.sphinx-build=	Fix hardcoded sphinx-build
+SUBST_FILES.sphinx-build+=	Makefile configure
+SUBST_FILES.sphinx-build+=	roms/skiboot/doc/Makefile
+SUBST_FILES.sphinx-build+=	roms/u-boot/Documentation/Makefile
+SUBST_SED.sphinx-build+=	-e 's/sphinx-build/sphinx-build${PYVERSSUFFIX}/g'
 
 .include "options.mk"
 
@@ -37,6 +45,7 @@ CONFIGURE_ARGS+=	--python=${PYTHONBIN}
 CONFIGURE_ARGS+=	--smbd=${PREFIX}/sbin/smbd
 CONFIGURE_ARGS+=	--mandir=${PREFIX}/${PKGMANDIR}
 CONFIGURE_ARGS+=	--enable-curses
+CONFIGURE_ARGS+=	--enable-docs
 CONFIGURE_ARGS+=	--enable-jemalloc
 CONFIGURE_ARGS+=	--disable-opengl
 CONFIGURE_ENV+=		mansuffix=/${PKGMANDIR}
@@ -51,6 +60,7 @@ NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-aarch64
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-alpha
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-arm
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-cris
+NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-hppa
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-i386
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-lm32
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-m68k
@@ -61,9 +71,12 @@ NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-mips64
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-mips64el
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-mipsel
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-moxie
+NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-nios2
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-or1k
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-ppc
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-ppc64
+NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-riscv32
+NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-riscv64
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-s390x
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-sh4
 NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-sh4eb
@@ -78,8 +91,6 @@ NOT_PAX_MPROTECT_SAFE+=	bin/qemu-system-xtensaeb
 PKG_SYSCONFSUBDIR=	qemu
 
 REPLACE_PERL+=		scripts/texi2pod.pl
-
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # not yet ported yet as of 2.10.0
 
 INSTALLATION_DIRS=	${PKGMANDIR}/man1 share/doc/qemu
 
@@ -116,6 +127,7 @@ TEST_TARGET=		check
 post-install:
 	${INSTALL_DATA} ${FILESDIR}/Makefile.multinode-NetBSD \
 		${DESTDIR}${PREFIX}/share/doc/qemu/
+	${RM} ${DESTDIR}${PREFIX}/share/doc/qemu/interop/.buildinfo
 
 # On Darwin, qemu uses Cocoa and CoreAudio
 .if ${OPSYS} != "Darwin"
@@ -126,6 +138,7 @@ post-install:
 .include "../../devel/jemalloc/buildlink3.mk"
 .include "../../devel/snappy/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
+.include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
 .include "../../lang/python/extension.mk"
 .include "../../security/libgcrypt/buildlink3.mk"

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.26 2018/12/14 22:52:45 schmonz Exp $
+# $NetBSD: Makefile,v 1.30 2019/05/05 15:18:00 schmonz Exp $
 #
 
-DISTNAME=		ucspi-ssl-0.10.7
+DISTNAME=		ucspi-ssl-0.10.9
 PKGNAME=		${DISTNAME:S/-0./-0.999./}
 CATEGORIES=		net
 MASTER_SITES=		https://www.fehcom.de/ipnet/ucspi-ssl/
@@ -20,18 +20,6 @@ SSL_PROGRAMS=		sslclient sslserver
 SSL_MAN1PAGES=		${SSL_SCRIPTS:S/$/.1/g} ${SSL_PROGRAMS:S/$/.1/g}
 SSL_MAN2PAGES=		ucspi-tls.2
 
-SUBST_CLASSES+=		prefix
-SUBST_STAGE.prefix=	do-configure
-SUBST_FILES.prefix=	${SSL_SCRIPTS:S/^/src\//g:S/$/.sh/g}
-SUBST_SED.prefix=	-e 's|HOME/command/|${PREFIX}/bin/|g'
-SUBST_MESSAGE.prefix=	Fixing prefix.
-
-SUBST_CLASSES+=		etc
-SUBST_STAGE.etc=	do-configure
-SUBST_FILES.etc=	src/dns_rcrw.c
-SUBST_SED.etc=		-e 's|/etc/dnsrewrite|${PKG_SYSCONFBASE}/dnsrewrite|g'
-SUBST_MESSAGE.etc=	Fixing prefix.
-
 PKG_USERS_VARS+=	UCSPI_SSL_USER
 PKG_GROUPS_VARS+=	UCSPI_SSL_GROUP
 PKG_GROUPS+=		${UCSPI_SSL_GROUP}
@@ -49,7 +37,11 @@ DJB_CONFIG_CMDS=							\
 	${ECHO} ${PREFIX}/bin > conf-tcpbin;				\
 	${ECHO} > conf-ssl;						\
 	${ECHO} ${SSLDIR}/certs > conf-cadir;				\
-	${ECHO} ${PKG_SYSCONFDIR}/dh1024.pem > conf-dhfile;
+	${ECHO} ${PKG_SYSCONFDIR}/dh1024.pem > conf-dhfile;		\
+	${ECHO} ${DEFAULT_MEDIUM_CIPHERS} > conf-ciphers;
+
+# from `postconf -d | grep tls_medium_cipherlist`
+DEFAULT_MEDIUM_CIPHERS=	aNULL:-aNULL:ALL:!EXPORT:!LOW:+RC4:@STRENGTH
 
 .include "../../mk/bsd.prefs.mk"
 

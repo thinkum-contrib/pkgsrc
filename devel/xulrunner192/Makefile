@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.67 2018/12/09 18:52:26 adam Exp $
+# $NetBSD: Makefile,v 1.69 2019/04/03 00:32:40 ryoon Exp $
 
 .include "dist.mk"
 PKGNAME=	xulrunner192-${MOZ_BRANCH}${MOZ_BRANCH_MINOR}
-PKGREVISION=	51
+PKGREVISION=	52
 CATEGORIES=	devel www
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
@@ -25,7 +25,7 @@ CONFIGURE_ARGS+=	--enable-application=xulrunner
 CONFIGURE_ARGS+=	--enable-libxul
 CONFIGURE_ARGS+=	--disable-ipc
 
-ALL_ENV+=		MOZILLA_PKG_NAME=xulrunner192
+ALL_ENV+=		MOZILLA_PKG_NAME=${PKGBASE}
 
 MAKE_ENV+=		FREEBL_NO_DEPEND=0
 

@@ -1,9 +1,9 @@
-$NetBSD: distinfo,v 1.6 2018/05/14 12:48:14 youri Exp $
+$NetBSD: distinfo,v 1.9 2019/05/08 01:23:19 gutteridge Exp $
 
-SHA1 (marco-1.20.1.tar.xz) = 0d6a4b6820553b901e23c6da7626fcc2a51027f6
-RMD160 (marco-1.20.1.tar.xz) = 18a2f3dfd703bd4d4c279d3584c559da600c1870
-SHA512 (marco-1.20.1.tar.xz) = 3179b9b8c41788c0cdff4e20d1a315bbe7447a6d6622f5dafff0d1251671b4e4f6de84c865460ef26bdc7340d45ee1af09fdf06933050a81c061719c0f11257f
-Size (marco-1.20.1.tar.xz) = 1423400 bytes
+SHA1 (marco-1.22.1.tar.xz) = 3d2cff329492fd3fef188df31761d6671e3bcde2
+RMD160 (marco-1.22.1.tar.xz) = 7e62d97b0b4c83d884728ffaaad0eb1e2fb1de66
+SHA512 (marco-1.22.1.tar.xz) = 18093f4d419fbc90f957a04ec3e36a153b3c51a6bcdc1ac5884adcc0292f157bc5e4af51e171451a4b54b5bccffdee2e8a07ed13dafb6106773abfb06b6a8a4f
+Size (marco-1.22.1.tar.xz) = 1357864 bytes
 SHA1 (patch-configure) = fa46453a5d25f154b60970e921f3802cd91ca786
 SHA1 (patch-src_compositor_compositor-xrender.c) = 5cb7e98d8e2b1dda2842f422ad2268bb258c35ee
 SHA1 (patch-src_core_delete.c) = ace180e80d63bbf0a35abc18bf6501061e09d158

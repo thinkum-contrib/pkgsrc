@@ -1,9 +1,8 @@
-# $NetBSD: Makefile,v 1.12 2018/11/29 11:22:00 prlw1 Exp $
+# $NetBSD: Makefile,v 1.16 2019/05/08 01:33:42 gutteridge Exp $
 
-PKGREVISION= 3
 .include "../../meta-pkgs/mate/Makefile.common"
 
-DISTNAME=	mate-control-center-${VERSION:R}.2
+DISTNAME=	mate-control-center-${VERSION:R}.1
 CATEGORIES=	sysutils
 
 COMMENT=	MATE Control Center

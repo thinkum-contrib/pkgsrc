@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.11 2018/05/16 16:22:32 jperkin Exp $
+@comment $NetBSD: PLIST,v 1.13 2019/04/30 09:32:07 adam Exp $
 ${PYSITELIB}/${EGG_INFODIR}/PKG-INFO
 ${PYSITELIB}/${EGG_INFODIR}/SOURCES.txt
 ${PYSITELIB}/${EGG_INFODIR}/dependency_links.txt
@@ -14,9 +14,6 @@ ${PYSITELIB}/psutil/_common.pyo
 ${PYSITELIB}/psutil/_compat.py
 ${PYSITELIB}/psutil/_compat.pyc
 ${PYSITELIB}/psutil/_compat.pyo
-${PYSITELIB}/psutil/_exceptions.py
-${PYSITELIB}/psutil/_exceptions.pyc
-${PYSITELIB}/psutil/_exceptions.pyo
 ${PYSITELIB}/psutil/_psaix.py
 ${PYSITELIB}/psutil/_psaix.pyc
 ${PYSITELIB}/psutil/_psaix.pyo
@@ -46,6 +43,9 @@ ${PYSITELIB}/psutil/tests/__init__.pyo
 ${PYSITELIB}/psutil/tests/__main__.py
 ${PYSITELIB}/psutil/tests/__main__.pyc
 ${PYSITELIB}/psutil/tests/__main__.pyo
+${PYSITELIB}/psutil/tests/runner.py
+${PYSITELIB}/psutil/tests/runner.pyc
+${PYSITELIB}/psutil/tests/runner.pyo
 ${PYSITELIB}/psutil/tests/test_aix.py
 ${PYSITELIB}/psutil/tests/test_aix.pyc
 ${PYSITELIB}/psutil/tests/test_aix.pyo

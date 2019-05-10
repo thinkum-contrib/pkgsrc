@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.26 2018/07/04 13:40:13 jperkin Exp $
+# $NetBSD: Makefile,v 1.29 2019/05/10 15:49:39 mef Exp $
 
 DISTNAME=	ExmanIDE-0.9.4
-PKGREVISION=	7
+PKGREVISION=	8
 CATEGORIES=	devel
 MASTER_SITES=	http://kldp.net/download.php/715/
 
@@ -14,10 +14,9 @@ DEPENDS+=	${PYPKGPREFIX}-wxWidgets>=2.6:../../x11/py-wxWidgets
 USE_TOOLS+=	pax
 
 WRKSRC=		${WRKDIR}/${PKGBASE}
-NO_CONFIGURE=	yes
 NO_BUILD=	yes
 
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # py-wxWidgets
+PYTHON_VERSIONS_INCOMPATIBLE=	 36 37 # py-wxWidgets
 
 SUBST_CLASSES+=		mod
 SUBST_MESSAGE.mod=	Fixing deprecated module names.

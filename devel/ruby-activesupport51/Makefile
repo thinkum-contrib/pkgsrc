@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1 2018/03/21 09:39:58 taca Exp $
+# $NetBSD: Makefile,v 1.3 2019/04/14 10:20:26 taca Exp $
 
 DISTNAME=	activesupport-${RAILS_VERSION}
 PKGNAME=	${RUBY_PKGPREFIX}-activesupport${RUBY_RAILS}-${RAILS_VERSION}
@@ -11,7 +11,7 @@ LICENSE=	mit
 
 DEPENDS+=	${RUBY_PKGPREFIX}-i18n>=0.7:../../devel/ruby-i18n
 DEPENDS+=	${RUBY_PKGPREFIX}-thread_safe>=0.3.4:../../misc/ruby-thread_safe
-DEPENDS+=	${RUBY_PKGPREFIX}-tzinfo>=1.1:../../time/ruby-tzinfo
+DEPENDS+=	${RUBY_PKGPREFIX}-tzinfo1>=1.1:../../time/ruby-tzinfo1
 # minitest 5.4.3 is bundlerd with Ruby 2.2 and later.
 #DEPENDS+=	${RUBY_PKGPREFIX}-minitest>=5.1:../../devel/ruby-minitest
 

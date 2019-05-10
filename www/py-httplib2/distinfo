@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.9 2018/11/21 17:21:17 adam Exp $
+$NetBSD: distinfo,v 1.11 2019/04/29 08:49:39 adam Exp $
 
-SHA1 (httplib2-0.12.0.tar.gz) = 861a4cdad3818719ad23795ab9d52078888e948b
-RMD160 (httplib2-0.12.0.tar.gz) = ee13a252ff9d034a0bde21453e5b64221e02e64b
-SHA512 (httplib2-0.12.0.tar.gz) = f9eead2dc764b0506d27df95b034b6aec1e539c16f5eca05b4c39dd159a4ebee652ba049b819153c9c8d6b67881452c35f483920191bcbfcca56d68a5d31bc4e
-Size (httplib2-0.12.0.tar.gz) = 218367 bytes
+SHA1 (httplib2-0.12.3.tar.gz) = d5aabd09dae672f90e278d386a42cd2168c29440
+RMD160 (httplib2-0.12.3.tar.gz) = 91441e3b317218cc2a8fdfc08bd96550c8f03b8a
+SHA512 (httplib2-0.12.3.tar.gz) = ce2f43dcada367512046bb920434118ca0ce111d37500e071691bb952b2034fa78a429e1e7cbf3d79200f5968b3d426cb1c26f3b6eb1a1fb453d17bc29fcfb95
+Size (httplib2-0.12.3.tar.gz) = 219141 bytes

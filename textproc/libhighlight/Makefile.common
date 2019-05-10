@@ -1,10 +1,10 @@
-# $NetBSD: Makefile.common,v 1.5 2018/12/16 07:04:32 schmonz Exp $
+# $NetBSD: Makefile.common,v 1.8 2019/04/26 12:44:43 roy Exp $
 # used by textproc/highlight/Makefile
 # used by textproc/libhighlight/Makefile
 # used by textproc/p5-highlight/Makefile
 
 DISTNAME=		highlight-${VERSION}
-VERSION=		3.48
+VERSION=		3.50
 CATEGORIES=		textproc
 MASTER_SITES=		http://www.andre-simon.de/zip/
 EXTRACT_SUFX=		.tar.bz2
@@ -16,6 +16,7 @@ LICENSE=		gnu-gpl-v3
 
 USE_TOOLS+=		gmake pkg-config
 USE_LANGUAGES=		c c++11
+USE_LIBTOOL=		yes
 MAKE_FILE=		makefile
 
 PATCHDIR=		${.CURDIR}/../../textproc/libhighlight/patches

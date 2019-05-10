@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.2 2018/08/07 16:46:43 nia Exp $
+# $NetBSD: Makefile,v 1.4 2019/05/08 12:40:05 nia Exp $
 
 DISTNAME=	libretro-core-info-${RETROARCH_VERSION}
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_GITHUB:=libretro/}
-GITHUB_TAG=	v${PKGVERSION_NOREV}
+GITHUB_TAG=	v${RETROARCH_VERSION}
 
 MAINTAINER=	nia@NetBSD.org
 HOMEPAGE=	https://www.libretro.com/

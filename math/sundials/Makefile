@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.2 2018/09/29 12:37:20 tnn Exp $
+# $NetBSD: Makefile,v 1.4 2019/04/25 07:33:05 maya Exp $
 
-DISTNAME=	sundials-3.1.1
+DISTNAME=	sundials-4.1.0
 PKGREVISION=	1
 CATEGORIES=	math
 MASTER_SITES=	https://computation.llnl.gov/projects/sundials/download/
@@ -23,7 +23,7 @@ post-extract:
 	${MKDIR} ${WRKSRC}
 
 post-install:
-	${MV} ${DESTDIR}${PREFIX}/LICENSE \
+	${MV} ${DESTDIR}${PREFIX}/include/sundials/LICENSE \
 		${DESTDIR}${PREFIX}/share/doc/${PKGBASE}
 	${INSTALL_DATA} ${WRKSRC}/../README.md ${WRKSRC}/../doc/*/* \
 		${DESTDIR}${PREFIX}/share/doc/${PKGBASE}

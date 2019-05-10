@@ -1,17 +1,21 @@
-$NetBSD: patch-src_pages.c,v 1.2 2017/08/27 12:12:25 adam Exp $
+$NetBSD: patch-src_pages.c,v 1.5 2019/03/22 16:30:02 rin Exp $
 
-Set os_overcommits to true on NetBSD since NetBSD does overcommit.
-This also has the benefit of not triggering the issue reported in
+Set os_overcommits to true on NetBSD < 8.0 as a workaround for
+the issue reported in kern/52239 and
 https://github.com/jemalloc/jemalloc/issues/837 .
 
---- src/pages.c.orig	2017-07-02 00:44:25.000000000 +0000
-+++ src/pages.c
-@@ -414,6 +414,8 @@ pages_boot(void) {
+--- src/pages.c.orig	2018-05-09 04:15:01.000000000 +0900
++++ src/pages.c	2019-03-23 01:24:38.101144076 +0900
+@@ -582,6 +582,12 @@ pages_boot(void) {
  		mmap_flags |= MAP_NORESERVE;
  	}
  #  endif
-+#elif defined __NetBSD__
++#elif defined(__NetBSD__)
++#  if !__NetBSD_Prereq__(8,0,0)
 +	os_overcommits = true;
++#  else
++	os_overcommits = false;
++#  endif
  #else
  	os_overcommits = false;
  #endif

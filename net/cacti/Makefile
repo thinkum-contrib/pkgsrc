@@ -1,25 +1,31 @@
-# $NetBSD: Makefile,v 1.38 2018/11/14 22:22:09 kleink Exp $
+# $NetBSD: Makefile,v 1.40 2019/04/29 16:09:05 hauke Exp $
 
-DISTNAME=	cacti-0.8.8h
-PKGREVISION=	7
+DISTNAME=	cacti-1.2.3
+PKGREVISION=	1
 CATEGORIES=	net
 MASTER_SITES=	https://www.cacti.net/downloads/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://www.cacti.net/
-COMMENT=	Frontend to rrdtool for monitoring systems and services
+COMMENT=	Web frontend to rrdtool for monitoring systems and services
 LICENSE=	gnu-gpl-v2
 
 USE_LANGUAGES=		# none
 USE_TOOLS+=		pax
 NO_BUILD=		yes
 
-DEPENDS+=		${PHP_PKG_PREFIX}-mysql-[0-9]*:../../databases/php-mysql
+#DEPENDS+=		${PHP_PKG_PREFIX}-gd-[0-9]*:../../graphics/php-gd
+DEPENDS+=		${PHP_PKG_PREFIX}-json-[0-9]*:../../textproc/php-json
+DEPENDS+=		${PHP_PKG_PREFIX}-zlib-[0-9]*:../../archivers/php-zlib
+DEPENDS+=		${PHP_PKG_PREFIX}-mbstring-[0-9]*:../../converters/php-mbstring
+DEPENDS+=		${PHP_PKG_PREFIX}-pdo_mysql-[0-9]*:../../databases/php-pdo_mysql
 DEPENDS+=		${PHP_PKG_PREFIX}-snmp-[0-9]*:../../net/php-snmp
 DEPENDS+=		${PHP_PKG_PREFIX}-sockets-[0-9]*:../../net/php-sockets
+DEPENDS+=		${PHP_PKG_PREFIX}-gmp-[0-9]*:../../devel/php-gmp
+DEPENDS+=		${PHP_PKG_PREFIX}-posix-[0-9]*:../../devel/php-posix
+DEPENDS+=		${PHP_PKG_PREFIX}-ldap-[0-9]*:../../databases/php-ldap
+DEPENDS+=		${PHP_PKG_PREFIX}-gettext-[0-9]*:../../devel/php-gettext
 DEPENDS+=		${APACHE_PKG_PREFIX}-${PHP_PKG_PREFIX}-[0-9]*:../../www/ap-php
-
-PHP_VERSIONS_ACCEPTED=	56
 
 .include "../../mk/bsd.prefs.mk"
 .include "../../lang/php/phpversion.mk"
@@ -33,7 +39,7 @@ PKG_SHELL.${CACTI_USER}=	${SH}
 PKG_USERS_VARS+=	CACTI_USER
 PKG_GROUPS_VARS+=	CACTI_GROUP
 
-BUILD_DEFS+=		PKG_SYSCONFBASE VARBASE
+BUILD_DEFS+=		PKG_SYSCONFBASE VARBASE APACHE_GROUP
 PKG_SYSCONFSUBDIR?=	httpd
 EGDIR=			${PREFIX}/share/examples/cacti
 CONF_FILES+=		${EGDIR}/httpd-cacti.conf ${PKG_SYSCONFDIR}/httpd-cacti.conf
@@ -62,19 +68,36 @@ FILES_SUBST+=		CACTI_LOGDIR=${CACTI_LOGDIR}
 
 SUBST_CLASSES+=		paths
 SUBST_STAGE.paths=	pre-configure
-SUBST_FILES.paths=	${WRKDIR}/httpd-cacti.conf install/index.php
-SUBST_FILES.paths+=	include/global.php include/global_settings.php
+SUBST_FILES.paths=	${WRKDIR}/httpd-cacti.conf
 SUBST_FILES.paths+=	${WRKDIR}/cacti-poller
+SUBST_FILES.paths+=	poller_maintenance.php utilities.php
+SUBST_FILES.paths+=	cli/install_cacti.php install/functions.php
+SUBST_FILES.paths+=	include/global.php include/global_settings.php
+SUBST_FILES.paths+=	lib/clog_webapi.php lib/installer.php lib/functions.php
 SUBST_VARS.paths=	CACTIDIR PREFIX CACTI_USER CACTI_LOGDIR CACTI_RRADIR
 SUBST_VARS.paths+=	PKG_PHP_MAJOR_VERS SH
 
+SUBST_CLASSES+=		perl-xml
+SUBST_STAGE.perl-xml=	pre-configure
+SUBST_FILES.perl-xml=	resource/script_queries/*.xml
+SUBST_SED.perl-xml=	-e 's,>perl,>${PERL5},'
+
 SUBST_CLASSES+=		docs
 SUBST_STAGE.docs=	pre-configure
-SUBST_FILES.docs=	docs/txt/manual.txt docs/html/*.html
+SUBST_FILES.docs=	docs/*.html
 SUBST_SED.docs=		-e 's,/var/www/html/cacti,${CACTIDIR},g'
 
-OWN_DIRS_PERMS+=	${CACTI_LOGDIR} ${CACTI_USER} ${CACTI_GROUP} 755
-OWN_DIRS_PERMS+=	${CACTI_RRADIR} ${CACTI_USER} ${CACTI_GROUP} 755
+OWN_DIRS_PERMS+=	${CACTI_LOGDIR} ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/cache ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/cache/boost ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/cache/mibcache ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/cache/realtime ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/cache/spikekill ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/resource/snmp_queries ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/resource/script_server ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/resource/script_queries ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTIDIR}/scripts ${CACTI_USER} ${APACHE_GROUP} 775
+OWN_DIRS_PERMS+=	${CACTI_RRADIR} ${CACTI_USER} ${APACHE_GROUP} 775
 REQD_FILES_PERMS+=	${CACTIDIR}/log/.htaccess ${CACTI_LOGDIR}/.htaccess \
 			${CACTI_USER} ${CACTI_GROUP} 644
 REQD_FILES_PERMS+=	${CACTIDIR}/rra/.htaccess ${CACTI_RRADIR}/.htaccess \
@@ -96,6 +119,7 @@ post-extract:
 	${CP} ${FILESDIR}/freebsd_memory.pl ${WRKSRC}/scripts/
 	${CP} ${FILESDIR}/netbsd_memory.pl ${WRKSRC}/scripts/
 	${CP} ${FILESDIR}/solaris_memory.pl ${WRKSRC}/scripts/
+	${CHMOD} 644 ${WRKSRC}/rra/.htaccess
 	cd ${WRKSRC}/scripts;					\
 	if [ -f ${LOWER_OPSYS}_memory.pl ]; then		\
 	  ${LN} -fs ${LOWER_OPSYS}_memory.pl local_memory.pl;	\

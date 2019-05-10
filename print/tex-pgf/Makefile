@@ -1,11 +1,12 @@
-# $NetBSD: Makefile,v 1.15 2016/06/16 04:06:14 markd Exp $
+# $NetBSD: Makefile,v 1.17 2019/05/06 21:11:18 markd Exp $
 
 DISTNAME=	pgf
-PKGNAME=	tex-${DISTNAME}-3.0.1a
+PKGNAME=	tex-${DISTNAME}-3.1.1
 CATEGORIES=	print graphics
-TEXLIVE_REV=	40966
+TEXLIVE_REV=	49907
 
 MAINTAINER=	minskim@NetBSD.org
+HOMEPAGE=	http://ctan.org/pkg/pgf
 COMMENT=	PostScript and PDF graphics systems for TeX
 LICENSE=	lppl-1.3c
 

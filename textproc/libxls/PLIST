@@ -1,0 +1,13 @@
+@comment $NetBSD: PLIST,v 1.2 2019/05/06 08:55:20 sjmulder Exp $
+bin/xls2csv
+include/libxls/brdb.c.h
+include/libxls/brdb.h
+include/libxls/endian.h
+include/libxls/ole.h
+include/libxls/xlsstruct.h
+include/libxls/xlstool.h
+include/libxls/xlstypes.h
+include/xls.h
+lib/libxlsreader.la
+lib/pkgconfig/libxls.pc
+man/man1/xls2csv.1

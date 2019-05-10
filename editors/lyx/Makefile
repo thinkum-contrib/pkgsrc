@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.72 2018/12/30 15:55:56 rhialto Exp $
+# $NetBSD: Makefile,v 1.77 2019/04/26 14:12:38 maya Exp $
 
-DISTNAME=		lyx-2.2.2
-PKGREVISION=		10
+DISTNAME=		lyx-2.3.2
+PKGREVISION=		2
 CATEGORIES=		editors
-MASTER_SITES=		ftp://ftp.lyx.org/pub/lyx/stable/2.2.x/
-MASTER_SITES+=		ftp://ftp.sdsc.edu/pub/other/lyx/stable/2.2.x/
-MASTER_SITES+=		ftp://ftp.lip6.fr/pub/lyx/stable/2.2.x/
-MASTER_SITES+=		ftp://ftp.ntua.gr/pub/X11/LyX/stable/2.2.x/
+MASTER_SITES=		ftp://ftp.lyx.org/pub/lyx/stable/2.3.x/
+MASTER_SITES+=		ftp://ftp.sdsc.edu/pub/other/lyx/stable/2.3.x/
+MASTER_SITES+=		ftp://ftp.lip6.fr/pub/lyx/stable/2.3.x/
+MASTER_SITES+=		ftp://ftp.ntua.gr/pub/X11/LyX/stable/2.3.x/
 EXTRACT_SUFX=		.tar.xz
 
 MAINTAINER=		reed@reedmedia.net
@@ -63,19 +63,19 @@ GNU_CONFIGURE=			YES
 USE_TOOLS+=			gmake perl:run pkg-config xgettext
 USE_LIBTOOL=			YES
 USE_PKGLOCALEDIR=		YES
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # not yet ported as of 1.6.10
+PYTHON_VERSIONS_INCOMPATIBLE=	36 37 # not yet ported as of 1.6.10
 
 CXXFLAGS.Linux+=	-fpermissive
 LDFLAGS.SunOS+=		-liconv
 
 CONFIGURE_ARGS+=	--without-included-mythes
-# XXX Uncomment this after updating LyX to latest:
-#CONFIGURE_ARGS+=	--without-included-boost
+CONFIGURE_ARGS+=	--without-included-boost
 
-CONFIGURE_ARGS+=	--with-extra-prefix=${BUILDLINK_PREFIX.qt4-libs} \
-			--with-qt4-dir=${QTDIR:Q} \
-			--with-qt4-includes=${BUILDLINK_PREFIX.qt4-libs}/qt4/include \
-			--with-qt4-libraries=${BUILDLINK_PREFIX.qt4-libs}/qt4/lib
+CONFIGURE_ARGS+=	--with-extra-prefix=${BUILDLINK_PREFIX.qt5-qtbase} \
+			--with-qt-dir=${QTDIR:Q} \
+			--with-qt-includes=${BUILDLINK_PREFIX.qt5-qtbase}/qt5/include \
+			--with-qt-libraries=${BUILDLINK_PREFIX.qt5-qtbase}/qt5/lib \
+			--enable-qt5
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -115,54 +115,10 @@ REPLACE_PYTHON=	development/autotests/keytest.py \
 			development/tools/generate_symbols_list.py \
 			development/tools/unicodesymbols.py \
 			lib/configure.py \
-			lib/lyx2lyx/LyX.py \
-			lib/lyx2lyx/generate_encoding_info.py \
+			lib/lyx2lyx/*.py \
 			lib/lyx2lyx/lyx2lyx \
-			lib/lyx2lyx/lyx2lyx_lang.py \
-			lib/lyx2lyx/lyx2lyx_tools.py \
-			lib/lyx2lyx/lyx2lyx_version.py \
-			lib/lyx2lyx/lyx_0_06.py \
-			lib/lyx2lyx/lyx_0_08.py \
-			lib/lyx2lyx/lyx_0_10.py \
-			lib/lyx2lyx/lyx_0_12.py \
-			lib/lyx2lyx/lyx_1_0.py \
-			lib/lyx2lyx/lyx_1_1.py \
-			lib/lyx2lyx/lyx_1_1_5.py \
-			lib/lyx2lyx/lyx_1_1_6_0.py \
-			lib/lyx2lyx/lyx_1_1_6_3.py \
-			lib/lyx2lyx/lyx_1_2.py \
-			lib/lyx2lyx/lyx_1_3.py \
-			lib/lyx2lyx/lyx_1_4.py \
-			lib/lyx2lyx/lyx_1_5.py \
-			lib/lyx2lyx/lyx_1_6.py \
-			lib/lyx2lyx/lyx_2_0.py \
-			lib/lyx2lyx/lyx_2_1.py \
-			lib/lyx2lyx/parser_tools.py \
-			lib/lyx2lyx/profiling.py \
-			lib/lyx2lyx/test_parser_tools.py \
-			lib/lyx2lyx/unicode_symbols.py \
-			lib/scripts/TeXFiles.py \
-			lib/scripts/clean_dvi.py \
-			lib/scripts/convertDefault.py \
-			lib/scripts/csv2lyx.py \
-			lib/scripts/date.py \
-			lib/scripts/ext_copy.py \
-			lib/scripts/fen2ascii.py \
-			lib/scripts/fig2pdftex.py \
-			lib/scripts/fig2pstex.py \
-			lib/scripts/fig_copy.py \
-			lib/scripts/html2latexwrapper.py \
-			lib/scripts/include_bib.py \
-			lib/scripts/layout2layout.py \
-			lib/scripts/legacy_lyxpreview2ppm.py \
+			lib/scripts/*.py \
 			lib/scripts/listerrors \
-			lib/scripts/lyxpak.py \
-			lib/scripts/lyxpreview2bitmap.py \
-			lib/scripts/lyxpreview_tools.py \
-			lib/scripts/prefs2prefs.py \
-			lib/scripts/prefs2prefs_lfuns.py \
-			lib/scripts/prefs2prefs_prefs.py \
-			lib/scripts/tex_copy.py \
 			po/lyx_pot.py \
 			po/postats.py \
 			src/tex2lyx/test/runtests.py
@@ -182,10 +138,11 @@ SUBST_SED.python+=	-e 's,command("python -tt,command("${PYTHONBIN} -tt,'
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../textproc/aspell/buildlink3.mk"
-.include "../../x11/qt4-libs/buildlink3.mk"
-.include "../../x11/qt4-tools/buildlink3.mk"
+.include "../../x11/qt5-qtbase/buildlink3.mk"
+.include "../../x11/qt5-qtsvg/buildlink3.mk"
+.include "../../x11/qt5-qtx11extras/buildlink3.mk"
 .include "../../textproc/mythes/buildlink3.mk"
-#.include "../../devel/boost-libs/buildlink3.mk"
+.include "../../devel/boost-libs/buildlink3.mk"
 
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"

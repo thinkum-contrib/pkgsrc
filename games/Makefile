@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.422 2018/12/23 15:05:51 nia Exp $
+# $NetBSD: Makefile,v 1.425 2019/04/13 12:08:04 nia Exp $
 #
 
 COMMENT=	Games
@@ -90,6 +90,7 @@ SUBDIR+=	eboard
 SUBDIR+=	einstein-puzzle
 SUBDIR+=	enigma
 SUBDIR+=	et
+SUBDIR+=	etlegacy
 SUBDIR+=	eus-demo
 SUBDIR+=	exchess
 SUBDIR+=	exchess-book-medium
@@ -226,6 +227,7 @@ SUBDIR+=	libggz
 SUBDIR+=	libkdegames
 SUBDIR+=	libkmahjongg
 SUBDIR+=	liblcf
+SUBDIR+=	libretro-2048
 SUBDIR+=	libretro-craft
 SUBDIR+=	libretro-nxengine
 SUBDIR+=	lincity
@@ -281,6 +283,7 @@ SUBDIR+=	plib
 SUBDIR+=	pmars
 SUBDIR+=	polyglot
 SUBDIR+=	powder
+SUBDIR+=	powder-toy
 SUBDIR+=	powermanga
 SUBDIR+=	powwow
 SUBDIR+=	prboom

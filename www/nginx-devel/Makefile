@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.39 2019/01/04 10:42:05 adam Exp $
+# $NetBSD: Makefile,v 1.42 2019/04/18 07:22:08 adam Exp $
 
-DISTNAME=	nginx-1.15.8
+DISTNAME=	nginx-1.15.12
 
 MAINTAINER=	imil@NetBSD.org
 

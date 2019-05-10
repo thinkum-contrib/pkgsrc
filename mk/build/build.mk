@@ -1,4 +1,4 @@
-# $NetBSD: build.mk,v 1.24 2018/11/30 18:38:19 rillig Exp $
+# $NetBSD: build.mk,v 1.26 2019/05/07 19:36:43 rillig Exp $
 #
 # This file defines what happens in the build phase, excluding the
 # self-test, which is defined in test.mk.
@@ -55,6 +55,8 @@ BUILD_MAKE_CMD= \
 
 .if defined(MAKE_JOBS_SAFE) && !empty(MAKE_JOBS_SAFE:M[nN][oO])
 _MAKE_JOBS=	# nothing
+.elif defined(MAKE_JOBS.${PKGPATH})
+_MAKE_JOBS=	-j${MAKE_JOBS.${PKGPATH}}
 .elif defined(MAKE_JOBS)
 _MAKE_JOBS=	-j${MAKE_JOBS}
 .endif
@@ -75,7 +77,7 @@ _BUILD_TARGETS+=	pkginstall
 
 .PHONY: build
 .if !target(build)
-.  if exists(${_COOKIE.build})
+.  if exists(${_COOKIE.build}) && !${_CLEANING}
 build:
 	@${DO_NADA}
 .  elif defined(_PKGSRC_BARRIER)
@@ -89,7 +91,7 @@ build: barrier
 acquire-build-lock: acquire-lock
 release-build-lock: release-lock
 
-.if exists(${_COOKIE.build})
+.if exists(${_COOKIE.build}) && !${_CLEANING}
 ${_COOKIE.build}:
 	@${DO_NADA}
 .else

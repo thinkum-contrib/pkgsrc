@@ -1,11 +1,12 @@
-# $NetBSD: Makefile,v 1.12 2018/11/14 22:21:43 kleink Exp $
+# $NetBSD: Makefile,v 1.15 2019/04/25 07:32:59 maya Exp $
 
-PKGREVISION= 2
+PKGREVISION= 1
 .include "../../meta-pkgs/mate/Makefile.common"
 
-DISTNAME=	mate-themes-3.22.16
+VERSION=	3.22.19
+DISTNAME=	mate-themes-${VERSION}
 CATEGORIES=	graphics
-MASTER_SITES=	http://pub.mate-desktop.org/releases/themes/3.22/
+MASTER_SITES=	http://pub.mate-desktop.org/releases/themes/${VERSION:R}/
 
 COMMENT=	Icons and themes for MATE desktop
 

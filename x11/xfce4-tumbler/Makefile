@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.56 2018/12/13 19:52:27 adam Exp $
+# $NetBSD: Makefile,v 1.62 2019/05/09 13:57:51 ryoon Exp $
 
-PKGREVISION= 12
+PKGREVISION= 4
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
-VERSION=	0.2.1
+VERSION=	0.2.3
 DISTNAME=	tumbler-${VERSION}
 PKGNAME=	xfce4-tumbler-${VERSION}
 CATEGORIES=	x11
@@ -40,7 +40,6 @@ CFLAGS+=		-g
 .include "../../graphics/openjpeg/buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
 .include "../../graphics/gdk-pixbuf2/buildlink3.mk"
-.include "../../multimedia/ffmpeg3/buildlink3.mk"
 .include "../../sysutils/dbus/buildlink3.mk"
 .include "../../sysutils/dbus-glib/buildlink3.mk"
 .include "../../www/curl/buildlink3.mk"

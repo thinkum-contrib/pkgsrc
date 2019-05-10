@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.273 2019/01/01 11:02:09 wiz Exp $
+# $NetBSD: Makefile,v 1.277 2019/04/25 07:32:53 maya Exp $
 
-DISTNAME=		gnucash-3.4
+DISTNAME=		gnucash-3.5
+PKGREVISION=		2
 CATEGORIES=		finance
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=gnucash/}
 EXTRACT_SUFX=		.tar.bz2
@@ -31,6 +32,8 @@ TEST_TARGET=		check
 
 LDFLAGS+=		${COMPILER_RPATH_FLAG}${PREFIX}/lib/gnucash
 CXXFLAGS+=		-Wno-deprecated-declarations
+# https://bugs.gnucash.org/show_bug.cgi?id=797039
+CFLAGS+=		-Wno-char-subscripts
 
 MAKE_ENV+=		GUILE_AUTO_COMPILE=0
 CMAKE_ARGS+=		-DWITH_AQBANKING=OFF

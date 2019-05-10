@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.5 2018/08/13 07:28:39 adam Exp $
+# $NetBSD: Makefile,v 1.7 2019/05/02 09:38:23 adam Exp $
 
-DISTNAME=	nose2-0.8.0
+DISTNAME=	nose2-0.9.1
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	devel python
 MASTER_SITES=	${MASTER_SITE_PYPI:=n/nose2/}
@@ -12,10 +12,8 @@ LICENSE=	2-clause-bsd
 
 DEPENDS+=	${PYPKGPREFIX}-coverage>=4.4.1:../../devel/py-coverage
 DEPENDS+=	${PYPKGPREFIX}-six>=1.7:../../lang/py-six
-
 .include "../../lang/python/pyversion.mk"
-
-.if "${PYPKGPREFIX}" == "py27"
+.if ${_PYTHON_VERSION} == 27
 DEPENDS+=	${PYPKGPREFIX}-mock-[0-9]*:../../devel/py-mock
 .endif
 

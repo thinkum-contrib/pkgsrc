@@ -84,31 +84,35 @@ const (
 	shqBacktSquot                       // e.g. `'word'`
 	shqSubshDquot                       // e.g. $("word")
 	shqSubshSquot                       // e.g. $('word')
+	shqSubshBackt                       // e.g. $(`word`)
 	shqDquotBacktDquot                  // e.g. "`"word"`"
 	shqDquotBacktSquot                  // e.g. "`'word'`"
 )
 
+// String returns a very short identifier for the quoting state.
+// In this, d means double quotes, s means single quotes,
+// b means backticks and S means subshell.
 func (q ShQuoting) String() string {
 	return [...]string{
 		"plain",
 		"d", "s", "b", "S",
-		"db", "bd", "bs", "Sd", "Ss",
+		"db", "bd", "bs", "Sd", "Ss", "Sb",
 		"dbd", "dbs",
 	}[q]
 }
 
-func (q ShQuoting) ToVarUseContext() vucQuoting {
+func (q ShQuoting) ToVarUseContext() VucQuoting {
 	switch q {
 	case shqPlain:
-		return vucQuotPlain
+		return VucQuotPlain
 	case shqDquot:
-		return vucQuotDquot
+		return VucQuotDquot
 	case shqSquot:
-		return vucQuotSquot
+		return VucQuotSquot
 	case shqBackt:
-		return vucQuotBackt
+		return VucQuotBackt
 	}
-	return vucQuotUnknown
+	return VucQuotUnknown
 }
 
 // ShToken is an operator or a keyword or some text intermingled with variables.

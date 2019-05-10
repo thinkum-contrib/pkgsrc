@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.25 2018/12/09 18:52:44 adam Exp $
+# $NetBSD: Makefile,v 1.27 2019/04/03 00:33:03 ryoon Exp $
 
-DISTNAME=	zathura-0.4.1
-PKGREVISION=	3
+DISTNAME=	zathura-0.4.3
+PKGREVISION=	1
 CATEGORIES=	print
 MASTER_SITES=	https://pwmt.org/projects/zathura/download/
 EXTRACT_SUFX=	.tar.xz
@@ -16,6 +16,9 @@ USE_TOOLS+=	pkg-config
 # XXX: msgfmt needs to support `--xml', always use the one from pkgsrc
 TOOL_DEPENDS+=	gettext-tools>=0.15:../../devel/gettext-tools
 TOOL_DEPENDS+=	${PYPKGPREFIX}-sphinx-[0-9]*:../../textproc/py-sphinx
+
+# Avoid possible dependency on librsvg
+MESON_ARGS+=	-D convert-icon=disabled
 
 CFLAGS.SunOS+=	-D__EXTENSIONS__
 

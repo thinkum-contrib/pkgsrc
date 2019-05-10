@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.7 2018/11/11 20:09:56 sno Exp $
+# $NetBSD: Makefile,v 1.9 2019/03/24 09:18:53 sno Exp $
 #
 
-DISTNAME=	log4cplus-2.0.2
+DISTNAME=	log4cplus-2.0.3
 CATEGORIES=	devel
-GITHUB_RELEASE=	REL_2_0_2
+GITHUB_RELEASE=	REL_2_0_3
 MASTER_SITES=	${MASTER_SITE_GITHUB:=log4cplus/}
 EXTRACT_SUFX=	.tar.bz2
 
@@ -22,6 +22,8 @@ CONFIGURE_ARGS+=	--without-wchar_t-support
 CONFIGURE_ARGS+=	--without-qt
 CONFIGURE_ARGS+=	--without-qt5
 CONFIGURE_ARGS+=	--without-python
+
+LDFLAGS.SunOS+=	-liconv
 
 .include "../../mk/compiler.mk"
 .if !empty(PKGSRC_COMPILER:Mclang)

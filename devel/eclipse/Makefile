@@ -1,5 +1,4 @@
-# $NetBSD: Makefile,v 1.32 2017/10/09 15:23:11 jperkin Exp $
-#
+# $NetBSD: Makefile,v 1.34 2019/05/02 08:36:10 wiz Exp $
 
 DISTNAME=	${PKGNAME_NOREV}
 PKGNAME=	eclipse-${VERSION}
@@ -16,7 +15,7 @@ LICENSE=	eclipse-license
 DEPENDS+=	apache-ant>=1.4.1:../../devel/apache-ant
 USE_TOOLS+=	unzip zip
 
-PKG_JVMS_ACCEPTED= sun-jdk6 sun-jdk15 sun-jdk14
+PKG_JVMS_ACCEPTED= sun-jdk7
 
 MAKE_ENV+=	JAVA_HOME=${PKG_JAVA_HOME:Q}
 MAKE_ENV+=	ANT_HOME=${PREFIX:Q}
@@ -32,7 +31,7 @@ VERSION=	3.0.1
 
 .if ${OPSYS} == "Linux"
 DISTNAME=	eclipse-sourceBuild-srcIncluded-${VERSION}
-MASTER_SITES=	ftp://download.eclipse.org/R-3.0.1-200409161125/
+MASTER_SITES=	http://archive.eclipse.org/eclipse/downloads/drops/R-3.0.1-200409161125/
 
 INSTALLATION_DIRS=	bin
 

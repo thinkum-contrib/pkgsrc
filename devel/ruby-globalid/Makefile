@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.7 2018/03/18 14:21:20 taca Exp $
+# $NetBSD: Makefile,v 1.10 2019/03/03 17:24:41 taca Exp $
 
-DISTNAME=	globalid-0.4.1
+DISTNAME=	globalid-0.4.2
 CATEGORIES=	devel
 
 MAINTAINER=	minskim@NetBSD.org
@@ -10,7 +10,9 @@ LICENSE=	mit
 
 DEPENDS+=	${RUBY_ACTIVESUPPORT_DEPENDS}
 
-RUBY_RAILS_ACCEPTED=	42
+USE_LANGAGES=	# none
+
+RUBY_RAILS_ACCEPTED=	# defined
 
 .include "../../lang/ruby/gem.mk"
 .include "../../mk/bsd.pkg.mk"

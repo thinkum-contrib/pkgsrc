@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.41 2018/12/27 15:07:05 joerg Exp $
+# $NetBSD: Makefile,v 1.49 2019/04/25 07:33:04 maya Exp $
 
-DISTNAME=	notmuch-0.28
+DISTNAME=	notmuch-0.28.3
+PKGREVISION=	3
 CATEGORIES=	mail
 MASTER_SITES=	https://notmuchmail.org/releases/
 
@@ -9,14 +10,14 @@ HOMEPAGE=	https://notmuchmail.org/
 COMMENT=	Mail indexer
 LICENSE=	gnu-gpl-v3
 
-BUILD_DEPENDS+=	${PYPKGPREFIX}-sphinx-[0-9]*:../../textproc/py-sphinx
-
 HAS_CONFIGURE=	yes
 USE_LANGUAGES=	c c++
 USE_TOOLS+=	bash gmake makeinfo pkg-config
 MAKE_FLAGS+=	PYTHON=${PYTHONBIN}
 INFO_FILES=	yes
 #TEST_TARGET=	check
+
+REPLACE_BASH+=	emacs/notmuch-emacs-mua
 
 .include "options.mk"
 

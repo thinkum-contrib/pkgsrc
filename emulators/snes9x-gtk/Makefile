@@ -1,5 +1,6 @@
-# $NetBSD: Makefile,v 1.63 2019/01/02 09:54:05 nia Exp $
+# $NetBSD: Makefile,v 1.66 2019/04/25 07:32:53 maya Exp $
 
+PKGREVISION= 1
 .include "../../emulators/snes9x/Makefile.common"
 
 PKGNAME=	snes9x-gtk-${SNES9X_VERSION}
@@ -7,15 +8,15 @@ PKGNAME=	snes9x-gtk-${SNES9X_VERSION}
 MAINTAINER=	nia@NetBSD.org
 COMMENT=	Super Nintendo Entertainment System (SNES) emulator (GUI version)
 
-CONFIGURE_DIRS+=	gtk
-BUILD_DIRS+=		gtk
-GNU_CONFIGURE=		yes
-
-USE_TOOLS+=	autoreconf autoconf automake pkg-config
+USE_TOOLS+=	pkg-config
 USE_TOOLS+=	msgfmt xgettext msgmerge
 USE_TOOLS+=	gawk
 
-BUILD_DEPENDS+=		gettext-m4-[0-9]*:../../devel/gettext-m4
+MESON_ARGS+=	-Dsystem-zip=false
+MESON_ARGS+=	-Dportaudio=false
+
+BUILD_DEPENDS+=	gettext-m4-[0-9]*:../../devel/gettext-m4
+BUILD_DEPENDS+=	${PYPKGPREFIX}-meson-[0-9]*:../../devel/py-meson
 
 .include "../../mk/oss.buildlink3.mk"
 
@@ -27,12 +28,20 @@ SUBST_FILES.oss+=	gtk/src/gtk_sound_driver_oss.cpp
 SUBST_SED.oss=		-e "s,/dev/dsp,${DEVOSSAUDIO},g"
 .endif
 
-LIBS.SunOS+=		-lsocket -lnsl
+LDFLAGS.SunOS+=		-lsocket -lnsl
 
 BUILDLINK_TRANSFORM+=	rm:-ldl
 
-pre-configure:
-	cd ${WRKSRC}/gtk && ./autogen.sh
+do-configure:
+	cd ${WRKSRC}/gtk && ${SETENV} ${MAKE_ENV} meson --prefix ${PREFIX} --libdir lib --mandir ${PKGMANDIR} --buildtype=plain ${MESON_ARGS} . output
+
+do-build:
+	cd ${WRKSRC}/gtk && ${SETENV} ${MAKE_ENV} ninja -C output
+
+do-install:
+	cd ${WRKSRC}/gtk && ${SETENV} ${INSTALL_ENV} ninja -C output install
+
+PYTHON_VERSIONS_INCOMPATIBLE=	27
 
 .include "options.mk"
 .include "../../converters/libiconv/buildlink3.mk"
@@ -43,5 +52,6 @@ pre-configure:
 .include "../../graphics/png/buildlink3.mk"
 .include "../../x11/libXrandr/buildlink3.mk"
 .include "../../x11/libXv/buildlink3.mk"
+.include "../../lang/python/application.mk"
 .include "../../mk/dlopen.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

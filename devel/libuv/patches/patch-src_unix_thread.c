@@ -1,10 +1,10 @@
-$NetBSD: patch-src_unix_thread.c,v 1.4 2018/02/22 08:44:15 adam Exp $
+$NetBSD: patch-src_unix_thread.c,v 1.6 2019/04/18 07:47:33 adam Exp $
 
 Use feature test for pthread_condattr_setclock, absent in netbsd-6-0
 
---- src/unix/thread.c.orig	2018-02-21 20:25:38.000000000 +0000
+--- src/unix/thread.c.orig	2019-02-10 16:44:47.000000000 +0000
 +++ src/unix/thread.c
-@@ -568,7 +568,7 @@ int uv_cond_init(uv_cond_t* cond) {
+@@ -687,7 +689,7 @@ int uv_cond_init(uv_cond_t* cond) {
    if (err)
      return UV__ERR(err);
  

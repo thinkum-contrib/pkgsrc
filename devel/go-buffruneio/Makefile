@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.8 2018/12/19 15:47:05 bsiegert Exp $
+# $NetBSD: Makefile,v 1.12 2019/04/16 18:41:14 bsiegert Exp $
 
 DISTNAME=	go-buffruneio-0.2.0
 MASTER_SITES=	${MASTER_SITE_GITHUB:=pelletier/}
-PKGREVISION=	5
+PKGREVISION=	9
 CATEGORIES=	devel
 GITHUB_TAG=	v${PKGVERSION_NOREV}
 

@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.74 2018/12/09 18:52:17 adam Exp $
+# $NetBSD: Makefile,v 1.80 2019/05/05 22:49:46 ryoon Exp $
 
 DISTNAME=		spectrum-1.4.8
-PKGREVISION=		49
+PKGREVISION=		53
 CATEGORIES=		chat
 MASTER_SITES=		https://cloud.github.com/downloads/hanzz/libtransport/
 
-MAINTAINER=		schnoebe@NetBSD.org
+MAINTAINER=		pkgsrc-users@NetBSD.org
 HOMEPAGE=		https://spectrum.im/
 COMMENT=		XMPP transport/gateway based on libpurple
 LICENSE=		gnu-gpl-v3
@@ -20,7 +20,7 @@ USE_LANGUAGES=		c++ c
 
 REPLACE_PYTHON+=	spectrumctl/spectrumctl.py
 PY_PATCHPLIST=		yes
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # py-xmpppy
+PYTHON_VERSIONS_INCOMPATIBLE=	 36 37 # py-xmpppy
 
 BUILD_DEFS+=		JABBER_USER JABBER_GROUP
 BUILD_DEFS+=		SPECTRUM_RUN SPECTRUM_DB SPECTRUM_LOG

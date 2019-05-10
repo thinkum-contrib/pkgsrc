@@ -1,7 +1,5 @@
 package pkglint
 
-// Checks concerning single lines in Makefiles.
-
 import (
 	"fmt"
 	"netbsd.org/pkglint/regex"
@@ -22,17 +20,19 @@ type MkLineImpl struct {
 }
 type mkLineAssign = *mkLineAssignImpl // See https://github.com/golang/go/issues/28045
 type mkLineAssignImpl struct {
-	commented   bool       // Whether the whole variable assignment is commented out
-	varname     string     // e.g. "HOMEPAGE", "SUBST_SED.perl"
-	varcanon    string     // e.g. "HOMEPAGE", "SUBST_SED.*"
-	varparam    string     // e.g. "", "perl"
-	op          MkOperator //
-	valueAlign  string     // The text up to and including the assignment operator, e.g. VARNAME+=\t
-	value       string     // The trimmed value
-	valueMk     []*MkToken // The value, sent through splitIntoMkWords
-	valueMkRest string     // nonempty in case of parse errors
-	fields      []string   // The value, space-separated according to shell quoting rules
-	comment     string
+	commented         bool   // Whether the whole variable assignment is commented out
+	varname           string // e.g. "HOMEPAGE", "SUBST_SED.perl"
+	varcanon          string // e.g. "HOMEPAGE", "SUBST_SED.*"
+	varparam          string // e.g. "", "perl"
+	spaceAfterVarname string
+	op                MkOperator //
+	valueAlign        string     // The text up to and including the assignment operator, e.g. VARNAME+=\t
+	value             string     // The trimmed value
+	valueMk           []*MkToken // The value, sent through splitIntoMkWords
+	valueMkRest       string     // nonempty in case of parse errors
+	fields            []string   // The value, space-separated according to shell quoting rules
+	spaceAfterValue   string
+	comment           string
 }
 type mkLineShell struct {
 	command string
@@ -62,66 +62,101 @@ type mkLineDependency struct {
 	sources string
 }
 
-// NewMkLine parses the text of a Makefile line to see what kind of line
+type MkLineParser struct{}
+
+// Parse parses the text of a Makefile line to see what kind of line
 // it is: variable assignment, include, comment, etc.
 //
 // See devel/bmake/parse.c:/^Parse_File/
-func NewMkLine(line Line) *MkLineImpl {
+func (p MkLineParser) Parse(line Line) *MkLineImpl {
 	text := line.Text
 
 	// XXX: This check should be moved somewhere else. NewMkLine should only be concerned with parsing.
 	if hasPrefix(text, " ") && line.Basename != "bsd.buildlink3.mk" {
 		line.Warnf("Makefile lines should not start with space characters.")
-		G.Explain(
+		line.Explain(
 			"If this line should be a shell command connected to a target, use a tab character for indentation.",
 			"Otherwise remove the leading whitespace.")
 	}
 
-	if m, commented, varname, spaceAfterVarname, op, valueAlign, value, spaceAfterValue, comment := MatchVarassign(text); m {
-		if G.Opts.WarnSpace && spaceAfterVarname != "" {
-			switch {
-			case hasSuffix(varname, "+") && op == "=":
-				break
-			case matches(varname, `^[a-z]`) && op == ":=":
-				break
-			default:
-				// XXX: This check should be moved somewhere else. NewMkLine should only be concerned with parsing.
-				fix := line.Autofix()
-				fix.Notef("Unnecessary space after variable name %q.", varname)
-				fix.Replace(varname+spaceAfterVarname+op, varname+op)
-				fix.Apply()
-			}
-		}
+	data := p.split(line, text)
 
-		// XXX: This check should be moved somewhere else. NewMkLine should only be concerned with parsing.
-		if comment != "" && value != "" && spaceAfterValue == "" {
-			line.Warnf("The # character starts a comment.")
-			G.Explain(
-				"In a variable assignment, an unescaped # starts a comment that",
-				"continues until the end of the line.",
-				"To escape the #, write \\#.")
-		}
-
-		return &MkLineImpl{line, &mkLineAssignImpl{
-			commented,
-			varname,
-			varnameCanon(varname),
-			varnameParam(varname),
-			NewMkOperator(op),
-			valueAlign,
-			strings.Replace(value, "\\#", "#", -1),
-			nil,
-			"",
-			nil,
-			comment}}
-	}
-
+	// Check for shell commands first because these cannot have comments
+	// at the end of the line.
 	if hasPrefix(text, "\t") {
-		shellcmd := text[1:]
-		return &MkLineImpl{line, mkLineShell{shellcmd}}
+		return p.parseShellcmd(line)
 	}
 
-	trimmedText := trimHspace(text)
+	if mkline := p.parseVarassign(line, data); mkline != nil {
+		return mkline
+	}
+	if mkline := p.parseCommentOrEmpty(line); mkline != nil {
+		return mkline
+	}
+	if mkline := p.parseDirective(line, data); mkline != nil {
+		return mkline
+	}
+	if mkline := p.parseInclude(line); mkline != nil {
+		return mkline
+	}
+	if mkline := p.parseSysinclude(line); mkline != nil {
+		return mkline
+	}
+	if mkline := p.parseDependency(line); mkline != nil {
+		return mkline
+	}
+	if mkline := p.parseMergeConflict(line); mkline != nil {
+		return mkline
+	}
+
+	// The %q is deliberate here since it shows possible strange characters.
+	line.Errorf("Unknown Makefile line format: %q.", text)
+	return &MkLineImpl{line, nil}
+}
+
+func (p MkLineParser) parseVarassign(line Line, data mkLineSplitResult) MkLine {
+	m, a := p.MatchVarassign(line, line.Text, data)
+	if !m {
+		return nil
+	}
+
+	if a.spaceAfterVarname != "" {
+		varname := a.varname
+		op := a.op
+		switch {
+		case hasSuffix(varname, "+") && (op == opAssign || op == opAssignAppend):
+			break
+		case matches(varname, `^[a-z]`) && op == opAssignEval:
+			break
+		default:
+			fix := line.Autofix()
+			fix.Notef("Unnecessary space after variable name %q.", varname)
+			fix.Replace(varname+a.spaceAfterVarname+op.String(), varname+op.String())
+			fix.Apply()
+		}
+	}
+
+	if a.comment != "" && a.value != "" && a.spaceAfterValue == "" {
+		line.Warnf("The # character starts a Makefile comment.")
+		line.Explain(
+			"In a variable assignment, an unescaped # starts a comment that",
+			"continues until the end of the line.",
+			"To escape the #, write \\#.",
+			"",
+			"If this # character intentionally starts a comment,",
+			"it should be preceded by a space in order to make it more visible.")
+	}
+
+	return &MkLineImpl{line, a}
+}
+
+func (p MkLineParser) parseShellcmd(line Line) MkLine {
+	return &MkLineImpl{line, mkLineShell{line.Text[1:]}}
+}
+
+func (p MkLineParser) parseCommentOrEmpty(line Line) MkLine {
+	trimmedText := trimHspace(line.Text)
+
 	if strings.HasPrefix(trimmedText, "#") {
 		return &MkLineImpl{line, mkLineComment{}}
 	}
@@ -130,37 +165,50 @@ func NewMkLine(line Line) *MkLineImpl {
 		return &MkLineImpl{line, mkLineEmpty{}}
 	}
 
-	if m, indent, directive, args, comment := matchMkDirective(text); m {
-		return &MkLineImpl{line, &mkLineDirectiveImpl{indent, directive, args, comment, nil, nil, nil}}
+	return nil
+}
+
+func (p MkLineParser) parseInclude(line Line) MkLine {
+	m, indent, directive, includedFile := MatchMkInclude(line.Text)
+	if !m {
+		return nil
 	}
 
-	if m, indent, directive, includedFile := MatchMkInclude(text); m {
-		return &MkLineImpl{line, &mkLineIncludeImpl{directive == "include", false, indent, includedFile, nil}}
+	return &MkLineImpl{line, &mkLineIncludeImpl{directive == "include", false, indent, includedFile, nil}}
+}
+
+func (p MkLineParser) parseSysinclude(line Line) MkLine {
+	m, indent, directive, includedFile := match3(line.Text, `^\.([\t ]*)(s?include)[\t ]+<([^>]+)>[\t ]*(?:#.*)?$`)
+	if !m {
+		return nil
 	}
 
-	if m, indent, directive, includedFile := match3(text, `^\.([\t ]*)(s?include)[\t ]+<([^>]+)>[\t ]*(?:#.*)?$`); m {
-		return &MkLineImpl{line, &mkLineIncludeImpl{directive == "include", true, indent, includedFile, nil}}
-	}
+	return &MkLineImpl{line, &mkLineIncludeImpl{directive == "include", true, indent, includedFile, nil}}
+}
 
+func (p MkLineParser) parseDependency(line Line) MkLine {
 	// XXX: Replace this regular expression with proper parsing.
-	// There might be a ${VAR:M*.c} in these variables, which currently confuses the "parser".
-	if m, targets, whitespace, sources := match3(text, `^([^\t :]+(?:[\t ]*[^\t :]+)*)([\t ]*):[\t ]*([^#]*?)(?:[\t ]*#.*)?$`); m {
-		// XXX: This check should be moved somewhere else. NewMkLine should only be concerned with parsing.
-		if whitespace != "" {
-			line.Notef("Space before colon in dependency line.")
-		}
-		return &MkLineImpl{line, mkLineDependency{targets, sources}}
+	// There might be a ${VAR:M*.c} in these variables, which the below regular expression cannot handle.
+	m, targets, whitespace, sources := match3(line.Text, `^([^\t :]+(?:[\t ]*[^\t :]+)*)([\t ]*):[\t ]*([^#]*?)(?:[\t ]*#.*)?$`)
+	if !m {
+		return nil
 	}
 
-	if matches(text, `^(<<<<<<<|=======|>>>>>>>)`) {
-		return &MkLineImpl{line, nil}
+	if whitespace != "" {
+		line.Notef("Space before colon in dependency line.")
+	}
+	return &MkLineImpl{line, mkLineDependency{targets, sources}}
+}
+
+func (p MkLineParser) parseMergeConflict(line Line) MkLine {
+	if !matches(line.Text, `^(<<<<<<<|=======|>>>>>>>)`) {
+		return nil
 	}
 
-	// The %q is deliberate here since it shows possible strange characters.
-	line.Errorf("Unknown Makefile line format: %q.", text)
 	return &MkLineImpl{line, nil}
 }
 
+// String returns the filename and line numbers.
 func (mkline *MkLineImpl) String() string {
 	return sprintf("%s:%s", mkline.Filename, mkline.Linenos())
 }
@@ -297,7 +345,7 @@ func (mkline *MkLineImpl) Args() string { return mkline.data.(mkLineDirective).a
 func (mkline *MkLineImpl) Cond() MkCond {
 	cond := mkline.data.(mkLineDirective).cond
 	if cond == nil {
-		cond = NewMkParser(nil, mkline.Args(), false).MkCond()
+		cond = NewMkParser(mkline.Line, mkline.Args(), true).MkCond()
 		mkline.data.(mkLineDirective).cond = cond
 	}
 	return cond
@@ -334,30 +382,38 @@ func (mkline *MkLineImpl) SetConditionalVars(varnames []string) {
 	mkline.data = include
 }
 
-// Tokenize extracts variable uses and other text from the string.
+// Tokenize extracts variable uses and other text from the given text.
 //
-// TODO: Check this paragraph for correctness.
-// Either:
-// The given s must have exactly the format from the file, i.e. an escaped
-// comment is written as \#.
-// Or:
-// The given s must have the format after parsing comments, i.e. the trailing
-// comment is already removed, and a # does not introduce another comment.
+// When used in IsVarassign lines, the given text must have the format
+// after stripping the end-of-line comment. Such text is available from
+// Value. A shell comment is therefore marked by a simple #, not an escaped
+// \# like in Makefiles.
+//
+// When used in IsShellCommand lines, # does not mark a Makefile comment
+// and may thus still appear in the text. Therefore, # marks a shell comment.
 //
 // Example:
 //  input:  ${PREFIX}/bin abc
 //  output: [MkToken("${PREFIX}", MkVarUse("PREFIX")), MkToken("/bin abc")]
 //
 // See ValueTokens, which is the tokenized version of Value.
-func (mkline *MkLineImpl) Tokenize(s string, warn bool) []*MkToken {
+func (mkline *MkLineImpl) Tokenize(text string, warn bool) []*MkToken {
 	if trace.Tracing {
-		defer trace.Call(mkline, s)()
+		defer trace.Call(mkline, text)()
 	}
 
-	p := NewMkParser(mkline.Line, s, true)
-	tokens := p.MkTokens()
-	if warn && p.Rest() != "" {
-		mkline.Warnf("Internal pkglint error in MkLine.Tokenize at %q.", p.Rest())
+	var tokens []*MkToken
+	var rest string
+	if (mkline.IsVarassign() || mkline.IsCommentedVarassign()) && text == mkline.Value() {
+		tokens, rest = mkline.ValueTokens()
+	} else {
+		p := NewMkParser(mkline.Line, text, true)
+		tokens = p.MkTokens()
+		rest = p.Rest()
+	}
+
+	if warn && rest != "" {
+		mkline.Warnf("Internal pkglint error in MkLine.Tokenize at %q.", rest)
 	}
 	return tokens
 }
@@ -415,71 +471,84 @@ func (mkline *MkLineImpl) ValueSplit(value string, separator string) []string {
 	return split
 }
 
-// ValueFields splits the given value, taking care of variable references.
-// Example:
+var notSpace = textproc.Space.Inverse()
+
+// ValueFields splits the given value in the same way as the :M variable
+// modifier, taking care of variable references. Example:
 //
-//  ValueFields("${VAR:Udefault value} ${VAR2}two words")
+//  ValueFields("${VAR:Udefault value} ${VAR2}two words;;; 'word three'")
 //  => "${VAR:Udefault value}"
 //     "${VAR2}two"
-//     "words"
+//     "words;;;"
+//     "'word three'"
 //
 // Note that even though the first word contains a space, it is not split
-// at that point since the space is inside a variable use.
+// at that point since the space is inside a variable use. Shell tokens
+// such as semicolons are also treated as normal characters. Only double
+// and single quotes are interpreted.
+//
+// Compare devel/bmake/files/str.c, function brk_string.
+//
+// TODO: Compare with brk_string from devel/bmake, especially for backticks.
 func (mkline *MkLineImpl) ValueFields(value string) []string {
-	tokens := mkline.Tokenize(value, false)
-	var split []string
-	cont := false
-
-	out := func(s string) {
-		if cont {
-			split[len(split)-1] += s
-		} else {
-			split = append(split, s)
-		}
+	if trace.Tracing {
+		defer trace.Call(mkline, value)()
 	}
 
-	for _, token := range tokens {
-		if token.Varuse != nil {
-			out(token.Text)
-			cont = true
+	p := NewShTokenizer(mkline.Line, value, false)
+	atoms := p.ShAtoms()
+
+	if len(atoms) > 0 && atoms[0].Type == shtSpace {
+		atoms = atoms[1:]
+	}
+
+	var word strings.Builder
+	var words []string
+	for _, atom := range atoms {
+		if atom.Type == shtSpace && atom.Quoting == shqPlain {
+			words = append(words, word.String())
+			word.Reset()
 		} else {
-			lexer := textproc.NewLexer(token.Text)
-			for !lexer.EOF() {
-				for lexer.NextBytesSet(textproc.Space) != "" {
-					cont = false
-				}
-				if word := lexer.NextBytesSet(textproc.Space.Inverse()); word != "" {
-					out(word)
-					cont = true
-				}
-			}
+			word.WriteString(atom.MkText)
 		}
 	}
-	return split
+	if word.Len() > 0 && atoms[len(atoms)-1].Quoting == shqPlain {
+		words = append(words, word.String())
+		word.Reset()
+	}
+
+	// TODO: Handle parse errors
+	word.WriteString(p.parser.Rest())
+	rest := word.String()
+	_ = rest
+
+	return words
 }
 
-func (mkline *MkLineImpl) ValueTokens() []*MkToken {
+func (mkline *MkLineImpl) ValueTokens() ([]*MkToken, string) {
 	value := mkline.Value()
 	if value == "" {
-		return nil
+		return nil, ""
 	}
 
 	assign := mkline.data.(mkLineAssign)
 	if assign.valueMk != nil || assign.valueMkRest != "" {
-		return assign.valueMk
+		return assign.valueMk, assign.valueMkRest
 	}
 
-	p := NewMkParser(mkline.Line, value, true)
+	// No error checking here since all this has already been done when the
+	// whole line was parsed in MkLineParser.Parse.
+	p := NewMkParser(nil, value, false)
 	assign.valueMk = p.MkTokens()
 	assign.valueMkRest = p.Rest()
-	return assign.valueMk
+	return assign.valueMk, assign.valueMkRest
 }
 
 // Fields applies to variable assignments and .for loops.
 // For variable assignments, it returns the right-hand side, properly split into words.
 // For .for loops, it returns all arguments (including variable names), properly split into words.
 func (mkline *MkLineImpl) Fields() []string {
-	if mkline.IsVarassign() {
+	if mkline.IsVarassign() || mkline.IsCommentedVarassign() {
 		value := mkline.Value()
 		if value == "" {
 			return nil
@@ -511,16 +580,19 @@ func (mkline *MkLineImpl) Fields() []string {
 }
 
 func (mkline *MkLineImpl) WithoutMakeVariables(value string) string {
-	valueNovar := ""
+	var valueNovar strings.Builder
 	for _, token := range NewMkParser(nil, value, false).MkTokens() {
 		if token.Varuse == nil {
-			valueNovar += token.Text
+			valueNovar.WriteString(token.Text)
 		}
 	}
-	return valueNovar
+	return valueNovar.String()
 }
 
 func (mkline *MkLineImpl) ResolveVarsInRelativePath(relativePath string) string {
+	if !contains(relativePath, "$") {
+		return cleanpath(relativePath)
+	}
 
 	var basedir string
 	if G.Pkg != nil {
@@ -528,21 +600,36 @@ func (mkline *MkLineImpl) ResolveVarsInRelativePath(relativePath string) string 
 	} else {
 		basedir = path.Dir(mkline.Filename)
 	}
-	pkgsrcdir := relpath(basedir, G.Pkgsrc.File("."))
-
-	if G.Testing {
-		// Relative pkgsrc paths usually only contain two or three levels.
-		// A possible reason for reaching this assertion is:
-		// Tests that access the file system must create their lines
-		// using t.SetupFileMkLines, not using t.NewMkLines.
-		G.Assertf(!contains(pkgsrcdir, "../../../../.."),
-			"Relative path %q for %q is too deep below the pkgsrc root %q.",
-			pkgsrcdir, basedir, G.Pkgsrc.File("."))
-	}
 
 	tmp := relativePath
-	tmp = strings.Replace(tmp, "${PKGSRCDIR}", pkgsrcdir, -1)
+	if contains(tmp, "PKGSRCDIR") {
+		pkgsrcdir := relpath(basedir, G.Pkgsrc.File("."))
+
+		if G.Testing {
+			// Relative pkgsrc paths usually only contain two or three levels.
+			// A possible reason for reaching this assertion is a pkglint unit test
+			// that uses t.NewMkLines instead of the correct t.SetUpFileMkLines.
+			G.Assertf(!contains(pkgsrcdir, "../../../../.."),
+				"Relative path %q for %q is too deep below the pkgsrc root %q.",
+				pkgsrcdir, basedir, G.Pkgsrc.File("."))
+		}
+		tmp = strings.Replace(tmp, "${PKGSRCDIR}", pkgsrcdir, -1)
+	}
+
+	// Strictly speaking, the .CURDIR should be replaced with the basedir.
+	// Depending on whether pkglint is executed with a relative or an absolute
+	// path, this would produce diagnostics that "this relative path must not
+	// be absolute". Since ${.CURDIR} is usually used in package Makefiles and
+	// followed by "../.." anyway, the exact directory doesn't matter.
 	tmp = strings.Replace(tmp, "${.CURDIR}", ".", -1)
+
+	// TODO: Add test for exists(${.PARSEDIR}/file).
+	// TODO: Add test for evaluating ${.PARSEDIR} in an included package.
+	// TODO: Add test for including ${.PARSEDIR}/other.mk.
+	// TODO: Add test for evaluating ${.PARSEDIR} in the infrastructure.
+	//  This is the only practically relevant use case since the category
+	//  directories don't contain any *.mk files that could be included.
+	// TODO: Add test that suggests ${.PARSEDIR} in .include to be omitted.
 	tmp = strings.Replace(tmp, "${.PARSEDIR}", ".", -1)
 
 	replaceLatest := func(varuse, category string, pattern regex.Pattern, replacement string) {
@@ -551,11 +638,16 @@ func (mkline *MkLineImpl) ResolveVarsInRelativePath(relativePath string) string 
 			tmp = strings.Replace(tmp, varuse, latest, -1)
 		}
 	}
+
+	// These variables are only used in pkgsrc packages, therefore they
+	// are replaced with the fixed "../.." regardless of where the text appears.
 	replaceLatest("${LUA_PKGSRCDIR}", "lang", `^lua[0-9]+$`, "../../lang/$0")
 	replaceLatest("${PHPPKGSRCDIR}", "lang", `^php[0-9]+$`, "../../lang/$0")
-	replaceLatest("${SUSE_DIR_PREFIX}", "emulators", `^(suse[0-9]+)_base$`, "$1")
 	replaceLatest("${PYPKGSRCDIR}", "lang", `^python[0-9]+$`, "../../lang/$0")
+
 	replaceLatest("${PYPACKAGE}", "lang", `^python[0-9]+$`, "$0")
+	replaceLatest("${SUSE_DIR_PREFIX}", "emulators", `^(suse[0-9]+)_base$`, "$1")
+
 	if G.Pkg != nil {
 		// XXX: Even if these variables are defined indirectly,
 		// pkglint should be able to resolve them properly.
@@ -573,7 +665,7 @@ func (mkline *MkLineImpl) ResolveVarsInRelativePath(relativePath string) string 
 }
 
 func (mkline *MkLineImpl) ExplainRelativeDirs() {
-	G.Explain(
+	mkline.Explain(
 		"Directories in the form \"../../category/package\" make it easier to",
 		"move a package around in pkgsrc, for example from pkgsrc-wip to the",
 		"main pkgsrc repository.")
@@ -589,18 +681,164 @@ func (mkline *MkLineImpl) RefTo(other MkLine) string {
 }
 
 var (
-	LowerDash = textproc.NewByteSet("a-z---")
-	AlnumDot  = textproc.NewByteSet("A-Za-z0-9_.")
+	LowerDash                  = textproc.NewByteSet("a-z---")
+	AlnumDot                   = textproc.NewByteSet("A-Za-z0-9_.")
+	unescapeMkCommentSafeChars = textproc.NewByteSet("\\#[$").Inverse()
 )
 
-func matchMkDirective(text string) (m bool, indent, directive, args, comment string) {
+// unescapeComment takes a Makefile line, as written in a file, and splits
+// it into the main part and the comment.
+//
+// The comment starts at the first #. Except if it is preceded by an odd number
+// of backslashes. Or by an opening bracket.
+//
+// The main text is returned including leading and trailing whitespace. Any
+// escaped # is returned in its unescaped form, that is, \# becomes #.
+//
+// The comment is returned including the leading "#", if any. If the line has
+// no comment, it is an empty string.
+func (p MkLineParser) unescapeComment(text string) (main, comment string) {
+	var sb strings.Builder
+
 	lexer := textproc.NewLexer(text)
-	if !lexer.SkipByte('.') {
-		return
+
+again:
+	if plain := lexer.NextBytesSet(unescapeMkCommentSafeChars); plain != "" {
+		sb.WriteString(plain)
+		goto again
 	}
 
-	indent = lexer.NextHspace()
-	directive = lexer.NextBytesSet(LowerDash)
+	switch {
+	case lexer.SkipByte('$'):
+		sb.WriteByte('$')
+
+	case lexer.SkipString("\\#"):
+		sb.WriteByte('#')
+
+	case lexer.PeekByte() == '\\' && len(lexer.Rest()) >= 2:
+		sb.WriteString(lexer.Rest()[:2])
+		lexer.Skip(2)
+
+	case lexer.SkipByte('\\'):
+		sb.WriteByte('\\')
+
+	case lexer.SkipString("[#"):
+		// See devel/bmake/files/parse.c:/as in modifier/
+		sb.WriteString("[#")
+
+	case lexer.SkipByte('['):
+		sb.WriteByte('[')
+
+	default:
+		main = sb.String()
+		if lexer.PeekByte() == '#' {
+			return main, lexer.Rest()
+		}
+
+		G.Assertf(lexer.EOF(), "unescapeComment(%q): sb = %q, rest = %q", text, main, lexer.Rest())
+		return main, ""
+	}
+
+	goto again
+}
+
+type mkLineSplitResult struct {
+	main               string
+	tokens             []*MkToken
+	spaceBeforeComment string
+	hasComment         bool
+	comment            string
+}
+
+// splitMkLine parses a logical line from a Makefile (that is, after joining
+// the lines that end in a backslash) into two parts: the main part and the
+// comment.
+//
+// This applies to all line types except those starting with a tab, which
+// contain the shell commands to be associated with make targets. These cannot
+// have comments.
+func (p MkLineParser) split(line Line, text string) mkLineSplitResult {
+
+	main, comment := p.unescapeComment(text)
+
+	parser := NewMkParser(line, main, line != nil)
+	lexer := parser.lexer
+
+	rtrimHspace := func(s string) string {
+		end := len(s)
+		for end > 0 && isHspace(s[end-1]) {
+			end--
+		}
+		return s[:end]
+	}
+
+	parseOther := func() string {
+		var sb strings.Builder
+
+		for !lexer.EOF() {
+			if lexer.SkipString("$$") {
+				sb.WriteString("$$")
+				continue
+			}
+
+			other := lexer.NextBytesFunc(func(b byte) bool { return b != '$' })
+			if other == "" {
+				break
+			}
+
+			sb.WriteString(other)
+		}
+
+		return sb.String()
+	}
+
+	var tokens []*MkToken
+	for !lexer.EOF() {
+		mark := lexer.Mark()
+
+		if varUse := parser.VarUse(); varUse != nil {
+			tokens = append(tokens, &MkToken{lexer.Since(mark), varUse})
+
+		} else if other := parseOther(); other != "" {
+			tokens = append(tokens, &MkToken{other, nil})
+
+		} else {
+			G.Assertf(lexer.SkipByte('$'), "Parse error for %q.", text)
+			tokens = append(tokens, &MkToken{"$", nil})
+		}
+	}
+
+	hasComment := comment != ""
+	if hasComment {
+		comment = comment[1:]
+	}
+
+	G.Assertf(lexer.Rest() == "", "Parse error for %q.", text)
+
+	mainWithSpaces := main
+	main = rtrimHspace(main)
+	spaceBeforeComment := ifelseStr(true, mainWithSpaces[len(main):], "")
+	if spaceBeforeComment != "" && len(tokens) > 0 {
+		tokenText := &tokens[len(tokens)-1].Text
+		*tokenText = rtrimHspace(*tokenText)
+		if *tokenText == "" {
+			tokens = tokens[:len(tokens)-1]
+		}
+	}
+
+	return mkLineSplitResult{main, tokens, spaceBeforeComment, hasComment, comment}
+}
+
+func (p MkLineParser) parseDirective(line Line, data mkLineSplitResult) MkLine {
+	text := line.Text
+	if !hasPrefix(text, ".") {
+		return nil
+	}
+
+	lexer := textproc.NewLexer(data.main[1:])
+
+	indent := lexer.NextHspace()
+	directive := lexer.NextBytesSet(LowerDash)
 	switch directive {
 	case "if", "else", "elif", "endif",
 		"ifdef", "ifndef",
@@ -610,36 +848,19 @@ func matchMkDirective(text string) (m bool, indent, directive, args, comment str
 		break
 	default:
 		// Intentionally not supported are: ifmake ifnmake elifdef elifndef elifmake elifnmake.
-		return
+		return nil
 	}
 
 	lexer.SkipHspace()
 
-	argsStart := lexer.Mark()
-	for !lexer.EOF() && lexer.PeekByte() != '#' {
-		switch {
-		case lexer.SkipString("[#"):
-			// See devel/bmake/files/parse.c:/as in modifier/
+	args := lexer.Rest()
 
-		case lexer.PeekByte() == '\\' && len(lexer.Rest()) > 1:
-			lexer.Skip(2)
+	// In .if and .endif lines the space surrounding the comment is irrelevant.
+	// Especially for checking that the .endif comment matches the .if condition,
+	// it must be trimmed.
+	trimmedComment := trimHspace(data.comment)
 
-		default:
-			lexer.Skip(1)
-		}
-	}
-	args = lexer.Since(argsStart)
-	args = strings.TrimFunc(args, func(r rune) bool { return isHspace(byte(r)) })
-	args = strings.Replace(args, "\\#", "#", -1)
-
-	if !lexer.EOF() {
-		lexer.Skip(1)
-		lexer.SkipHspace()
-		comment = lexer.Rest()
-	}
-
-	m = true
-	return
+	return &MkLineImpl{line, &mkLineDirectiveImpl{indent, directive, args, trimmedComment, nil, nil, nil}}
 }
 
 // VariableNeedsQuoting determines whether the given variable needs the :Q operator
@@ -648,9 +869,9 @@ func matchMkDirective(text string) (m bool, indent, directive, args, comment str
 // This decision depends on many factors, such as whether the type of the context is
 // a list of things, whether the variable is a list, whether it can contain only
 // safe characters, and so on.
-func (mkline *MkLineImpl) VariableNeedsQuoting(varname string, vartype *Vartype, vuc *VarUseContext) (needsQuoting YesNoUnknown) {
+func (mkline *MkLineImpl) VariableNeedsQuoting(mklines MkLines, varuse *MkVarUse, vartype *Vartype, vuc *VarUseContext) (needsQuoting YesNoUnknown) {
 	if trace.Tracing {
-		defer trace.Call(varname, vartype, vuc, trace.Result(&needsQuoting))()
+		defer trace.Call(varuse, vartype, vuc, trace.Result(&needsQuoting))()
 	}
 
 	// TODO: Systematically test this function, each and every case, from top to bottom.
@@ -662,34 +883,27 @@ func (mkline *MkLineImpl) VariableNeedsQuoting(varname string, vartype *Vartype,
 	}
 
 	if !vartype.basicType.NeedsQ() {
-		if vartype.kindOfList == lkNone {
-			if vartype.guessed {
+		if !vartype.List() {
+			if vartype.Guessed() {
 				return unknown
 			}
 			return no
 		}
-		if vartype.kindOfList == lkShell && !vuc.IsWordPart {
+		if !vuc.IsWordPart {
 			return no
 		}
 	}
 
-	// In .for loops, the :Q operator is always misplaced, since
-	// the items are broken up at whitespace, not as shell words
-	// like in all other parts of make(1).
-	if vuc.quoting == vucQuotFor {
-		return no
-	}
-
 	// A shell word may appear as part of a shell word, for example COMPILER_RPATH_FLAG.
-	if vuc.IsWordPart && vuc.quoting == vucQuotPlain {
-		if vartype.kindOfList == lkNone && vartype.basicType == BtShellWord {
+	if vuc.IsWordPart && vuc.quoting == VucQuotPlain {
+		if !vartype.List() && vartype.basicType == BtShellWord {
 			return no
 		}
 	}
 
 	// Determine whether the context expects a list of shell words or not.
-	wantList := vucVartype.IsConsideredList()
-	haveList := vartype.IsConsideredList()
+	wantList := vucVartype.MayBeAppendedTo()
+	haveList := vartype.MayBeAppendedTo()
 	if trace.Tracing {
 		trace.Stepf("wantList=%v, haveList=%v", wantList, haveList)
 	}
@@ -697,24 +911,22 @@ func (mkline *MkLineImpl) VariableNeedsQuoting(varname string, vartype *Vartype,
 	// Both of these can be correct, depending on the situation:
 	// 1. echo ${PERL5:Q}
 	// 2. xargs ${PERL5}
-	if !vuc.IsWordPart && vuc.quoting == vucQuotPlain {
-		if wantList && haveList {
-			return unknown
-		}
+	if !vuc.IsWordPart && wantList && haveList {
+		return unknown
 	}
 
 	// Pkglint assumes that the tool definitions don't include very
 	// special characters, so they can safely be used inside any quotes.
-	if tool := G.ToolByVarname(varname); tool != nil {
+	if tool := G.ToolByVarname(mklines, varuse.varname); tool != nil {
 		switch vuc.quoting {
-		case vucQuotPlain:
+		case VucQuotPlain:
 			if !vuc.IsWordPart {
 				return no
 			}
 			// XXX: Should there be a return here? It looks as if it could have been forgotten.
-		case vucQuotBackt:
+		case VucQuotBackt:
 			return no
-		case vucQuotDquot, vucQuotSquot:
+		case VucQuotDquot, VucQuotSquot:
 			return unknown
 		}
 	}
@@ -723,7 +935,7 @@ func (mkline *MkLineImpl) VariableNeedsQuoting(varname string, vartype *Vartype,
 	//
 	// An exception is in the case of backticks, because the whole backticks expression
 	// is parsed as a single shell word by pkglint. (XXX: This comment may be outdated.)
-	if vuc.IsWordPart && vucVartype.IsShell() && vuc.quoting != vucQuotBackt {
+	if vuc.IsWordPart && vucVartype.IsShell() && vuc.quoting != VucQuotBackt {
 		return yes
 	}
 
@@ -739,52 +951,53 @@ func (mkline *MkLineImpl) VariableNeedsQuoting(varname string, vartype *Vartype,
 		if vucVartype.basicType == BtHomepage && vartype.basicType == BtFetchURL {
 			return no // Just for HOMEPAGE=${MASTER_SITE_*:=subdir/}.
 		}
+
+		// .for dir in ${PATH:C,:, ,g}
+		for _, modifier := range varuse.modifiers {
+			if modifier.ChangesWords() {
+				return unknown
+			}
+		}
+
 		return yes
 	}
 
 	// Bad: LDADD+= -l${LIBS}
 	// Good: LDADD+= ${LIBS:S,^,-l,}
-	if wantList && haveList && vuc.IsWordPart {
+	if wantList {
 		return yes
 	}
 
 	if trace.Tracing {
-		trace.Step1("Don't know whether :Q is needed for %q", varname)
+		trace.Step1("Don't know whether :Q is needed for %q", varuse.varname)
 	}
 	return unknown
 }
 
-func (mkline *MkLineImpl) DetermineUsedVariables() []string {
-	// TODO: It would be good to have these variables as MkVarUse objects
-	// including the context in which they are used.
+// ForEachUsed calls the action for each variable that is used in the line.
+func (mkline *MkLineImpl) ForEachUsed(action func(varUse *MkVarUse, time vucTime)) {
 
-	var varnames []string
+	var searchIn func(text string, time vucTime) // mutually recursive with searchInVarUse
 
-	add := func(varname string) {
-		varnames = append(varnames, varname)
-	}
-
-	var searchIn func(text string) // mutually recursive with searchInVarUse
-
-	searchInVarUse := func(varuse *MkVarUse) {
+	searchInVarUse := func(varuse *MkVarUse, time vucTime) {
 		varname := varuse.varname
 		if !varuse.IsExpression() {
-			add(varname)
+			action(varuse, time)
 		}
-		searchIn(varname)
+		searchIn(varname, time)
 		for _, mod := range varuse.modifiers {
-			searchIn(mod.Text)
+			searchIn(mod.Text, time)
 		}
 	}
 
-	searchIn = func(text string) {
+	searchIn = func(text string, time vucTime) {
 		if !contains(text, "$") {
 			return
 		}
 
 		for _, token := range NewMkParser(nil, text, false).MkTokens() {
 			if token.Varuse != nil {
-				searchInVarUse(token.Varuse)
+				searchInVarUse(token.Varuse, time)
 			}
 		}
 	}
@@ -792,27 +1005,69 @@ func (mkline *MkLineImpl) DetermineUsedVariables() []string {
 	switch {
 
 	case mkline.IsVarassign():
-		searchIn(mkline.Varname())
-		searchIn(mkline.Value())
+		searchIn(mkline.Varname(), vucTimeParse)
+		searchIn(mkline.Value(), mkline.Op().Time())
 
 	case mkline.IsDirective() && mkline.Directive() == "for":
-		searchIn(mkline.Args())
+		searchIn(mkline.Args(), vucTimeParse)
 
 	case mkline.IsDirective() && mkline.Cond() != nil:
-		mkline.Cond().Walk(&MkCondCallback{VarUse: searchInVarUse})
+		mkline.Cond().Walk(&MkCondCallback{
+			VarUse: func(varuse *MkVarUse) {
+				searchInVarUse(varuse, vucTimeParse)
+			}})
 
 	case mkline.IsShellCommand():
-		searchIn(mkline.ShellCommand())
+		searchIn(mkline.ShellCommand(), vucTimeRun)
 
 	case mkline.IsDependency():
-		searchIn(mkline.Targets())
-		searchIn(mkline.Sources())
+		searchIn(mkline.Targets(), vucTimeParse)
+		searchIn(mkline.Sources(), vucTimeParse)
 
 	case mkline.IsInclude():
-		searchIn(mkline.IncludedFile())
+		searchIn(mkline.IncludedFile(), vucTimeParse)
+	}
+}
+
+func (mkline *MkLineImpl) UnquoteShell(str string) string {
+	var sb strings.Builder
+	n := len(str)
+
+outer:
+	for i := 0; i < n; i++ {
+		switch str[i] {
+		case '"':
+			for i++; i < n; i++ {
+				switch str[i] {
+				case '"':
+					continue outer
+				case '\\':
+					i++
+					if i < n {
+						sb.WriteByte(str[i])
+					}
+				default:
+					sb.WriteByte(str[i])
+				}
+			}
+
+		case '\'':
+			for i++; i < n && str[i] != '\''; i++ {
+				sb.WriteByte(str[i])
+			}
+
+		case '\\':
+			i++
+			if i < n {
+				sb.WriteByte(str[i])
+			}
+
+		default:
+			sb.WriteByte(str[i])
+		}
 	}
 
-	return varnames
+	return sb.String()
 }
 
 type MkOperator uint8
@@ -847,6 +1102,15 @@ func (op MkOperator) String() string {
 	return [...]string{"=", "!=", ":=", "+=", "?=", "use", "use-loadtime", "use-match"}[op]
 }
 
+// Time returns the time at which the right-hand side of the assignment is
+// evaluated.
+func (op MkOperator) Time() vucTime {
+	if op == opAssignShell || op == opAssignEval {
+		return vucTimeParse
+	}
+	return vucTimeRun
+}
+
 // VarUseContext defines the context in which a variable is defined
 // or used. Whether that is allowed depends on:
 //
@@ -864,7 +1128,7 @@ func (op MkOperator) String() string {
 type VarUseContext struct {
 	vartype    *Vartype
 	time       vucTime
-	quoting    vucQuoting
+	quoting    VucQuoting
 	IsWordPart bool // Example: LOCALBASE=${LOCALBASE}
 }
 
@@ -892,29 +1156,22 @@ const (
 
 func (t vucTime) String() string { return [...]string{"unknown", "parse", "run"}[t] }
 
-// The quoting context in which the variable is used.
+// VucQuoting describes in what level of quoting the variable is used.
 // Depending on this context, the modifiers :Q or :M can be allowed or not.
 //
 // The shell tokenizer knows multi-level quoting modes (see ShQuoting),
 // but for deciding whether :Q is necessary or not, a single level is enough.
-type vucQuoting uint8
+type VucQuoting uint8
 
 const (
-	vucQuotUnknown vucQuoting = iota
-	vucQuotPlain              // Example: echo LOCALBASE=${LOCALBASE}
-	vucQuotDquot              // Example: echo "The version is ${PKGVERSION}."
-	vucQuotSquot              // Example: echo 'The version is ${PKGVERSION}.'
-	vucQuotBackt              // Example: echo `sed 1q ${WRKSRC}/README`
-
-	// The .for loop in Makefiles. This is the only place where
-	// variables are split on whitespace. Everywhere else (:Q, :M)
-	// they are split like in the shell.
-	//
-	// Example: .for f in ${EXAMPLE_FILES}
-	vucQuotFor
+	VucQuotUnknown VucQuoting = iota
+	VucQuotPlain              // Example: echo LOCALBASE=${LOCALBASE}
+	VucQuotDquot              // Example: echo "The version is ${PKGVERSION}."
+	VucQuotSquot              // Example: echo 'The version is ${PKGVERSION}.'
+	VucQuotBackt              // Example: echo `sed 1q ${WRKSRC}/README`
 )
 
-func (q vucQuoting) String() string {
+func (q VucQuoting) String() string {
 	return [...]string{"unknown", "plain", "dquot", "squot", "backt", "mk-for"}[q]
 }
 
@@ -1112,17 +1369,6 @@ func (ind *Indentation) TrackAfter(mkline MkLine) {
 			ind.top().depth += 2
 		}
 
-		if cond != nil {
-			ind.RememberUsedVariables(cond)
-
-			cond.Walk(&MkCondCallback{
-				Call: func(name string, arg string) {
-					if name == "exists" {
-						ind.AddCheckedFile(arg)
-					}
-				}})
-		}
-
 	case "for", "ifdef", "ifndef":
 		ind.top().depth += 2
 
@@ -1142,6 +1388,23 @@ func (ind *Indentation) TrackAfter(mkline MkLine) {
 		}
 	}
 
+	switch directive {
+	case "if", "elif":
+		cond := mkline.Cond()
+		if cond == nil {
+			break
+		}
+
+		ind.RememberUsedVariables(cond)
+
+		cond.Walk(&MkCondCallback{
+			Call: func(name string, arg string) {
+				if name == "exists" {
+					ind.AddCheckedFile(arg)
+				}
+			}})
+	}
+
 	if trace.Tracing {
 		trace.Stepf("Indentation after line %s: %s", mkline.Linenos(), ind)
 	}
@@ -1159,48 +1422,65 @@ func (ind *Indentation) CheckFinish(filename string) {
 	}
 }
 
-// VarnameBytes contains characters that may be used in variable names.
-// The bracket is included only for the tool of the same name, e.g. "TOOLS_PATH.[".
+// VarbaseBytes contains characters that may be used in the main part of variable names.
+// VarparamBytes contains characters that may be used in the parameter part of variable names.
+//
+// For example, TOOLS_PATH.[ is a valid variable name but [ alone isn't since
+// the opening bracket is only allowed in the parameter part of variable names.
 //
 // This approach differs from the one in devel/bmake/files/parse.c:/^Parse_IsVar,
 // but in practice it works equally well. Luckily there aren't many situations
 // where a complicated variable name contains unbalanced parentheses or braces,
 // which would confuse the devel/bmake parser.
-var VarnameBytes = textproc.NewByteSet("A-Za-z_0-9*+---.[")
+//
+// TODO: The allowed characters differ between the basename and the parameter
+//  of the variable. The square bracket is only allowed in the parameter part.
+var (
+	VarbaseBytes  = textproc.NewByteSet("A-Za-z_0-9+---")
+	VarparamBytes = textproc.NewByteSet("A-Za-z_0-9#*+---.[")
+)
 
-func MatchVarassign(text string) (m, commented bool, varname, spaceAfterVarname, op, valueAlign, value, spaceAfterValue, comment string) {
-	lexer := textproc.NewLexer(text)
+func (p MkLineParser) MatchVarassign(line Line, text string, asdfData mkLineSplitResult) (m bool, assignment mkLineAssign) {
 
-	commented = lexer.SkipByte('#')
+	// A commented variable assignment does not have leading whitespace.
+	// Otherwise line 1 of almost every Makefile fragment would need to
+	// be scanned for a variable assignment even though it only contains
+	// the $NetBSD CVS Id.
+	clex := textproc.NewLexer(text)
+	commented := clex.SkipByte('#')
+	if commented && clex.SkipHspace() || clex.EOF() {
+		return false, nil
+	}
+
+	withoutLeadingComment := text
+	if commented {
+		withoutLeadingComment = withoutLeadingComment[1:]
+	}
+
+	data := p.split(nil, withoutLeadingComment)
+
+	lexer := NewMkTokensLexer(data.tokens)
+	mainStart := lexer.Mark()
+
 	for !commented && lexer.SkipByte(' ') {
 	}
 
 	varnameStart := lexer.Mark()
-	for !lexer.EOF() {
-		switch {
-
-		case lexer.NextBytesSet(VarnameBytes) != "":
-			continue
-
-		case lexer.PeekByte() == '$':
-			parser := NewMkParser(nil, lexer.Rest(), false)
-			varuse := parser.VarUse()
-			if varuse == nil {
-				return
-			}
-			varuseLen := len(lexer.Rest()) - len(parser.Rest())
-			lexer.Skip(varuseLen)
-			continue
-		}
-		break
+	// TODO: duplicated code in MkParser.Varname
+	for lexer.NextBytesSet(VarbaseBytes) != "" || lexer.NextVarUse() != nil {
 	}
-	varname = lexer.Since(varnameStart)
+	if lexer.SkipByte('.') || hasPrefix(data.main, "SITES_") {
+		for lexer.NextBytesSet(VarparamBytes) != "" || lexer.NextVarUse() != nil {
+		}
+	}
+
+	varname := lexer.Since(varnameStart)
 
 	if varname == "" {
 		return
 	}
 
-	spaceAfterVarname = lexer.NextHspace()
+	spaceAfterVarname := lexer.NextHspace()
 
 	opStart := lexer.Mark()
 	switch lexer.PeekByte() {
@@ -1210,37 +1490,38 @@ func MatchVarassign(text string) (m, commented bool, varname, spaceAfterVarname,
 	if !lexer.SkipByte('=') {
 		return
 	}
-	op = lexer.Since(opStart)
+	op := NewMkOperator(lexer.Since(opStart))
 
-	if hasSuffix(varname, "+") && op == "=" && spaceAfterVarname == "" {
+	if hasSuffix(varname, "+") && op == opAssign && spaceAfterVarname == "" {
 		varname = varname[:len(varname)-1]
-		op = "+="
+		op = opAssignAppend
 	}
 
 	lexer.SkipHspace()
 
-	valueAlign = text[:len(text)-len(lexer.Rest())]
-	valueStart := lexer.Mark()
-	// FIXME: This is the same code as in matchMkDirective.
-	for !lexer.EOF() && lexer.PeekByte() != '#' {
-		switch {
-		case lexer.SkipString("[#"):
-			break
-
-		case lexer.PeekByte() == '\\' && len(lexer.Rest()) > 1:
-			lexer.Skip(2)
-
-		default:
-			lexer.Skip(1)
-		}
+	value := trimHspace(lexer.Rest())
+	valueAlign := ifelseStr(commented, "#", "") + lexer.Since(mainStart)
+	spaceBeforeComment := data.spaceBeforeComment
+	if value == "" {
+		valueAlign += spaceBeforeComment
+		spaceBeforeComment = ""
 	}
-	rawValueWithSpace := lexer.Since(valueStart)
-	spaceAfterValue = rawValueWithSpace[len(strings.TrimRight(rawValueWithSpace, " \t")):]
-	value = trimHspace(strings.Replace(lexer.Since(valueStart), "\\#", "#", -1))
-	comment = lexer.Rest()
 
-	m = true
-	return
+	return true, &mkLineAssignImpl{
+		commented:         commented,
+		varname:           varname,
+		varcanon:          varnameCanon(varname),
+		varparam:          varnameParam(varname),
+		spaceAfterVarname: spaceAfterVarname,
+		op:                op,
+		valueAlign:        valueAlign,
+		value:             value,
+		valueMk:           nil, // filled in lazily
+		valueMkRest:       "",  // filled in lazily
+		fields:            nil, // filled in lazily
+		spaceAfterValue:   spaceBeforeComment,
+		comment:           ifelseStr(data.hasComment, "#", "") + data.comment,
+	}
 }
 
 func MatchMkInclude(text string) (m bool, indentation, directive, filename string) {

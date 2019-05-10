@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.16 2018/11/01 14:22:59 tsutsui Exp $
+$NetBSD: distinfo,v 1.21 2019/03/21 08:42:22 tsutsui Exp $
 
-SHA1 (rsvg2-3.3.0.gem) = 275ebc452091c90f54decc429433a5a68314826f
-RMD160 (rsvg2-3.3.0.gem) = 91ae4ceb732c8300a0113927117a9c4e20e09c28
-SHA512 (rsvg2-3.3.0.gem) = cebeb731128e526ac41d1f5107b5d6036c263732b7443d52590347d79c57317fd97bbefde556aabc69c84b62e6eaa8155f011971dc04cf5c50b2bd8f39af7760
-Size (rsvg2-3.3.0.gem) = 30720 bytes
+SHA1 (rsvg2-3.3.6.gem) = 829874d1f09b0820e8da915951e9fafabf6904e5
+RMD160 (rsvg2-3.3.6.gem) = 4e3ccc2426ffa33e07b58c5c8e2948ca82df4535
+SHA512 (rsvg2-3.3.6.gem) = 2f9c0d3e4006d76273a61efb80395a4f1ec146946567b6cd064067d3ad09f9f4d653accbeddbf4ca63718b668da801d41424d346bdec5c59d1fbace871da6c97
+Size (rsvg2-3.3.6.gem) = 29696 bytes

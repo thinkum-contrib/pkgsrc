@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.9 2019/01/01 00:17:29 leot Exp $
+$NetBSD: distinfo,v 1.14 2019/04/14 19:11:44 leot Exp $
 
-SHA1 (hub-2.7.0.tar.gz) = 5742f0cd073cccbd1efa4071cc2dda47bf6685af
-RMD160 (hub-2.7.0.tar.gz) = e3b5fdf2aeffc5eafaff023ab13f4becab618c9e
-SHA512 (hub-2.7.0.tar.gz) = 77223b0860bac42195dfc43e9164f5da446e414e32d0d3caa931f30e5b06d6f65cd69caa2f5097285a91d2ddb48265dfedec9dd8b361417556ff38782fa1a17c
-Size (hub-2.7.0.tar.gz) = 997861 bytes
+SHA1 (hub-2.11.2.tar.gz) = b4fc389fbc24f54e9d73d4175ec97b6b37aac226
+RMD160 (hub-2.11.2.tar.gz) = f5849f9c64edc5a195d8b1623f050ba7bc2405f2
+SHA512 (hub-2.11.2.tar.gz) = 3b8230d1ee6619c2fe502cd3a7ad04aeab4ca77a6251c4d50c87addad3e3cbb043c8c102b080cb7a528e1d72f1ac6a59d8ca1c024f15601aa35b74961590420d
+Size (hub-2.11.2.tar.gz) = 1043892 bytes

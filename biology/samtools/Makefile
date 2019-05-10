@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.3 2018/11/06 10:49:41 adam Exp $
+# $NetBSD: Makefile,v 1.5 2019/04/25 07:32:37 maya Exp $
 
 DISTNAME=	samtools-1.9
+PKGREVISION=	1
 CATEGORIES=	biology
 MASTER_SITES=	${MASTER_SITE_GITHUB:=samtools/}
 EXTRACT_SUFX=	.tar.bz2
@@ -21,6 +22,7 @@ REPLACE_PERL+=		misc/plot-bamstats
 REPLACE_PERL+=		test/test.pl
 REPLACE_PYTHON=		misc/*.py
 
+.include "../../devel/zlib/buildlink3.mk"
 .include "../../biology/htslib/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../mk/curses.buildlink3.mk"

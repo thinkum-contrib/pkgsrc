@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1 2016/09/13 16:03:38 taca Exp $
+# $NetBSD: Makefile,v 1.3 2019/04/30 03:58:45 taca Exp $
 
 PLUGIN=		zipdownload
 

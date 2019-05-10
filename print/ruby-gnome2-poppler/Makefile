@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.104 2018/12/10 10:59:26 wiz Exp $
+# $NetBSD: Makefile,v 1.110 2019/05/09 13:57:51 ryoon Exp $
 
 DISTNAME=		poppler-${VERSION}
 PKGNAME=		${RUBY_PKGPREFIX}-gnome2-${DISTNAME}

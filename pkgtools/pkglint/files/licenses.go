@@ -3,11 +3,12 @@ package pkglint
 import "netbsd.org/pkglint/licenses"
 
 type LicenseChecker struct {
-	MkLine MkLine
+	MkLines MkLines
+	MkLine  MkLine
 }
 
 func (lc *LicenseChecker) Check(value string, op MkOperator) {
-	expanded := resolveVariableRefs(value) // For ${PERL5_LICENSE}
+	expanded := resolveVariableRefs(lc.MkLines, value) // For ${PERL5_LICENSE}
 	cond := licenses.Parse(ifelseStr(op == opAssignAppend, "append-placeholder ", "") + expanded)
 
 	if cond == nil {
@@ -31,9 +32,7 @@ func (lc *LicenseChecker) checkName(license string) {
 	}
 	if licenseFile == "" {
 		licenseFile = G.Pkgsrc.File("licenses/" + license)
-		if G.Pkgsrc.UsedLicenses != nil {
-			G.Pkgsrc.UsedLicenses[license] = true
-		}
+		G.InterPackage.UseLicense(license)
 	}
 
 	if !fileExists(licenseFile) {
@@ -47,7 +46,7 @@ func (lc *LicenseChecker) checkName(license string) {
 		"no-redistribution",
 		"shareware":
 		lc.MkLine.Errorf("License %q must not be used.", license)
-		G.Explain(
+		lc.MkLine.Explain(
 			"Instead of using these deprecated licenses, extract the actual",
 			"license from the package into the pkgsrc/licenses/ directory",
 			"and define LICENSE to that filename.",
@@ -64,7 +63,7 @@ func (lc *LicenseChecker) checkNode(cond *licenses.Condition) {
 
 	if cond.And && cond.Or {
 		lc.MkLine.Errorf("AND and OR operators in license conditions can only be combined using parentheses.")
-		G.Explain(
+		lc.MkLine.Explain(
 			"Examples for valid license conditions are:",
 			"",
 			"\tlicense1 AND license2 AND (license3 OR license4)",

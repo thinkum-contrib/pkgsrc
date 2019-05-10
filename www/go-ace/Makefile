@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.8 2018/12/19 15:47:11 bsiegert Exp $
+# $NetBSD: Makefile,v 1.12 2019/04/16 18:41:20 bsiegert Exp $
 
 DISTNAME=	ace-0.0.4b
 PKGNAME=	go-${DISTNAME}
-PKGREVISION=	5
+PKGREVISION=	9
 MASTER_SITES=	${MASTER_SITE_GITHUB:=yosssi/}
 CATEGORIES=	www
 GITHUB_TAG=	71afeb714739f9d5f7e1849bcd4a0a5938e1a70d

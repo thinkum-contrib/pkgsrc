@@ -1,8 +1,8 @@
-# $NetBSD: version.mk,v 1.4 2018/10/12 23:43:47 nia Exp $
+# $NetBSD: version.mk,v 1.6 2019/05/08 12:40:05 nia Exp $
 #
 # used by emulators/libretro-core-info/Makefile
 # used by emulators/retroarch/Makefile
 
 .if !defined(RETROARCH_VERSION)
-RETROARCH_VERSION=	1.7.5
+RETROARCH_VERSION=	1.7.7
 .endif

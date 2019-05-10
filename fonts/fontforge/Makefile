@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.106 2018/11/14 22:21:27 kleink Exp $
+# $NetBSD: Makefile,v 1.108 2019/04/25 07:32:54 maya Exp $
 
 DISTNAME=	fontforge-dist-20170731
 PKGNAME=	${DISTNAME:S/-dist-/-/}
-PKGREVISION=	4
+PKGREVISION=	5
 CATEGORIES=	fonts editors
 MASTER_SITES=	${MASTER_SITE_GITHUB:=fontforge/}
 EXTRACT_SUFX=	.tar.xz
@@ -38,7 +38,7 @@ PY_PATCHPLIST=		yes
 
 # Requires GNU date features
 .if ${OPSYS} == "SunOS"
-TOOLS_PLATFORM.date=
+_TOOLS_USE_PKGSRC.date=	yes
 .endif
 
 .include "options.mk"

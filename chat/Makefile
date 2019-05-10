@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.212 2019/01/01 09:41:20 nia Exp $
+# $NetBSD: Makefile,v 1.218 2019/05/03 17:14:27 nia Exp $
 #
 
 COMMENT=	Communication programs
@@ -15,6 +15,7 @@ SUBDIR+=	centerim
 SUBDIR+=	centerim5
 SUBDIR+=	cgiirc
 SUBDIR+=	climm
+SUBDIR+=	coyim
 SUBDIR+=	ctrlproxy
 SUBDIR+=	dccserver
 SUBDIR+=	dircproxy
@@ -45,6 +46,8 @@ SUBDIR+=	icb
 SUBDIR+=	icbirc
 SUBDIR+=	icqlib
 SUBDIR+=	ii
+SUBDIR+=	inspircd
+SUBDIR+=	inspircd3
 SUBDIR+=	ircII
 SUBDIR+=	ircd-hybrid
 SUBDIR+=	irchat-pj
@@ -112,6 +115,7 @@ SUBDIR+=	py-hangups
 SUBDIR+=	py-mastodon
 SUBDIR+=	py-nbxmpp
 SUBDIR+=	py-xmpppy
+SUBDIR+=	quassel
 SUBDIR+=	quirc
 SUBDIR+=	riece
 SUBDIR+=	roxirc
@@ -138,7 +142,6 @@ SUBDIR+=	telepathy-qt
 SUBDIR+=	tik
 SUBDIR+=	tirc
 SUBDIR+=	tkabber
-SUBDIR+=	tkicb
 SUBDIR+=	tkirc
 SUBDIR+=	tkirc2
 SUBDIR+=	tootstream

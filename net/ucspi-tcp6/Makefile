@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.7 2018/12/16 06:40:29 schmonz Exp $
+# $NetBSD: Makefile,v 1.11 2019/05/05 15:17:49 schmonz Exp $
 
-DISTNAME=		ucspi-tcp6-1.10.1
+DISTNAME=		ucspi-tcp6-1.10.5
 CATEGORIES=		net
 MASTER_SITES=		https://www.fehcom.de/ipnet/ucspi-tcp6/
 EXTRACT_SUFX=		.tgz
@@ -12,7 +12,7 @@ LICENSE=		public-domain
 
 CONFLICTS+=		ucspi-tcp-[0-9]*
 
-WRKSRC=			${WRKDIR}/host/${PKGNAME_NOREV}
+WRKSRC=			${WRKDIR}/net/${PKGBASE}/${DISTNAME}
 DJB_SLASHPACKAGE=	yes
 DJB_RESTRICTED=		no
 DJB_CONFIG_DIR=		${WRKSRC}

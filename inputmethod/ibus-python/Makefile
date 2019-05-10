@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.15 2018/07/03 05:03:21 adam Exp $
+# $NetBSD: Makefile,v 1.17 2019/04/26 13:14:02 maya Exp $
 
 .include "../../inputmethod/ibus/Makefile.common"
 
@@ -38,11 +38,10 @@ NO_BUILD=	yes
 INSTALL_DIRS=	bindings ibus
 
 CONFIGURE_ARGS+=	--disable-dconf
-CONFIGURE_ARGS+=	--disable-gconf
 CONFIGURE_ARGS+=	--enable-python-library
 CONFIGURE_ENV+=		PYTHON2=${PYTHONBIN}
 
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # py-gtk2
+PYTHON_VERSIONS_INCOMPATIBLE=	 36 37 # py-gtk2
 
 PY_PATCHPLIST=	yes
 .include "../../lang/python/extension.mk"

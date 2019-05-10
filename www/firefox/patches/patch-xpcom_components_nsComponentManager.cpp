@@ -1,10 +1,10 @@
-$NetBSD: patch-xpcom_components_nsComponentManager.cpp,v 1.2 2018/11/14 18:51:40 wiz Exp $
+$NetBSD: patch-xpcom_components_nsComponentManager.cpp,v 1.4 2019/03/19 16:11:28 ryoon Exp $
 
 Ensure symbols aren't pruned from being unused.
 
---- xpcom/components/nsComponentManager.cpp.orig	2018-10-31 00:08:15.000000000 +0000
+--- xpcom/components/nsComponentManager.cpp.orig	2019-03-07 16:53:45.000000000 +0000
 +++ xpcom/components/nsComponentManager.cpp
-@@ -298,8 +298,13 @@ extern mozilla::Module const* const __st
+@@ -268,8 +268,13 @@ NSMODULE_ASAN_BLACKLIST __declspec(alloc
  
  #  if defined(__ELF__) || (defined(_WIN32) && defined(__GNUC__))
  

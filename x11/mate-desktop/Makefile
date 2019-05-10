@@ -1,6 +1,5 @@
-# $NetBSD: Makefile,v 1.13 2018/11/14 22:22:46 kleink Exp $
+# $NetBSD: Makefile,v 1.17 2019/05/08 01:12:54 gutteridge Exp $
 
-PKGREVISION= 2
 .include "../../meta-pkgs/mate/Makefile.common"
 
 DISTNAME=	mate-desktop-${VERSION:R}.1
@@ -23,6 +22,7 @@ SUBST_SED.prefix=	-e 's,$${prefix},${PREFIX},'
 
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
+.include "../../textproc/iso-codes/buildlink3.mk"
 .include "../../devel/dconf/buildlink3.mk"
 .include "../../x11/startup-notification/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

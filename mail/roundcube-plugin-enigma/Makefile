@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3 2018/05/16 08:17:31 triaxx Exp $
+# $NetBSD: Makefile,v 1.5 2019/04/30 03:58:45 taca Exp $
 
 PLUGIN=		enigma
 

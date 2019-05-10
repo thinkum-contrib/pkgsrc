@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.2 2015/11/04 01:02:06 agc Exp $
+$NetBSD: distinfo,v 1.5 2019/05/07 10:35:48 markd Exp $
 
-SHA1 (tex-europecv-34454/europecv.tar.xz) = b84596a284670d681b6b231f5cf1075246bfe5d1
-RMD160 (tex-europecv-34454/europecv.tar.xz) = 78ee5f2c7973f0a61bad38adf47a17c7490882dc
-SHA512 (tex-europecv-34454/europecv.tar.xz) = 3dba7718456887ac342b9280470fba48ce4ad0e8ea2dfd20b0149ffacbd9373f3a9635dd7038bb7bea9b20e1061144d1dbb7cdb1890f3a1b01a3df336b39f57d
-Size (tex-europecv-34454/europecv.tar.xz) = 36796 bytes
+SHA1 (tex-europecv-49938/europecv.tar.xz) = ef83212b44b197b4c04bbfa0af0ac52f6eee9895
+RMD160 (tex-europecv-49938/europecv.tar.xz) = 24922fd8fbf2c2ac21b8680dcac009e11db5e0ed
+SHA512 (tex-europecv-49938/europecv.tar.xz) = 9fead1161da43333206095f00151220675dc27c7381de054f4b76554425c717692fb203293758bba7b9574c375d0ce6d9f00d0c08ab17a1f719a7f53da56e5f5
+Size (tex-europecv-49938/europecv.tar.xz) = 37968 bytes

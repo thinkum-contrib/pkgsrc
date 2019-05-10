@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.3 2018/05/12 03:33:45 markd Exp $
+# $NetBSD: Makefile,v 1.5 2019/05/07 12:17:48 markd Exp $
 
 DISTNAME=	lwarp.doc
-PKGNAME=	tex-${DISTNAME:S/./-/}-0.55
-TEXLIVE_REV=	47491
+PKGNAME=	tex-${DISTNAME:S/./-/}-0.67
+TEXLIVE_REV=	50118
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://ctan.org/pkg/lwarp

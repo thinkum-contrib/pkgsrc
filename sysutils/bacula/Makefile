@@ -1,9 +1,8 @@
-# $NetBSD: Makefile,v 1.77 2018/12/09 18:52:45 adam Exp $
-
-PKGREVISION=		21
+# $NetBSD: Makefile,v 1.79 2019/04/03 00:33:06 ryoon Exp $
 
 CONFLICTS+=		bacula-client-[0-9]* bacula-clientonly-[0-9]*
 
+PKGREVISION= 1
 .include "options.mk"
 
 PLIST_SRC=		PLIST.common

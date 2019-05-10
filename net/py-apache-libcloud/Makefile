@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.11 2018/12/27 15:05:27 joerg Exp $
+# $NetBSD: Makefile,v 1.13 2019/05/10 14:58:37 mef Exp $
 
-DISTNAME=	apache-libcloud-2.2.1
+DISTNAME=	apache-libcloud-2.4.0
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
-PKGREVISION=	1
 CATEGORIES=	net python
 MASTER_SITES=	${MASTER_SITE_PYPI:=a/apache-libcloud/}
 
@@ -14,13 +13,14 @@ LICENSE=	apache-2.0
 USE_LANGUAGES=	# none
 
 DEPENDS+=	${PYPKGPREFIX}-requests-[0-9]*:../../devel/py-requests
-BUILD_DEPENDS+=	${PYPKGPREFIX}-requests-mock-[0-9]*:../../devel/py-requests-mock
-BUILD_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
 BUILD_DEPENDS+=	${PYPKGPREFIX}-test-runner-[0-9]*:../../devel/py-test-runner
+TEST_DEPENDS+=	${PYPKGPREFIX}-requests-mock-[0-9]*:../../devel/py-requests-mock
+TEST_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
 
 pre-install:
-	${RM} ${WRKSRC}/libcloud/compute/drivers/azure.py.orig
-	${RM} ${WRKSRC}/build/lib/libcloud/compute/drivers/azure.py.orig
+	${RM} -f ${WRKSRC}/libcloud/compute/drivers/azure.py.orig
+	${RM} -f ${WRKSRC}/build/lib/libcloud/compute/drivers/azure.py.orig
+	${RM} -f ${WRKSRC}/build/lib/libcloud/compute/drivers/azure.py.rej
 
 .include "../../lang/python/egg.mk"
 .include "../../mk/bsd.pkg.mk"

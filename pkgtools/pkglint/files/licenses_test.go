@@ -11,7 +11,7 @@ func (s *Suite) Test_LicenseChecker_Check(c *check.C) {
 		"The licenses for most software are designed to take away ...")
 	mkline := t.NewMkLine("Makefile", 7, "LICENSE=dummy")
 
-	licenseChecker := LicenseChecker{mkline}
+	licenseChecker := LicenseChecker{nil, mkline}
 	licenseChecker.Check("gpl-v2", opAssign)
 
 	t.CheckOutputLines(
@@ -47,19 +47,19 @@ func (s *Suite) Test_LicenseChecker_Check(c *check.C) {
 func (s *Suite) Test_LicenseChecker_checkName__LICENSE_FILE(c *check.C) {
 	t := s.Init(c)
 
-	t.SetupPkgsrc()
-	t.SetupPackage("category/package",
+	t.SetUpPkgsrc()
+	t.SetUpPackage("category/package",
 		"LICENSE=\tmy-license",
 		"",
 		"LICENSE_FILE=\tmy-license")
 	t.CreateFileLines("category/package/my-license",
 		"An individual license file.")
 
-	G.Main("pkglint", t.File("category/package"))
+	t.Main(t.File("category/package"))
 
-	// FIXME: It should be allowed to place a license file directly into
-	// the package directory.
+	// There is no warning about the unusual file name in the package directory.
+	// If it were not mentioned in LICENSE_FILE, the file named my-license
+	// would be warned about.
 	t.CheckOutputLines(
-		"WARN: ~/category/package/my-license: Unexpected file found.",
-		"0 errors and 1 warning found.")
+		"Looks fine.")
 }

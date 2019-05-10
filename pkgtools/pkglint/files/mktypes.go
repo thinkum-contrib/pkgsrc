@@ -1,10 +1,6 @@
 package pkglint
 
-import (
-	"netbsd.org/pkglint/textproc"
-	"strings"
-	"unicode"
-)
+import "strings"
 
 // MkToken represents a contiguous string from a Makefile.
 // It is either a literal string or a variable use.
@@ -47,69 +43,53 @@ func (m MkVarUseModifier) IsSuffixSubst() bool {
 }
 
 func (m MkVarUseModifier) MatchSubst() (ok bool, regex bool, from string, to string, options string) {
-	l := textproc.NewLexer(m.Text)
-	regex = l.PeekByte() == 'C'
-	if l.SkipByte('S') || l.SkipByte('C') {
-		separator := l.PeekByte()
-		l.Skip(1)
-		if unicode.IsPunct(rune(separator)) || separator == '|' {
-			noSeparator := func(b byte) bool { return int(b) != separator && b != '\\' }
-			nextToken := func() string {
-				start := l.Mark()
-				for {
-					switch {
-					case l.NextBytesFunc(noSeparator) != "":
-						continue
-					case l.PeekByte() == '\\' && len(l.Rest()) >= 2:
-						// TODO: Compare with devel/bmake for the exact behavior
-						l.Skip(2)
-					default:
-						return l.Since(start)
-					}
-				}
-			}
-
-			from = nextToken()
-			if from != "" && l.SkipByte(byte(separator)) {
-				to = nextToken()
-				if l.SkipByte(byte(separator)) {
-					options = l.NextBytesFunc(func(b byte) bool {
-						return b == '1' || b == 'g' || b == 'W'
-					})
-					ok = l.EOF()
-					return
-				}
-			}
-		}
-	}
-	return
+	p := NewMkParser(nil, m.Text, false)
+	return p.varUseModifierSubst('}')
 }
 
 // Subst evaluates an S/from/to/ modifier.
 //
 // Example:
 //  MkVarUseModifier{"S,name,file,g"}.Subst("distname-1.0") => "distfile-1.0"
-func (m MkVarUseModifier) Subst(str string) string {
+func (m MkVarUseModifier) Subst(str string) (string, bool) {
 	// XXX: The call to MatchSubst is usually redundant because MatchSubst
 	// is typically called directly before calling Subst.
 	ok, regex, from, to, options := m.MatchSubst()
-	G.Assertf(ok && !regex, "Subst must only be called after MatchSubst.")
+	if !ok {
+		return "", false
+	}
+
 	leftAnchor := hasPrefix(from, "^")
 	if leftAnchor {
 		from = from[1:]
 	}
+
 	rightAnchor := hasSuffix(from, "$")
 	if rightAnchor {
 		from = from[:len(from)-1]
+	}
+
+	if regex {
+		if matches(from, `^[\w-]+$`) && matches(to, `^[^&$\\]*$`) {
+			regex = false
+		} else {
+			// TODO: Maybe implement regular expression substitutions later.
+			return "", false
+		}
 	}
 
 	result := mkopSubst(str, leftAnchor, from, rightAnchor, to, options)
 	if trace.Tracing && result != str {
 		trace.Stepf("Subst: %q %q => %q", str, m.Text, result)
 	}
-	return result
+	return result, true
 }
 
+// MatchMatch tries to match the modifier to a :M or a :N pattern matching.
+// Examples:
+//  :Mpattern   => true, true, "pattern"
+//  :Npattern   => true, false, "pattern"
+//  :X          => false
 func (m MkVarUseModifier) MatchMatch() (ok bool, positive bool, pattern string) {
 	if hasPrefix(m.Text, "M") || hasPrefix(m.Text, "N") {
 		return true, m.Text[0] == 'M', m.Text[1:]
@@ -118,6 +98,39 @@ func (m MkVarUseModifier) MatchMatch() (ok bool, positive bool, pattern string) 
 }
 
 func (m MkVarUseModifier) IsToLower() bool { return m.Text == "tl" }
+
+// ChangesWords returns true if applying this modifier to a list variable
+// may change the number of words in the list, or their boundaries.
+func (m MkVarUseModifier) ChangesWords() bool {
+	text := m.Text
+
+	// See MkParser.VarUseModifiers for the meaning of these modifiers.
+	switch text[0] {
+
+	case 'E', 'H', 'M', 'N', 'O', 'R', 'T':
+		return false
+
+	case 'C', 'Q', 'S':
+		// For the :C and :S modifiers, a more detailed analysis could reveal
+		// cases that don't change the structure, such as :S,a,b,g or
+		// :C,[0-9A-Za-z_],.,g, but not :C,x,,g.
+		return true
+	}
+
+	switch text {
+
+	case "tl", "tu":
+		return false
+
+	case "sh", "tW", "tw":
+		return true
+	}
+
+	// If in doubt, be pessimistic. As of March 2019, the only code that
+	// actually uses this function doesn't issue a possibly wrong warning
+	// in such a case.
+	return true
+}
 
 func (vu *MkVarUse) Mod() string {
 	var mod strings.Builder
@@ -128,9 +141,8 @@ func (vu *MkVarUse) Mod() string {
 	return mod.String()
 }
 
-// IsExpression returns whether the varname is interpreted as a variable
-// name (the usual case) or as an expression (rare, only the modifiers
-// "?:" and "L" do this).
+// IsExpression returns whether the varname is interpreted as an expression
+// instead of a variable name (rare, only the modifiers :? and :L do this).
 func (vu *MkVarUse) IsExpression() bool {
 	if len(vu.modifiers) == 0 {
 		return false

@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.53 2018/12/15 21:12:19 wiz Exp $
+# $NetBSD: Makefile,v 1.55 2019/04/03 00:32:30 ryoon Exp $
 #
 
 DISTNAME=		apache-couchdb-2.1.1
 PKGNAME=		${DISTNAME:S/apache-//}
-PKGREVISION=		8
+PKGREVISION=		9
 CATEGORIES=		databases
 MASTER_SITES=		${MASTER_SITE_APACHE:=couchdb/source/${PKGVERSION_NOREV}/}
 
@@ -73,6 +73,7 @@ CONFIGURE_ARGS+=	--skip-deps
 CONFIGURE_ARGS+=	--with-curl
 
 BUILD_TARGET=		release
+TEST_TARGET=		check
 
 INSTALLATION_DIRS+=	bin couchdb/lib
 INSTALLATION_DIRS+=	couchdb/share/server couchdb/share/www/docs

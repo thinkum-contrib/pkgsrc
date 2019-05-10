@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.1 2018/11/28 15:12:27 nia Exp $
+# $NetBSD: Makefile,v 1.5 2019/05/05 22:49:45 ryoon Exp $
 
 DISTNAME=	centerim5-5.0.1
+PKGREVISION=	2
 CATEGORIES=	chat
 MASTER_SITES=	http://www.centerim.org/download/cim5/
 
@@ -19,7 +20,7 @@ CONFIGURE_ARGS+=	--prefix=${PREFIX}
 
 USE_LIBTOOL=	yes
 
-PYTHON_VERSIONS_INCOMPATIBLE=	27 34
+PYTHON_VERSIONS_INCOMPATIBLE=	27
 
 SUBST_CLASSES+=		equals
 SUBST_STAGE.equals=	pre-configure
@@ -30,11 +31,11 @@ SUBST_SED.equals=	-e 's,== True,= True,g'
 pre-configure:
 	cd ${WRKSRC} && ./bootstrap
 
+.include "../../lang/python/application.mk"
 .include "../../converters/libiconv/buildlink3.mk"
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/libidn/buildlink3.mk"
 .include "../../devel/libsigc++/buildlink3.mk"
 .include "../../devel/ncursesw/buildlink3.mk"
 .include "../../chat/libpurple/buildlink3.mk"
-.include "../../lang/python/application.mk"
 .include "../../mk/bsd.pkg.mk"

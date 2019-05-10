@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.35 2018/07/03 05:03:24 adam Exp $
+# $NetBSD: Makefile,v 1.38 2019/04/26 13:14:04 maya Exp $
 
-DISTNAME=	bulk-large-20170929
+DISTNAME=	bulk-large-20190305
+PKGREVISION=	1
 CATEGORIES=	meta-pkgs
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -14,7 +15,7 @@ RESTRICTED=		Just for test build purpose
 NO_BIN_ON_CDROM=	${RESTRICTED}
 NO_BIN_ON_FTP=		${RESTRICTED}
 
-PYTHON_VERSIONS_INCOMPATIBLE=	34 35 36 37 # py-gtk2
+PYTHON_VERSIONS_INCOMPATIBLE=	 36 37 # py-gtk2
 
 #
 # Note: the primary purpose of this package is to build the most
@@ -96,8 +97,9 @@ BUILD_DEPENDS+=	mit-krb5-appl-[0-9]*:../../security/mit-krb5-appl
 BUILD_DEPENDS+=	FlightCrew-[0-9]*:../../textproc/FlightCrew
 BUILD_DEPENDS+=	clearsilver-[0-9]*:../../www/clearsilver
 BUILD_DEPENDS+=	mediawiki-[0-9]*:../../www/mediawiki
-BUILD_DEPENDS+=	${RUBY_PKGPREFIX}-rails32>=3.2:../../www/ruby-rails32
 BUILD_DEPENDS+=	${RUBY_PKGPREFIX}-rails42>=4.2:../../www/ruby-rails42
+BUILD_DEPENDS+=	${RUBY_PKGPREFIX}-rails51>=5.1.6.1:../../www/ruby-rails51
+BUILD_DEPENDS+=	${RUBY_PKGPREFIX}-rails52>=5.2.2:../../www/ruby-rails52
 
 #
 # 3. Libraries

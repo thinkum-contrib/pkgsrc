@@ -1,10 +1,12 @@
-# $NetBSD: Makefile,v 1.3 2018/12/31 15:06:44 jmcneill Exp $
+# $NetBSD: Makefile,v 1.6 2019/05/08 05:14:20 thorpej Exp $
 
 UBOOT_TARGET=		beagleboneblack
 UBOOT_CONFIG=		am335x_boneblack_defconfig
 UBOOT_BIN=		u-boot.img
 UBOOT_BIN+= 		MLO
 
-PKGREVISION=		1
+UBOOT_INSTALLBOOT_PLIST=installboot.plist
+
+PKGREVISION=		4
 
 .include "../../sysutils/u-boot/u-boot-arm.mk"

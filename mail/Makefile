@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.516 2018/12/16 09:06:55 ryoon Exp $
+# $NetBSD: Makefile,v 1.526 2019/05/02 22:12:33 wiz Exp $
 #
 
 COMMENT=	Electronic mail utilities
@@ -10,7 +10,6 @@ SUBDIR+=	R-mime
 SUBDIR+=	YoSucker
 SUBDIR+=	akonadi
 SUBDIR+=	alpine
-SUBDIR+=	amavis-perl
 SUBDIR+=	amavisd-milter
 SUBDIR+=	amavisd-new
 SUBDIR+=	anomy-sanitizer
@@ -223,6 +222,8 @@ SUBDIR+=	p5-MIME-tools
 SUBDIR+=	p5-Mail-Alias
 SUBDIR+=	p5-Mail-Audit
 SUBDIR+=	p5-Mail-Box
+SUBDIR+=	p5-Mail-Box-IMAP4
+SUBDIR+=	p5-Mail-Box-POP3
 SUBDIR+=	p5-Mail-ClamAV
 SUBDIR+=	p5-Mail-DKIM
 SUBDIR+=	p5-Mail-DeliveryStatus-BounceParser
@@ -240,6 +241,7 @@ SUBDIR+=	p5-Mail-SRS
 SUBDIR+=	p5-Mail-Sender
 SUBDIR+=	p5-Mail-Sender-Easy
 SUBDIR+=	p5-Mail-Sendmail
+SUBDIR+=	p5-Mail-Transport
 SUBDIR+=	p5-Mail-Webmail-Gmail
 SUBDIR+=	p5-MailTools
 SUBDIR+=	p5-Net-LMTP
@@ -330,11 +332,10 @@ SUBDIR+=	roundcube-plugin-password
 SUBDIR+=	roundcube-plugin-zipdownload
 SUBDIR+=	rspamd
 SUBDIR+=	rss2email
-SUBDIR+=	ruby-actionmailer32
 SUBDIR+=	ruby-actionmailer42
 SUBDIR+=	ruby-actionmailer51
+SUBDIR+=	ruby-actionmailer52
 SUBDIR+=	ruby-mail
-SUBDIR+=	ruby-mail25
 SUBDIR+=	ruby-mailfactory
 SUBDIR+=	ruby-mime-types
 SUBDIR+=	ruby-mime-types-data
@@ -350,6 +351,7 @@ SUBDIR+=	sendmail-qtool
 SUBDIR+=	sendymail
 SUBDIR+=	serialmail
 SUBDIR+=	sid-milter
+SUBDIR+=	sieve-connect
 SUBDIR+=	sigrot
 SUBDIR+=	sma
 SUBDIR+=	smtp-vilter

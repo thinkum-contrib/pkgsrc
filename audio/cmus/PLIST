@@ -1,7 +1,8 @@
-@comment $NetBSD: PLIST,v 1.15 2018/01/01 22:29:16 rillig Exp $
+@comment $NetBSD: PLIST,v 1.17 2019/05/09 13:22:58 jperkin Exp $
 bin/cmus
 bin/cmus-remote
 ${PLIST.faad}lib/cmus/ip/aac.so
+lib/cmus/ip/cue.so
 ${PLIST.ffmpeg}lib/cmus/ip/ffmpeg.so
 ${PLIST.flac}lib/cmus/ip/flac.so
 ${PLIST.mad}lib/cmus/ip/mad.so
@@ -14,6 +15,7 @@ ${PLIST.vorbis}lib/cmus/ip/vorbis.so
 lib/cmus/ip/wav.so
 ${PLIST.wavpack}lib/cmus/ip/wavpack.so
 ${PLIST.libao}lib/cmus/op/ao.so
+${PLIST.coreaudio}lib/cmus/op/coreaudio.so
 ${PLIST.jack}lib/cmus/op/jack.so
 ${PLIST.oss}lib/cmus/op/oss.so
 ${PLIST.pulseaudio}lib/cmus/op/pulse.so
@@ -23,9 +25,13 @@ man/man1/cmus.1
 man/man7/cmus-tutorial.7
 share/cmus/cyan.theme
 share/cmus/default.theme
+share/cmus/dracula.theme
 share/cmus/gray-88.theme
 share/cmus/green-mono-88.theme
 share/cmus/green.theme
+share/cmus/gruvbox-alt.theme
+share/cmus/gruvbox.theme
+share/cmus/jellybeans.theme
 share/cmus/night.theme
 share/cmus/rc
 share/cmus/solarized-dark.theme

@@ -14,9 +14,11 @@ func (s *Suite) Test__test_names(c *check.C) {
 	ck.AllowPrefix("Varalign", "mklines_varalign.go")
 	ck.AllowPrefix("ShellParser", "mkshparser.go")
 	ck.AllowCamelCaseDescriptions(
+		"compared_to_splitIntoShellTokens",
 		"comparing_YesNo_variable_to_string",
 		"enumFrom",
 		"enumFromDirs",
+		"enumFromFiles",
 		"dquotBacktDquot",
 		"and_getSubdirs",
 		"SilentAutofixFormat")

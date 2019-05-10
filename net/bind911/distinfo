@@ -1,14 +1,17 @@
-$NetBSD: distinfo,v 1.5 2018/12/15 16:39:07 taca Exp $
+$NetBSD: distinfo,v 1.7 2019/04/30 02:51:38 taca Exp $
 
-SHA1 (bind-9.11.5-P1.tar.gz) = ddf74a0ff4eff6593b0a790dc1520f0e59bb214e
-RMD160 (bind-9.11.5-P1.tar.gz) = a6987bdeef11760af1f9b582b89d077aeed6389c
-SHA512 (bind-9.11.5-P1.tar.gz) = cf0e511342affc81fc89656417a6d74a8ee4c3ffcc242e3aad76864f34d8ff7b0b52ada422385b5becafb7ef3a81dddfb28ba1488c8bee168f16842e2c617069
-Size (bind-9.11.5-P1.tar.gz) = 8814650 bytes
+SHA1 (bind-9.11.6-P1.tar.gz) = 1a142cc9af68f7205bc0ea942458e6a044244422
+RMD160 (bind-9.11.6-P1.tar.gz) = 7024ba26f218015ebd99f54988f78148ae789cf7
+SHA512 (bind-9.11.6-P1.tar.gz) = 419aeeddeab7aef818b9043db7b21a847993444f663dca04e58ee97a0ebee0610cbc5a9422d17a6f0ee5d44598a2cbb5651e3b4e8c56708eaf923dca0a5c4c03
+Size (bind-9.11.6-P1.tar.gz) = 8102241 bytes
+SHA1 (patch-bin_named_server.c) = 0294d74eb3039049c4672a3de6eb371407bb382d
+SHA1 (patch-bin_pkcs11_pkcs11-keygen.c) = 49571fc0222c57cac0f2f07875c74ad2afadcb32
 SHA1 (patch-bin_tests_system_metadata_tests.sh) = d01a492d0b7738760bdbff714248e279a78fef28
 SHA1 (patch-config.threads.in) = 8341bdb11888d3efdde5f115de91b1f46aa40bd0
 SHA1 (patch-configure) = 7f73f26266ebd4556ab160e93dc0738188a70e20
 SHA1 (patch-contrib_dlz_config.dlz.in) = 6c53d61aaaf1a952a867e4c4da0194db94f511d7
 SHA1 (patch-lib_dns_rbt.c) = 8af91b6d40b591d28d15f7f98c9b7a82df234381
-SHA1 (patch-lib_isc_unix_socket.c) = dff0163246985d0750b2c99ce7673b257df3e5bf
+SHA1 (patch-lib_dns_view.c) = 39e71fe6a407e4f9bee49b1ee25adfa0ba74b338
+SHA1 (patch-lib_isc_unix_socket.c) = a36e24f530c4a462b782ad7cce784fd4648dded3
 SHA1 (patch-lib_lwres_getaddrinfo.c) = 1956a857c1b158dbe95c46d90ab406e0030e321e
-SHA1 (patch-lib_lwres_getnameinfo.c) = 366100a25064f43bd938e9acf31188c917b45cbe
+SHA1 (patch-lib_lwres_getnameinfo.c) = 67cece0c9b7077dc48fcae15bcab426e8e82a506

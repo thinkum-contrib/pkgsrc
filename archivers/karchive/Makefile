@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.19 2018/12/09 18:51:58 adam Exp $
+# $NetBSD: Makefile,v 1.21 2019/04/25 20:40:02 markd Exp $
 
 DISTNAME=	karchive-${KF5VER}
-PKGREVISION=	3
 CATEGORIES=	archivers
 
 HOMEPAGE=	https://community.kde.org/Frameworks

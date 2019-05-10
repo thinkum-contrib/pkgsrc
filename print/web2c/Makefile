@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.79 2018/12/10 10:59:26 wiz Exp $
+# $NetBSD: Makefile,v 1.85 2019/05/09 13:57:51 ryoon Exp $
 
 DISTNAME=	texlive-20180414-source
 PKGNAME=	web2c-2018
-PKGREVISION=	8
+PKGREVISION=	13
 CATEGORIES=	print
 MASTER_SITES=	ftp://tug.org/historic/systems/texlive/2018/
 EXTRACT_SUFX=	.tar.xz
@@ -17,7 +17,9 @@ DEPENDS+=	ptexenc>=1.3.4:../../print/ptexenc
 EXTRACT_ELEMENTS=	${DISTNAME}/build-aux \
 			${DISTNAME}/texk/web2c
 
-GNU_CONFIGURE=	yes
+GNU_CONFIGURE=		yes
+GNU_CONFIGURE_STRICT=	no # texk/web2c/web2c doesn't know the options
+
 INFO_FILES=	yes
 USE_LANGUAGES=	c c++11
 USE_LIBTOOL=	yes

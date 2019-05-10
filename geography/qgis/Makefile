@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.70 2018/12/13 19:51:58 adam Exp $
+# $NetBSD: Makefile,v 1.73 2019/04/25 07:32:56 maya Exp $
 
-DISTNAME=	qgis-2.18.16
-PKGREVISION=	9
+DISTNAME=	qgis-2.18.28
+PKGREVISION=	2
 CATEGORIES=	geography
 MASTER_SITES=	https://qgis.org/downloads/
 EXTRACT_SUFX=	.tar.bz2
@@ -54,6 +54,7 @@ CMAKE_ARG_PATH=..
 pre-configure:
 	${MKDIR} ${WRKSRC}/build
 
+.include "../../devel/qjson/buildlink3.mk"
 .include "../../geography/gdal-lib/buildlink3.mk"
 .include "../../geography/proj/buildlink3.mk"
 .include "../../graphics/tiff/buildlink3.mk"

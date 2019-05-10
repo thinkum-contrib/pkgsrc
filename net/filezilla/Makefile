@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.106 2018/12/09 18:52:39 adam Exp $
+# $NetBSD: Makefile,v 1.110 2019/04/03 00:32:57 ryoon Exp $
 
-VERSION=	3.39.0
+VERSION=	3.41.2
 DISTNAME=	FileZilla_${VERSION}_src
 PKGNAME=	filezilla-${VERSION}
 PKGREVISION=	1

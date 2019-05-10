@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.13 2019/01/04 21:53:17 adam Exp $
+# $NetBSD: Makefile,v 1.15 2019/04/26 13:14:21 maya Exp $
 
-DISTNAME=	Django-2.1.5
+DISTNAME=	Django-2.1.7
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:tl}
 CATEGORIES=	www python
 MASTER_SITES=	https://www.djangoproject.com/m/releases/${PKGVERSION_NOREV:R}/
@@ -15,7 +15,7 @@ DEPENDS+=	${PYPKGPREFIX}-pytz-[0-9]*:../../time/py-pytz
 
 USE_LANGUAGES=	# none
 
-PYTHON_VERSIONS_INCOMPATIBLE=	27 34
+PYTHON_VERSIONS_INCOMPATIBLE=	27
 
 REPLACE_PYTHON+=	django/bin/django-admin.py
 REPLACE_PYTHON+=	django/conf/project_template/manage.py-tpl

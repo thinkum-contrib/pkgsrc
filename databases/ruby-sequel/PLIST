@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.64 2019/01/06 14:58:28 taca Exp $
+@comment $NetBSD: PLIST,v 1.68 2019/05/06 05:12:28 taca Exp $
 bin/sequel${RUBY_SUFFIX}
 ${GEM_HOME}/cache/${GEM_NAME}.gem
 ${GEM_LIBDIR}/CHANGELOG
@@ -86,6 +86,10 @@ ${GEM_LIBDIR}/doc/release_notes/5.13.0.txt
 ${GEM_LIBDIR}/doc/release_notes/5.14.0.txt
 ${GEM_LIBDIR}/doc/release_notes/5.15.0.txt
 ${GEM_LIBDIR}/doc/release_notes/5.16.0.txt
+${GEM_LIBDIR}/doc/release_notes/5.17.0.txt
+${GEM_LIBDIR}/doc/release_notes/5.18.0.txt
+${GEM_LIBDIR}/doc/release_notes/5.19.0.txt
+${GEM_LIBDIR}/doc/release_notes/5.20.0.txt
 ${GEM_LIBDIR}/doc/release_notes/5.2.0.txt
 ${GEM_LIBDIR}/doc/release_notes/5.3.0.txt
 ${GEM_LIBDIR}/doc/release_notes/5.4.0.txt
@@ -332,6 +336,7 @@ ${GEM_LIBDIR}/lib/sequel/plugins/subclasses.rb
 ${GEM_LIBDIR}/lib/sequel/plugins/subset_conditions.rb
 ${GEM_LIBDIR}/lib/sequel/plugins/table_select.rb
 ${GEM_LIBDIR}/lib/sequel/plugins/tactical_eager_loading.rb
+${GEM_LIBDIR}/lib/sequel/plugins/throw_failures.rb
 ${GEM_LIBDIR}/lib/sequel/plugins/timestamps.rb
 ${GEM_LIBDIR}/lib/sequel/plugins/touch.rb
 ${GEM_LIBDIR}/lib/sequel/plugins/tree.rb
@@ -507,6 +512,7 @@ ${GEM_LIBDIR}/spec/extensions/synchronize_sql_spec.rb
 ${GEM_LIBDIR}/spec/extensions/table_select_spec.rb
 ${GEM_LIBDIR}/spec/extensions/tactical_eager_loading_spec.rb
 ${GEM_LIBDIR}/spec/extensions/thread_local_timezones_spec.rb
+${GEM_LIBDIR}/spec/extensions/throw_failures_spec.rb
 ${GEM_LIBDIR}/spec/extensions/timestamps_spec.rb
 ${GEM_LIBDIR}/spec/extensions/to_dot_spec.rb
 ${GEM_LIBDIR}/spec/extensions/touch_spec.rb

@@ -1,9 +1,9 @@
-# $NetBSD: Makefile.common,v 1.46 2018/11/22 11:53:33 adam Exp $
+# $NetBSD: Makefile.common,v 1.50 2019/04/30 14:09:52 abs Exp $
 #
 # used by databases/mysql56-client/Makefile
 # used by databases/mysql56-server/Makefile
 
-DISTNAME=	mysql-5.6.42
+DISTNAME=	mysql-5.6.44
 CATEGORIES=	databases
 MASTER_SITES=	${MASTER_SITE_MYSQL:=MySQL-5.6/}
 
@@ -17,6 +17,7 @@ PATCHDIR?=	${.CURDIR}/../../databases/mysql56-client/patches
 USE_CMAKE=		yes
 USE_LANGUAGES=		c c++
 USE_TOOLS+=		bash gmake perl:run
+USE_GCC_RUNTIME=	yes
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -61,12 +62,12 @@ CMAKE_ARGS+=		-DINSTALL_SUPPORTFILESDIR="share/mysql"
 CMAKE_ARGS+=		-DMYSQL_DATADIR=${MYSQL_DATADIR}
 
 CMAKE_ARGS+=		-DWITH_ZLIB="system"
-CMAKE_ARGS+=		-DDEFAULT_CHARSET=${MYSQL_CHARSET:Q}
-CMAKE_ARGS+=		-DDEFAULT_COLLATION=${MYSQL_COLLATION:Q}
+CMAKE_ARGS+=		-DDEFAULT_CHARSET=${MYSQL_CHARSET}
+CMAKE_ARGS+=		-DDEFAULT_COLLATION=${MYSQL_COLLATION}
 CMAKE_ARGS+=		-DWITH_EXTRA_CHARSETS=${MYSQL_EXTRA_CHARSET:Q}
 
 # MySQL 5 depends on builtin functions enabled with i486 and later with GCC.
-.if ${OPSYS} == "NetBSD" && !empty(MACHINE_ARCH:Mi386)
+.if ${OPSYS} == "NetBSD" && ${MACHINE_ARCH} == "i386"
 GNU_ARCH.i386=		i486
 CFLAGS+=		-march=i486
 .endif
