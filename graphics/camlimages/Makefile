@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.117 2019/05/05 22:49:48 ryoon Exp $
+# $NetBSD: Makefile,v 1.120 2019/07/21 22:24:55 wiz Exp $
 
 VERSION=		4.0.1
 PKGNAME=		camlimages-${VERSION}
-PKGREVISION=		79
+PKGREVISION=		81
 CATEGORIES=		graphics
 MASTER_SITES=		https://bitbucket.org/camlspotter/camlimages/get/
 DISTNAME=		v${VERSION}
@@ -23,9 +23,9 @@ WRKSRC=			${WRKDIR}/camlspotter-camlimages-v${VERSION}
 SUBST_CLASSES+=		omf
 SUBST_STAGE.omf=	pre-configure
 SUBST_FILES.omf=	OMakefile
-SUBST_SED.omf=		-e 's,@PREFIX@,${PREFIX},g'
-SUBST_SED.omf+=		-e 's,@X11BASE@,${X11BASE},g'
-SUBST_SED.omf+=		-e s%@LDFLAGS@%${LDFLAGS:Q}%g
+SUBST_VARS.omf=		PREFIX
+SUBST_VARS.omf+=	X11BASE
+SUBST_VARS.omf+=	LDFLAGS
 SUBST_SED.omf+=		-e 's,@OCAMLFIND_DESTDIR@,${DESTDIR}${PREFIX}/lib/ocaml/site-lib,g'
 SUBST_SED.omf+=		-e 's,@OCAMLFIND_LDCONF@,/dev/null,g'
 SUBST_MESSAGE.omf=	Fixing vars in OMakefile

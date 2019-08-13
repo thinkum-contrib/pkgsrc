@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.152 2018/11/23 08:06:29 ryoon Exp $
+# $NetBSD: Makefile,v 1.154 2019/07/31 09:39:56 nia Exp $
 
-PKGREVISION= 1
+PKGREVISION= 3
 .include "Makefile.common"
 
 COMMENT=		Multimedia player library
@@ -12,6 +12,7 @@ CONFIGURE_ARGS+=	--disable-v4l2
 CONFIGURE_ARGS+=	--disable-real-codecs
 CONFIGURE_ARGS+=	--disable-aalib
 CONFIGURE_ARGS+=	--disable-mlib
+CONFIGURE_ARGS+=	--disable-vaapi
 
 SUBST_CLASSES+=		oss
 SUBST_STAGE.oss=	pre-configure

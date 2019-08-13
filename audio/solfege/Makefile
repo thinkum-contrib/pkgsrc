@@ -1,12 +1,13 @@
-# $NetBSD: Makefile,v 1.66 2019/04/26 13:13:43 maya Exp $
+# $NetBSD: Makefile,v 1.70 2019/07/21 22:24:28 wiz Exp $
 
-DISTNAME=		solfege-3.14.1
-PKGREVISION=		32
+DISTNAME=		solfege-3.22.2
+PKGREVISION=		1
 CATEGORIES=		audio
-MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=solfege/}
+MASTER_SITES=		${MASTER_SITE_GNU:=solfege/}
+EXTRACT_SUFX=		.tar.xz
 
 MAINTAINER=		schmonz@NetBSD.org
-HOMEPAGE=		http://www.solfege.org/
+HOMEPAGE=		https://www.gnu.org/software/solfege/
 COMMENT=		Practice several musical ear training exercises
 LICENSE=		gnu-gpl-v3
 
@@ -19,8 +20,8 @@ CONFIGURE_ENV+=		PYTHON=${PYTHONBIN:Q} ac_cv_path_MSGGREP=true
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR:Q}
 CONFIGURE_ARGS+=	--disable-oss-sound
 CONFIGURE_ARGS+=	--disable-pygtk-test
-CONFIGURE_ARGS+=	--enable-docbook-stylesheet=${LOCALBASE}/share/xsl/docbook/html/chunk.xsl
-CONFIGURE_ARGS+=	--localedir=${LOCALBASE}/${PKGLOCALEDIR}/locale
+CONFIGURE_ARGS+=	--enable-docbook-stylesheet=${PREFIX}/share/xsl/docbook/html/chunk.xsl
+CONFIGURE_ARGS+=	--localedir=${PREFIX}/${PKGLOCALEDIR}/locale
 
 USE_TOOLS+=		gmake gm4 makeinfo pkg-config msgfmt bash:run
 
@@ -32,10 +33,10 @@ PYTHON_VERSIONS_INCOMPATIBLE=	 36 37 # py-gtk2
 SUBST_CLASSES+=		sound
 SUBST_STAGE.sound=	do-configure
 SUBST_FILES.sound=	default.config
-SUBST_SED.sound=	-e 's|@WAVPLAYER@|${WAVPLAYER}|g'
-SUBST_SED.sound+=	-e 's|@MIDIPLAYER@|${MIDIPLAYER}|g'
-SUBST_SED.sound+=	-e 's|@MP3PLAYER@|${MP3PLAYER}|g'
-SUBST_SED.sound+=	-e 's|@OGGPLAYER@|${OGGPLAYER}|g'
+SUBST_VARS.sound=	WAVPLAYER
+SUBST_VARS.sound+=	MIDIPLAYER
+SUBST_VARS.sound+=	MP3PLAYER
+SUBST_VARS.sound+=	OGGPLAYER
 SUBST_MESSAGE.sound=	Setting default audio player.
 
 EGDIR=			${PREFIX}/share/examples/solfege
@@ -49,13 +50,13 @@ INSTALLATION_DIRS=	bin ${PKGMANDIR}/man1 ${EGDIR}
 .if ${OPSYS} == "NetBSD"
 WAVPLAYER=	/usr/bin/audioplay
 MIDIPLAYER=	/usr/bin/midiplay
-MP3PLAYER=	${LOCALBASE}/bin/mpg123
-OGGPLAYER=	${LOCALBASE}/bin/ogg123
+MP3PLAYER=	${PREFIX}/bin/mpg123
+OGGPLAYER=	${PREFIX}/bin/ogg123
 .elif ${OPSYS} == "Darwin"
-WAVPLAYER=	${LOCALBASE}/bin/qtplay
-MIDIPLAYER=	${LOCALBASE}/bin/qtplay
-MP3PLAYER=	${LOCALBASE}/bin/qtplay
-OGGPLAYER=	${LOCALBASE}/bin/qtplay
+WAVPLAYER=	${PREFIX}/bin/qtplay
+MIDIPLAYER=	${PREFIX}/bin/qtplay
+MP3PLAYER=	${PREFIX}/bin/qtplay
+OGGPLAYER=	${PREFIX}/bin/qtplay
 DEPENDS+=	qtplay-[0-9]*:../../audio/qtplay
 .endif
 

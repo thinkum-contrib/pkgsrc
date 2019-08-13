@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.309 2019/04/30 03:41:51 taca Exp $
+# $NetBSD: Makefile,v 1.312 2019/07/17 13:33:00 triaxx Exp $
 
 .include "../../mail/postfix/Makefile.common"
 
-COMMENT=	Postfix SMTP server and tools
+COMMENT=	Fast, easy to administer, and secure mail transfer agent
 
 CONFLICTS+=	courier-mta-[0-9]* fastforward>=0.51nb2 sendmail-[0-9]*
 CONFLICTS+=	esmtp>=1.2 nullmailer-[0-9]*
 
-USE_TOOLS+=	perl
+USE_TOOLS+=	perl pkg-config
 
 SPECIAL_PERMS+=	sbin/postdrop ${POSTFIX_USER} ${MAILDROP_GROUP} 2555
 SPECIAL_PERMS+=	sbin/postqueue ${POSTFIX_USER} ${MAILDROP_GROUP} 2555
@@ -48,7 +48,7 @@ CONF_FILES_PERMS=	# empty
 
 SUBST_CLASSES+=		paths
 SUBST_FILES.paths=	${WRKDIR}/mailer.conf
-SUBST_SED.paths+=	-e 's,@PREFIX@,${PREFIX},g'
+SUBST_VARS.paths=	PREFIX
 SUBST_STAGE.paths=	pre-configure
 
 INSTALLATION_DIRS+=	${LIBEXECDIR} ${METADIR} ${SHLIBDIR} ${EXAMPLEDIR} ${DOCDIR}

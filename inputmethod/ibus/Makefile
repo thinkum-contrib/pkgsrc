@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.63 2019/04/25 07:33:00 maya Exp $
+# $NetBSD: Makefile,v 1.65 2019/07/21 22:25:09 wiz Exp $
 
-PKGREVISION= 2
+PKGREVISION= 3
 .include "Makefile.common"
 
 COMMENT=	Intelligent Input Bus
@@ -68,6 +68,7 @@ BUILDLINK_API_DEPENDS.glib2+=		glib2>=2.26.0
 BUILDLINK_DEPMETHOD.vala+=	build
 .include "../../lang/vala/buildlink3.mk"
 PY_PATCHPLIST=	yes
+.include "../../sysutils/dbus/buildlink3.mk"
 .include "../../sysutils/libnotify/buildlink3.mk"
 .include "../../textproc/iso-codes/buildlink3.mk"
 GTK2_IMMODULES=	yes

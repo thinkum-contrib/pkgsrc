@@ -1,4 +1,4 @@
-# $NetBSD: mozilla-common.mk,v 1.1 2019/04/19 14:02:03 fox Exp $
+# $NetBSD: mozilla-common.mk,v 1.3 2019/07/31 01:35:27 fox Exp $
 #
 # Common Makefile fragment for mozilla packages based on gecko 2.0.
 # derived from www/firefox
@@ -64,7 +64,9 @@ MOZ_CONFIGURE_ARGS+=	"ac_add_options --with-system-libevent=${BUILDLINK_PREFIX.l
 MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-default-toolkit=cairo-gtk3"
 MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-system-pixman"
 MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-webrender=build"
-MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-rust-simd"
+# Disable Rust SIMD option to fix build with lang/rust-1.33.0
+# This should be enabled later again.
+#MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-rust-simd"
 MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-system-ffi"
 MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-chrome-format=flat"
 MOZ_CONFIGURE_ARGS+=	"ac_add_options --enable-gconf"
@@ -81,10 +83,10 @@ SUBST_VARS.prefix+=		PREFIX
 BUILDLINK_API_DEPENDS.libevent+=       libevent>=1.1
 .include "../../devel/libevent/buildlink3.mk"
 .include "../../devel/libffi/buildlink3.mk"
-BUILDLINK_API_DEPENDS.nspr+=   nspr>=4.19
+BUILDLINK_API_DEPENDS.nspr+=   nspr>=4.21
 .include "../../devel/nspr/buildlink3.mk"
 .include "../../textproc/icu/buildlink3.mk"
-BUILDLINK_API_DEPENDS.nss+=     nss>=3.38
+BUILDLINK_API_DEPENDS.nss+=     nss>=3.44.1
 .include "../../devel/nss/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
 .include "../../graphics/MesaLib/buildlink3.mk"

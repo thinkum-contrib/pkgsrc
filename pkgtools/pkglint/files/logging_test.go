@@ -10,24 +10,28 @@ import (
 // Suppressing duplicate messages or filtering messages happens
 // in other methods of the Logger, namely Relevant, FirstTime, Diag.
 func (s *Suite) Test_Logger_Logf(c *check.C) {
+	t := s.Init(c)
+
 	var sw strings.Builder
 	logger := Logger{out: NewSeparatorWriter(&sw)}
 
 	logger.Logf(Error, "filename", "3", "Blue should be %s.", "Blue should be orange.")
 
-	c.Check(sw.String(), equals, ""+
+	t.CheckEquals(sw.String(), ""+
 		"ERROR: filename:3: Blue should be orange.\n")
 }
 
 // Logf doesn't filter duplicates, but Diag does.
 func (s *Suite) Test_Logger_Logf__duplicates(c *check.C) {
+	t := s.Init(c)
+
 	var sw strings.Builder
 	logger := Logger{out: NewSeparatorWriter(&sw)}
 
 	logger.Logf(Error, "filename", "3", "Blue should be %s.", "Blue should be orange.")
 	logger.Logf(Error, "filename", "3", "Blue should be %s.", "Blue should be orange.")
 
-	c.Check(sw.String(), equals, ""+
+	t.CheckEquals(sw.String(), ""+
 		"ERROR: filename:3: Blue should be orange.\n"+
 		"ERROR: filename:3: Blue should be orange.\n")
 }
@@ -46,7 +50,7 @@ func (s *Suite) Test_Logger_Logf__mixed_with_Diag(c *check.C) {
 	logger.Diag(line, Error, "Diag %s.", "1") // Duplicate, therefore suppressed
 	logger.Logf(Error, "filename", "3", "Logf output 3.", "Logf output 3.")
 
-	c.Check(sw.String(), equals, ""+
+	t.CheckEquals(sw.String(), ""+
 		"ERROR: filename:3: Logf output 1.\n"+
 		"ERROR: filename:3: Diag 1.\n"+
 		"ERROR: filename:3: Logf output 2.\n"+
@@ -54,6 +58,8 @@ func (s *Suite) Test_Logger_Logf__mixed_with_Diag(c *check.C) {
 }
 
 func (s *Suite) Test_Logger_Logf__production(c *check.C) {
+	t := s.Init(c)
+
 	var sw strings.Builder
 	logger := Logger{out: NewSeparatorWriter(&sw)}
 
@@ -63,7 +69,7 @@ func (s *Suite) Test_Logger_Logf__production(c *check.C) {
 	G.Testing = false
 	logger.Logf(Error, "filename", "3", "diagnostic", "message")
 
-	c.Check(sw.String(), equals, ""+
+	t.CheckEquals(sw.String(), ""+
 		"ERROR: filename:3: message\n")
 }
 
@@ -76,7 +82,7 @@ func (s *Suite) Test_Logger_Logf__profiling(c *check.C) {
 	G.Logger.histo = histogram.New()
 	line.Warnf("Warning.")
 
-	G.Logger.histo.PrintStats(G.out.out, "loghisto", -1)
+	G.Logger.histo.PrintStats(G.Logger.out.out, "loghisto", -1)
 
 	t.CheckOutputLines(
 		"WARN: filename:123: Warning.",
@@ -101,7 +107,7 @@ func (s *Suite) Test_Logger_Logf__profiling_autofix(c *check.C) {
 
 	// The AUTOFIX line is not counted in the histogram although
 	// it uses the same code path as the other messages.
-	G.Logger.histo.PrintStats(G.out.out, "loghisto", -1)
+	G.Logger.histo.PrintStats(G.Logger.out.out, "loghisto", -1)
 
 	t.CheckOutputLines(
 		"NOTE: filename:123: Autofix note.",
@@ -125,7 +131,7 @@ func (s *Suite) Test_Logger_Diag__duplicates(c *check.C) {
 	logger.Diag(line, Error, "Blue should be %s.", "orange")
 	logger.Diag(line, Error, "Blue should be %s.", "orange")
 
-	c.Check(sw.String(), equals, ""+
+	t.CheckEquals(sw.String(), ""+
 		"ERROR: filename:3: Blue should be orange.\n")
 }
 
@@ -153,7 +159,7 @@ func (s *Suite) Test_Logger_Diag__explanation(c *check.C) {
 	logger.Explain(
 		"The colors have further changed.")
 
-	c.Check(sw.String(), equals, ""+
+	t.CheckEquals(sw.String(), ""+
 		"ERROR: filename:3: Blue should be orange.\n"+
 		"\n"+
 		"\tThe colors have changed.\n"+
@@ -409,6 +415,35 @@ func (s *Suite) Test_Logger_Explain__empty_lines(c *check.C) {
 		"")
 }
 
+// In an explanation, it can happen that the pkgsrc directory is mentioned.
+// While pkgsrc does not support either PKGSRCDIR or PREFIX or really any
+// other directory name to contain spaces, during pkglint development this
+// may happen because the pkgsrc root is in the temporary directory.
+//
+// In this situation, the ~ placeholder must still be properly substituted.
+func (s *Suite) Test_Logger_Explain__line_wrapped_temporary_directory(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpCommandLine("--explain")
+	filename := t.File("filename.mk")
+	mkline := t.NewMkLine(filename, 123, "")
+
+	mkline.Notef("Just a note to get the below explanation.")
+	G.Logger.Explain(
+		sprintf("%[1]s %[1]s %[1]s %[1]s %[1]s %[1]q", filename))
+
+	t.CheckOutputLinesIgnoreSpace(
+		"NOTE: ~/filename.mk:123: Just a note to get the below explanation.",
+		"",
+		"\t~/filename.mk",
+		"\t~/filename.mk",
+		"\t~/filename.mk",
+		"\t~/filename.mk",
+		"\t~/filename.mk",
+		"\t\"~/filename.mk\"",
+		"")
+}
+
 func (s *Suite) Test_Logger_ShowSummary__explanations_with_only(c *check.C) {
 	t := s.Init(c)
 
@@ -418,24 +453,24 @@ func (s *Suite) Test_Logger_ShowSummary__explanations_with_only(c *check.C) {
 	// Neither the warning nor the corresponding explanation are logged.
 	line.Warnf("Filtered warning.")
 	line.Explain("Explanation for the above warning.")
-	G.ShowSummary()
+	G.Logger.ShowSummary()
 
 	// Since the above warning is filtered out by the --only option,
 	// adding --explain to the options would not show any explanation.
 	// Therefore, "Run \"pkglint -e\"" is not advertised in this case,
 	// but see below.
-	c.Check(G.explanationsAvailable, equals, false)
+	t.CheckEquals(G.Logger.explanationsAvailable, false)
 	t.CheckOutputLines(
 		"Looks fine.")
 
 	line.Warnf("This warning is interesting.")
 	line.Explain("This explanation is available.")
-	G.ShowSummary()
+	G.Logger.ShowSummary()
 
-	c.Check(G.explanationsAvailable, equals, true)
+	t.CheckEquals(G.Logger.explanationsAvailable, true)
 	t.CheckOutputLines(
 		"WARN: Makefile:27: This warning is interesting.",
-		"0 errors and 1 warning found.",
+		"1 warning found.",
 		"(Run \"pkglint -e\" to show explanations.)")
 }
 
@@ -524,7 +559,7 @@ func (s *Suite) Test_Logger_ShowSummary__explanations_available(c *check.C) {
 
 	t.CheckOutputLines(
 		"ERROR: .",
-		"1 error and 0 warnings found.",
+		"1 error found.",
 		"(Run \"pkglint -e\" to show explanations.)")
 }
 
@@ -543,7 +578,7 @@ func (s *Suite) Test_Logger_ShowSummary__explanations_available_in_explain_mode(
 
 	t.CheckOutputLines(
 		"ERROR: .",
-		"1 error and 0 warnings found.")
+		"1 error found.")
 }
 
 func (s *Suite) Test_Logger_ShowSummary__autofix_available(c *check.C) {
@@ -647,10 +682,11 @@ func (s *Suite) Test_Logger_Logf__gcc_format(c *check.C) {
 
 	t.SetUpCommandLine("--gcc-output-format")
 
-	G.Logf(Note, "filename", "123", "Both filename and line number.", "Both filename and line number.")
-	G.Logf(Note, "", "123", "No filename, only line number.", "No filename, only line number.")
-	G.Logf(Note, "filename", "", "Filename without line number.", "Filename without line number.")
-	G.Logf(Note, "", "", "Neither filename nor line number.", "Neither filename nor line number.")
+	logger := &G.Logger
+	logger.Logf(Note, "filename", "123", "Both filename and line number.", "Both filename and line number.")
+	logger.Logf(Note, "", "123", "No filename, only line number.", "No filename, only line number.")
+	logger.Logf(Note, "filename", "", "Filename without line number.", "Filename without line number.")
+	logger.Logf(Note, "", "", "Neither filename nor line number.", "Neither filename nor line number.")
 
 	t.CheckOutputLines(
 		"filename:123: note: Both filename and line number.",
@@ -664,10 +700,11 @@ func (s *Suite) Test_Logger_Logf__traditional_format(c *check.C) {
 
 	t.SetUpCommandLine("--gcc-output-format=no")
 
-	G.Logf(Note, "filename", "123", "Both filename and line number.", "Both filename and line number.")
-	G.Logf(Note, "", "123", "No filename, only line number.", "No filename, only line number.")
-	G.Logf(Note, "filename", "", "Filename without line number.", "Filename without line number.")
-	G.Logf(Note, "", "", "Neither filename nor line number.", "Neither filename nor line number.")
+	logger := &G.Logger
+	logger.Logf(Note, "filename", "123", "Both filename and line number.", "Both filename and line number.")
+	logger.Logf(Note, "", "123", "No filename, only line number.", "No filename, only line number.")
+	logger.Logf(Note, "filename", "", "Filename without line number.", "Filename without line number.")
+	logger.Logf(Note, "", "", "Neither filename nor line number.", "Neither filename nor line number.")
 
 	t.CheckOutputLines(
 		"NOTE: filename:123: Both filename and line number.",
@@ -681,7 +718,7 @@ func (s *Suite) Test_Logger_Errorf__gcc_format(c *check.C) {
 
 	t.SetUpCommandLine("--gcc-output-format")
 
-	G.Errorf("filename", "Cannot be opened for %s.", "reading")
+	G.Logger.Errorf("filename", "Cannot be opened for %s.", "reading")
 
 	t.CheckOutputLines(
 		"filename: error: Cannot be opened for reading.")
@@ -693,8 +730,8 @@ func (s *Suite) Test_Logger_Logf__strange_characters(c *check.C) {
 
 	t.SetUpCommandLine("--gcc-output-format", "--source", "--explain")
 
-	G.Logf(Note, "filename", "123", "Format.", "Unicode \U0001F645 and ANSI \x1B are never logged.")
-	G.Explain(
+	G.Logger.Logf(Note, "filename", "123", "Format.", "Unicode \U0001F645 and ANSI \x1B are never logged.")
+	G.Logger.Explain(
 		"Even a \u0007 in the explanation is silent.")
 
 	t.CheckOutputLines(
@@ -744,7 +781,7 @@ func (s *Suite) Test_Logger_Diag__source_duplicates(c *check.C) {
 
 	t.SetUpPkgsrc()
 	t.CreateFileLines("category/dependency/patches/patch-aa",
-		RcsID,
+		CvsID,
 		"",
 		"--- old file",
 		"+++ new file",
@@ -771,7 +808,7 @@ func (s *Suite) Test_Logger_Diag__source_duplicates(c *check.C) {
 			"Patch \"../../category/dependency/patches/patch-aa\" is not recorded. "+
 			"Run \""+confMake+" makepatchsum\".",
 		"",
-		"3 errors and 0 warnings found.",
+		"3 errors found.",
 		"(Run \"pkglint -e\" to show explanations.)")
 }
 
@@ -780,17 +817,17 @@ func (s *Suite) Test_Logger_shallBeLogged(c *check.C) {
 
 	t.SetUpCommandLine( /* none */ )
 
-	c.Check(G.shallBeLogged("Options should not contain whitespace."), equals, true)
+	t.CheckEquals(G.Logger.shallBeLogged("Options should not contain whitespace."), true)
 
 	t.SetUpCommandLine("--only", "whitespace")
 
-	c.Check(G.shallBeLogged("Options should not contain whitespace."), equals, true)
-	c.Check(G.shallBeLogged("Options should not contain space."), equals, false)
+	t.CheckEquals(G.Logger.shallBeLogged("Options should not contain whitespace."), true)
+	t.CheckEquals(G.Logger.shallBeLogged("Options should not contain space."), false)
 
 	t.SetUpCommandLine( /* none again */ )
 
-	c.Check(G.shallBeLogged("Options should not contain whitespace."), equals, true)
-	c.Check(G.shallBeLogged("Options should not contain space."), equals, true)
+	t.CheckEquals(G.Logger.shallBeLogged("Options should not contain whitespace."), true)
+	t.CheckEquals(G.Logger.shallBeLogged("Options should not contain space."), true)
 }
 
 // Even if verbose logging is disabled, the "Replacing" diagnostics
@@ -816,62 +853,68 @@ func (s *Suite) Test_Logger_Logf__panic(c *check.C) {
 	t := s.Init(c)
 
 	t.ExpectPanic(
-		func() { G.Logf(Error, "filename", "13", "No period", "No period") },
+		func() { G.Logger.Logf(Error, "filename", "13", "No period", "No period") },
 		"Pkglint internal error: Diagnostic format \"No period\" must end in a period.")
 }
 
 func (s *Suite) Test_SeparatorWriter(c *check.C) {
+	t := s.Init(c)
+
 	var sb strings.Builder
 	wr := NewSeparatorWriter(&sb)
 
 	wr.WriteLine("a")
 	wr.WriteLine("b")
 
-	c.Check(sb.String(), equals, "a\nb\n")
+	t.CheckEquals(sb.String(), "a\nb\n")
 
 	wr.Separate()
 
-	c.Check(sb.String(), equals, "a\nb\n")
+	t.CheckEquals(sb.String(), "a\nb\n")
 
 	wr.WriteLine("c")
 
-	c.Check(sb.String(), equals, "a\nb\n\nc\n")
+	t.CheckEquals(sb.String(), "a\nb\n\nc\n")
 }
 
 func (s *Suite) Test_SeparatorWriter_Flush(c *check.C) {
+	t := s.Init(c)
+
 	var sb strings.Builder
 	wr := NewSeparatorWriter(&sb)
 
 	wr.Write("a")
 	wr.Write("b")
 
-	c.Check(sb.String(), equals, "")
+	t.CheckEquals(sb.String(), "")
 
 	wr.Flush()
 
-	c.Check(sb.String(), equals, "ab")
+	t.CheckEquals(sb.String(), "ab")
 
 	wr.Separate()
 
 	// The current line is terminated immediately by the above Separate(),
 	// but the empty line for separating two paragraphs is kept in mind.
 	// It will be added later, before the next non-newline character.
-	c.Check(sb.String(), equals, "ab\n")
+	t.CheckEquals(sb.String(), "ab\n")
 
 	wr.Write("c")
 	wr.Flush()
 
-	c.Check(sb.String(), equals, "ab\n\nc")
+	t.CheckEquals(sb.String(), "ab\n\nc")
 }
 
 func (s *Suite) Test_SeparatorWriter_Separate(c *check.C) {
+	t := s.Init(c)
+
 	var sb strings.Builder
 	wr := NewSeparatorWriter(&sb)
 
 	wr.WriteLine("a")
 	wr.Separate()
 
-	c.Check(sb.String(), equals, "a\n")
+	t.CheckEquals(sb.String(), "a\n")
 
 	// The call to Separate had requested an empty line. That empty line
 	// can either be given explicitly (like here), or it will be written
@@ -879,10 +922,10 @@ func (s *Suite) Test_SeparatorWriter_Separate(c *check.C) {
 	wr.WriteLine("")
 	wr.Separate()
 
-	c.Check(sb.String(), equals, "a\n\n")
+	t.CheckEquals(sb.String(), "a\n\n")
 
 	wr.WriteLine("c")
 	wr.Separate()
 
-	c.Check(sb.String(), equals, "a\n\nc\n")
+	t.CheckEquals(sb.String(), "a\n\nc\n")
 }

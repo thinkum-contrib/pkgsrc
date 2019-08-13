@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.66 2019/04/25 07:32:53 maya Exp $
+# $NetBSD: Makefile,v 1.68 2019/07/21 22:24:47 wiz Exp $
 
-PKGREVISION= 1
+PKGREVISION= 2
 .include "../../emulators/snes9x/Makefile.common"
 
 PKGNAME=	snes9x-gtk-${SNES9X_VERSION}
@@ -30,8 +30,6 @@ SUBST_SED.oss=		-e "s,/dev/dsp,${DEVOSSAUDIO},g"
 
 LDFLAGS.SunOS+=		-lsocket -lnsl
 
-BUILDLINK_TRANSFORM+=	rm:-ldl
-
 do-configure:
 	cd ${WRKSRC}/gtk && ${SETENV} ${MAKE_ENV} meson --prefix ${PREFIX} --libdir lib --mandir ${PKGMANDIR} --buildtype=plain ${MESON_ARGS} . output
 
@@ -54,4 +52,5 @@ PYTHON_VERSIONS_INCOMPATIBLE=	27
 .include "../../x11/libXv/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../mk/dlopen.buildlink3.mk"
+BUILDLINK_TRANSFORM+=	opt:-ldl:${BUILDLINK_LDADD.dl:Q}
 .include "../../mk/bsd.pkg.mk"

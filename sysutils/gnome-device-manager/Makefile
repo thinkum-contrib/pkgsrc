@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.54 2018/11/29 11:21:57 prlw1 Exp $
+# $NetBSD: Makefile,v 1.56 2019/07/21 22:25:42 wiz Exp $
 #
 
 DISTNAME=	gnome-device-manager-0.2
-PKGREVISION=	49
+PKGREVISION=	50
 CATEGORIES=	sysutils gnome
 MASTER_SITES=	http://hal.freedesktop.org/releases/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://hal.freedesktop.org/
+HOMEPAGE=	https://www.freedesktop.org/wiki/Software/hal/
 COMMENT=	GNOME program to manage devices and device drivers
 
 GNU_CONFIGURE=		YES

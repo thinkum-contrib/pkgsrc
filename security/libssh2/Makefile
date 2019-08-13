@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.17 2019/04/01 14:21:14 wiz Exp $
+# $NetBSD: Makefile,v 1.19 2019/07/21 08:18:53 nia Exp $
 
-DISTNAME=	libssh2-1.8.2
+DISTNAME=	libssh2-1.9.0
 CATEGORIES=	security
 MASTER_SITES=	https://www.libssh2.org/download/
 
@@ -15,6 +15,7 @@ USE_LIBTOOL=	yes
 CONFIGURE_ARGS+=	--with-libgcrypt=no
 CONFIGURE_ARGS+=	--with-libz=${BUILDLINK_PREFIX.zlib:Q}
 CONFIGURE_ARGS+=	--with-openssl=${SSLBASE:Q}
+CONFIGURE_ARGS+=	--disable-examples-build
 
 PKGCONFIG_OVERRIDE+=	libssh2.pc.in
 TEST_TARGET=		check

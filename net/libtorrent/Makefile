@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.59 2018/06/24 16:57:58 adam Exp $
+# $NetBSD: Makefile,v 1.61 2019/07/30 09:19:59 nia Exp $
 
-DISTNAME=	libtorrent-0.13.7
+DISTNAME=	libtorrent-0.13.8
 CATEGORIES=	net
-MASTER_SITES=	http://rtorrent.net/downloads/
+MASTER_SITES=	https://rtorrent.net/downloads/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://github.com/rakshasa/libtorrent
@@ -51,7 +51,7 @@ CONFIGURE_ARGS+=	--disable-instrumentation
 .if !exists(${BUILDLINK_PREFIX.openssl}/lib/pkgconfig/openssl.pc)
 OPENSSL_CFLAGS=	-I${BUILDLINK_PREFIX.openssl}/include
 OPENSSL_LIBS=	-L${BUILDLINK_PREFIX.openssl}/lib \
-		-W,-lR${BUILDLINK_PREFIX.openssl}/lib
+		-Wl,-R${BUILDLINK_PREFIX.openssl}/lib
 
 CONFIGURE_ENV+=	OPENSSL_CFLAGS=${OPENSSL_CFLAGS:Q}
 CONFIGURE_ENV+=	OPENSSL_LIBS=${OPENSSL_LIBS:Q}

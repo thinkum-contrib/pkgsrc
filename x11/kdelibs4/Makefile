@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.98 2018/12/13 19:51:39 adam Exp $
+# $NetBSD: Makefile,v 1.100 2019/07/01 04:07:54 ryoon Exp $
 
 DISTNAME=	kdelibs-4.14.38
 PKGNAME=	${DISTNAME:S/-4/4-4/}
-PKGREVISION=	4
+PKGREVISION=	5
 CATEGORIES=	x11
 COMMENT=	Support libraries for the KDE integrated X11 desktop
 MASTER_SITES=	${MASTER_SITE_KDE:=applications/17.08.3/src/}
@@ -56,7 +56,7 @@ SUBST_STAGE.kdelibsfix=		pre-configure
 SUBST_MESSAGE.kdelibsfix=	Fixing hardcoded paths.
 SUBST_FILES.kdelibsfix=		kde3support/kdeui/k3sconfig.cpp
 SUBST_FILES.kdelibsfix+=	kio/kssl/kopenssl.cpp
-SUBST_SED.kdelibsfix=		-e 's:@LOCALBASE@:${LOCALBASE}:g'
+SUBST_VARS.kdelibsfix=		LOCALBASE
 
 # Avoid the WRKDIR path in the installed cmake file
 SUBST_CLASSES+=			phononrelpath

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.36 2018/12/13 19:51:38 adam Exp $
+# $NetBSD: Makefile,v 1.38 2019/07/20 22:46:06 wiz Exp $
 
 DISTNAME=	rasqal-0.9.33
-PKGREVISION=	10
+PKGREVISION=	12
 CATEGORIES=	textproc
 MASTER_SITES=	http://download.librdf.org/source/
 

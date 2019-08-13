@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.8 2016/07/16 00:20:27 markd Exp $
+# $NetBSD: Makefile,v 1.10 2019/07/02 06:06:48 nia Exp $
 
 DISTNAME=	B-emv2.2Linux
 PKGNAME=	b-em-2.2
@@ -23,7 +23,7 @@ SUBST_CLASSES+=		paths d2u
 SUBST_MESSAGE.paths=	Fixing non-existing paths.
 SUBST_STAGE.paths=	pre-configure
 SUBST_FILES.paths=	src/linux.c src/win.c
-SUBST_SED.paths=	-e 's,@BEMDATADIR@,${BEMDATADIR},g'
+SUBST_VARS.paths=	BEMDATADIR
 
 SUBST_MESSAGE.d2u=	Removing CR end-of-line markers
 SUBST_STAGE.d2u=	post-extract
@@ -49,6 +49,7 @@ do-install:
 
 BUILDLINK_API_DEPENDS.allegro+=	allegro>=4.4.2nb2
 .include "../../devel/allegro/buildlink3.mk"
+.include "../../devel/zlib/buildlink3.mk"
 .include "../../audio/openal-soft/buildlink3.mk"
 .include "../../audio/freealut/buildlink3.mk"
 .include "../../graphics/MesaLib/buildlink3.mk"

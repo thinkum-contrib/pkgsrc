@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# $NetBSD: bootstrap,v 1.265 2019/05/07 19:54:46 rillig Exp $
+# $NetBSD: bootstrap,v 1.269 2019/07/21 20:14:06 rillig Exp $
 #
 # Copyright (c) 2001-2011 Alistair Crooks <agc@NetBSD.org>
 # All rights reserved.
@@ -31,8 +31,13 @@
 # compiler/linker flags: CFLAGS, CPPFLAGS, LDFLAGS, LIBS
 # tools: CP, GREP, ID, MKDIR, SH, TEST, TOUCH, XARGS
 
+# The bootstrap program must be able to run with very limited shells.
+# It must not use any of the following features:
+#
+# * the ${var%pattern} or ${var#pattern} expansions
+# * the $(command) subshell
 
-BOOTSTRAP_VERSION=20060721
+BOOTSTRAP_VERSION=20190721
 
 # Don't let the bootstrap program get confused by a pre-existing mk.conf
 # file.
@@ -353,7 +358,8 @@ checkarg_sane_absolute_path()
 	*/)	die "ERROR: The argument to $2 must not end in /." ;;
 	*//* | */. | */./* | */.. | */../*)
 		die "ERROR: The path $1 (from $2) must be canonical." ;;
-	/*)	checkarg_no_symlink_path "$1" "$2" ;;
+	/*)	[ "${3-}" = "may-be-symlink" ] \
+		|| checkarg_no_symlink_path "$1" "$2" ;;
 	*)	die "ERROR: The argument to $2 must be an absolute path." ;;
 	esac
 }
@@ -362,7 +368,7 @@ checkarg_no_symlink_path()
 {
 	_dir=$1
 	while [ ! -d "$_dir" ]; do
-		_dir=${_dir%/*}
+		_dir=`dirname "$_dir"`
 		[ "$_dir" ] || _dir="/"
 	done
 
@@ -505,7 +511,7 @@ checkarg_sane_absolute_path "$sysconfdir" "--sysconfdir"
 checkarg_sane_absolute_path "$varbase" "--varbase"
 checkarg_sane_relative_path "$pkginfodir" "--pkginfodir"
 checkarg_sane_relative_path "$pkgmandir" "--pkgmandir"
-checkarg_sane_absolute_path "$wrkdir" "--workdir"
+checkarg_sane_absolute_path "$wrkdir" "--workdir" may-be-symlink
 
 # set defaults for system locations if not already set by the user
 wrkobjdir=${wrkdir}/pkgsrc
@@ -571,7 +577,7 @@ CYGWIN_*)
 	need_bsd_install=no
 	opsys=`uname -o`
 	need_awk=no
-	need_sed=no
+	need_sed=yes
 	need_xargs=no
 	machine_arch=`uname -m`
 	# only used for unprivileged builds.
@@ -1278,7 +1284,7 @@ run_cmd "(cd $wrkdir/libarchive; env $BSTRAP_ENV \
 $shprog ./configure $configure_quiet_flags --enable-static --disable-shared \
 --disable-bsdtar --disable-bsdcpio --disable-posix-regex-lib --disable-xattr \
 --disable-maintainer-mode --disable-acl --without-zlib --without-bz2lib \
---without-lzmadec --without-iconv --without-lzma --without-lzo2 --without-lz4 \
+--without-iconv --without-lzma --without-lzo2 --without-lz4 \
 --without-nettle --without-openssl --without-xml2 --without-expat --without-zstd \
 MAKE=$bmake && $bmake $make_quiet_flags -j$make_jobs)"
 copy_src $pkgsrcdir/pkgtools/pkg_install/files pkg_install

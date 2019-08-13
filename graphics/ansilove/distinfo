@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.2 2016/09/11 15:47:20 kamil Exp $
+$NetBSD: distinfo,v 1.4 2019/07/02 15:46:04 fcambus Exp $
 
-SHA1 (ansilove-3.0.4.tar.gz) = 47f65aa34d4782d828c88d82298fa81c79b0cd96
-RMD160 (ansilove-3.0.4.tar.gz) = 26f67e469b08c6fc75107190ca76dbdf0d6204bb
-SHA512 (ansilove-3.0.4.tar.gz) = a0e3d9607c0211af8902d4bb4a9ac5e07715a86a3d34f0e7ccf58c50b9d5f09490be96b7b662680e1f32522025cb7c3fb50903e886b464bbe530f68a0dbb6bb3
-Size (ansilove-3.0.4.tar.gz) = 151101 bytes
+SHA1 (ansilove-4.0.1.tar.gz) = f0786ef8bfb1ec51aab7e9ad0c555300d643aa76
+RMD160 (ansilove-4.0.1.tar.gz) = c9ace1d1f24fd172054b9e75412af9f38d64e2c2
+SHA512 (ansilove-4.0.1.tar.gz) = 9cc4556eefebd59834595bff1d89c9fcbecfdee98625194a33b762120737398c0179395cda22f32912961ccb8214252ccb679da580c6e3a617b76fa787c9a43a
+Size (ansilove-4.0.1.tar.gz) = 121489 bytes

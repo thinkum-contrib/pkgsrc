@@ -1,10 +1,10 @@
-# $NetBSD: Makefile,v 1.9 2019/01/26 09:50:34 markd Exp $
+# $NetBSD: Makefile,v 1.11 2019/07/29 11:32:12 markd Exp $
 
 DISTNAME=	collection-basic
-PKGNAME=	texlive-${DISTNAME}-2018.48869
+PKGNAME=	texlive-${DISTNAME}-2019.51558
 CATEGORIES=	meta-pkgs
 MASTER_SITES=	# empty
-TEXLIVE_REV=	48869
+TEXLIVE_REV=	51558
 
 MAINTAINER=	minskim@NetBSD.org
 HOMEPAGE=	http://www.tug.org/texlive/
@@ -25,7 +25,9 @@ DEPENDS+=	tex-graphics-def>=2016:../../print/tex-graphics-def
 DEPENDS+=	gsftopkk>=1.19.2nb4:../../fonts/gsftopkk
 DEPENDS+=	tex-hyph-utf8>=2013:../../print/tex-hyph-utf8
 DEPENDS+=	tex-hyphen-base>=2013:../../print/tex-hyphen-base
+DEPENDS+=	tex-hyphenex-[0-9]*:../../print/tex-hyphenex
 DEPENDS+=	tex-ifluatex>=1.3pl26725:../../print/tex-ifluatex
+DEPENDS+=	tex-ifplatform-[0-9]*:../../print/tex-ifplatform
 DEPENDS+=	tex-ifxetex>=0.6:../../print/tex-ifxetex
 DEPENDS+=	tex-knuth-lib>=2014:../../fonts/tex-knuth-lib
 DEPENDS+=	tex-knuth-local>=2014:../../fonts/tex-knuth-local
@@ -44,6 +46,7 @@ DEPENDS+=	tex-tex-ini-files-[0-9]*:../../print/tex-tex-ini-files
 DEPENDS+=	tex-texlive-docindex>=2014:../../print/tex-texlive-docindex
 # texlive-msg-translations is not needed in pkgsrc.
 DEPENDS+=	tex-texlive-scripts>=2013:../../print/tex-texlive-scripts
+DEPENDS+=	tex-tlshell-[0-9]*:../../devel/tex-tlshell
 DEPENDS+=	tex-unicode-data-[0-9]*:../../print/tex-unicode-data
 DEPENDS+=	tex-updmap-map-[0-9]*:../../print/tex-updmap-map
 DEPENDS+=	tex-xdvi>=22.87:../../print/tex-xdvi

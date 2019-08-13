@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.38 2018/11/14 22:22:52 kleink Exp $
+# $NetBSD: Makefile,v 1.40 2019/07/21 22:26:05 wiz Exp $
 
-PKGREVISION= 6
+PKGREVISION= 7
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
 DISTNAME=	xfce4-eyes-plugin-4.5.0
 CATEGORIES=	x11
 MASTER_SITES=	http://archive.xfce.org/src/panel-plugins/xfce4-eyes-plugin/4.5/
 
-HOMEPAGE=	http://goodies.xfce.org/projects/panel-plugins/xfce4-eyes-plugin
+HOMEPAGE=	https://goodies.xfce.org/projects/panel-plugins/xfce4-eyes-plugin
 COMMENT=	Xfce eyes plugin
 
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"

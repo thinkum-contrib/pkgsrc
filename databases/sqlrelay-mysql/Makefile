@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.14 2018/12/13 19:51:46 adam Exp $
+# $NetBSD: Makefile,v 1.16 2019/07/20 22:46:14 wiz Exp $
 
 PKGNAME=		${DISTNAME:S/sqlrelay/sqlrelay-mysql/}
-PKGREVISION=		6
+PKGREVISION=		8
 COMMENT=		MySQL support for SQL Relay
 
 .include "../../databases/sqlrelay/Makefile.common"

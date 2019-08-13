@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.34 2019/04/03 00:32:58 ryoon Exp $
+# $NetBSD: Makefile,v 1.36 2019/07/20 22:46:38 wiz Exp $
 
 PKGNAME=	gst-plugins1-${DISTNAME}
 PKGREVISION=	1

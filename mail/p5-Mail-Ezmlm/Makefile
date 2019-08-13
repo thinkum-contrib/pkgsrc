@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.19 2018/08/22 09:45:31 wiz Exp $
+# $NetBSD: Makefile,v 1.21 2019/07/01 21:35:47 nia Exp $
 #
 
 DISTNAME=		Ezmlm-0.08.2
@@ -8,7 +8,7 @@ CATEGORIES=		mail perl5
 MASTER_SITES=		${MASTER_SITE_PERL_CPAN:=Mail/}
 
 MAINTAINER=		schmonz@NetBSD.org
-HOMEPAGE=		http://search.cpan.org/~sumpfrall/Ezmlm/
+HOMEPAGE=		https://metacpan.org/release/Ezmlm
 COMMENT=		Perl5 module for managing ezmlm mailing lists
 
 DEPENDS+=		qmail>=1.03:../../mail/qmail
@@ -19,8 +19,8 @@ MAKE_ENV+=		BSD_BATCH_INSTALL=1	# skip interactive config stage
 SUBST_CLASSES+=		paths
 SUBST_STAGE.paths=	do-configure
 SUBST_FILES.paths=	Ezmlm.pm
-SUBST_SED.paths=	-e 's|@LOCALBASE@|${LOCALBASE}|g'
-SUBST_SED.paths+=	-e 's|@QMAILDIR@|${QMAILDIR}|g'
+SUBST_VARS.paths=	LOCALBASE
+SUBST_VARS.paths+=	QMAILDIR
 SUBST_MESSAGE.paths=	Configuring paths.
 
 PERL5_PACKLIST=		auto/Mail/Ezmlm/.packlist

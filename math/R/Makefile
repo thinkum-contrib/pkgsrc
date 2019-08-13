@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.195 2019/03/13 15:42:41 wen Exp $
+# $NetBSD: Makefile,v 1.200 2019/07/20 22:46:31 wiz Exp $
 
-DISTNAME=	R-3.5.3
+DISTNAME=	R-3.6.0
+PKGREVISION=	2
 CATEGORIES=	math
 MASTER_SITES=	${MASTER_SITE_R_CRAN:=base/R-3/}
 
@@ -16,8 +17,8 @@ INSTALL_TARGET=		install install-info
 TEST_TARGET=		check
 USE_LANGUAGES=		c c++ fortran
 USE_LIBTOOL=		yes
-USE_TOOLS+=		aclocal autoconf autoreconf automake
-USE_TOOLS+=		gmake gzip:run makeinfo perl:run pkg-config sed unzip:run
+USE_TOOLS+=		aclocal autoconf autoreconf automake gmake gzip:run
+USE_TOOLS+=		makeinfo perl:run pkg-config sed unzip:run
 TEXINFO_REQD=		5.1
 INFO_FILES=		yes
 
@@ -143,6 +144,9 @@ BUILDLINK_API_DEPENDS.bzip2+=	bzip2>=1.0.5
 
 # failed to convert strong functions and variables: Invalid type identifier
 CTF_FILES_SKIP+=	lib/R/library/mgcv/libs/mgcv.so
+
+# Exposes PKG_CONFIG_LIBDIR buildlink paths in a comment.
+CHECK_WRKREF_SKIP+=	lib/R/etc/Makeconf
 
 pre-configure:
 	${RUN} cd ${WRKSRC} && autoreconf -fvi

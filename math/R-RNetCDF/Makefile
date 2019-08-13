@@ -1,18 +1,17 @@
-# $NetBSD: Makefile,v 1.2 2018/12/13 19:52:08 adam Exp $
-#
+# $NetBSD: Makefile,v 1.5 2019/07/31 18:23:57 brook Exp $
 
-PKGREVISION=	1
-CATEGORIES=	math
-MASTER_SITES=	${MASTER_SITE_R_CRAN:=contrib/}
+PKGREVISION=	3
+CATEGORIES=	math R
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	${R_HOMEPAGE_BASE}/ncdf/
-COMMENT=	High-level R interface to Unidata's netCDF data files
-LICENSE=	gnu-gpl-v2
+COMMENT=	Interface to NetCDF datasets
+LICENSE=	gnu-gpl-v2 OR gnu-gpl-v3	# OR file LICENSE
 
 R_PKGNAME=	RNetCDF
 R_PKGVER=	1.9-1
 
+USE_LANGUAGES=	c
 
 .include "../../math/R/Makefile.extension"
 .include "../../devel/netcdf/buildlink3.mk"

@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.17 2019/05/08 01:12:54 gutteridge Exp $
+# $NetBSD: Makefile,v 1.22 2019/07/21 22:26:01 wiz Exp $
 
 .include "../../meta-pkgs/mate/Makefile.common"
 
+PKGREVISION=	3
 DISTNAME=	mate-desktop-${VERSION:R}.1
 CATEGORIES=	x11
 
@@ -21,6 +22,7 @@ SUBST_STAGE.prefix=	pre-install
 SUBST_SED.prefix=	-e 's,$${prefix},${PREFIX},'
 
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
+.include "../../graphics/librsvg/tool.mk"
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
 .include "../../textproc/iso-codes/buildlink3.mk"
 .include "../../devel/dconf/buildlink3.mk"

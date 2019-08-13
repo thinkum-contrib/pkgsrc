@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.18 2018/11/14 22:22:45 kleink Exp $
+# $NetBSD: Makefile,v 1.22 2019/07/21 22:26:00 wiz Exp $
 
-PKGREVISION= 3
+PKGREVISION= 1
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
-DISTNAME=	libxfce4ui-4.13.4
+DISTNAME=	libxfce4ui-4.13.6
 CATEGORIES=	x11
 MASTER_SITES+=	http://archive.xfce.org/src/xfce/libxfce4ui/4.13/
 
@@ -27,6 +27,8 @@ CONF_FILES=	${XFCE4_EGBASE}/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.
 
 MAKE_DIRS+=	${XFCE4_EGBASE}/xfconf/xfce-perchannel-xml \
 		${PKG_SYSCONFDIR}/xfce4/xfconf/xfce-perchannel-xml
+
+USE_LANGUAGES=	c99
 
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
 .include "../../devel/xfce4-conf/buildlink3.mk"

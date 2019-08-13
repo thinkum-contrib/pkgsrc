@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.52 2018/11/14 22:22:30 kleink Exp $
+# $NetBSD: Makefile,v 1.54 2019/07/21 22:25:48 wiz Exp $
 
-PKGREVISION= 3
+PKGREVISION= 4
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
 DISTNAME=	xfce4-xkb-plugin-0.8.1
 CATEGORIES=	sysutils
 MASTER_SITES=	http://archive.xfce.org/src/panel-plugins/xfce4-xkb-plugin/0.8/
 
-HOMEPAGE=	http://goodies.xfce.org/projects/panel-plugins/xfce4-xkb-plugin
+HOMEPAGE=	https://goodies.xfce.org/projects/panel-plugins/xfce4-xkb-plugin
 COMMENT=	Xfce Keyboard plugin
 
 LDFLAGS.DragonFly=	-lX11

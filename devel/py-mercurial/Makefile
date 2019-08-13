@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.28 2019/03/19 12:12:22 wiz Exp $
+# $NetBSD: Makefile,v 1.31 2019/07/14 10:59:35 wiz Exp $
 
 DISTNAME=	mercurial-${VERSION}
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
@@ -21,10 +21,11 @@ USE_TOOLS+=	gmake msgfmt
 INSTALLATION_DIRS=	bin ${PKGMANDIR}/man1 ${PKGMANDIR}/man5
 INSTALLATION_DIRS+=	share/doc/mercurial
 
-.include "Makefile.version"
+.include "version.mk"
 
 # Known test failures:
-# none
+# test-narrow-shallow (sometimes):
+# https://bz.mercurial-scm.org/show_bug.cgi?id=6150
 do-test:
 	cd ${WRKSRC} && make tests PYTHON=${PYTHONBIN} TESTFLAGS=${_MAKE_JOBS:Q}
 

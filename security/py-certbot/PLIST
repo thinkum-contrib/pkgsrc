@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.18 2019/05/07 08:50:36 adam Exp $
+@comment $NetBSD: PLIST,v 1.20 2019/07/15 12:52:54 adam Exp $
 bin/certbot-${PYVERSSUFFIX}
 ${PYSITELIB}/${EGG_INFODIR}/PKG-INFO
 ${PYSITELIB}/${EGG_INFODIR}/SOURCES.txt
@@ -30,6 +30,9 @@ ${PYSITELIB}/certbot/client.pyo
 ${PYSITELIB}/certbot/compat/__init__.py
 ${PYSITELIB}/certbot/compat/__init__.pyc
 ${PYSITELIB}/certbot/compat/__init__.pyo
+${PYSITELIB}/certbot/compat/filesystem.py
+${PYSITELIB}/certbot/compat/filesystem.pyc
+${PYSITELIB}/certbot/compat/filesystem.pyo
 ${PYSITELIB}/certbot/compat/misc.py
 ${PYSITELIB}/certbot/compat/misc.pyc
 ${PYSITELIB}/certbot/compat/misc.pyo
@@ -211,9 +214,12 @@ ${PYSITELIB}/certbot/tests/client_test.pyo
 ${PYSITELIB}/certbot/tests/compat/__init__.py
 ${PYSITELIB}/certbot/tests/compat/__init__.pyc
 ${PYSITELIB}/certbot/tests/compat/__init__.pyo
-${PYSITELIB}/certbot/tests/compat/compat_test.py
-${PYSITELIB}/certbot/tests/compat/compat_test.pyc
-${PYSITELIB}/certbot/tests/compat/compat_test.pyo
+${PYSITELIB}/certbot/tests/compat/filesystem_test.py
+${PYSITELIB}/certbot/tests/compat/filesystem_test.pyc
+${PYSITELIB}/certbot/tests/compat/filesystem_test.pyo
+${PYSITELIB}/certbot/tests/compat/os_test.py
+${PYSITELIB}/certbot/tests/compat/os_test.pyc
+${PYSITELIB}/certbot/tests/compat/os_test.pyo
 ${PYSITELIB}/certbot/tests/configuration_test.py
 ${PYSITELIB}/certbot/tests/configuration_test.pyc
 ${PYSITELIB}/certbot/tests/configuration_test.pyo
@@ -295,9 +301,10 @@ ${PYSITELIB}/certbot/tests/testdata/csr-nosans_nistp256.pem
 ${PYSITELIB}/certbot/tests/testdata/csr-san_512.pem
 ${PYSITELIB}/certbot/tests/testdata/csr_512.der
 ${PYSITELIB}/certbot/tests/testdata/csr_512.pem
-${PYSITELIB}/certbot/tests/testdata/google_certificate.pem
-${PYSITELIB}/certbot/tests/testdata/google_issuer_certificate.pem
 ${PYSITELIB}/certbot/tests/testdata/nistp256_key.pem
+${PYSITELIB}/certbot/tests/testdata/ocsp_certificate.pem
+${PYSITELIB}/certbot/tests/testdata/ocsp_issuer_certificate.pem
+${PYSITELIB}/certbot/tests/testdata/ocsp_responder_certificate.pem
 ${PYSITELIB}/certbot/tests/testdata/os-release
 ${PYSITELIB}/certbot/tests/testdata/rsa2048_key.pem
 ${PYSITELIB}/certbot/tests/testdata/rsa256_key.pem

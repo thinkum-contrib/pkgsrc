@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.5 2019/05/10 09:40:01 nia Exp $
+# $NetBSD: Makefile,v 1.11 2019/07/20 22:46:11 wiz Exp $
 
-DISTNAME=	inspircd-3.0.1
+DISTNAME=	inspircd-3.2.0
+PKGREVISION=	1
 CATEGORIES=	chat
 MASTER_SITES=	${MASTER_SITE_GITHUB:=inspircd/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
@@ -12,7 +13,7 @@ LICENSE=	gnu-gpl-v2
 
 EXTRACT_USING=	bsdtar
 USE_TOOLS+=	gmake perl pkg-config
-USE_LANGUAGES=	c c++03
+USE_LANGUAGES=	c99 gnu++03
 HAS_CONFIGURE=	yes
 MAKE_FILE=	GNUmakefile
 MAKE_ENV+=	INSTALL=${INSTALL:Q}
@@ -22,12 +23,16 @@ BUILD_DEFS+=	PKG_SYSCONFDIR
 PKG_SYSCONFSUBDIR=	inspircd
 
 CONFIGURE_ARGS+=	--prefix=${PREFIX}
+CONFIGURE_ARGS+=	--example-dir=${EGDIR}
 CONFIGURE_ARGS+=	--manual-dir=${PREFIX}/${PKGMANDIR}/man1
 CONFIGURE_ARGS+=	--module-dir=${PREFIX}/lib/inspircd/modules
 CONFIGURE_ARGS+=	--config-dir=${PKG_SYSCONFDIR}
 CONFIGURE_ARGS+=	--data-dir=${PREFIX}/inspircd/data
 CONFIGURE_ARGS+=	--log-dir=${PREFIX}/inspircd/logs
 CONFIGURE_ARGS+=	--script-dir=${PREFIX}/inspircd/scripts
+CONFIGURE_ARGS+=	--disable-auto-extras
+CONFIGURE_ARGS+=	--distribution-label=pkgsrc
+
 CONFIG_SHELL=		${PERL5}
 
 REPLACE_PERL+=		tools/genssl
@@ -89,21 +94,18 @@ INSTALLATION_DIRS+=	${EGDIR}
 INSTALLATION_DIRS+=	${EGDIR}/sql
 INSTALLATION_DIRS+=	${EGDIR}/services
 
-INSPIRCD_EXTRAS_OFF+=	m_regex_re2.cpp
-INSPIRCD_EXTRAS_OFF+=	m_regex_tre.cpp
-
-CONFIGURE_ARGS+=	--distribution-label=pkgsrc
+INSPIRCD_EXTRAS+=	m_regex_posix.cpp
 
 .include "options.mk"
 
+.if !empty(PKG_OPTIONS:Mopenssl) || !empty(PKG_OPTIONS:Mgnutls) || \
+    !empty(PKG_OPTIONS:Mmbedtls)
+INSPIRCD_EXTRAS+=	m_sslrehashsignal.cpp
+.endif
+
 post-configure:
 	cd ${WRKSRC} && ${CONFIGURE_ENV} ${PERL5} ./configure \
-	    --enable-extras=${INSPIRCD_EXTRAS_ON:C/\.cpp[ ]* m_/.cpp,m_/gW} \
-	    --disable-extras=${INSPIRCD_EXTRAS_OFF:C/\.cpp[ ]* m_/.cpp,m_/gW}
-
-post-install:
-	${MV} ${DESTDIR}${PKG_SYSCONFDIR}/examples/* ${DESTDIR}${EGDIR}
-	${RM} -rf ${DESTDIR}${PKG_SYSCONFDIR}/examples
+	    --enable-extras=${INSPIRCD_EXTRAS:S/.cpp m_/.cpp,m_/gW}
 
 .include "../../mk/pthread.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

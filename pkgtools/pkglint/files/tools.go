@@ -41,7 +41,7 @@ func (tool *Tool) String() string {
 		aliases = ":" + strings.Join(tool.Aliases, ",")
 	}
 
-	varForm := ifelseStr(tool.MustUseVarForm, "var", "")
+	varForm := condStr(tool.MustUseVarForm, "var", "")
 
 	return sprintf("%s:%s:%s:%s%s",
 		tool.Name, tool.Varname, varForm, tool.Validity, aliases)
@@ -135,13 +135,14 @@ func NewTools() *Tools {
 //
 // After this tool is added to USE_TOOLS, it may be used by this name
 // (e.g. "awk") or by its variable (e.g. ${AWK}).
-func (tr *Tools) Define(name, varname string, mkline MkLine) *Tool {
+func (tr *Tools) Define(name, varname string, mkline *MkLine) *Tool {
 	if trace.Tracing {
 		trace.Stepf("Tools.Define: %q %q in %s", name, varname, mkline)
 	}
 
 	if !tr.IsValidToolName(name) {
 		mkline.Errorf("Invalid tool name %q.", name)
+		return nil
 	}
 
 	validity := tr.validity(mkline.Basename, false)
@@ -149,6 +150,8 @@ func (tr *Tools) Define(name, varname string, mkline MkLine) *Tool {
 }
 
 func (tr *Tools) def(name, varname string, mustUseVarForm bool, validity Validity, aliases []string) *Tool {
+	assert(tr.IsValidToolName(name))
+
 	fresh := Tool{name, varname, mustUseVarForm, validity, aliases}
 
 	tool := tr.byName[name]
@@ -222,7 +225,7 @@ func (tr *Tools) Trace() {
 //
 // If addToUseTools is true, a USE_TOOLS line makes a tool immediately
 // usable. This should only be done if the current line is unconditional.
-func (tr *Tools) ParseToolLine(mklines MkLines, mkline MkLine, fromInfrastructure bool, addToUseTools bool) {
+func (tr *Tools) ParseToolLine(mklines *MkLines, mkline *MkLine, fromInfrastructure bool, addToUseTools bool) {
 	switch {
 
 	case mkline.IsVarassign():
@@ -248,6 +251,10 @@ func (tr *Tools) ParseToolLine(mklines MkLines, mkline MkLine, fromInfrastructur
 			}
 
 		case "TOOLS_ALIASES.*":
+			if containsVarRef(varparam) {
+				break
+			}
+
 			tool := tr.def(varparam, "", false, Nowhere, nil)
 
 			for _, alias := range mkline.ValueFields(value) {
@@ -292,33 +299,48 @@ func (tr *Tools) addAlias(tool *Tool, alias string) {
 // parseUseTools interprets a "USE_TOOLS+=" line from a Makefile fragment.
 // It determines the validity of the tool, i.e. in which places it may be used.
 //
-// If createIfAbsent is true and the tools is unknown, it is registered.
+// If createIfAbsent is true and the tool is unknown, it is registered.
 // This can be done only in the pkgsrc infrastructure files, where the
 // actual definition is assumed to be in some other file. In packages
 // though, this assumption cannot be made and pkglint needs to be strict.
-func (tr *Tools) parseUseTools(mkline MkLine, createIfAbsent bool, addToUseTools bool) {
+func (tr *Tools) parseUseTools(mkline *MkLine, createIfAbsent bool, addToUseTools bool) {
 	value := mkline.Value()
 	if containsVarRef(value) {
 		return
 	}
 
-	deps := mkline.ValueFields(value)
-
-	// See mk/tools/autoconf.mk:/^\.if !defined/
-	if matches(value, `\bautoconf213\b`) {
-		deps = append(deps, "autoconf-2.13", "autoheader-2.13", "autoreconf-2.13", "autoscan-2.13", "autoupdate-2.13", "ifnames-2.13")
-	}
-	if matches(value, `\bautoconf\b`) {
-		deps = append(deps, "autoheader", "autom4te", "autoreconf", "autoscan", "autoupdate", "ifnames")
-	}
-
 	validity := tr.validity(mkline.Basename, addToUseTools)
-	for _, dep := range deps {
+	for _, dep := range mkline.ValueFields(value) {
 		name := strings.Split(dep, ":")[0]
 		if createIfAbsent || tr.ByName(name) != nil {
 			tr.def(name, "", false, validity, nil)
+			for _, implicitName := range tr.implicitTools(name) {
+				tr.def(implicitName, "", false, validity, nil)
+			}
 		}
 	}
+}
+
+func (tr *Tools) implicitTools(toolName string) []string {
+
+	// See mk/tools/autoconf.mk:/^\.if !defined/
+
+	if toolName == "autoconf213" {
+		return []string{
+			"autoconf-2.13", "autoheader-2.13", "autoreconf-2.13",
+			"autoscan-2.13", "autoupdate-2.13", "ifnames-2.13",
+			"autoconf",
+			"autoheader", "autom4te", "autoreconf",
+			"autoscan", "autoupdate", "ifnames"}
+	}
+
+	if toolName == "autoconf" {
+		return []string{
+			"autoheader", "autom4te", "autoreconf",
+			"autoscan", "autoupdate", "ifnames"}
+	}
+
+	return nil
 }
 
 func (tr *Tools) validity(basename string, useTools bool) Validity {
@@ -327,7 +349,7 @@ func (tr *Tools) validity(basename string, useTools bool) Validity {
 		return AfterPrefsMk
 	case basename == "Makefile" && !tr.SeenPrefs:
 		return AfterPrefsMk
-	case useTools, basename == "bsd.pkg.mk":
+	case useTools:
 		return AtRunTime
 	default:
 		return Nowhere
@@ -369,7 +391,7 @@ func (tr *Tools) Usable(tool *Tool, time ToolTime) bool {
 }
 
 func (tr *Tools) Fallback(other *Tools) {
-	G.Assertf(tr.fallback == nil, "Tools.Fallback must only be called once.")
+	assert(tr.fallback == nil) // Must only be called once.
 	tr.fallback = other
 }
 

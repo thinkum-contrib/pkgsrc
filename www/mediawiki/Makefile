@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.75 2019/05/08 02:12:07 wen Exp $
+# $NetBSD: Makefile,v 1.78 2019/07/06 14:57:07 wen Exp $
 
 DISTNAME=	mediawiki-${VER}.${PVER}
 CATEGORIES=	www
@@ -21,8 +21,8 @@ INSTALLATION_DIRS=	${EGDIR} share/mediawiki
 .include "../../mk/bsd.prefs.mk"
 .include "options.mk"
 
-VER=			1.32
-PVER=			1
+VER=			1.33
+PVER=			0
 
 APACHE_USER?=		www
 APACHE_GROUP?=		www
@@ -41,7 +41,7 @@ SUBST_CLASSES+=		paths
 SUBST_MESSAGE.paths=	Fixing pathnames in configuration file.
 SUBST_STAGE.paths=	pre-configure
 SUBST_FILES.paths=	../mediawiki.conf
-SUBST_SED.paths=	-e "s,@MEDIAWIKI@,${MEDIAWIKI},g"
+SUBST_VARS.paths=	MEDIAWIKI
 
 SUBST_CLASSES+=		sh
 SUBST_STAGE.sh=		pre-configure

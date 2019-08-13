@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.34 2018/11/14 22:21:30 kleink Exp $
+# $NetBSD: Makefile,v 1.36 2019/07/21 22:24:50 wiz Exp $
 #
 
 DISTNAME=	gnome-mastermind-0.3.1
-PKGREVISION=	29
+PKGREVISION=	30
 CATEGORIES=	games
 MASTER_SITES=	http://download.gna.org/gnome-mastermind/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.autistici.org/gnome-mastermind/
+HOMEPAGE=	https://www.autistici.org/gnome-mastermind/
 COMMENT=	Mastermind (the game)
 
 GNU_CONFIGURE=	yes

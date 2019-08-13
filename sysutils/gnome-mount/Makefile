@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.47 2018/11/14 22:22:24 kleink Exp $
+# $NetBSD: Makefile,v 1.49 2019/07/21 22:25:43 wiz Exp $
 #
 
 DISTNAME=		gnome-mount-0.8
-PKGREVISION=		42
+PKGREVISION=		43
 CATEGORIES=		sysutils gnome
 MASTER_SITES=		http://hal.freedesktop.org/releases/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://hal.freedesktop.org/
+HOMEPAGE=	https://www.freedesktop.org/wiki/Software/hal/
 COMMENT=	Programs for mounting, unmounting and ejecting storage devices
 
 GNU_CONFIGURE=		YES

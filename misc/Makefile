@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.507 2019/03/23 10:55:06 tsutsui Exp $
+# $NetBSD: Makefile,v 1.510 2019/07/31 13:37:02 brook Exp $
 #
 
 COMMENT=	Miscellaneous utilities
@@ -7,6 +7,7 @@ SUBDIR+=	9menu
 SUBDIR+=	Addresses
 SUBDIR+=	JBidwatcher
 SUBDIR+=	JMdict
+SUBDIR+=	R-Hmisc
 SUBDIR+=	R-pillar
 SUBDIR+=	ansiweather
 SUBDIR+=	ascii
@@ -194,6 +195,7 @@ SUBDIR+=	multitail
 SUBDIR+=	nxtvepg
 SUBDIR+=	nyancat
 SUBDIR+=	ocaml-cudf
+SUBDIR+=	ocaml-magic-mime
 SUBDIR+=	ocaml-opaline
 SUBDIR+=	ocaml-opam
 SUBDIR+=	ocaml-opam-file-format
@@ -380,7 +382,6 @@ SUBDIR+=	xorg-sgml-doctools
 SUBDIR+=	xrolodex
 SUBDIR+=	xtail
 SUBDIR+=	xtend
-SUBDIR+=	yelp
 SUBDIR+=	yelp3
 SUBDIR+=	yrolo
 SUBDIR+=	zorro

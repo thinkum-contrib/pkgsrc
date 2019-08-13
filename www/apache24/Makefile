@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.78 2019/04/05 13:48:38 jperkin Exp $
+# $NetBSD: Makefile,v 1.82 2019/07/22 10:34:22 jperkin Exp $
 #
 # When updating this package, make sure that no strings like
 # "PR 12345" are in the commit message. Upstream likes
@@ -7,7 +7,7 @@
 
 DISTNAME=	httpd-2.4.39
 PKGNAME=	${DISTNAME:S/httpd/apache/}
-PKGREVISION=	1
+PKGREVISION=	3
 CATEGORIES=	www
 MASTER_SITES=	${MASTER_SITE_APACHE:=httpd/}
 MASTER_SITES+=	http://archive.apache.org/dist/httpd/
@@ -37,7 +37,7 @@ CONFIGURE_ENV+=		ac_cv_path_RSYNC=/nonexistent
 .include "../../mk/compiler.mk"
 
 CFLAGS.SunOS+=	-D__EXTENSIONS__
-.if !empty(CC_VERSION:Mgcc-[6-9]*) || !empty(PKGSRC_COMPILER:Mclang)
+.if !empty(CC_VERSION:Mgcc-[5-9]*) || !empty(PKGSRC_COMPILER:Mclang)
 CFLAGS.SunOS+=	-D_XOPEN_SOURCE=600
 .else
 CFLAGS.SunOS+=	-D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1
@@ -119,10 +119,10 @@ SUBST_CLASSES+=		paths
 SUBST_STAGE.paths=	pre-configure
 SUBST_MESSAGE.paths=	Fixing paths.
 SUBST_FILES.paths=	config.layout Makefile.in support/apxs.in
-SUBST_SED.paths=	-e "s|@PREFIX@|${PREFIX}|g"
-SUBST_SED.paths+=	-e "s|@VARBASE@|${VARBASE}|g"
+SUBST_VARS.paths=	PREFIX
+SUBST_VARS.paths+=	VARBASE
 SUBST_SED.paths+=	-e "s|@SYSCONFDIR@|${PKG_SYSCONFDIR}|g"
-SUBST_SED.paths+=	-e "s|@PAX@|${PAX}|g"
+SUBST_VARS.paths+=	PAX
 SUBST_SED.paths+=	-e "s|@LOCALBASE@|${PREFIX}|g"
 
 SUBST_CLASSES+=		apr-lt

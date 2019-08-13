@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.38 2018/12/13 19:52:07 adam Exp $
+# $NetBSD: Makefile,v 1.41 2019/07/20 22:46:30 wiz Exp $
 #
 
 DISTNAME=	freepops-0.2.9
-PKGREVISION=	14
+PKGREVISION=	16
 CATEGORIES=	mail
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=freepops/}
 
@@ -42,9 +42,9 @@ SUBST_CLASSES+=		paths
 SUBST_STAGE.paths=	do-configure
 SUBST_FILES.paths=	config.h doc/freepopsd.1 src/freepops.h
 SUBST_FILES.paths+=	src/lua/freepops.lua
-SUBST_SED.paths=	-e 's|@PREFIX@|${PREFIX}|g'
-SUBST_SED.paths+=	-e 's|@PKG_SYSCONFDIR@|${PKG_SYSCONFDIR}|g'
-SUBST_SED.paths+=	-e 's|@VARBASE@|${VARBASE}|g'
+SUBST_VARS.paths=	PREFIX
+SUBST_VARS.paths+=	PKG_SYSCONFDIR
+SUBST_VARS.paths+=	VARBASE
 SUBST_MESSAGE.paths=	Adjusting paths.
 
 BUILD_DEFS+=		VARBASE

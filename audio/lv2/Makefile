@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.14 2019/04/25 07:32:35 maya Exp $
+# $NetBSD: Makefile,v 1.16 2019/07/21 22:23:58 wiz Exp $
 
 DISTNAME=	lv2-1.16.0
-PKGREVISION=	1
+PKGREVISION=	3
 CATEGORIES=	audio
 MASTER_SITES=	http://lv2plug.in/spec/
 EXTRACT_SUFX=	.tar.bz2
@@ -16,7 +16,6 @@ USE_TOOLS+=	pkg-config
 PKGCONFIG_OVERRIDE+=	lv2/lv2plug.in/ns/lv2core/lv2core.pc.in
 PKGCONFIG_OVERRIDE+=	lv2.pc.in
 
-PYTHON_SELF_CONFLICT=	yes
 REPLACE_PYTHON+=	lv2specgen/lv2specgen.py
 
 .include "options.mk"

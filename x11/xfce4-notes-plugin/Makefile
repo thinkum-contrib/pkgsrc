@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.51 2018/11/14 22:22:52 kleink Exp $
+# $NetBSD: Makefile,v 1.53 2019/07/21 22:26:06 wiz Exp $
 
-PKGREVISION= 9
+PKGREVISION= 10
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
 DISTNAME=	xfce4-notes-plugin-1.8.1
 CATEGORIES=	sysutils
 MASTER_SITES=	http://archive.xfce.org/src/panel-plugins/xfce4-notes-plugin/1.8/
 
-HOMEPAGE=	http://goodies.xfce.org/projects/panel-plugins/xfce4-notes-plugin
+HOMEPAGE=	https://goodies.xfce.org/projects/panel-plugins/xfce4-notes-plugin
 COMMENT=	Xfce notes plugin
 
 LDFLAGS.DragonFly=	-lm -lX11

@@ -1,14 +1,12 @@
-# $NetBSD: Makefile,v 1.16 2018/08/22 09:47:19 wiz Exp $
+# $NetBSD: Makefile,v 1.18 2019/07/01 21:35:57 nia Exp $
 
-DISTNAME=      	Time-Duration-1.20
-#PKGNAME=	p5-${DISTNAME}0
+DISTNAME=      	Time-Duration-1.21
 PKGNAME=	p5-${DISTNAME}
-PKGREVISION=	3
 CATEGORIES=	devel perl5 time
 MASTER_SITES=	${MASTER_SITE_PERL_CPAN:=Time/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://search.cpan.org/~avif/Time-Duration-1.04/Duration.pm
+HOMEPAGE=	https://metacpan.org/pod/release/AVIF/Time-Duration-1.04/Duration.pm
 COMMENT=	Perl5 module for rounded or exact English expression of durations
 LICENSE=	${PERL5_LICENSE}
 

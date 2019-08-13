@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.13 2018/12/16 10:07:11 ryoon Exp $
+# $NetBSD: Makefile,v 1.15 2019/07/04 13:41:56 ryoon Exp $
 
-DISTNAME=	scala-2.12.8
+DISTNAME=	scala-2.13.0
 CATEGORIES=	lang
 MASTER_SITES=	http://www.scala-lang.org/files/archive/
 EXTRACT_SUFX=	.tgz
@@ -23,9 +23,9 @@ SCALA_HOME=	${PREFIX}/share/${DISTNAME}
 SUBST_CLASSES+=		scala
 SUBST_FILES.scala=	bin/fsc bin/scala bin/scalac bin/scaladoc bin/scalap
 SUBST_STAGE.scala=	pre-configure
-SUBST_SED.scala=	-e 's,@PREFIX@,${PREFIX},g'
+SUBST_VARS.scala=	PREFIX
 SUBST_SED.scala+=	-e 's,@JAVA_HOME@,${PKG_JAVA_HOME},g'
-SUBST_SED.scala+=	-e 's,@SCALA_HOME@,${SCALA_HOME},g'
+SUBST_VARS.scala+=	SCALA_HOME
 
 PLIST_SUBST+=	DISTNAME=${DISTNAME}
 

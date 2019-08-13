@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.2 2018/04/29 10:03:26 wiz Exp $
+$NetBSD: distinfo,v 1.4 2019/06/11 12:13:53 wiz Exp $
 
-SHA1 (html5-parser-0.4.5.tar.gz) = b11e843820c108f05ebdf0d6a065446f9cc75641
-RMD160 (html5-parser-0.4.5.tar.gz) = aa7cc34ac0faacc0f2fd5bb8edb16d71a1623367
-SHA512 (html5-parser-0.4.5.tar.gz) = 3c0421dd228ba5f3544f188fde5391d6be0fe92b879cf1e7697b5e5612a9e5bf08863bcb76f4297a59bfbfc69010a95f5d97fff78a7e6d26c889e173b07e4ae5
-Size (html5-parser-0.4.5.tar.gz) = 275587 bytes
+SHA1 (html5-parser-0.4.7.tar.gz) = 136f44f162ba4ce5c9c6d01dffe7c1529e24560b
+RMD160 (html5-parser-0.4.7.tar.gz) = 95b049ebef86b58f5b4a6548bf92b68841c9a923
+SHA512 (html5-parser-0.4.7.tar.gz) = 6734709b0bae67e3bb176bbc80beab4702990d83c57679764301b7f0272ab3798d6b5a4f2f5eecf99c9fff89211efbab701947454ecba3c5fb98fc06161ca59e
+Size (html5-parser-0.4.7.tar.gz) = 274508 bytes

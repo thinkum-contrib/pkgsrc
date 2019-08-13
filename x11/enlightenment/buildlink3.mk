@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.13 2019/03/20 12:13:21 wiz Exp $
+# $NetBSD: buildlink3.mk,v 1.15 2019/07/20 22:46:07 wiz Exp $
 
 BUILDLINK_TREE+=	enlightenment
 
@@ -6,7 +6,7 @@ BUILDLINK_TREE+=	enlightenment
 ENLIGHTENMENT_BUILDLINK3_MK:=
 
 BUILDLINK_API_DEPENDS.enlightenment+=	enlightenment>=0.17.3
-BUILDLINK_ABI_DEPENDS.enlightenment?=	enlightenment>=0.17.3nb17
+BUILDLINK_ABI_DEPENDS.enlightenment?=	enlightenment>=0.17.3nb19
 BUILDLINK_PKGSRCDIR.enlightenment?=	../../x11/enlightenment
 
 .include "../../devel/ecore/buildlink3.mk"

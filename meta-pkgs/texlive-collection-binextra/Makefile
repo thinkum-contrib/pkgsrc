@@ -1,10 +1,10 @@
-# $NetBSD: Makefile,v 1.15 2019/02/02 00:08:33 markd Exp $
+# $NetBSD: Makefile,v 1.17 2019/07/29 11:34:56 markd Exp $
 
 DISTNAME=	collection-binextra
-PKGNAME=	texlive-${DISTNAME}-2018pre2
+PKGNAME=	texlive-${DISTNAME}-2019pre1
 CATEGORIES=	meta-pkgs
 MASTER_SITES=	# empty
-TEXLIVE_REV=	49312
+TEXLIVE_REV=	51464
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://www.tug.org/texlive/
@@ -40,13 +40,13 @@ DEPENDS+=	dvi2tty-[0-9]*:../../converters/dvi2tty
 DEPENDS+=	dvidvi-[0-9]*:../../print/dvidvi
 # depend dviinfox
 DEPENDS+=	dviljk-[0-9]*:../../print/dviljk
+# depend dviout-util
 DEPENDS+=	dvipng-[0-9]*:../../graphics/dvipng
 # depend dvipos
 # depend dvisvgm
 # depend findhyph
 # depend fragmaster
 # depend hook-pre-commit-pkg
-# depend hyphenex
 # depend installfont
 # depend ketcindy
 DEPENDS+=	lacheck-[0-9]*:../../print/lacheck
@@ -97,7 +97,6 @@ DEPENDS+=	tex-texdoctk-[0-9]*:../../print/tex-texdoctk
 # texware entirely included in web2c
 # tie entirely included in web2c
 # depend tlcockpit
-# depend tlshell
 # depend tpic2pdftex
 # depend typeoutfileinfo
 # web entirely included in web2c

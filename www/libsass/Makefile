@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.12 2018/11/12 07:24:46 adam Exp $
+# $NetBSD: Makefile,v 1.15 2019/07/09 20:31:33 nia Exp $
 
-DISTNAME=	libsass-3.5.5
+DISTNAME=	libsass-3.6.1
+PKGREVISION=	1
 CATEGORIES=	www devel
 MASTER_SITES=	${MASTER_SITE_GITHUB:=sass/}
 
@@ -18,7 +19,7 @@ MAKE_FILE=		GNUmakefile
 PKGCONFIG_OVERRIDE=	src/support/libsass.pc.in
 
 pre-configure:
-	set -e; cd ${WRKSRC}; libtoolize -c -f; \
+	${RUN} cd ${WRKSRC}; libtoolize -c -f; \
 	aclocal; autoheader; automake -a --foreign -i; autoconf
 
 .include "../../mk/bsd.pkg.mk"

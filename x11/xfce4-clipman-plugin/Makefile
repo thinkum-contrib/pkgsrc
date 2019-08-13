@@ -1,12 +1,13 @@
-# $NetBSD: Makefile,v 1.51 2019/01/18 12:58:40 youri Exp $
+# $NetBSD: Makefile,v 1.53 2019/07/21 22:26:05 wiz Exp $
 
+PKGREVISION= 1
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
 DISTNAME=	xfce4-clipman-plugin-1.4.3
 CATEGORIES=	sysutils
 MASTER_SITES=	http://archive.xfce.org/src/panel-plugins/xfce4-clipman-plugin/1.4/
 
-HOMEPAGE=	http://goodies.xfce.org/projects/panel-plugins/xfce4-clipman-plugin
+HOMEPAGE=	https://goodies.xfce.org/projects/panel-plugins/xfce4-clipman-plugin
 COMMENT=	Xfce clipboard plugin
 
 PKG_SYSCONFSUBDIR=	xdg

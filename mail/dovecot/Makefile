@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.193 2019/04/03 00:32:51 ryoon Exp $
+# $NetBSD: Makefile,v 1.196 2019/07/20 22:46:30 wiz Exp $
 
 DOVECOT_VERSION=	1.2
 DOVECOT_SUBVERSION=	.17
 SIEVE_VERSION=		0.1.19
 MANAGESIEVE_VERSION=	0.11.13
 DISTNAME=		dovecot-${DOVECOT_VERSION}${DOVECOT_SUBVERSION}
-PKGREVISION=		31
+PKGREVISION=		32
 CATEGORIES=		mail
 MASTER_SITES=		http://www.dovecot.org/releases/${DOVECOT_VERSION}/
 DOVECOT_SIEVE_SITES=	http://pigeonhole.dovecot.org/releases/${DOVECOT_VERSION}/
@@ -15,7 +15,7 @@ SITES.${MANAGESIEVE_PATCH}=	${DOVECOT_SIEVE_SITES}
 PATCH_DIST_STRIP.${MANAGESIEVE_PATCH}=	-p1
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		http://www.dovecot.org/
+HOMEPAGE=		https://www.dovecot.org/
 COMMENT=		Secure IMAP and POP3 server
 LICENSE=		mit AND gnu-lgpl-v2.1 AND modified-bsd
 
@@ -52,7 +52,7 @@ INSTALLATION_DIRS+=	libexec/dovecot sbin share/doc/dovecot		\
 
 SUBST_CLASSES+=		paths
 SUBST_FILES.paths=	dovecot-example.conf
-SUBST_SED.paths+=	-e 's,@PREFIX@,${PREFIX},g'
+SUBST_VARS.paths=	PREFIX
 SUBST_STAGE.paths=	pre-configure
 
 BUILD_DEFS+=		VARBASE

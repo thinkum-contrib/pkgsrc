@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"sort"
 	"strconv"
@@ -40,6 +41,12 @@ func hasSuffix(s, suffix string) bool {
 }
 func sprintf(format string, args ...interface{}) string {
 	return fmt.Sprintf(format, args...)
+}
+func regcomp(re regex.Pattern) *regexp.Regexp {
+	return G.res.Compile(re)
+}
+func match(s string, re regex.Pattern) []string {
+	return G.res.Match(s, re)
 }
 func matches(s string, re regex.Pattern) bool {
 	return G.res.Matches(s, re)
@@ -91,6 +98,14 @@ func trimHspace(str string) string {
 	return str[start:end]
 }
 
+func rtrimHspace(str string) string {
+	end := len(str)
+	for end > 0 && isHspace(str[end-1]) {
+		end--
+	}
+	return str[:end]
+}
+
 func trimCommon(a, b string) (string, string) {
 	// trim common prefix
 	for len(a) > 0 && len(b) > 0 && a[0] == b[0] {
@@ -111,11 +126,18 @@ func isHspace(ch byte) bool {
 	return ch == ' ' || ch == '\t'
 }
 
-func ifelseStr(cond bool, a, b string) string {
+func condStr(cond bool, a, b string) string {
 	if cond {
 		return a
 	}
 	return b
+}
+
+func condInt(cond bool, trueValue, falseValue int) int {
+	if cond {
+		return trueValue
+	}
+	return falseValue
 }
 
 func keysJoined(m map[string]bool) string {
@@ -127,6 +149,13 @@ func keysJoined(m map[string]bool) string {
 	return strings.Join(keys, " ")
 }
 
+func imin(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func imax(a, b int) int {
 	if a > b {
 		return a
@@ -134,9 +163,51 @@ func imax(a, b int) int {
 	return b
 }
 
+// assertNil ensures that the given error is nil.
+//
+// Contrary to other diagnostics, the format should not end in a period
+// since it is followed by the error.
+//
+// Other than Assertf, this method does not require any comparison operator in the calling code.
+// This makes it possible to get 100% branch coverage for cases that "really can never fail".
 func assertNil(err error, format string, args ...interface{}) {
 	if err != nil {
 		panic("Pkglint internal error: " + sprintf(format, args...) + ": " + err.Error())
+	}
+}
+
+func assertNotNil(obj interface{}) {
+
+	// https://stackoverflow.com/questions/13476349/check-for-nil-and-nil-interface-in-go
+	isNil := func() bool {
+		defer func() { _ = recover() }()
+		return reflect.ValueOf(obj).IsNil()
+	}
+
+	if obj == nil || isNil() {
+		panic("Pkglint internal error: unexpected nil pointer")
+	}
+}
+
+// assert checks that the condition is true. Otherwise it terminates the
+// process with a fatal error message, prefixed with "Pkglint internal error".
+//
+// This method must only be used for programming errors.
+// For runtime errors, use dummyLine.Fatalf.
+func assert(cond bool) {
+	if !cond {
+		panic("Pkglint internal error")
+	}
+}
+
+// assertf checks that the condition is true. Otherwise it terminates the
+// process with a fatal error message, prefixed with "Pkglint internal error".
+//
+// This method must only be used for programming errors.
+// For runtime errors, use dummyLine.Fatalf.
+func assertf(cond bool, format string, args ...interface{}) {
+	if !cond {
+		panic("Pkglint internal error: " + sprintf(format, args...))
 	}
 }
 
@@ -147,7 +218,7 @@ func isEmptyDir(filename string) bool {
 
 	dirents, err := ioutil.ReadDir(filename)
 	if err != nil {
-		return true
+		return true // XXX: Why not false?
 	}
 
 	for _, dirent := range dirents {
@@ -203,46 +274,47 @@ func dirglob(dirname string) []string {
 
 // Checks whether a file is already committed to the CVS repository.
 func isCommitted(filename string) bool {
-	lines := G.loadCvsEntries(filename)
-	if lines == nil {
-		return false
-	}
-	needle := "/" + path.Base(filename) + "/"
-	for _, line := range lines.Lines {
-		if hasPrefix(line.Text, needle) {
-			return true
-		}
-	}
-	return false
+	entries := G.loadCvsEntries(filename)
+	_, found := entries[path.Base(filename)]
+	return found
 }
 
+// isLocallyModified tests whether a file (not a directory) is modified,
+// as seen by CVS.
+//
+// There is no corresponding test for Git (as used by pkgsrc-wip) since that
+// is more difficult to implement than simply reading a CVS/Entries file.
 func isLocallyModified(filename string) bool {
-	baseName := path.Base(filename)
-
-	lines := G.loadCvsEntries(filename)
-	if lines == nil {
+	entries := G.loadCvsEntries(filename)
+	entry, found := entries[path.Base(filename)]
+	if !found {
 		return false
 	}
 
-	for _, line := range lines.Lines {
-		fields := strings.Split(line.Text, "/")
-		if 3 < len(fields) && fields[1] == baseName {
-			st, err := os.Stat(filename)
-			if err != nil {
-				return true
-			}
-
-			// Following http://cvsman.com/cvs-1.12.12/cvs_19.php, format both timestamps.
-			cvsModTime := fields[3]
-			fsModTime := st.ModTime().UTC().Format(time.ANSIC)
-			if trace.Tracing {
-				trace.Stepf("cvs.time=%q fs.time=%q", cvsModTime, fsModTime)
-			}
-
-			return cvsModTime != fsModTime
-		}
+	st, err := os.Stat(filename)
+	if err != nil {
+		return true
 	}
-	return false
+
+	// Following http://cvsman.com/cvs-1.12.12/cvs_19.php, format both timestamps.
+	cvsModTime := entry.Timestamp
+	fsModTime := st.ModTime().UTC().Format(time.ANSIC)
+	if trace.Tracing {
+		trace.Stepf("cvs.time=%q fs.time=%q", cvsModTime, fsModTime)
+	}
+
+	return cvsModTime != fsModTime
+}
+
+// CvsEntry is one of the entries in a CVS/Entries file.
+//
+// See http://cvsman.com/cvs-1.12.12/cvs_19.php.
+type CvsEntry struct {
+	Name      string
+	Revision  string
+	Timestamp string
+	Options   string
+	TagDate   string
 }
 
 // Returns the number of columns that a string occupies when printed with
@@ -251,7 +323,7 @@ func tabWidth(s string) int {
 	length := 0
 	for _, r := range s {
 		if r == '\t' {
-			length = length - length%8 + 8
+			length = length&-8 + 8
 		} else {
 			length++
 		}
@@ -263,12 +335,33 @@ func detab(s string) string {
 	var detabbed strings.Builder
 	for _, r := range s {
 		if r == '\t' {
-			detabbed.WriteString("        "[:8-detabbed.Len()%8])
+			detabbed.WriteString("        "[:8-detabbed.Len()&7])
 		} else {
-			detabbed.WriteString(string(r))
+			detabbed.WriteRune(r)
 		}
 	}
 	return detabbed.String()
+}
+
+// alignWith extends str with as many tabs as needed to reach
+// the same screen width as the other string.
+func alignWith(str, other string) string {
+	alignBefore := (tabWidth(other) + 7) & -8
+	alignAfter := tabWidth(str) & -8
+	tabsNeeded := imax((alignBefore-alignAfter)/8, 1)
+	return str + strings.Repeat("\t", tabsNeeded)
+}
+
+func indent(width int) string {
+	return strings.Repeat("\t", width>>3) + "       "[:width&7]
+}
+
+// alignmentAfter returns the indentation that is necessary to get
+// from the given prefix to the desired width.
+func alignmentAfter(prefix string, width int) string {
+	pw := tabWidth(prefix)
+	assert(width >= pw)
+	return indent(width - condInt(pw&-8 != width&-8, pw&-8, pw))
 }
 
 func shorten(s string, maxChars int) string {
@@ -325,7 +418,7 @@ func toInt(s string, def int) int {
 
 // mkopSubst evaluates make(1)'s :S substitution operator.
 func mkopSubst(s string, left bool, from string, right bool, to string, flags string) string {
-	re := regex.Pattern(ifelseStr(left, "^", "") + regexp.QuoteMeta(from) + ifelseStr(right, "$", ""))
+	re := regex.Pattern(condStr(left, "^", "") + regexp.QuoteMeta(from) + condStr(right, "$", ""))
 	done := false
 	gflag := contains(flags, "g")
 	return replaceAllFunc(s, re, func(match string) string {
@@ -368,7 +461,7 @@ func relpath(from, to string) (result string) {
 	}
 
 	// Take a shortcut for the common case from "dir" to "dir/subdir/...".
-	if hasPrefix(cto, cfrom) && len(cto) > len(cfrom)+1 && cto[len(cfrom)] == '/' {
+	if hasPrefix(cto, cfrom) && hasPrefix(cto[len(cfrom):], "/") {
 		return cleanpath(cto[len(cfrom)+1:])
 	}
 
@@ -390,10 +483,10 @@ func relpath(from, to string) (result string) {
 	absTo := abspath(cto)
 
 	toTop, err := filepath.Rel(absFrom, absTopdir)
-	G.AssertNil(err, "relpath from %q to topdir %q", absFrom, absTopdir)
+	assertNil(err, "relpath from %q to topdir %q", absFrom, absTopdir)
 
 	fromTop, err := filepath.Rel(absTopdir, absTo)
-	G.AssertNil(err, "relpath from topdir %q to %q", absTopdir, absTo)
+	assertNil(err, "relpath from topdir %q to %q", absTopdir, absTo)
 
 	result = cleanpath(filepath.ToSlash(toTop) + "/" + filepath.ToSlash(fromTop))
 
@@ -449,6 +542,34 @@ func cleanpath(filename string) string {
 	return strings.Join(parts, "/")
 }
 
+func pathContains(haystack, needle string) bool {
+	n0 := needle[0]
+	for i := 0; i < 1+len(haystack)-len(needle); i++ {
+		if haystack[i] == n0 && hasPrefix(haystack[i:], needle) {
+			if i == 0 || haystack[i-1] == '/' {
+				if i+len(needle) == len(haystack) || haystack[i+len(needle)] == '/' {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func pathContainsDir(haystack, needle string) bool {
+	n0 := needle[0]
+	for i := 0; i < 1+len(haystack)-len(needle); i++ {
+		if haystack[i] == n0 && hasPrefix(haystack[i:], needle) {
+			if i == 0 || haystack[i-1] == '/' {
+				if i+len(needle) < len(haystack) && haystack[i+len(needle)] == '/' {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
 func containsVarRef(s string) bool {
 	return contains(s, "${")
 }
@@ -459,23 +580,46 @@ func hasAlnumPrefix(s string) bool { return s != "" && textproc.AlnumU.Contains(
 // and only returns true on each first call.
 type Once struct {
 	seen map[uint64]struct{}
+
+	// Only used during testing, to trace the actual arguments,
+	// since hashing is a one-way function.
+	Trace bool
 }
 
 func (o *Once) FirstTime(what string) bool {
-	return o.check(crc64.Checksum([]byte(what), crc64.MakeTable(crc64.ECMA)))
+	firstTime := o.check(o.keyString(what))
+	if firstTime && o.Trace {
+		G.Logger.out.WriteLine(sprintf("FirstTime: %s", what))
+	}
+	return firstTime
 }
 
 func (o *Once) FirstTimeSlice(whats ...string) bool {
-	crc := crc64.New(crc64.MakeTable(crc64.ECMA))
-	for _, what := range whats {
-		_, _ = crc.Write([]byte(what))
+	firstTime := o.check(o.keyStrings(whats))
+	if firstTime && o.Trace {
+		G.Logger.out.WriteLine(sprintf("FirstTime: %s", strings.Join(whats, ", ")))
 	}
-	return o.check(crc.Sum64())
+	return firstTime
 }
 
 func (o *Once) Seen(what string) bool {
-	_, seen := o.seen[crc64.Checksum([]byte(what), crc64.MakeTable(crc64.ECMA))]
+	_, seen := o.seen[o.keyString(what)]
 	return seen
+}
+
+func (*Once) keyString(what string) uint64 {
+	return crc64.Checksum([]byte(what), crc64.MakeTable(crc64.ECMA))
+}
+
+func (*Once) keyStrings(whats []string) uint64 {
+	crc := crc64.New(crc64.MakeTable(crc64.ECMA))
+	for i, what := range whats {
+		if i != 0 {
+			_, _ = crc.Write([]byte{0})
+		}
+		_, _ = crc.Write([]byte(what))
+	}
+	return crc.Sum64()
 }
 
 func (o *Once) check(key uint64) bool {
@@ -499,26 +643,26 @@ func (o *Once) check(key uint64) bool {
 // TODO: Merge this code with Var, which defines essentially the
 //  same features.
 type Scope struct {
-	firstDef       map[string]MkLine // TODO: Can this be removed?
-	lastDef        map[string]MkLine
+	firstDef       map[string]*MkLine // TODO: Can this be removed?
+	lastDef        map[string]*MkLine
 	value          map[string]string
-	used           map[string]MkLine
+	used           map[string]*MkLine
 	usedAtLoadTime map[string]bool
 	fallback       map[string]string
 }
 
 func NewScope() Scope {
 	return Scope{
-		make(map[string]MkLine),
-		make(map[string]MkLine),
+		make(map[string]*MkLine),
+		make(map[string]*MkLine),
 		make(map[string]string),
-		make(map[string]MkLine),
+		make(map[string]*MkLine),
 		make(map[string]bool),
 		make(map[string]string)}
 }
 
 // Define marks the variable and its canonicalized form as defined.
-func (s *Scope) Define(varname string, mkline MkLine) {
+func (s *Scope) Define(varname string, mkline *MkLine) {
 	def := func(name string) {
 		if s.firstDef[name] == nil {
 			s.firstDef[name] = mkline
@@ -559,7 +703,7 @@ func (s *Scope) Fallback(varname string, value string) {
 }
 
 // Use marks the variable and its canonicalized form as used.
-func (s *Scope) Use(varname string, line MkLine, time vucTime) {
+func (s *Scope) Use(varname string, line *MkLine, time VucTime) {
 	use := func(name string) {
 		if s.used[name] == nil {
 			s.used[name] = line
@@ -567,7 +711,7 @@ func (s *Scope) Use(varname string, line MkLine, time vucTime) {
 				trace.Step2("Using %q in %s", name, line.String())
 			}
 		}
-		if time == vucTimeParse {
+		if time == VucLoadTime {
 			s.usedAtLoadTime[name] = true
 		}
 	}
@@ -580,7 +724,7 @@ func (s *Scope) Use(varname string, line MkLine, time vucTime) {
 //  - defined,
 //  - mentioned in a commented variable assignment,
 //  - mentioned in a documentation comment.
-func (s *Scope) Mentioned(varname string) MkLine {
+func (s *Scope) Mentioned(varname string) *MkLine {
 	return s.firstDef[varname]
 }
 
@@ -641,7 +785,7 @@ func (s *Scope) UsedAtLoadTime(varname string) bool {
 // value, and the including file later overrides that value. Or the other way
 // round: the including file sets a value first, and the included file then
 // assigns a default value using ?=.
-func (s *Scope) FirstDefinition(varname string) MkLine {
+func (s *Scope) FirstDefinition(varname string) *MkLine {
 	mkline := s.firstDef[varname]
 	if mkline != nil && mkline.IsVarassign() {
 		lastLine := s.LastDefinition(varname)
@@ -662,7 +806,7 @@ func (s *Scope) FirstDefinition(varname string) MkLine {
 // value, and the including file later overrides that value. Or the other way
 // round: the including file sets a value first, and the included file then
 // assigns a default value using ?=.
-func (s *Scope) LastDefinition(varname string) MkLine {
+func (s *Scope) LastDefinition(varname string) *MkLine {
 	mkline := s.lastDef[varname]
 	if mkline != nil && mkline.IsVarassign() {
 		return mkline
@@ -673,8 +817,8 @@ func (s *Scope) LastDefinition(varname string) MkLine {
 // Commented returns whether the variable has only been defined in commented
 // variable assignments. These are ignored by bmake but used heavily in
 // mk/defaults/mk.conf for documentation.
-func (s *Scope) Commented(varname string) MkLine {
-	var mklines []MkLine
+func (s *Scope) Commented(varname string) *MkLine {
+	var mklines []*MkLine
 	if first := s.firstDef[varname]; first != nil {
 		mklines = append(mklines, first)
 	}
@@ -683,13 +827,13 @@ func (s *Scope) Commented(varname string) MkLine {
 	}
 
 	for _, mkline := range mklines {
-		if mkline != nil && mkline.IsVarassign() {
+		if mkline.IsVarassign() {
 			return nil
 		}
 	}
 
 	for _, mkline := range mklines {
-		if mkline != nil && mkline.IsCommentedVarassign() {
+		if mkline.IsCommentedVarassign() {
 			return mkline
 		}
 	}
@@ -697,7 +841,7 @@ func (s *Scope) Commented(varname string) MkLine {
 	return nil
 }
 
-func (s *Scope) FirstUse(varname string) MkLine {
+func (s *Scope) FirstUse(varname string) *MkLine {
 	return s.used[varname]
 }
 
@@ -846,7 +990,7 @@ type fileCacheEntry struct {
 	count   int
 	key     string
 	options LoadOptions
-	lines   Lines
+	lines   *Lines
 }
 
 func NewFileCache(size int) *FileCache {
@@ -857,7 +1001,7 @@ func NewFileCache(size int) *FileCache {
 		0}
 }
 
-func (c *FileCache) Put(filename string, options LoadOptions, lines Lines) {
+func (c *FileCache) Put(filename string, options LoadOptions, lines *Lines) {
 	key := c.key(filename)
 
 	entry := c.mapping[key]
@@ -878,7 +1022,9 @@ func (c *FileCache) Put(filename string, options LoadOptions, lines Lines) {
 }
 
 func (c *FileCache) removeOldEntries() {
-	sort.Slice(c.table, func(i, j int) bool { return c.table[j].count < c.table[i].count })
+	sort.Slice(c.table, func(i, j int) bool {
+		return c.table[j].count < c.table[i].count
+	})
 
 	if G.Testing {
 		for _, e := range c.table {
@@ -909,14 +1055,14 @@ func (c *FileCache) removeOldEntries() {
 	}
 }
 
-func (c *FileCache) Get(filename string, options LoadOptions) Lines {
+func (c *FileCache) Get(filename string, options LoadOptions) *Lines {
 	key := c.key(filename)
 	entry, found := c.mapping[key]
 	if found && entry.options == options {
 		c.hits++
 		entry.count++
 
-		lines := make([]Line, entry.lines.Len())
+		lines := make([]*Line, entry.lines.Len())
 		for i, line := range entry.lines.Lines {
 			lines[i] = NewLineMulti(filename, int(line.firstLine), int(line.lastLine), line.Text, line.raw)
 		}
@@ -929,13 +1075,18 @@ func (c *FileCache) Get(filename string, options LoadOptions) Lines {
 func (c *FileCache) Evict(filename string) {
 	key := c.key(filename)
 	entry, found := c.mapping[key]
-	if found {
-		delete(c.mapping, key)
+	if !found {
+		return
+	}
 
-		sort.Slice(c.table, func(i, j int) bool {
-			return c.table[j] == entry && c.table[i] != entry
-		})
-		c.table = c.table[0 : len(c.table)-1]
+	delete(c.mapping, key)
+
+	for i, e := range c.table {
+		if e == entry {
+			c.table[i] = c.table[len(c.table)-1]
+			c.table = c.table[:len(c.table)-1]
+			return
+		}
 	}
 }
 
@@ -1095,6 +1246,48 @@ func joinSkipEmptyOxford(conn string, elements ...string) string {
 	return strings.Join(nonempty, ", ")
 }
 
+type pathMatcher struct {
+	matchType       pathMatchType
+	pattern         string
+	originalPattern string
+}
+
+func newPathMatcher(pattern string) *pathMatcher {
+	assert(strings.IndexByte(pattern, '[') == -1)
+	assert(strings.IndexByte(pattern, '?') == -1)
+
+	stars := strings.Count(pattern, "*")
+	assert(stars == 0 || stars == 1)
+	switch {
+	case stars == 0:
+		return &pathMatcher{pmExact, pattern, pattern}
+	case pattern[0] == '*':
+		return &pathMatcher{pmSuffix, pattern[1:], pattern}
+	default:
+		assert(pattern[len(pattern)-1] == '*')
+		return &pathMatcher{pmPrefix, pattern[:len(pattern)-1], pattern}
+	}
+}
+
+func (m pathMatcher) matches(subject string) bool {
+	switch m.matchType {
+	case pmPrefix:
+		return hasPrefix(subject, m.pattern)
+	case pmSuffix:
+		return hasSuffix(subject, m.pattern)
+	default:
+		return subject == m.pattern
+	}
+}
+
+type pathMatchType uint8
+
+const (
+	pmExact pathMatchType = iota
+	pmPrefix
+	pmSuffix
+)
+
 // StringInterner collects commonly used strings to avoid wasting heap memory
 // by duplicated strings.
 type StringInterner struct {
@@ -1123,7 +1316,7 @@ func (si *StringInterner) Intern(str string) string {
 	return key
 }
 
-// StringSets stores unique strings in insertion order.
+// StringSet stores unique strings in insertion order.
 type StringSet struct {
 	Elements []string
 	seen     map[string]struct{}

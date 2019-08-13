@@ -1,4 +1,4 @@
-# $NetBSD: options.mk,v 1.10 2019/05/08 12:51:54 nia Exp $
+# $NetBSD: options.mk,v 1.12 2019/05/31 18:11:51 maya Exp $
 
 .include "../../mk/bsd.fast.prefs.mk"
 

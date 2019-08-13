@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.15 2018/11/14 22:21:25 kleink Exp $
+# $NetBSD: Makefile,v 1.17 2019/07/21 22:24:45 wiz Exp $
 
 DISTNAME=	free42
 PKGNAME=	${DISTNAME}-1.4.78
-PKGREVISION=	9
+PKGREVISION=	10
 DIST_SUBDIR=	${PKGNAME_NOREV}
 CATEGORIES=	emulators
 #MASTER_SITES=	http://thomasokken.com/free42/download/
@@ -10,7 +10,7 @@ MASTER_SITES=	${MASTER_SITE_BACKUP}
 EXTRACT_SUFX=	.tgz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://thomasokken.com/free42/
+HOMEPAGE=	https://thomasokken.com/free42/
 COMMENT=	HP42S Calculator Simulator
 LICENSE=	gnu-gpl-v2
 

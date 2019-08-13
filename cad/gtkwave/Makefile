@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.97 2019/04/13 23:38:40 mef Exp $
+# $NetBSD: Makefile,v 1.99 2019/07/21 22:24:30 wiz Exp $
 #
 
 DISTNAME=		gtkwave-3.3.100
+PKGREVISION=		1
 CATEGORIES=		cad
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=gtkwave/}
 #MASTER_SITES=		http://home.nc.rr.com/gtkwave/
@@ -17,8 +18,8 @@ GNU_CONFIGURE=		yes
 USE_TOOLS+=		gmake pkg-config
 USE_LANGUAGES+=		c c++
 
-PTHREAD_AUTO_VARS=	yes
-CHECK_PORTABILITY_SKIP+= contrib/bundle_for_osx/launcher.sh
+PTHREAD_AUTO_VARS=		yes
+CHECK_PORTABILITY_SKIP+=	contrib/bundle_for_osx/launcher.sh
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.gtkwave
 PKG_SUPPORTED_OPTIONS=	gtkwave-tcl gconf

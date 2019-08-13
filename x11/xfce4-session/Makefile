@@ -1,12 +1,13 @@
-# $NetBSD: Makefile,v 1.71 2019/01/18 14:12:29 youri Exp $
+# $NetBSD: Makefile,v 1.76 2019/07/21 22:26:06 wiz Exp $
 
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
-DISTNAME=		xfce4-session-4.13.1
+DISTNAME=		xfce4-session-4.13.3
+PKGREVISION=		2
 CATEGORIES=		x11
 MASTER_SITES+=		http://archive.xfce.org/src/xfce/xfce4-session/4.13/
 
-HOMEPAGE=		http://docs.xfce.org/xfce/xfce4-session/start
+HOMEPAGE=		https://docs.xfce.org/xfce/xfce4-session/start
 COMMENT=		Xfce session manager
 
 PKGCONFIG_OVERRIDE+=	libxfsm/xfce4-session-2.0.pc.in
@@ -40,7 +41,7 @@ CONF_FILES=	${EGDIR}/autostart/xscreensaver.desktop					\
 		${EGDIR}/xinitrc							\
 		${PKG_SYSCONFDIR}/xfce4/xinitrc
 
-.if !empty(Darwin-*-*)
+.if ${OPSYS} == Darwin
 .include "../../sysutils/consolekit/buildlink3.mk"
 .endif
 

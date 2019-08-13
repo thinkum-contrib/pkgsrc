@@ -1,11 +1,10 @@
-# $NetBSD: Makefile,v 1.135 2018/08/22 09:45:34 wiz Exp $
+# $NetBSD: Makefile,v 1.137 2019/07/24 03:49:35 taca Exp $
 
-DISTNAME=	squirrelmail-webmail-1.4.23pre14764
+DISTNAME=	squirrelmail-webmail-1.4.23pre14832
 PKGNAME=	${DISTNAME:S/-webmail//}
-PKGREVISION=	1
 CATEGORIES=	mail www
 MASTER_SITES=	${MASTER_SITE_LOCAL}
-EXTRACT_SUFX=	.tar.bz2
+EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	taca@NetBSD.org
 HOMEPAGE=	http://www.squirrelmail.org/
@@ -62,9 +61,9 @@ OWN_DIRS_PERMS+=	${USER_PREFS_DIR} ${APACHE_USER} ${APACHE_GROUP} 755
 SUBST_CLASSES+=		paths
 SUBST_FILES.paths=	${WRKDIR}/squirrelmail.conf.dist
 SUBST_FILES.paths+=	config/config_default.php
-SUBST_SED.paths+=	-e 's,@PREFIX@,${PREFIX},g'
-SUBST_SED.paths+=	-e 's,@ATTACHMENTS_DIR@,${ATTACHMENTS_DIR},g'
-SUBST_SED.paths+=	-e 's,@USER_PREFS_DIR@,${USER_PREFS_DIR},g'
+SUBST_VARS.paths=	PREFIX
+SUBST_VARS.paths+=	ATTACHMENTS_DIR
+SUBST_VARS.paths+=	USER_PREFS_DIR
 SUBST_SED.paths+=	-e 's,@SMDIR@,${PREFIX}/${SMDIR},g'
 SUBST_STAGE.paths=	pre-configure
 

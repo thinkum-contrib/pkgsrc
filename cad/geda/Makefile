@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.119 2019/04/25 07:32:37 maya Exp $
+# $NetBSD: Makefile,v 1.121 2019/07/21 22:24:30 wiz Exp $
 
 DISTNAME=	geda-gaf-1.8.2
 PKGNAME=	${DISTNAME:S/-gaf-/-/}
-PKGREVISION=	21
+PKGREVISION=	22
 CATEGORIES=	cad
 MASTER_SITES=	http://ftp.geda-project.org/geda-gaf/stable/v1.8/1.8.2/
 
@@ -58,7 +58,7 @@ REPLACE_SH+=		gnetlist/scripts/sch2eaglepos.sh
 USE_TOOLS+=		sh:run
 
 # for gsch2pcb
-CONFIGURE_ARGS+=	--with-pcb-datadir=${LOCALBASE}/share
+CONFIGURE_ARGS+=	--with-pcb-datadir=${PREFIX}/share
 USE_TOOLS+=		gawk:run lex perl:run pkg-config
 
 # disable groff for a consistent build

@@ -1,0 +1,8 @@
+$NetBSD: distinfo,v 1.2 2019/06/05 19:19:38 adam Exp $
+
+SHA1 (node_exporter-0.18.1.tar.gz) = 7df18bbe353e6393519738ec8010172869df55d4
+RMD160 (node_exporter-0.18.1.tar.gz) = e4043a6345c4650cd99d0cabdceea333bf3bc596
+SHA512 (node_exporter-0.18.1.tar.gz) = cf2b854fbec1ba39b18432cdc11ab507ebc5b2828e6b34b4f49af9b949fcd365cb3e5eb1e265d0825783810c6b1572a8b3512ec27a46e5c83f89a505590159c0
+Size (node_exporter-0.18.1.tar.gz) = 2110072 bytes
+SHA1 (patch-collector_cpufreq__solaris.go) = d8acca33c0f2a0d861a16b4ceaa63ede3999ac40
+SHA1 (patch-vendor_github.com_sirupsen_logrus_terminal__check__unix.go) = 3f91368fe7c8cde518fea17dc1cd513602b7135d

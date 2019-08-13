@@ -1,12 +1,13 @@
-# $NetBSD: Makefile,v 1.1 2019/01/07 02:33:17 bacon Exp $
+# $NetBSD: Makefile,v 1.3 2019/07/01 04:07:57 ryoon Exp $
 
 DISTNAME=	canu-1.8
+PKGREVISION=	1
 CATEGORIES=	biology java
 MASTER_SITES=	${MASTER_SITE_GITHUB:=marbl/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
 
 MAINTAINER=	bacon@NetBSD.org
-HOMEPAGE=	http://canu.readthedocs.io/
+HOMEPAGE=	https://canu.readthedocs.io/
 COMMENT=	Single molecule sequence assembler for genomes large and small
 LICENSE=	gnu-gpl-v2
 

@@ -1,8 +1,8 @@
-# $NetBSD: u-boot.mk,v 1.16 2019/05/08 05:02:35 thorpej Exp $
+# $NetBSD: u-boot.mk,v 1.20 2019/07/26 10:22:07 tnn Exp $
 
 .include "../../sysutils/u-boot/u-boot-version.mk"
 
-PKGNAME=	u-boot-${UBOOT_TARGET}-${UBOOT_VERSION}
+PKGNAME=	u-boot-${UBOOT_TARGET}-${UBOOT_VERSION:S/-/./}
 DISTNAME?=	u-boot-${UBOOT_VERSION}
 DISTINFO_FILE?=	${.CURDIR}/../../sysutils/u-boot/distinfo
 CATEGORIES=	sysutils
@@ -23,11 +23,18 @@ USE_TOOLS+=		bison gmake gsed pkg-config
 PYTHON_FOR_BUILD_ONLY=	yes
 PYTHON_VERSIONS_ACCEPTED=	27
 
+SUBST_CLASSES+=		pythonpath
+SUBST_STAGE.pythonpath=	pre-configure
+SUBST_FILES.pythonpath=	tools/dtoc/dtoc
+SUBST_SED.pythonpath=	-e "s|/usr/bin/python|${PYTHONBIN}|g"
+
 REPLACE_INTERPRETER+=	python2
-REPLACE.python2.old=	.*/usr/bin/env.*python2*
+REPLACE.python2.old=	python2
 REPLACE.python2.new=	${PYTHONBIN}
 REPLACE_FILES.python2=	scripts/fill_scrapyard.py \
+			tools/binman/binman \
 			tools/binman/binman.py \
+			tools/dtoc/dtoc.py \
 			tools/genboardscfg.py \
 			tools/moveconfig.py
 

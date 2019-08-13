@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.16 2018/12/13 19:52:08 adam Exp $
-#
+# $NetBSD: Makefile,v 1.19 2019/07/31 19:59:31 brook Exp $
 
-PKGREVISION=	11
+PKGREVISION=	13
 CATEGORIES=	math
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
@@ -11,6 +10,8 @@ LICENSE=	gnu-gpl-v2
 
 R_PKGNAME=	ncdf
 R_PKGVER=	1.6.6
+
+USE_LANGUAGES=	c
 
 CONFIGURE_ARGS+=	--with-netcdf_incdir=${BUILDLINK_PREFIX.netcdf}/include
 CONFIGURE_ARGS+=	--with-netcdf_libdir=${BUILDLINK_PREFIX.netcdf}/lib

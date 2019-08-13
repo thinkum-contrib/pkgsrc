@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.79 2018/11/14 22:22:40 kleink Exp $
+# $NetBSD: Makefile,v 1.81 2019/07/21 22:25:57 wiz Exp $
 #
 
 DISTNAME=	gnome-screensaver-2.30.2
-PKGREVISION=	30
+PKGREVISION=	31
 CATEGORIES=	x11 gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gnome-screensaver/2.30/}
 EXTRACT_SUFX=	.tar.bz2
@@ -39,7 +39,7 @@ INSTALLATION_DIRS=	${EGDIR}/pam.d
 SUBST_CLASSES+=		flavour
 SUBST_STAGE.flavour=	pre-install
 SUBST_FILES.flavour=	savers/netbsd-floaters.desktop.in
-SUBST_SED.flavour=	-e "s|@PREFIX@|${PREFIX}|g"
+SUBST_VARS.flavour=	PREFIX
 SUBST_MESSAGE.flavour=	Preparing NetBSD flavoured screensaver
 
 post-extract:

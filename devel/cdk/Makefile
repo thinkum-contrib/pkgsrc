@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.39 2019/02/21 09:59:30 wiz Exp $
+# $NetBSD: Makefile,v 1.41 2019/07/27 14:04:06 nia Exp $
 
-DISTNAME=		cdk-5.0-20180306
+DISTNAME=		cdk-5.0-20190303
 PKGNAME=		${DISTNAME:S/5.0-/5.0./}
 CATEGORIES=		devel
 MASTER_SITES=		ftp://ftp.invisible-island.net/cdk/
 EXTRACT_SUFX=		.tgz
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		http://invisible-island.net/cdk/
+HOMEPAGE=		https://invisible-island.net/cdk/
 COMMENT=		Curses Development Kit
 
 WRKSRC=			${WRKDIR}/${DISTNAME}

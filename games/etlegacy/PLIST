@@ -1,12 +1,11 @@
-@comment $NetBSD: PLIST,v 1.1 2019/04/11 20:56:34 nia Exp $
-bin/etl
+@comment $NetBSD: PLIST,v 1.4 2019/06/30 23:33:40 nia Exp $
+${PLIST.client}bin/etl
 bin/etlded
 man/man6/etl.6
 man/man6/etlded.6
 share/applications/etlegacy.desktop
 share/etlegacy/COPYING.txt
 share/etlegacy/INSTALL.txt
-share/etlegacy/etl_renderer2.sh
 share/etlegacy/etmain/campaigncycle.cfg
 share/etlegacy/etmain/etl_server.cfg
 share/etlegacy/etmain/legacy.cfg
@@ -119,11 +118,8 @@ share/etlegacy/legacy/luascripts/wolfadmin/util/tables.lua
 share/etlegacy/legacy/luascripts/wolfadmin/util/timers.lua
 share/etlegacy/legacy/luascripts/wolfadmin/util/util.lua
 share/etlegacy/legacy/pak3_${PKGVERSION}-dirty.pk3
-share/etlegacy/legacy/qagame.mp.nbsd.x86_64.so
 share/etlegacy/legacy/rules.toml
 share/etlegacy/legacy/sprees.toml
 share/etlegacy/legacy/wolfadmin.toml
-share/etlegacy/librenderer_opengl1_x86_64.so
-share/etlegacy/librenderer_opengl2_x86_64.so
 share/icons/hicolor/scalable/apps/etl.svg
 share/mime/packages/etlegacy.xml

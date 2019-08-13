@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.32 2018/11/14 22:21:24 kleink Exp $
+# $NetBSD: Makefile,v 1.34 2019/07/21 22:24:44 wiz Exp $
 #
 
 DISTNAME=	scite339
 PKGNAME=	scite-3.3.9
-PKGREVISION=	9
+PKGREVISION=	10
 CATEGORIES=	editors
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=scintilla/}
 EXTRACT_SUFX=	.tgz
@@ -13,12 +13,12 @@ HOMEPAGE=	http://scintilla.sourceforge.net/
 COMMENT=	Source code editor
 #LICENSE=	# TODO: (see mk/license.mk)
 
-WRKSRC=		${WRKDIR}/scite
-USE_LANGUAGES=	c c++
-BUILD_DIRS+=	gtk
-USE_TOOLS+=	gmake pkg-config
-MAKE_FILE=	makefile
-INSTALLATION_DIRS= share/applications share/pixmaps
+WRKSRC=			${WRKDIR}/scite
+USE_LANGUAGES=		c c++
+BUILD_DIRS+=		gtk
+USE_TOOLS+=		gmake pkg-config
+MAKE_FILE=		makefile
+INSTALLATION_DIRS=	share/applications share/pixmaps
 
 BUILDLINK_TRANSFORM.SunOS+=	rm:-Wl,--version-script=lua.vers
 

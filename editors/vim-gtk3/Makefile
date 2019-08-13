@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.13 2019/01/14 20:20:22 leot Exp $
+# $NetBSD: Makefile,v 1.15 2019/07/21 22:24:44 wiz Exp $
 
 PKGNAME=	vim-gtk3-${VIM_VERSION}.${VIM_PATCHLEVEL}
-PKGREVISION=	2
+PKGREVISION=	3
 
 COMMENT=	Vim editor (vi clone) with X11 GTK3 GUI
 
@@ -25,8 +25,8 @@ INSTALL_TARGET=		installvimbin
 
 INSTALLATION_DIRS+=	${PKGMANDIR}/man1
 
-CHECK_INTERPRETER_SKIP+=${PKGMANDIR}/man1/gvim.1 ${PKGMANDIR}/man1/gview.1
-CHECK_INTERPRETER_SKIP+=${PKGMANDIR}/man1/rgvim.1 ${PKGMANDIR}/man1/rgview.1
+CHECK_INTERPRETER_SKIP+=	${PKGMANDIR}/man1/gvim.1 ${PKGMANDIR}/man1/gview.1
+CHECK_INTERPRETER_SKIP+=	${PKGMANDIR}/man1/rgvim.1 ${PKGMANDIR}/man1/rgview.1
 
 post-install:
 .for f in gvim.1 gview.1 rgvim.1 rgview.1

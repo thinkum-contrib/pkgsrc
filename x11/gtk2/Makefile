@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.305 2019/04/26 14:12:50 maya Exp $
+# $NetBSD: Makefile,v 1.308 2019/07/21 22:24:16 wiz Exp $
 
 DISTNAME=	gtk+-2.24.32
 PKGNAME=	${DISTNAME:S/gtk/gtk2/}
-PKGREVISION=	8
+PKGREVISION=	10
 CATEGORIES=	x11 gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gtk+/2.24/}
 EXTRACT_SUFX=	.tar.xz
@@ -54,6 +54,7 @@ REQD_DIRS+=		${PREFIX}/libdata/gtk-2.0
 
 BUILD_DIRS=		. demos/gtk-demo
 
+LDFLAGS.SunOS+=		-lintl
 # fix for 'only weak aliases are supported on darwin' error
 CONFIGURE_ARGS.Darwin+=	--disable-visibility
 

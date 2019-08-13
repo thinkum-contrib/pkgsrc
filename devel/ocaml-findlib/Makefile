@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.42 2018/11/27 13:53:46 jaapb Exp $
+# $NetBSD: Makefile,v 1.45 2019/07/31 09:07:00 jaapb Exp $
 
-DISTNAME=		findlib-1.8.0
+DISTNAME=		findlib-1.8.1
 PKGNAME=		ocaml-${DISTNAME}
-PKGREVISION=		4
 CATEGORIES=		devel
 MASTER_SITES=		http://download.camlcity.org/download/
 
@@ -51,9 +50,9 @@ FILES_SUBST+=		OCAML_FINDLIB_DIRS="${OCAML_FINDLIB_DIRS}" OCAML_SITELIBDIR="${OC
 SUBST_CLASSES+=		ofr
 SUBST_STAGE.ofr=	pre-configure
 SUBST_FILES.ofr=	ocaml-findlib-register.sh
-SUBST_SED.ofr=		-e 's,@SH@,'${SH:Q}','
-SUBST_SED.ofr+=		-e 's,@PREFIX@,${PREFIX},'
-SUBST_SED.ofr+=		-e 's,@FGREP@,'${FGREP:Q}','
+SUBST_VARS.ofr=		SH
+SUBST_VARS.ofr+=	PREFIX
+SUBST_VARS.ofr+=	FGREP
 
 SUBST_CLASSES+=		pathes
 SUBST_STAGE.pathes=	post-install

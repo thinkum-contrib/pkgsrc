@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.63 2018/04/17 22:29:52 wiz Exp $
+# $NetBSD: Makefile,v 1.65 2019/07/20 22:46:55 wiz Exp $
 
 DISTNAME=		elinks-0.12pre6
 PKGNAME=		${DISTNAME:S/pre/rc/}
-PKGREVISION=		12
+PKGREVISION=		13
 CATEGORIES=		www
 MASTER_SITES=		http://elinks.or.cz/download/
 MASTER_SITES+=		http://ftp.icm.edu.pl/packages/elinks/
@@ -11,6 +11,7 @@ EXTRACT_SUFX=		.tar.bz2
 MAINTAINER=		pkgsrc-users@NetBSD.org
 HOMEPAGE=		http://elinks.or.cz/
 COMMENT=		Extended/Enhanced Links
+LICENSE=		gnu-gpl-v2
 
 GNU_CONFIGURE=		yes
 USE_PKGLOCALEDIR=	yes

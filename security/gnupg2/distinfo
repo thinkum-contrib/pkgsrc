@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.55 2019/04/01 08:30:04 adam Exp $
+$NetBSD: distinfo,v 1.57 2019/07/10 09:28:24 adam Exp $
 
-SHA1 (gnupg-2.2.15.tar.bz2) = 1909afdad3cf29583126c471298da290399270f4
-RMD160 (gnupg-2.2.15.tar.bz2) = c0c865319502a7497755e8ec8c6e26c0b5f71718
-SHA512 (gnupg-2.2.15.tar.bz2) = 7c6f0092d384fd71fc7a1c905ce23ae98df42ce131ee09fc190c275f9c8d0912be344b0782244cccb5b3938322ef3cfff8ed1ec7e949e761478b8c5110dde36a
-Size (gnupg-2.2.15.tar.bz2) = 6705912 bytes
+SHA1 (gnupg-2.2.17.tar.bz2) = 12c1cee8871c03f0315fc8f27876364b75c95b12
+RMD160 (gnupg-2.2.17.tar.bz2) = 13ad8e3e216d8c7ff6786329d8c15627ed2b9af2
+SHA512 (gnupg-2.2.17.tar.bz2) = a3cd094addac62b4b4ec1683005a2bec761ea2aacf6daf904316b1819f4f6a41f256a8d9452cf28cad71b3e68228465baa27ae0eb1fa734fa91542ef0f159c5d
+Size (gnupg-2.2.17.tar.bz2) = 6717554 bytes

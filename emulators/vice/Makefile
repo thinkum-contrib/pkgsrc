@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.136 2018/12/31 15:38:55 rhialto Exp $
+# $NetBSD: Makefile,v 1.138 2019/07/21 22:24:47 wiz Exp $
 
 DISTNAME=	vice-3.3
+PKGREVISION=	1
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=vice-emu/}
 
@@ -17,7 +18,7 @@ NO_SRC_ON_FTP=		${RESTRICTED}
 
 USE_PKGLOCALEDIR=	yes
 USE_LANGUAGES=		c c++11
-USE_TOOLS+=		gmake pkg-config perl
+USE_TOOLS+=		bash gmake pkg-config perl
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--enable-ethernet
 CONFIGURE_ARGS.NetBSD+=	--without-oss

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.58 2019/04/25 07:32:46 maya Exp $
+# $NetBSD: Makefile,v 1.61 2019/07/21 22:24:37 wiz Exp $
 
 DISTNAME=	gps-${GPS_VERSION}
-PKGREVISION=	22
+PKGREVISION=	23
 CATEGORIES=	devel
 MASTER_SITES=	http://downloads.dragonlace.net/src/
 DISTFILES=	gps-5.2.1-1-src.tgz
@@ -13,7 +13,7 @@ LICENSE=	gnu-gpl-v2
 
 # GPS is no longer buildable and needs to be updated to work with
 # current Ada compilers. The former MAINTAINER abandoned it.
-PKG_FAIL_REASON=	Unbuildable with gcc5-aux.
+PKG_FAIL_REASON+=	"Unbuildable with gcc5-aux."
 
 GNU_CONFIGURE=		yes
 USE_TOOLS+=		gmake sed perl awk pkg-config
@@ -35,7 +35,7 @@ CONFIGURE_ARGS+=	--disable-shared --with-gmp=${PREFIX}
 SUBST_CLASSES+= 	coll python
 SUBST_STAGE.coll=	pre-configure
 SUBST_FILES.coll=	gnatlib/src/gnatcoll_readline.gpr.in
-SUBST_SED.coll=		-e "s|@PREFIX@|${PREFIX}|g"
+SUBST_VARS.coll=	PREFIX
 SUBST_SED.coll+=	-e "s|-rpath|${LINKER_RPATH_FLAG}|g"
 SUBST_STAGE.python=	pre-configure
 SUBST_FILES.python=	share/plug-ins/gps_utils/console_process.py

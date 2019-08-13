@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.58 2019/03/18 16:17:46 gdt Exp $
+# $NetBSD: Makefile,v 1.61 2019/07/21 22:24:35 wiz Exp $
 
 MAJOR=		2.5
 DISTNAME=	postgis-${MAJOR}.2
 PKGNAME=	postgresql${PGSQL_VERSION}-${DISTNAME}
-PKGREVISION=	1
+PKGREVISION=	4
 #PKGREVISION=	0
 CATEGORIES=	databases geography
 MASTER_SITES=	https://download.osgeo.org/postgis/source/

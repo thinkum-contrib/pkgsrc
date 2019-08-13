@@ -1,4 +1,4 @@
-# $NetBSD: ocaml.mk,v 1.23 2019/03/05 16:14:35 jaapb Exp $
+# $NetBSD: ocaml.mk,v 1.26 2019/07/26 09:59:27 tnn Exp $
 #
 # This Makefile fragment handles the common variables used by OCaml packages.
 #
@@ -23,7 +23,7 @@
 # OCAML_USE_OASIS_DYNRUN [implies OCAML_USE_OASIS]
 # package uses oasis.dynrun
 # OCAML_USE_OPAM
-# package uses OPAM installer
+# package uses OPAM installer [implies OCAML_USE_FINDLIB]
 # OCAML_USE_TOPKG
 # package uses topkg [implies OCAML_USE_FINDLIB]
 # OCAML_USE_JBUILDER
@@ -110,10 +110,10 @@ DUNE_BUILD_PACKAGES?=	# empty
 # Default value of OASIS_BUILD_ARGS
 OASIS_BUILD_ARGS?=	# empty
 
-# Default value of OCAML_ENABLE_BINARY_COMPILER
-.if (${MACHINE_ARCH} == "i386") || (${MACHINE_ARCH} == "x86_64") || \
-    (${MACHINE_ARCH} == "powerpc") || (${MACHINE_ARCH} == "sparc") || \
-    (${MACHINE_ARCH} == "arm")
+# Default value of OCAML_USE_OPT_COMPILER
+.if (${MACHINE_ARCH} == "i386") || (${MACHINE_ARCH} == "powerpc") || \
+    !empty(MACHINE_ARCH:M*arm*) || (${MACHINE_ARCH} == "aarch64") || \
+    (${MACHINE_ARCH} == "x86_64")
 OCAML_USE_OPT_COMPILER?=	yes
 .else
 OCAML_USE_OPT_COMPILER?=	no
@@ -194,6 +194,9 @@ PLIST_VARS+=	ocaml-opt
 # The opt compiler needs the C compiler suite
 USE_LANGUAGES+=	c
 PLIST.ocaml-opt=	yes
+.else
+# If we're bytecode compiling, don't strip executables
+INSTALL_UNSTRIPPED=	yes
 .endif
 
 #
@@ -267,12 +270,12 @@ do-install:
 do-build:
 .if !empty(JBUILDER_BUILD_PACKAGES)
 	${RUN} ${_ULIMIT_CMD} \
-		cd ${WRKSRC} && jbuilder build -j ${MAKE_JOBS} \
+		cd ${WRKSRC} && jbuilder build -j ${MAKE_JOBS:U1} \
 		${JBUILDER_BUILD_FLAGS} -p ${JBUILDER_BUILD_PACKAGES:ts,} \
 		${JBUILDER_BUILD_TARGETS}
 .else
 	${RUN} ${_ULIMIT_CMD} \
-		cd ${WRKSRC} && jbuilder build -j ${MAKE_JOBS} \
+		cd ${WRKSRC} && jbuilder build -j ${MAKE_JOBS:U1} \
 		${JBUILDER_BUILD_FLAGS} ${JBUILDER_BUILD_TARGETS}
 .endif
 
@@ -286,12 +289,12 @@ do-build:
 do-build:
 .if !empty(DUNE_BUILD_PACKAGES)
 	${RUN} ${_ULIMIT_CMD} \
-		cd ${WRKSRC} && dune build -j ${MAKE_JOBS} \
+		cd ${WRKSRC} && dune build -j ${MAKE_JOBS:U1} \
 		${DUNE_BUILD_FLAGS} -p ${DUNE_BUILD_PACKAGES:ts,} \
 		${DUNE_BUILD_TARGETS}
 .else
 	${RUN} ${_ULIMIT_CMD} \
-		cd ${WRKSRC} && dune build --profile release -j ${MAKE_JOBS} \
+		cd ${WRKSRC} && dune build --profile release -j ${MAKE_JOBS:U1} \
 		${DUNE_BUILD_FLAGS} ${DUNE_BUILD_TARGETS}
 .endif
 

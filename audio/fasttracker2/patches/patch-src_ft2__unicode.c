@@ -1,4 +1,4 @@
-$NetBSD: patch-src_ft2__unicode.c,v 1.2 2019/03/21 10:16:40 fox Exp $
+$NetBSD: patch-src_ft2__unicode.c,v 1.4 2019/07/30 00:06:50 fox Exp $
 
 1. Added a type cast to iconv(3) calls to match the prototypes defined
 in NetBSD's iconv.h.
@@ -6,13 +6,15 @@ in NetBSD's iconv.h.
 2. Added a NetBSD specific iconv_open() call to prevent failures due
 to mismatches iconv_open() parameters present in GNU iconv(3).
 
---- src/ft2_unicode.c.orig	2019-03-16 22:34:24.000000000 +0000
+3. Added support for SunOS / SmartOS compatibility.
+
+--- src/ft2_unicode.c.orig	2019-06-18 19:45:46.000000000 +0000
 +++ src/ft2_unicode.c
-@@ -277,7 +277,11 @@ char *cp437ToUtf8(char *src)
- 	inLen  = srcLen;
+@@ -271,7 +271,11 @@ char *cp437ToUtf8(char *src)
+ 	inLen = srcLen;
  	outPtr = outBuf;
  
-+#if defined(__NetBSD__)
++#if defined(__NetBSD__) || defined(__sun) || defined(sun)
 +	rc = iconv(cd, (const char **)&inPtr, &inLen, &outPtr, &outLen);
 +#else
  	rc = iconv(cd, &inPtr, &inLen, &outPtr, &outLen);
@@ -20,24 +22,24 @@ to mismatches iconv_open() parameters present in GNU iconv(3).
  	iconv(cd, NULL, NULL, &outPtr, &outLen); // flush
  	iconv_close(cd);
  
-@@ -307,6 +311,8 @@ char *utf8ToCp437(char *src, bool remove
+@@ -301,6 +305,8 @@ char *utf8ToCp437(char *src, bool remove
  
  #ifdef __APPLE__
  	cd = iconv_open("437//TRANSLIT//IGNORE", "UTF-8-MAC");
-+#elif defined(__NetBSD__)
-+	cd = iconv_open("437", "UTF-8");    	
++#elif defined(__NetBSD__) || defined(__sun) || defined(sun)
++	cd = iconv_open("437", "UTF-8");
  #else
  	cd = iconv_open("437//TRANSLIT//IGNORE", "UTF-8");
  #endif
-@@ -323,7 +329,11 @@ char *utf8ToCp437(char *src, bool remove
- 	inLen  = srcLen;
+@@ -317,7 +323,11 @@ char *utf8ToCp437(char *src, bool remove
+ 	inLen = srcLen;
  	outPtr = outBuf;
  
-+#if defined(__NetBSD__)
++#if defined(__NetBSD__) || defined(__sun) || defined(sun)
 +	rc = iconv(cd, (const char **)&inPtr, &inLen, &outPtr, &outLen);
 +#else
  	rc = iconv(cd, &inPtr, &inLen, &outPtr, &outLen);
-+#endif	
++#endif
  	iconv(cd, NULL, NULL, &outPtr, &outLen); // flush
  	iconv_close(cd);
  

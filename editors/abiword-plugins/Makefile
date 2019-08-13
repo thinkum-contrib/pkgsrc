@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.100 2019/04/03 00:32:40 ryoon Exp $
+# $NetBSD: Makefile,v 1.104 2019/07/21 22:24:41 wiz Exp $
 
 .include	"../../editors/abiword/Makefile.common"
 DISTNAME=	abiword-${ABIVERSION}
 PKGNAME=	abiword-plugins-${ABIVERSION}
-PKGREVISION=	5
+PKGREVISION=	8
 CATEGORIES=	editors
 MASTER_SITES=	http://www.abiword.com/downloads/abiword/${PKGVERSION_NOREV}/source/
 
@@ -15,7 +15,7 @@ LICENSE=	gnu-gpl-v2
 DISTINFO_FILE=	${.CURDIR}/../../editors/abiword/distinfo
 PATCHDIR=	${.CURDIR}/../../editors/abiword/patches
 
-CONFLICTS=      abiword-plugins-[0-9]* abiword-personal-[0-9]* abiword2-[0-9]*
+CONFLICTS=	abiword-plugins-[0-9]* abiword-personal-[0-9]* abiword2-[0-9]*
 
 GNU_CONFIGURE=	yes
 USE_LIBTOOL=	yes
@@ -32,7 +32,7 @@ CONFIGURE_ARGS+=	--with-inter7eps=no
 
 # evolution data server can't be found even if buildlinked
 # disable to make sure it's not found somewhere else
-CONFIGURE_ARGS+=        --with-evolution-data-server=no
+CONFIGURE_ARGS+=	--with-evolution-data-server=no
 
 # Disabled plugins: gda rsvg mathview
 # rsvg is not needed with gtk, we don't have libgnomedb

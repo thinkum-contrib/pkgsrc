@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.110 2019/04/03 00:32:57 ryoon Exp $
+# $NetBSD: Makefile,v 1.117 2019/07/23 16:40:06 wiz Exp $
 
-VERSION=	3.41.2
+VERSION=	3.43.0
 DISTNAME=	FileZilla_${VERSION}_src
 PKGNAME=	filezilla-${VERSION}
-PKGREVISION=	1
+PKGREVISION=	2
 CATEGORIES=	net x11
 MASTER_SITES=	https://download.filezilla-project.org/client/
 EXTRACT_SUFX=	.tar.bz2
@@ -14,7 +14,7 @@ COMMENT=	FTP, FTPS, and SFTP client with intuitive GUI
 LICENSE=	gnu-gpl-v2
 
 GNU_CONFIGURE=	yes
-USE_LANGUAGES=	c c++
+USE_LANGUAGES=	c c++17
 USE_TOOLS+=	gmake pkg-config msgfmt msgmerge xgettext
 WRKSRC=		${WRKDIR}/${PKGNAME_NOREV}
 
@@ -22,15 +22,20 @@ CONFIGURE_ARGS+=	--disable-autoupdatecheck
 # avoid xdg-utils dependency
 CONFIGURE_ENV+=		ac_cv_path_xdgopen=firefox
 
-# GCC 4.9 is required to support C++14.
-GCC_REQD+=		4.9
+# For C++17.
+GCC_REQD+=		7
 
 .include "options.mk"
+
+# As of 3.41, 64-bit atomic ops are required
+.if ${MACHINE_ARCH} == "i386"
+CXXFLAGS+=	-march=i586
+.endif
 
 .include "../../databases/sqlite3/buildlink3.mk"
 .include "../../devel/libidn/buildlink3.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
-BUILDLINK_API_DEPENDS.libfilezilla+=	libfilezilla>=0.15.1
+BUILDLINK_API_DEPENDS.libfilezilla+=	libfilezilla>=0.17.1
 .include "../../net/libfilezilla/buildlink3.mk"
 BUILDLINK_API_DEPENDS.gnutls+=	gnutls>=3.4.0
 .include "../../security/gnutls/buildlink3.mk"

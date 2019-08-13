@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.10 2018/11/14 22:22:29 kleink Exp $
+# $NetBSD: Makefile,v 1.12 2019/07/21 22:25:47 wiz Exp $
 
-PKGREVISION= 9
+PKGREVISION= 10
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
 DISTNAME=		xfce4-gvfs-mount-0.0.4-6d2684b
@@ -8,7 +8,7 @@ PKGNAME=		xfce4-gvfs-mount-plugin-0.0.4
 CATEGORIES=		sysutils
 MASTER_SITES=	http://archive.xfce.org/src/panel-plugins/xfce4-gvfs-mount/0.0/
 
-HOMEPAGE=		http://goodies.xfce.org/projects/panel-plugins/xfce4-gvfs-mount
+HOMEPAGE=		https://goodies.xfce.org/projects/panel-plugins/xfce4-gvfs-mount
 COMMENT=		Xfce gvfs mount plugin
 
 .include "../../devel/libglade/buildlink3.mk"

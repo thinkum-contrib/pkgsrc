@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.187 2019/04/03 00:32:53 ryoon Exp $
+# $NetBSD: Makefile,v 1.191 2019/07/21 22:25:20 wiz Exp $
 
 DISTNAME=	octave-5.1.0
-PKGREVISION=	2
+PKGREVISION=	5
 CATEGORIES=	math
 MASTER_SITES=	${MASTER_SITE_GNU:=octave/}
 
@@ -71,7 +71,7 @@ SUBST_CLASSES+=			fix-make
 SUBST_STAGE.fix-make=		pre-configure
 SUBST_MESSAGE.fix-make=		Fixing path to gmake.
 SUBST_FILES.fix-make=		scripts/pkg/private/configure_make.m
-SUBST_SED.fix-make=		-e 's:@GMAKE@:${GMAKE}:g'
+SUBST_VARS.fix-make=		GMAKE
 
 SUBST_CLASSES+=			qt5-pkg-config
 SUBST_STAGE.qt5-pkg-config=	pre-configure

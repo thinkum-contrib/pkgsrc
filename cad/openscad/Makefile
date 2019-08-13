@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.54 2019/04/25 07:32:37 maya Exp $
-#
+# $NetBSD: Makefile,v 1.58 2019/07/01 04:07:58 ryoon Exp $
 
-DISTNAME=	openscad-2015.03-3.src
-PKGNAME=	openscad-2015.03p3
-PKGREVISION=	13
+VERSION=	2019.05
+DISTNAME=	openscad-${VERSION}
+PKGREVISION=	1
 CATEGORIES=	cad
-MASTER_SITES=	http://files.openscad.org/
+MASTER_SITES=	${MASTER_SITE_GITHUB:=openscad/}
+GITHUB_TAG=	openscad-${VERSION}
 
 MAINTAINER=	reinoud@NetBSD.org
 HOMEPAGE=	http://www.openscad.org/
@@ -16,11 +16,9 @@ USE_LANGUAGES=	c c++
 USE_TOOLS+=	bison gettext pkg-config
 USE_LIBTOOL=	yes
 
-WRKSRC=		${WRKDIR}/${DISTNAME:R}
+WRKSRC=		${WRKDIR}/${PKGBASE}-${DISTNAME}
 
-MAKE_JOBS_SAFE=	no
-
-CHECK_PORTABILITY_SKIP+=tests/compare-bitmaps.sh
+CHECK_PORTABILITY_SKIP+=	tests/compare-bitmaps.sh
 
 REPLACE_PYTHON=	libraries/MCAD/get_submodules.py
 .include "../../lang/python/application.mk"
@@ -49,5 +47,6 @@ do-configure:
 .include "../../x11/qt4-libs/buildlink3.mk"
 .include "../../x11/qt4-tools/buildlink3.mk"
 .include "../../x11/qt4-qscintilla/buildlink3.mk"
-
+.include "../../textproc/libxml++/buildlink3.mk"
+.include "../../math/double-conversion/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

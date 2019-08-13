@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.1 2019/02/09 08:18:44 wen Exp $
+# $NetBSD: Makefile,v 1.3 2019/06/30 20:15:36 nia Exp $
 #
 
-DISTNAME=	Perl-PrereqScanner-NotQuiteLite-0.9904
+DISTNAME=	Perl-PrereqScanner-NotQuiteLite-0.9905
 PKGNAME=	p5-${DISTNAME}
 CATEGORIES=	devel perl5
 MASTER_SITES=	${MASTER_SITE_PERL_CPAN:=Perl/}
 
 MAINTAINER=	wen@NetBSD.org
-HOMEPAGE=	http://search.cpan.org/dist/Perl-PrereqScanner-NotQuiteLite/
+HOMEPAGE=	https://metacpan.org/release/Perl-PrereqScanner-NotQuiteLite
 COMMENT=	Tool to scan your Perl code for its prerequisites
 LICENSE=	${PERL5_LICENSE}
 

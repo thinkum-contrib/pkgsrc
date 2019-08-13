@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.50 2019/03/20 12:13:21 wiz Exp $
+# $NetBSD: Makefile,v 1.53 2019/07/20 22:46:07 wiz Exp $
 
 DISTNAME=	enlightenment-0.17.3
-PKGREVISION=	17
+PKGREVISION=	19
 CATEGORIES=	x11
 MASTER_SITES=	http://download.enlightenment.org/releases/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	joerg@NetBSD.org
-HOMEPAGE=	http://enlightenment.org/
+HOMEPAGE=	https://enlightenment.org/
 COMMENT=	Enlightenment Window Manager, Development Release
 LICENSE=	2-clause-bsd
 

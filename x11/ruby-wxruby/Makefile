@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.30 2018/11/14 22:22:50 kleink Exp $
+# $NetBSD: Makefile,v 1.32 2019/07/21 22:26:04 wiz Exp $
 #
 
 DISTNAME=	wxruby-2.0.1
-PKGREVISION=	24
+PKGREVISION=	25
 CATEGORIES=	x11
 MASTER_SITES=	# http://rubyforge.org/frs/download.php/63379/
 
@@ -27,7 +27,7 @@ INSTALLATION_DIRS+=	${RUBY_DOC}/wxruby ${RUBY_EG}/wxruby \
 SUBST_CLASSES+=		path
 SUBST_STAGE.path=	pre-configure
 SUBST_FILES.path=	rake/rakenetbsd.rb
-SUBST_SED.path=		-e "s|@PREFIX@|${PREFIX}|g"
+SUBST_VARS.path=	PREFIX
 SUBST_MESSAGE.path=	Fixing include path.
 
 pre-configure:

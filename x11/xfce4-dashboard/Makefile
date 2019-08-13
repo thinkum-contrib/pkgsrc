@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.13 2018/11/14 22:22:51 kleink Exp $
+# $NetBSD: Makefile,v 1.15 2019/07/21 22:26:05 wiz Exp $
 
-PKGREVISION= 3
+PKGREVISION= 4
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
 VERSION=	0.7.4
@@ -9,7 +9,7 @@ PKGNAME=	xfce4-dashboard-${VERSION}
 CATEGORIES=	x11
 MASTER_SITES+=	http://archive.xfce.org/src/apps/xfdashboard/${VERSION:R}/
 
-HOMEPAGE=	http://goodies.xfce.org/projects/applications/xfdashboard/start
+HOMEPAGE=	https://goodies.xfce.org/projects/applications/xfdashboard/start
 COMMENT=	Maybe a Gnome shell like dashboard for Xfce
 
 EGDIR=			${XFCE4_EGBASE}

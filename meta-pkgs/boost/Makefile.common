@@ -1,4 +1,4 @@
-# $NetBSD: Makefile.common,v 1.80 2018/12/13 19:22:57 adam Exp $
+# $NetBSD: Makefile.common,v 1.82 2019/07/01 04:00:10 ryoon Exp $
 #
 # used by devel/boost-build/Makefile
 # used by devel/boost-docs/Makefile
@@ -10,7 +10,7 @@
 
 BOOST_PACKAGE?=		undefined
 BOOST_COMMENT?=		undefined
-BOOST_VERSION=		1.69.0
+BOOST_VERSION=		1.70.0
 BOOST_SHORT_VERSION=	${BOOST_VERSION:S/./_/:C/\..*$//}
 
 # Update mysql57-client/patches/patch-cmake_boost.cmake when updating version
@@ -27,7 +27,7 @@ MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=boost/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.boost.org/
+HOMEPAGE=	https://www.boost.org/
 COMMENT=	Free, peer-reviewed portable C++ source libraries ${BOOST_COMMENT}
 LICENSE=	boost-license
 

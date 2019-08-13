@@ -13,6 +13,10 @@ type Vartype struct {
 	aclEntries []ACLEntry
 }
 
+func NewVartype(basicType *BasicType, options vartypeOptions, aclEntries ...ACLEntry) *Vartype {
+	return &Vartype{basicType, options, aclEntries}
+}
+
 type vartypeOptions uint8
 
 const (
@@ -38,8 +42,12 @@ const (
 )
 
 type ACLEntry struct {
-	glob        string // Examples: "Makefile", "*.mk"
+	matcher     *pathMatcher
 	permissions ACLPermissions
+}
+
+func NewACLEntry(glob string, permissions ACLPermissions) ACLEntry {
+	return ACLEntry{newPathMatcher(glob), permissions}
 }
 
 type ACLPermissions uint8
@@ -70,20 +78,20 @@ func (perms ACLPermissions) String() string {
 		return "none"
 	}
 	return joinSkipEmpty(", ",
-		ifelseStr(perms.Contains(aclpSet), "set", ""),
-		ifelseStr(perms.Contains(aclpSetDefault), "set-default", ""),
-		ifelseStr(perms.Contains(aclpAppend), "append", ""),
-		ifelseStr(perms.Contains(aclpUseLoadtime), "use-loadtime", ""),
-		ifelseStr(perms.Contains(aclpUse), "use", ""))
+		condStr(perms.Contains(aclpSet), "set", ""),
+		condStr(perms.Contains(aclpSetDefault), "set-default", ""),
+		condStr(perms.Contains(aclpAppend), "append", ""),
+		condStr(perms.Contains(aclpUseLoadtime), "use-loadtime", ""),
+		condStr(perms.Contains(aclpUse), "use", ""))
 }
 
 func (perms ACLPermissions) HumanString() string {
 	return joinSkipEmptyOxford("or",
-		ifelseStr(perms.Contains(aclpSet), "set", ""),
-		ifelseStr(perms.Contains(aclpSetDefault), "given a default value", ""),
-		ifelseStr(perms.Contains(aclpAppend), "appended to", ""),
-		ifelseStr(perms.Contains(aclpUseLoadtime), "used at load time", ""),
-		ifelseStr(perms.Contains(aclpUse), "used", ""))
+		condStr(perms.Contains(aclpSet), "set", ""),
+		condStr(perms.Contains(aclpSetDefault), "given a default value", ""),
+		condStr(perms.Contains(aclpAppend), "appended to", ""),
+		condStr(perms.Contains(aclpUseLoadtime), "used at load time", ""),
+		condStr(perms.Contains(aclpUse), "used", ""))
 }
 
 func (vt *Vartype) List() bool                { return vt.options&List != 0 }
@@ -96,7 +104,7 @@ func (vt *Vartype) NeedsRationale() bool      { return vt.options&NeedsRationale
 
 func (vt *Vartype) EffectivePermissions(basename string) ACLPermissions {
 	for _, aclEntry := range vt.aclEntries {
-		if m, _ := path.Match(aclEntry.glob, basename); m {
+		if aclEntry.matcher.matches(basename) {
 			return aclEntry.permissions
 		}
 	}
@@ -119,8 +127,8 @@ func (vt *Vartype) Union() ACLPermissions {
 //
 // If the permission is allowed nowhere, an empty string is returned.
 func (vt *Vartype) AlternativeFiles(perms ACLPermissions) string {
-	pos := make([]string, 0, len(vt.aclEntries))
-	neg := make([]string, 0, len(vt.aclEntries))
+	var pos []string
+	var neg []string
 
 	merge := func(slice []string) []string {
 		di := 0
@@ -128,7 +136,8 @@ func (vt *Vartype) AlternativeFiles(perms ACLPermissions) string {
 			redundant := false
 			for _, late := range slice[si+1:] {
 				matched, err := path.Match(late, early)
-				if err == nil && matched {
+				assertNil(err, "path.Match")
+				if matched {
 					redundant = true
 					break
 				}
@@ -143,9 +152,9 @@ func (vt *Vartype) AlternativeFiles(perms ACLPermissions) string {
 
 	for _, aclEntry := range vt.aclEntries {
 		if aclEntry.permissions.Contains(perms) {
-			pos = append(pos, aclEntry.glob)
+			pos = append(pos, aclEntry.matcher.originalPattern)
 		} else {
-			neg = append(neg, aclEntry.glob)
+			neg = append(neg, aclEntry.matcher.originalPattern)
 		}
 	}
 
@@ -181,9 +190,6 @@ func (vt *Vartype) MayBeAppendedTo() bool {
 	switch vt.basicType {
 	case BtAwkCommand, BtSedCommands, BtShellCommand, BtShellCommands, BtConfFiles:
 		return true
-	}
-
-	switch vt.basicType {
 	case BtComment, BtLicense:
 		return true
 	}
@@ -272,10 +278,6 @@ func (bt *BasicType) NeedsQ() bool {
 	return !bt.IsEnum()
 }
 
-func (vt *Vartype) IsPlainString() bool {
-	return vt.basicType == BtComment || vt.basicType == BtMessage
-}
-
 type BasicType struct {
 	name    string
 	checker func(*VartypeCheck)
@@ -349,6 +351,7 @@ var (
 	BtURL                    = &BasicType{"URL", (*VartypeCheck).URL}
 	BtUserGroupName          = &BasicType{"UserGroupName", (*VartypeCheck).UserGroupName}
 	BtVariableName           = &BasicType{"VariableName", (*VartypeCheck).VariableName}
+	BtVariableNamePattern    = &BasicType{"VariableNamePattern", (*VartypeCheck).VariableNamePattern}
 	BtVersion                = &BasicType{"Version", (*VartypeCheck).Version}
 	BtWrapperReorder         = &BasicType{"WrapperReorder", (*VartypeCheck).WrapperReorder}
 	BtWrapperTransform       = &BasicType{"WrapperTransform", (*VartypeCheck).WrapperTransform}

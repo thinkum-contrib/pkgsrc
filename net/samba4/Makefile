@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.66 2019/04/25 07:33:12 maya Exp $
+# $NetBSD: Makefile,v 1.74 2019/07/21 22:25:33 wiz Exp $
 
-DISTNAME=	samba-4.10.2
-PKGREVISION=	1
+DISTNAME=	samba-4.10.5
+PKGREVISION=	3
 CATEGORIES=	net
 MASTER_SITES=	http://download.samba.org/pub/samba/stable/
 
@@ -115,7 +115,7 @@ LDFLAGS+=		${COMPILER_RPATH_FLAG}${SMB_PRIVATELIB}
 CFLAGS.SunOS+=		-DHAVE_SOLARIS_GETGRENT_R
 # workaround https://bugzilla.samba.org/show_bug.cgi?id=12502 for now
 CFLAGS.SunOS+=		-DMSG_NOSIGNAL=0
-LDFLAGS.SunOS+=		-lsocket -lnsl
+LDFLAGS.SunOS+=		-lsocket -lnsl -lsendfile
 
 .include "options.mk"
 
@@ -168,10 +168,6 @@ SUBST_MESSAGE.logpath=	Fixing log path.
 SUBST_FILES.logpath=	examples/smb.conf.default
 SUBST_STAGE.logpath=	pre-configure
 SUBST_SED.logpath+=	-e 's,/usr/local/samba/var/log.%m,${SMB_LOGFILEBASE}/log.%m,g'
-
-.if ${INIT_SYSTEM} == "rc.d"
-MESSAGE_SRC=		${PKGDIR}/MESSAGE.rcd
-.endif
 
 SMF_INSTANCES=	smbd nmbd
 

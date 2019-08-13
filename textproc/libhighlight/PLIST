@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.7 2019/04/04 14:14:28 schmonz Exp $
+@comment $NetBSD: PLIST,v 1.9 2019/06/20 03:08:12 schmonz Exp $
 lib/libhighlight.la
 share/doc/highlight/AUTHORS
 share/doc/highlight/COPYING
@@ -76,6 +76,7 @@ share/highlight/langDefs/arc.lang
 share/highlight/langDefs/arm.lang
 share/highlight/langDefs/as400cl.lang
 share/highlight/langDefs/ascend.lang
+share/highlight/langDefs/asciidoc.lang
 share/highlight/langDefs/asp.lang
 share/highlight/langDefs/aspect.lang
 share/highlight/langDefs/assembler.lang
@@ -129,6 +130,7 @@ share/highlight/langDefs/email.lang
 share/highlight/langDefs/erb.lang
 share/highlight/langDefs/erlang.lang
 share/highlight/langDefs/euphoria.lang
+share/highlight/langDefs/exapunks.lang
 share/highlight/langDefs/excel.lang
 share/highlight/langDefs/express.lang
 share/highlight/langDefs/fame.lang
@@ -150,6 +152,7 @@ share/highlight/langDefs/haxe.lang
 share/highlight/langDefs/hcl.lang
 share/highlight/langDefs/html.lang
 share/highlight/langDefs/httpd.lang
+share/highlight/langDefs/hugo.lang
 share/highlight/langDefs/icon.lang
 share/highlight/langDefs/idl.lang
 share/highlight/langDefs/idlang.lang
@@ -464,6 +467,11 @@ share/highlight/themes/darkplus.theme
 share/highlight/themes/darkslategray.theme
 share/highlight/themes/darkspectrum.theme
 share/highlight/themes/denim.theme
+share/highlight/themes/duotone-dark-earth.theme
+share/highlight/themes/duotone-dark-forest.theme
+share/highlight/themes/duotone-dark-sea.theme
+share/highlight/themes/duotone-dark-sky.theme
+share/highlight/themes/duotone-dark-space.theme
 share/highlight/themes/dusk.theme
 share/highlight/themes/earendel.theme
 share/highlight/themes/easter.theme

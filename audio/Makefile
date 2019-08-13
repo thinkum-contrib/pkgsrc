@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.556 2018/12/14 09:09:44 wiz Exp $
+# $NetBSD: Makefile,v 1.560 2019/07/21 23:08:22 nia Exp $
 #
 
 COMMENT=	Audio tools
@@ -56,6 +56,7 @@ SUBDIR+=	bmpx
 SUBDIR+=	bsl
 SUBDIR+=	buzztard
 SUBDIR+=	cam
+SUBDIR+=	cantata
 SUBDIR+=	cd-discid
 SUBDIR+=	cddb-bundle
 SUBDIR+=	cddbd
@@ -305,6 +306,7 @@ SUBDIR+=	mbrolavox-us3
 SUBDIR+=	mikmod
 SUBDIR+=	milkytracker
 SUBDIR+=	mixer.app
+SUBDIR+=	mixxx
 SUBDIR+=	mkcdtoc
 SUBDIR+=	moc
 SUBDIR+=	moodbar
@@ -350,7 +352,6 @@ SUBDIR+=	nosefart
 SUBDIR+=	nspmod
 SUBDIR+=	ocp
 SUBDIR+=	oggasm
-SUBDIR+=	openal
 SUBDIR+=	openal-soft
 SUBDIR+=	opencore-amr
 SUBDIR+=	opus-tools
@@ -376,7 +377,6 @@ SUBDIR+=	pianobar
 SUBDIR+=	picard
 SUBDIR+=	playitslowly
 SUBDIR+=	pocketsphinx
-SUBDIR+=	portaudio
 SUBDIR+=	portaudio-devel
 SUBDIR+=	pulseaudio
 SUBDIR+=	py-acoustid

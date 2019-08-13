@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.5 2018/11/14 22:22:29 kleink Exp $
+# $NetBSD: Makefile,v 1.9 2019/07/21 22:25:47 wiz Exp $
 
-PKGREVISION= 3
+PKGREVISION= 1
 .include "../../meta-pkgs/xfce4/Makefile.common"
 
-DISTNAME=	xfce4-power-manager-1.6.1
+DISTNAME=	xfce4-power-manager-1.6.3
 CATEGORIES=	sysutils
 MASTER_SITES=	http://archive.xfce.org/src/apps/xfce4-power-manager/1.6/
 
-HOMEPAGE=	http://goodies.xfce.org/projects/applications/xfce4-power-manager
+HOMEPAGE=	https://goodies.xfce.org/projects/applications/xfce4-power-manager
 COMMENT=	Xfce power manager
 
 CONFIGURE_ARGS+=--sysconfdir=${PKG_SYSCONFBASE}

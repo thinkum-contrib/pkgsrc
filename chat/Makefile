@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.218 2019/05/03 17:14:27 nia Exp $
+# $NetBSD: Makefile,v 1.226 2019/07/28 15:22:55 nia Exp $
 #
 
 COMMENT=	Communication programs
@@ -8,8 +8,11 @@ SUBDIR+=	atheme
 SUBDIR+=	bitchbot
 SUBDIR+=	bitchx
 SUBDIR+=	bitlbee
+SUBDIR+=	bitlbee-discord
+SUBDIR+=	bitlbee-facebook
+SUBDIR+=	bitlbee-mastodon
+SUBDIR+=	bitlbee-steam
 SUBDIR+=	bnc
-SUBDIR+=	bsflite
 SUBDIR+=	carbons-purple
 SUBDIR+=	centerim
 SUBDIR+=	centerim5
@@ -32,13 +35,11 @@ SUBDIR+=	finch
 SUBDIR+=	fisg
 SUBDIR+=	gajim
 SUBDIR+=	gajim-plugin-omemo
-SUBDIR+=	gale
 SUBDIR+=	gg2
 SUBDIR+=	gloox
 SUBDIR+=	gnomeicu
 SUBDIR+=	goofey
 SUBDIR+=	gossip
-SUBDIR+=	gtmess
 SUBDIR+=	hexchat
 SUBDIR+=	i2cb
 SUBDIR+=	i2cbd
@@ -79,8 +80,6 @@ SUBDIR+=	libotr
 SUBDIR+=	libpurple
 SUBDIR+=	libtelepathy
 SUBDIR+=	libtlen
-SUBDIR+=	licq-core
-SUBDIR+=	licq-gui-console
 SUBDIR+=	loudmouth
 SUBDIR+=	lurch-purple
 SUBDIR+=	matterircd

@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.64 2018/11/14 22:21:14 kleink Exp $
+# $NetBSD: Makefile,v 1.66 2019/07/21 22:23:59 wiz Exp $
 
-DISTNAME=	gdl-3.10.0
-PKGREVISION=	16
+DISTNAME=	gdl-3.28.0
+PKGREVISION=	1
 CATEGORIES=	devel gnome
-MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gdl/3.10/}
+MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gdl/3.28/}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://www.gnome.org/
+HOMEPAGE=	https://gitlab.gnome.org/GNOME/gdl
 COMMENT=	Gnome Devtool Libraries
 LICENSE=	gnu-gpl-v3
 

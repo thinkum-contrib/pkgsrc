@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.15 2019/04/01 11:38:40 wiz Exp $
+$NetBSD: distinfo,v 1.17 2019/07/20 22:52:49 wiz Exp $
 
-SHA1 (enigmail-2.0.10.tar.gz) = 5648000c5b1a35b326a1c6cbcbdfb9f91302ba27
-RMD160 (enigmail-2.0.10.tar.gz) = 42f940723dad359ffd4328418593f5612d1a41ba
-SHA512 (enigmail-2.0.10.tar.gz) = cca49c768b330767e23ede2258bcaf7693f37a81e651a7c8a7fbb9c0dad0d4d6383582a45b608cbfc234fe33e053c291ad9df01589214c58678da621235c7e33
-Size (enigmail-2.0.10.tar.gz) = 2608628 bytes
+SHA1 (enigmail-2.0.12.tar.gz) = e4964b059621c392fa36430b52e31656b6bae92a
+RMD160 (enigmail-2.0.12.tar.gz) = b0627517b6ad16e1dacd7a56e3b48fcd62cb3652
+SHA512 (enigmail-2.0.12.tar.gz) = f9f4f1ed4c7244280be2fade0ccb2f4b5e7075dd60f53953478ffb84012e687b7ac7bad489c0b0cb2d8937916c783fe9e1841174bf1e5bdb9ab8cb58b415db74
+Size (enigmail-2.0.12.tar.gz) = 2614589 bytes

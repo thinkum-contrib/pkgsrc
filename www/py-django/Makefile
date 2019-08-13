@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.105 2019/02/12 13:11:56 adam Exp $
+# $NetBSD: Makefile,v 1.107 2019/07/01 18:23:52 adam Exp $
 
-DISTNAME=	Django-1.11.20
+DISTNAME=	Django-1.11.22
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:tl}
 CATEGORIES=	www python
 MASTER_SITES=	https://www.djangoproject.com/m/releases/${PKGVERSION_NOREV:R}/
@@ -19,8 +19,8 @@ REPLACE_PYTHON+=	django/conf/project_template/manage.py-tpl
 
 post-install:
 	cd ${DESTDIR}${PREFIX}/bin && \
-		${MV} django-admin django-admin-${PYVERSSUFFIX} && \
-		${MV} django-admin.py django-admin-${PYVERSSUFFIX}.py || ${TRUE}
+	${MV} django-admin django-admin-${PYVERSSUFFIX} && \
+	${MV} django-admin.py django-admin-${PYVERSSUFFIX}.py || ${TRUE}
 
 .include "../../lang/python/application.mk"
 .include "../../lang/python/egg.mk"

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.47 2019/04/25 07:32:51 maya Exp $
+# $NetBSD: Makefile,v 1.49 2019/07/21 22:24:42 wiz Exp $
 
 DISTNAME=	gedit-3.22.1
-PKGREVISION=	8
+PKGREVISION=	9
 CATEGORIES=	editors gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gedit/${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.xz
@@ -16,10 +16,10 @@ USE_PKGLOCALEDIR=	yes
 USE_TOOLS+=		gmake intltool msgfmt perl pkg-config
 GNU_CONFIGURE=		yes
 
-PKGCONFIG_OVERRIDE+=	data/gedit.pc.in
-PY_PATCHPLIST=		yes
+PKGCONFIG_OVERRIDE+=		data/gedit.pc.in
+PY_PATCHPLIST=			yes
 PYTHON_VERSIONS_INCOMPATIBLE=	27
-REPLACE_PYTHON+=	plugins/externaltools/data/send-to-fpaste.tool.in
+REPLACE_PYTHON+=		plugins/externaltools/data/send-to-fpaste.tool.in
 
 CONFIGURE_ARGS+=	--disable-updater
 CONFIGURE_ARGS+=	--disable-deprecations

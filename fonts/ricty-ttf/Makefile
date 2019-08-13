@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.23 2017/08/01 17:40:11 wiz Exp $
+# $NetBSD: Makefile,v 1.25 2019/07/30 05:46:40 wiz Exp $
 
 DISTNAME=	Ricty-3.2.4
 PKGNAME=	${DISTNAME:S/Ricty/ricty-ttf/}
@@ -43,7 +43,7 @@ do-build:
 	cd ${WRKSRC}; \
 	${PKGSRC_SETENV} ${MAKE_ENV} \
 	${BASH} -x ./ricty_generator.sh \
-	${LOCALBASE}/share/fonts/X11/TTF/Inconsolata.otf \
+	${LOCALBASE}/share/fonts/X11/OTF/Inconsolata.otf \
 	${LOCALBASE}/share/fonts/X11/TTF/migu-1m-regular.ttf \
 	${LOCALBASE}/share/fonts/X11/TTF/migu-1m-bold.ttf
 

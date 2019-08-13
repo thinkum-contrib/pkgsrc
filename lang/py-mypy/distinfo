@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.6 2019/04/19 10:07:18 adam Exp $
+$NetBSD: distinfo,v 1.8 2019/07/03 19:40:41 adam Exp $
 
-SHA1 (mypy-0.701.tar.gz) = 6e76c13939ce55067b5ca4b04266c4b7af12c7ec
-RMD160 (mypy-0.701.tar.gz) = 5b61a23d2a0ec982a20902e620f0bf4912c9665f
-SHA512 (mypy-0.701.tar.gz) = ce3602ab815cc7f3f98200ed2ad23d01b1eb39a5f57f09c4b3bd89c111c201bacae622201a02ec9ef49ce1f3837d000d182a870506dc01e767cae481f476412d
-Size (mypy-0.701.tar.gz) = 1854439 bytes
+SHA1 (mypy-0.711.tar.gz) = fce3b7f54467e2e0eed0c1f17d3cd0ef252a9ba9
+RMD160 (mypy-0.711.tar.gz) = 35c7680e8f8ad87dc2a3e33859f53565bc87fde5
+SHA512 (mypy-0.711.tar.gz) = 931cf0c7c2703b9db20eb9e9275ae0641ecda16dda02fe0f1b64921691ba4ddc849c356f50a136bbf49039fb96c22e5c963a8997fab7f3efc5d70f2c4a6b72a8
+Size (mypy-0.711.tar.gz) = 1889049 bytes

@@ -36,6 +36,7 @@ ares			Use the ares library for asynchronous name resolution.
 aria2-metalink		Enable Metalink support.
 arts			Use the aRts audio daemon.
 aspell			Add spell checking support using aspell.
+async	Use the async library
 ass			Enable subtitle renderer for the ASS/SSA format
 asterisk-config		Control installation of Asterisk sample config files.
 aterm-big5		Enable Chinese support.
@@ -65,6 +66,7 @@ blender-exppython	Enable the Experimental Python support.
 bluray			Enable libbluray support.
 boehm-gc		Use Boehm's garbage collector for memory allocation.
 bozohttpd-do-htpasswd	Enable .htpasswd file processing in bozohttpd.
+brotli			Provides the BROTLI_COMPRESS output filter.
 bugzilla-charts		Enable generation of charts.
 bugzilla-imagemagick	Compress .BMPs to save space.
 bugzilla-patchviewer	Enable patchviewer support.
@@ -246,7 +248,7 @@ gdbm			Use the GNU gdbm database library.
 gdk-pixbuf		Use gdk-pixbuf as imaging library.
 gdk-pixbuf2		Use gdk-pixbuf2 as imaging library.
 geoclue			Enable geoclue support.
-geoip			Enable IP-to-country-lookup using the GeoIP C library.
+geoip			Enable IP-to-country-lookup.
 ggi			Enable GGI support.
 ghostscript		Enable GhostScript support.
 gif			Enable GIF support.
@@ -297,6 +299,7 @@ halfops			Halfops are similar to plain ops, but can't kick/deop plain ops.
 hawknl			Enable HawkNL network API support.
 hping-suid		Install hping executable setuid root.
 hpn-patch		High Performance Enabled SSH/SCP for OpenSSH.
+http	Add support for HTTP.
 http2			Add support for HTTP/2.
 hunspell		Add spell checking support using hunspell.
 i586-optimized		Optimize for i586 (only).
@@ -504,7 +507,7 @@ modplug			Use for decoding mod-like music formats.
 motif			Enable motif support.
 motoya			Add motoya fonts.
 mozilla			Use mozilla as gecko rendering engine.
-mozilla-jemalloc	Enable building with Mozilla'a jemalloc.
+mozilla-jemalloc	Enable building with Mozilla's jemalloc.
 mozilla-jit		Enable nanojit javascript acceleration.
 mozilla-lightning	Enable the lightning calendar extension.
 mozilla-single-profile	Enable single profiles on mozilla browsers.
@@ -777,6 +780,7 @@ uds			Enable support for Unix domain sockets.
 uim			Enable UIM support.
 uim-fep			Enable UIM FEP support.
 umefont			Add Umefont.
+unix	Enable support for unix.
 unicode			Enable support for Unicode.
 unixodbc		Enable ODBC support via unixODBC.
 unrealircd-chroot	Enable support for running in a chroot jail.

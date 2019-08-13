@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.4 2018/03/01 23:46:54 wiz Exp $
+# $NetBSD: Makefile,v 1.6 2019/06/26 06:12:46 wiz Exp $
 
 DISTNAME=		xorgproto-2018.4
 CATEGORIES=		x11 devel

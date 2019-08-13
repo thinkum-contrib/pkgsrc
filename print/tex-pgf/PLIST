@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.8 2019/01/29 19:54:29 markd Exp $
+@comment $NetBSD: PLIST,v 1.10 2019/07/17 11:14:13 markd Exp $
 share/texmf-dist/tex/context/third/pgf/basiclayer/t-pgf.tex
 share/texmf-dist/tex/context/third/pgf/basiclayer/t-pgfbim.tex
 share/texmf-dist/tex/context/third/pgf/basiclayer/t-pgfbla.tex
@@ -82,6 +82,7 @@ share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarymatrix.
 share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarymindmap.code.tex
 share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarypatterns.code.tex
 share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarypatterns.meta.code.tex
+share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryperspective.code.tex
 share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarypetri.code.tex
 share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryplothandlers.code.tex
 share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryplotmarks.code.tex
@@ -376,6 +377,7 @@ share/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshapes.multipart.cod
 share/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshapes.symbols.code.tex
 share/texmf-dist/tex/generic/pgf/lua/pgf/manual.lua
 share/texmf-dist/tex/generic/pgf/lua/pgf/manual/DocumentParser.lua
+share/texmf-dist/tex/generic/pgf/math/pgfint.code.tex
 share/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
 share/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
 share/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex

@@ -1,10 +1,11 @@
-@comment $NetBSD: PLIST,v 1.6 2019/05/06 21:11:18 markd Exp $
+@comment $NetBSD: PLIST,v 1.8 2019/07/17 11:14:13 markd Exp $
 share/texmf-dist/doc/generic/pgf/AUTHORS
 share/texmf-dist/doc/generic/pgf/ChangeLog
 share/texmf-dist/doc/generic/pgf/FILES
 share/texmf-dist/doc/generic/pgf/INSTALL
 share/texmf-dist/doc/generic/pgf/README
 share/texmf-dist/doc/generic/pgf/README-3.0.0
+share/texmf-dist/doc/generic/pgf/extract.lua
 share/texmf-dist/doc/generic/pgf/images/brave-gnu-world-logo-mask.bb
 share/texmf-dist/doc/generic/pgf/images/brave-gnu-world-logo-mask.jpg
 share/texmf-dist/doc/generic/pgf/images/brave-gnu-world-logo.25.bb
@@ -97,6 +98,7 @@ share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-math.tex
 share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-matrices.tex
 share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-mindmaps.tex
 share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-patterns.tex
+share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-perspective.tex
 share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-petri.tex
 share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-plot-handlers.tex
 share/texmf-dist/doc/generic/pgf/text-en/pgfmanual-en-library-plot-marks.tex

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.5 2018/01/01 18:16:36 rillig Exp $
+# $NetBSD: Makefile,v 1.7 2019/07/23 20:33:51 sevan Exp $
 
-DISTNAME=	clojure-1.5.1
+DISTNAME=	clojure-1.8.0
 CATEGORIES=	lang
 MASTER_SITES=	http://repo1.maven.org/maven2/org/clojure/clojure/${PKGVERSION_NOREV}/
 EXTRACT_SUFX=	.zip
@@ -30,7 +30,7 @@ SUBST_STAGE.java=	pre-install
 SUBST_MESSAGE.java=	Set Java
 SUBST_FILES.java=	clj.sh
 SUBST_SED.java=		-e 's,@JAVA_HOME@,${PKG_JAVA_HOME},g'
-SUBST_SED.java+=	-e 's,@SH@,${SH},'
+SUBST_VARS.java=	SH
 
 pre-patch:
 	${INSTALL_DATA} ${FILESDIR}/clj.sh ${WRKSRC}

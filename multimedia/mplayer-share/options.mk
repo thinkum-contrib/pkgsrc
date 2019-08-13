@@ -1,4 +1,4 @@
-# $NetBSD: options.mk,v 1.62 2019/03/25 22:55:14 rhialto Exp $
+# $NetBSD: options.mk,v 1.65 2019/06/25 20:50:22 markd Exp $
 
 .if defined(PKGNAME) && empty(PKGNAME:Mmplayer-share*)
 
@@ -30,11 +30,10 @@ PKG_SUPPORTED_OPTIONS+=	oss
 .endif
 
 PKG_SUPPORTED_OPTIONS+= 	faad
-PKG_SUGGESTED_OPTIONS+=		faad
 
 # Set options based on the specific package being built.
 .if !empty(PKGNAME:M*mplayer*)
-PKG_SUPPORTED_OPTIONS+=	aalib caca esound ggi mplayer-menu nas pulseaudio sdl
+PKG_SUPPORTED_OPTIONS+=	aalib alsa caca esound ggi mplayer-menu nas pulseaudio sdl
 
 .if ${VDPAU_AVAILABLE} == "yes"
 PKG_SUPPORTED_OPTIONS+=	vdpau
@@ -81,15 +80,17 @@ PKG_SUPPORTED_OPTIONS+= xvid
 # Define PKG_SUGGESTED_OPTIONS.
 # -------------------------------------------------------------------------
 
-.for o in cdparanoia dv esound gif jpeg \
-	    dvdread dvdnav \
-	    lame libmpg123 mad mplayer-menu \
+.for o in   dvdread dvdnav gif jpeg \
+	    mplayer-menu \
 	    mplayer-default-cflags mplayer-runtime-cpudetection \
-	    nas oss pulseaudio png sdl theora vorbis x264 xvid vdpau lirc
+	    oss png pulseaudio sdl vdpau lirc
 .  if !empty(PKG_SUPPORTED_OPTIONS:M${o})
 PKG_SUGGESTED_OPTIONS+=	${o}
 .  endif
 .endfor
+.if !empty(PKGNAME:M*mplayer*)
+PKG_SUGGESTED_OPTIONS.Linux+=	alsa
+.endif
 PKG_SUGGESTED_OPTIONS.Linux+=	vidix
 
 # -------------------------------------------------------------------------
@@ -108,6 +109,13 @@ CONFIGURE_ARGS+=	--enable-aa
 .  include "../../graphics/aalib/buildlink3.mk"
 .else
 CONFIGURE_ARGS+=	--disable-aa
+.endif
+
+.if !empty(PKG_OPTIONS:Malsa)
+CONFIGURE_ARGS+=	--enable-alsa
+.  include "../../audio/alsa-lib/buildlink3.mk"
+.else
+CONFIGURE_ARGS+=	--disable-alsa
 .endif
 
 .if !empty(PKG_OPTIONS:Mcaca)

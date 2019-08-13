@@ -101,12 +101,26 @@ func (s *Suite) Test_VartypeCheck_CFlag(c *check.C) {
 		"-no-integrated-as",
 		"-pthread",
 		"`pkg-config`_plus")
+	vt.OutputEmpty()
+
+	vt.Values(
+		"-L${PREFIX}/lib",
+		"-L${PREFIX}/lib64",
+		"-lncurses",
+		"-DMACRO=\\\"",
+		"-DMACRO=\\'")
 
 	vt.Output(
-		"WARN: filename.mk:2: Compiler flag \"/W3\" should start with a hyphen.",
-		"WARN: filename.mk:3: Compiler flag \"target:sparc64\" should start with a hyphen.",
-		"WARN: filename.mk:5: Unknown compiler flag \"-XX:+PrintClassHistogramAfterFullGC\".",
-		"WARN: filename.mk:11: Compiler flag \"`pkg-config`_plus\" should start with a hyphen.")
+		"WARN: filename.mk:21: \"-L${PREFIX}/lib\" is a linker flag "+
+			"and belong to LDFLAGS, LIBS or LDADD instead of CFLAGS.",
+		"WARN: filename.mk:22: \"-L${PREFIX}/lib64\" is a linker flag "+
+			"and belong to LDFLAGS, LIBS or LDADD instead of CFLAGS.",
+		"WARN: filename.mk:23: \"-lncurses\" is a linker flag "+
+			"and belong to LDFLAGS, LIBS or LDADD instead of CFLAGS.",
+		"WARN: filename.mk:24: Compiler flag \"-DMACRO=\\\\\\\"\" "+
+			"has unbalanced double quotes.",
+		"WARN: filename.mk:25: Compiler flag \"-DMACRO=\\\\'\" "+
+			"has unbalanced single quotes.")
 
 	vt.Op(opUseMatch)
 	vt.Values(
@@ -420,7 +434,7 @@ func (s *Suite) Test_VartypeCheck_Enum__use_match(c *check.C) {
 	t.SetUpCommandLine("-Wall", "--explain")
 
 	mklines := t.NewMkLines("module.mk",
-		MkRcsID,
+		MkCvsID,
 		"",
 		".if !empty(MACHINE_ARCH:Mi386) || ${MACHINE_ARCH} == i386",
 		".endif",
@@ -452,22 +466,32 @@ func (s *Suite) Test_VartypeCheck_Enum__use_match(c *check.C) {
 
 func (s *Suite) Test_VartypeCheck_FetchURL(c *check.C) {
 	t := s.Init(c)
+
+	t.SetUpPackage("category/own-master-site",
+		"MASTER_SITE_OWN=\thttps://example.org/")
+	t.FinishSetUp()
+
 	vt := NewVartypeCheckTester(t, (*VartypeCheck).FetchURL)
 
 	t.SetUpMasterSite("MASTER_SITE_GNU", "http://ftp.gnu.org/pub/gnu/")
 	t.SetUpMasterSite("MASTER_SITE_GITHUB", "https://github.com/")
+
+	G.Pkg = NewPackage(t.File("category/own-master-site"))
+	G.Pkg.load()
 
 	vt.Varname("MASTER_SITES")
 	vt.Values(
 		"https://github.com/example/project/",
 		"http://ftp.gnu.org/pub/gnu/bison", // Missing a slash at the end
 		"${MASTER_SITE_GNU:=bison}",
-		"${MASTER_SITE_INVALID:=subdir/}")
+		"${MASTER_SITE_INVALID:=subdir/}",
+		"${MASTER_SITE_OWN}",
+		"${MASTER_SITE_OWN:=subdir/}")
 
 	vt.Output(
 		"WARN: filename.mk:1: Please use ${MASTER_SITE_GITHUB:=example/} "+
-			"instead of \"https://github.com/example/project/\" "+
-			"and run \""+confMake+" help topic=github\" for further tips.",
+			"instead of \"https://github.com/example/\" "+
+			"and run \""+confMake+" help topic=github\" for further instructions.",
 		"WARN: filename.mk:2: Please use ${MASTER_SITE_GNU:=bison} "+
 			"instead of \"http://ftp.gnu.org/pub/gnu/bison\".",
 		"ERROR: filename.mk:3: The subdirectory in MASTER_SITE_GNU must end with a slash.",
@@ -486,6 +510,42 @@ func (s *Suite) Test_VartypeCheck_FetchURL(c *check.C) {
 
 	vt.Output(
 		"WARN: filename.mk:23: \"http://example.org/download?filename=<distfile>;version=<version>\" is not a valid URL.")
+
+	vt.Values(
+		"${MASTER_SITE_GITHUB:S,^,-,:=project/archive/${DISTFILE}}")
+
+	// No warning that the part after the := must end with a slash,
+	// since there is another modifier in the variable use, in this case :S.
+	//
+	// That modifier adds a hyphen at the beginning (but pkglint doesn't
+	// inspect this), therefore the URL is not required to end with a slash anymore.
+	vt.OutputEmpty()
+
+	// As of June 2019, the :S modifier is not analyzed since it is unusual.
+	vt.Values(
+		"${MASTER_SITE_GNU:S,$,subdir/,}")
+	vt.OutputEmpty()
+
+	vt.Values(
+		"https://github.com/transmission/transmission-releases/raw/master/")
+	vt.Output(
+		"WARN: filename.mk:51: Please use ${MASTER_SITE_GITHUB:=transmission/} " +
+			"instead of \"https://github.com/transmission/\" " +
+			"and run \"" + confMake + " help topic=github\" for further instructions.")
+}
+
+func (s *Suite) Test_VartypeCheck_FetchURL__without_package(c *check.C) {
+	t := s.Init(c)
+
+	vt := NewVartypeCheckTester(t, (*VartypeCheck).FetchURL)
+
+	vt.Varname("MASTER_SITES")
+	vt.Values(
+		"https://github.com/example/project/",
+		"${MASTER_SITE_OWN}")
+
+	vt.Output(
+		"ERROR: filename.mk:2: The site MASTER_SITE_OWN does not exist.")
 }
 
 func (s *Suite) Test_VartypeCheck_Filename(c *check.C) {
@@ -497,8 +557,8 @@ func (s *Suite) Test_VartypeCheck_Filename(c *check.C) {
 		"OS/2-manual.txt")
 
 	vt.Output(
-		"WARN: filename.mk:1: \"Filename with spaces.docx\" is not a valid filename.",
-		"WARN: filename.mk:2: A filename should not contain a slash.")
+		"WARN: filename.mk:1: The filename \"Filename with spaces.docx\" contains the invalid characters \"  \".",
+		"WARN: filename.mk:2: The filename \"OS/2-manual.txt\" contains the invalid character \"/\".")
 
 	vt.Op(opUseMatch)
 	vt.Values(
@@ -506,7 +566,9 @@ func (s *Suite) Test_VartypeCheck_Filename(c *check.C) {
 
 	// There's no guarantee that a filename only contains [A-Za-z0-9.].
 	// Therefore there are no useful checks in this situation.
-	vt.OutputEmpty()
+	vt.Output(
+		"WARN: filename.mk:11: The filename pattern \"Filename with spaces.docx\" " +
+			"contains the invalid characters \"  \".")
 }
 
 func (s *Suite) Test_VartypeCheck_FileMask(c *check.C) {
@@ -514,20 +576,30 @@ func (s *Suite) Test_VartypeCheck_FileMask(c *check.C) {
 
 	vt.Varname("FNAME")
 	vt.Values(
+		"filename.txt",
+		"*.txt",
+		"[12345].txt",
+		"[0-9].txt",
+		"???.txt",
 		"FileMask with spaces.docx",
 		"OS/2-manual.txt")
 
 	vt.Output(
-		"WARN: filename.mk:1: \"FileMask with spaces.docx\" is not a valid filename mask.",
-		"WARN: filename.mk:2: A filename mask should not contain a slash.")
+		"WARN: filename.mk:6: The filename pattern \"FileMask with spaces.docx\" "+
+			"contains the invalid characters \"  \".",
+		"WARN: filename.mk:7: The filename pattern \"OS/2-manual.txt\" "+
+			"contains the invalid character \"/\".")
 
 	vt.Op(opUseMatch)
 	vt.Values(
 		"FileMask with spaces.docx")
 
 	// There's no guarantee that a filename only contains [A-Za-z0-9.].
-	// Therefore there are no useful checks in this situation.
-	vt.OutputEmpty()
+	// Therefore it might be necessary to allow all characters here.
+	// TODO: Investigate whether this restriction is useful in practice.
+	vt.Output(
+		"WARN: filename.mk:11: The filename pattern \"FileMask with spaces.docx\" " +
+			"contains the invalid characters \"  \".")
 }
 
 func (s *Suite) Test_VartypeCheck_FileMode(c *check.C) {
@@ -624,6 +696,18 @@ func (s *Suite) Test_VartypeCheck_Homepage(c *check.C) {
 	vt.Output(
 		"WARN: filename.mk:31: HOMEPAGE should not be defined in terms of MASTER_SITEs.")
 
+	delete(G.Pkg.vars.firstDef, "MASTER_SITES")
+	delete(G.Pkg.vars.lastDef, "MASTER_SITES")
+	G.Pkg.vars.Define("MASTER_SITES", t.NewMkLine(G.Pkg.File("Makefile"), 5,
+		"MASTER_SITES=\t# none"))
+
+	vt.Values(
+		"${MASTER_SITES}")
+
+	// When MASTER_SITES is empty, pkglint cannot extract the first of the URLs
+	// for using it in the HOMEPAGE.
+	vt.Output(
+		"WARN: filename.mk:41: HOMEPAGE should not be defined in terms of MASTER_SITEs.")
 }
 
 func (s *Suite) Test_VartypeCheck_Identifier(c *check.C) {
@@ -689,16 +773,28 @@ func (s *Suite) Test_VartypeCheck_LdFlag(c *check.C) {
 		"-static-something",
 		"${LDFLAGS.NetBSD}",
 		"-l${LIBNCURSES}",
-		"`pkg-config`_plus")
+		"`pkg-config`_plus",
+		"-DMACRO",
+		"-UMACRO",
+		"-P",
+		"-E",
+		"-I${PREFIX}/include")
 	vt.Op(opUseMatch)
 	vt.Values(
 		"anything")
 
 	vt.Output(
-		"WARN: filename.mk:4: Unknown linker flag \"-unknown\".",
-		"WARN: filename.mk:5: Linker flag \"no-hyphen\" should start with a hyphen.",
 		"WARN: filename.mk:6: Please use \"${COMPILER_RPATH_FLAG}\" instead of \"-Wl,--rpath\".",
-		"WARN: filename.mk:12: Linker flag \"`pkg-config`_plus\" should start with a hyphen.")
+		"WARN: filename.mk:13: \"-DMACRO\" is a compiler flag "+
+			"and belongs on CFLAGS, CPPFLAGS, CXXFLAGS or FFLAGS instead of LDFLAGS.",
+		"WARN: filename.mk:14: \"-UMACRO\" is a compiler flag "+
+			"and belongs on CFLAGS, CPPFLAGS, CXXFLAGS or FFLAGS instead of LDFLAGS.",
+		"WARN: filename.mk:15: \"-P\" is a compiler flag "+
+			"and belongs on CFLAGS, CPPFLAGS, CXXFLAGS or FFLAGS instead of LDFLAGS.",
+		"WARN: filename.mk:16: \"-E\" is a compiler flag "+
+			"and belongs on CFLAGS, CPPFLAGS, CXXFLAGS or FFLAGS instead of LDFLAGS.",
+		"WARN: filename.mk:17: \"-I${PREFIX}/include\" is a compiler flag "+
+			"and belongs on CFLAGS, CPPFLAGS, CXXFLAGS or FFLAGS instead of LDFLAGS.")
 }
 
 func (s *Suite) Test_VartypeCheck_License(c *check.C) {
@@ -711,10 +807,10 @@ func (s *Suite) Test_VartypeCheck_License(c *check.C) {
 	G.Pkg = NewPackage(t.File("category/package"))
 
 	mklines := t.NewMkLines("perl5.mk",
-		MkRcsID,
+		MkCvsID,
 		"PERL5_LICENSE= gnu-gpl-v2 OR artistic")
 	// Also registers the PERL5_LICENSE variable in the package.
-	mklines.collectDefinedVariables()
+	mklines.collectVariables()
 
 	vt := NewVartypeCheckTester(t, (*VartypeCheck).License)
 
@@ -894,7 +990,7 @@ func (s *Suite) Test_VartypeCheck_PathMask(c *check.C) {
 		"src/*/*")
 
 	vt.Output(
-		"WARN: filename.mk:2: \"src/*&*\" is not a valid pathname mask.")
+		"WARN: filename.mk:2: The pathname pattern \"src/*&*\" contains the invalid character \"&\".")
 
 	vt.Op(opUseMatch)
 	vt.Values("any")
@@ -916,7 +1012,7 @@ func (s *Suite) Test_VartypeCheck_Pathname(c *check.C) {
 		"anything")
 
 	vt.Output(
-		"WARN: filename.mk:1: \"${PREFIX}/*\" is not a valid pathname.")
+		"WARN: filename.mk:1: The pathname \"${PREFIX}/*\" contains the invalid character \"*\".")
 }
 
 func (s *Suite) Test_VartypeCheck_Perl5Packlist(c *check.C) {
@@ -1130,6 +1226,12 @@ func (s *Suite) Test_VartypeCheck_ShellCommand(c *check.C) {
 	vt.Values("*")
 
 	vt.OutputEmpty()
+
+	vt.Varname("CC")
+	vt.Op(opAssignAppend)
+	vt.Values("-ggdb")
+
+	vt.OutputEmpty()
 }
 
 func (s *Suite) Test_VartypeCheck_ShellCommands(c *check.C) {
@@ -1230,8 +1332,13 @@ func (s *Suite) Test_VartypeCheck_URL(c *check.C) {
 		"https://www.netbsd.org/",
 		"https://www.example.org",
 		"ftp://example.org/pub/",
-		"gopher://example.org/",
+		"gopher://example.org/")
 
+	vt.Output(
+		"WARN: filename.mk:4: Please write NetBSD.org instead of www.netbsd.org.",
+		"NOTE: filename.mk:5: For consistency, please add a trailing slash to \"https://www.example.org\".")
+
+	vt.Values(
 		"",
 		"ftp://example.org/<",
 		"gopher://example.org/<",
@@ -1243,17 +1350,15 @@ func (s *Suite) Test_VartypeCheck_URL(c *check.C) {
 		"string with spaces")
 
 	vt.Output(
-		"WARN: filename.mk:4: Please write NetBSD.org instead of www.netbsd.org.",
-		"NOTE: filename.mk:5: For consistency, please add a trailing slash to \"https://www.example.org\".",
-		"WARN: filename.mk:8: \"\" is not a valid URL.",
-		"WARN: filename.mk:9: \"ftp://example.org/<\" is not a valid URL.",
-		"WARN: filename.mk:10: \"gopher://example.org/<\" is not a valid URL.",
-		"WARN: filename.mk:11: \"http://example.org/<\" is not a valid URL.",
-		"WARN: filename.mk:12: \"https://example.org/<\" is not a valid URL.",
-		"WARN: filename.mk:13: \"https://www.example.org/path with spaces\" is not a valid URL.",
-		"WARN: filename.mk:14: \"httpxs://www.example.org\" is not a valid URL. Only ftp, gopher, http, and https URLs are allowed here.",
-		"WARN: filename.mk:15: \"mailto:someone@example.org\" is not a valid URL.",
-		"WARN: filename.mk:16: \"string with spaces\" is not a valid URL.")
+		"WARN: filename.mk:11: \"\" is not a valid URL.",
+		"WARN: filename.mk:12: \"ftp://example.org/<\" is not a valid URL.",
+		"WARN: filename.mk:13: \"gopher://example.org/<\" is not a valid URL.",
+		"WARN: filename.mk:14: \"http://example.org/<\" is not a valid URL.",
+		"WARN: filename.mk:15: \"https://example.org/<\" is not a valid URL.",
+		"WARN: filename.mk:16: \"https://www.example.org/path with spaces\" is not a valid URL.",
+		"WARN: filename.mk:17: \"httpxs://www.example.org\" is not a valid URL. Only ftp, gopher, http, and https URLs are allowed here.",
+		"WARN: filename.mk:18: \"mailto:someone@example.org\" is not a valid URL.",
+		"WARN: filename.mk:19: \"string with spaces\" is not a valid URL.")
 
 	// Yes, even in 2019, some pkgsrc-wip packages really use a gopher HOMEPAGE.
 	vt.Values(
@@ -1290,6 +1395,23 @@ func (s *Suite) Test_VartypeCheck_VariableName(c *check.C) {
 
 	vt.Output(
 		"WARN: filename.mk:2: \"VarBase\" is not a valid variable name.")
+}
+
+func (s *Suite) Test_VartypeCheck_VariableNamePattern(c *check.C) {
+	vt := NewVartypeCheckTester(s.Init(c), (*VartypeCheck).VariableNamePattern)
+
+	vt.Varname("_SORTED_VARS.group")
+	vt.Values(
+		"VARBASE",
+		"VarBase",
+		"PKG_OPTIONS_VAR.pkgbase",
+		"${INDIRECT}",
+		"*_DIRS",
+		"VAR.*",
+		"***")
+
+	vt.Output(
+		"WARN: filename.mk:2: \"VarBase\" is not a valid variable name pattern.")
 }
 
 func (s *Suite) Test_VartypeCheck_Version(c *check.C) {
@@ -1507,11 +1629,11 @@ func (vt *VartypeCheckTester) Values(values ...string) {
 			panic("Invalid operator: " + opStr)
 		}
 
-		space := ifelseStr(hasSuffix(varname, "+") && opStr == "=", " ", "")
+		space := condStr(hasSuffix(varname, "+") && opStr == "=", " ", "")
 		return varname + space + opStr + value
 	}
 
-	test := func(mklines MkLines, mkline MkLine, value string) {
+	test := func(mklines *MkLines, mkline *MkLine, value string) {
 		varname := vt.varname
 		comment := ""
 		if mkline.IsVarassign() {
@@ -1545,10 +1667,10 @@ func (vt *VartypeCheckTester) Values(values ...string) {
 		text := toText(value)
 
 		line := vt.tester.NewLine(vt.filename, vt.lineno, text)
-		mklines := NewMkLines(NewLines(vt.filename, []Line{line}))
+		mklines := NewMkLines(NewLines(vt.filename, []*Line{line}))
 		vt.lineno++
 
-		mklines.ForEach(func(mkline MkLine) { test(mklines, mkline, value) })
+		mklines.ForEach(func(mkline *MkLine) { test(mklines, mkline, value) })
 	}
 }
 

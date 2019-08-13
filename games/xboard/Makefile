@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.55 2018/11/14 22:21:32 kleink Exp $
+# $NetBSD: Makefile,v 1.57 2019/07/21 22:24:53 wiz Exp $
 
 DISTNAME=	xboard-4.8.0
-PKGREVISION=	9
+PKGREVISION=	11
 CATEGORIES=	games
 MASTER_SITES=	${MASTER_SITE_GNU:=xboard/}
 
@@ -35,7 +35,7 @@ SUBST_FILES.engine=	xboard.conf
 SUBST_SED.engine=	-e '/ChessProgram / s,fairymax,gnuchess,'
 DEPENDS+=		gnuchess-[0-9]*:../../games/gnuchess
 
-.if ${OPSYS} == "NetBSD" || ${OPSYS} == "Solaris"
+.if ${OPSYS} == "NetBSD" || ${OPSYS} == "SunOS"
 WAVPLAYER=      /usr/bin/audioplay
 .elif ${OPSYS} == "OpenBSD"
 WAVPLAYER=      /usr/bin/aucat -i

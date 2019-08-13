@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.35 2018/12/01 05:55:38 wiz Exp $
+# $NetBSD: Makefile,v 1.37 2019/07/30 14:21:12 nia Exp $
 
-DISTNAME=		goffice-0.10.44
+DISTNAME=		goffice-0.10.45
 PKGNAME=		${DISTNAME:S/goffice/goffice0.10/}
 CATEGORIES=		misc
 MASTER_SITES=		${MASTER_SITE_GNOME:=sources/goffice/0.10/}
@@ -15,7 +15,7 @@ USE_PKGLOCALEDIR=	yes
 USE_LIBTOOL=		yes
 PKGCONFIG_OVERRIDE+=	${WRKSRC}/libgoffice.pc.in
 GNU_CONFIGURE=		yes
-USE_TOOLS+=		gmake intltool msgfmt pkg-config
+USE_TOOLS+=		bison gmake intltool msgfmt pkg-config
 
 TEST_TARGET=		check
 

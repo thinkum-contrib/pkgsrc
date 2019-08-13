@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.31 2019/05/08 02:19:16 wen Exp $
+# $NetBSD: Makefile,v 1.33 2019/06/30 20:14:55 nia Exp $
 
-DISTNAME=	Devel-PPPort-3.51
+DISTNAME=	Devel-PPPort-3.52
 PKGNAME=	p5-${DISTNAME}
 CATEGORIES=	devel perl5
-MASTER_SITES=	${MASTER_SITE_PERL_CPAN:=../../authors/id/E/ET/ETHER/}
+MASTER_SITES=	${MASTER_SITE_PERL_CPAN:=../../authors/id/A/AT/ATOOMIC/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://search.cpan.org/dist/Devel-PPPort/
+HOMEPAGE=	https://metacpan.org/release/Devel-PPPort
 COMMENT=	Perl5 module to bring newer features to older perl
 LICENSE=	${PERL5_LICENSE}
 

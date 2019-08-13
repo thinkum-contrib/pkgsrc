@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.2 2019/03/18 20:19:31 schmonz Exp $
+# $NetBSD: Makefile,v 1.8 2019/07/10 12:59:53 schmonz Exp $
 
-DISTNAME=		djbdnscurve6-34
+DISTNAME=		djbdnscurve6-35
+PKGREVISION=		2
 CATEGORIES=		net
 MASTER_SITES=		https://www.fehcom.de/ipnet/djbdnscurve6/
 EXTRACT_SUFX=		.tgz
@@ -27,7 +28,7 @@ SUBST_MESSAGE.etc=	Fixing prefix.
 SUBST_CLASSES+=		sysconfdir
 SUBST_STAGE.sysconfdir=	do-configure
 SUBST_FILES.sysconfdir=	src/dnscache-conf.c
-SUBST_SED.sysconfdir=	-e 's|@PKG_SYSCONFDIR@|${PKG_SYSCONFDIR}|g'
+SUBST_VARS.sysconfdir=	PKG_SYSCONFDIR
 SUBST_MESSAGE.sysconfdir=Fixing sysconfdir.
 
 EGDIR=			${PREFIX}/share/examples/${PKGBASE}
@@ -37,11 +38,6 @@ BUILD_DEFS+=		PKG_SYSCONFBASE
 INSTALLATION_DIRS=	${PKGMANDIR}/man1 ${PKGMANDIR}/man5 ${PKGMANDIR}/man8 \
 			share/examples/${PKGBASE}
 
-.include "../../mk/bsd.prefs.mk"
-
-CFLAGS+=		-I${PREFIX}/include/qlibs
-LDFLAGS+=		-L${PREFIX}/lib/qlibs
-
 do-install:
 	cd ${WRKSRC}/compile && ./install && ./instcheck
 	cd ${WRKSRC}/man; for i in 1 5 8; do				\
@@ -50,6 +46,6 @@ do-install:
 	done
 
 .include "../../net/fehqlibs/buildlink3.mk"
-.include "../../security/nacl/buildlink3.mk"
+.include "../../security/libsodium/buildlink3.mk"
 .include "../../mk/djbware.mk"
 .include "../../mk/bsd.pkg.mk"

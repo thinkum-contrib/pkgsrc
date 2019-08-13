@@ -1,4 +1,4 @@
-# $NetBSD: xorg.mk,v 1.32 2019/03/20 21:06:39 wiz Exp $
+# $NetBSD: xorg.mk,v 1.34 2019/07/20 21:09:48 wiz Exp $
 #
 # This is for X.org, but use "xfree" files also.
 
@@ -9,9 +9,11 @@ FILES_LIST=	${FILESDIR}/xorg
 .include "../../fonts/fontconfig/buildlink3.mk"
 .include "../../fonts/libfontenc/buildlink3.mk"
 .include "../../graphics/MesaLib/buildlink3.mk"
+.include "../../graphics/libepoxy/buildlink3.mk"
 .include "../../graphics/freetype2/buildlink3.mk"
 .include "../../graphics/glu/buildlink3.mk"
 .include "../../graphics/glut/buildlink3.mk"
+.include "../../multimedia/libvdpau/buildlink3.mk"
 .include "../../sysutils/libpciaccess/buildlink3.mk"
 .include "../../textproc/expat/buildlink3.mk"
 .include "../../x11/evieext/buildlink3.mk"
@@ -20,7 +22,6 @@ FILES_LIST=	${FILESDIR}/xorg
 .include "../../x11/libSM/buildlink3.mk"
 .include "../../x11/libX11/buildlink3.mk"
 .include "../../x11/libXScrnSaver/buildlink3.mk"
-.include "../../x11/libXTrap/buildlink3.mk"
 .include "../../x11/libXau/buildlink3.mk"
 .include "../../x11/libXcomposite/buildlink3.mk"
 .include "../../x11/libXcursor/buildlink3.mk"

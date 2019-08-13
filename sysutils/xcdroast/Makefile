@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.81 2018/11/14 22:22:28 kleink Exp $
+# $NetBSD: Makefile,v 1.83 2019/07/21 22:25:46 wiz Exp $
 
 DISTNAME=	xcdroast-1.18
-PKGREVISION=	3
+PKGREVISION=	4
 CATEGORIES=	sysutils
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=xcdroast/}
 
@@ -34,7 +34,7 @@ SUBST_CLASSES+=			devossaudio
 SUBST_STAGE.devossaudio=	pre-build
 SUBST_MESSAGE.devossaudio=	Fixing path to audio device.
 SUBST_FILES.devossaudio=	io.c wavplay.c
-SUBST_SED.devossaudio=		-e "s,@DEVOSSAUDIO@,${DEVOSSAUDIO},g"
+SUBST_VARS.devossaudio=		DEVOSSAUDIO
 
 INSTALLATION_DIRS=	${DOCDIR}
 SPECIAL_PERMS+=		lib/xcdroast/bin/xcdrwrap {REAL_ROOT_USER} ${REAL_ROOT_GROUP} 4711

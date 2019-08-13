@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.19 2019/04/25 07:33:11 maya Exp $
+# $NetBSD: Makefile,v 1.22 2019/07/21 22:25:33 wiz Exp $
 
 DISTNAME=	netatalk-3.1.12
 PKGNAME=        ${DISTNAME:C/-/3-/}
-PKGREVISION=	2
+PKGREVISION=	4
 CATEGORIES=	net
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=netatalk/}
 EXTRACT_SUFX=	.tar.bz2
@@ -30,7 +30,7 @@ SMF_SRCDIR=		${WRKSRC}/distrib/initscripts
 SMF_METHODS=		netatalk_smf
 SMF_MANIFEST=		netatalk.xml
 
-CONFLICTS=		netatalk22-[0-9]* netatalk-30-[0-9]* netatalk-[0-9]*
+CONFLICTS=		netatalk22-[0-9]* netatalk30-[0-9]* netatalk-[0-9]*
 CONFLICTS+=		netatalk-asun-[0-9]* netatalk-umich-[0-9]*
 
 .include "../../mk/bsd.prefs.mk"
@@ -69,7 +69,7 @@ SUBST_SED.paths=	-e "s,^\\(DVIPS=\\)\\(/usr/local/tex\\)\\(/bin\\),\\1${PREFIX}\
 
 PLIST_VARS+=		ea
 .if ${OPSYS} == "SunOS" || ${OPSYS} == "DragonFly" || ${OPSYS} == "Linux" || \
-	(${OPSYS} == "NetBSD" && empty(OS_VERSION:M[0-6].[0-8]*))
+	(${OPSYS} == "NetBSD" && empty(OS_VERSION:M[0-6].[0-8].*))
 PLIST.ea=		yes
 .endif
 

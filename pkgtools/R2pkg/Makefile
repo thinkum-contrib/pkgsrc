@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.2 2017/07/18 17:24:31 brook Exp $
+# $NetBSD: Makefile,v 1.4 2019/08/01 13:11:08 brook Exp $
 #
 
-VERS=		0.3
+VERS=		0.5
 PKGNAME=	R2pkg-${VERS}
 CATEGORIES=	pkgtools
 

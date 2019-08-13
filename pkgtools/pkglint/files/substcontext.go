@@ -1,9 +1,6 @@
 package pkglint
 
-import (
-	"netbsd.org/pkglint/textproc"
-	"strings"
-)
+import "netbsd.org/pkglint/textproc"
 
 // SubstContext records the state of a block of variable assignments
 // that make up a SUBST class (see `mk/subst.mk`).
@@ -47,7 +44,18 @@ func (st *SubstContextStats) Or(other SubstContextStats) {
 	st.seenTransform = st.seenTransform || other.seenTransform
 }
 
-func (ctx *SubstContext) Varassign(mkline MkLine) {
+func (ctx *SubstContext) Process(mkline *MkLine) {
+	switch {
+	case mkline.IsEmpty():
+		ctx.Finish(mkline)
+	case mkline.IsVarassign():
+		ctx.Varassign(mkline)
+	case mkline.IsDirective():
+		ctx.Directive(mkline)
+	}
+}
+
+func (ctx *SubstContext) Varassign(mkline *MkLine) {
 	if trace.Tracing {
 		trace.Stepf("SubstContext.Varassign curr=%v all=%v", ctx.curr, ctx.inAllBranches)
 	}
@@ -173,7 +181,7 @@ func (ctx *SubstContext) Varassign(mkline MkLine) {
 	}
 }
 
-func (ctx *SubstContext) Directive(mkline MkLine) {
+func (ctx *SubstContext) Directive(mkline *MkLine) {
 	if ctx.id == "" {
 		return
 	}
@@ -203,13 +211,10 @@ func (ctx *SubstContext) Directive(mkline MkLine) {
 }
 
 func (ctx *SubstContext) IsComplete() bool {
-	return ctx.id != "" &&
-		ctx.stage != "" &&
-		ctx.curr.seenFiles &&
-		ctx.curr.seenTransform
+	return ctx.stage != "" && ctx.curr.seenFiles && ctx.curr.seenTransform
 }
 
-func (ctx *SubstContext) Finish(mkline MkLine) {
+func (ctx *SubstContext) Finish(mkline *MkLine) {
 	if ctx.id == "" {
 		return
 	}
@@ -228,65 +233,33 @@ func (ctx *SubstContext) Finish(mkline MkLine) {
 	*ctx = *NewSubstContext()
 }
 
-func (ctx *SubstContext) dupString(mkline MkLine, pstr *string, varname, value string) {
+func (*SubstContext) dupString(mkline *MkLine, pstr *string, varname, value string) {
 	if *pstr != "" {
 		mkline.Warnf("Duplicate definition of %q.", varname)
 	}
 	*pstr = value
 }
 
-func (ctx *SubstContext) dupBool(mkline MkLine, flag *bool, varname string, op MkOperator, value string) {
+func (*SubstContext) dupBool(mkline *MkLine, flag *bool, varname string, op MkOperator, value string) {
 	if *flag && op != opAssignAppend {
 		mkline.Warnf("All but the first %q lines should use the \"+=\" operator.", varname)
 	}
 	*flag = true
 }
 
-func (ctx *SubstContext) suggestSubstVars(mkline MkLine) {
+func (ctx *SubstContext) suggestSubstVars(mkline *MkLine) {
 
 	tokens, _ := splitIntoShellTokens(mkline.Line, mkline.Value())
 	for _, token := range tokens {
-
-		parser := NewMkParser(nil, mkline.UnquoteShell(token), false)
-		lexer := parser.lexer
-		if !lexer.SkipByte('s') {
-			continue
-		}
-
-		separator := lexer.NextByteSet(textproc.XPrint) // Really any character works
-		if separator == -1 {
-			continue
-		}
-
-		if !lexer.SkipByte('@') {
-			continue
-		}
-
-		varname := parser.Varname()
-		if !lexer.SkipByte('@') || !lexer.SkipByte(byte(separator)) {
-			continue
-		}
-
-		varuse := parser.VarUse()
-		if varuse == nil || varuse.varname != varname {
-			continue
-		}
-
-		switch varuse.Mod() {
-		case "", ":Q":
-			break
-		default:
-			continue
-		}
-
-		if !lexer.SkipByte(byte(separator)) {
+		varname := ctx.extractVarname(mkline.UnquoteShell(token))
+		if varname == "" {
 			continue
 		}
 
 		varop := sprintf("SUBST_VARS.%s%s%s",
 			ctx.id,
-			ifelseStr(hasSuffix(ctx.id, "+"), " ", ""),
-			ifelseStr(ctx.curr.seenVars, "+=", "="))
+			condStr(hasSuffix(ctx.id, "+"), " ", ""),
+			condStr(ctx.curr.seenVars, "+=", "="))
 
 		fix := mkline.Autofix()
 		fix.Notef("The substitution command %q can be replaced with \"%s %s\".",
@@ -295,15 +268,53 @@ func (ctx *SubstContext) suggestSubstVars(mkline MkLine) {
 			"Replacing @VAR@ with ${VAR} is such a typical pattern that pkgsrc has built-in support for it,",
 			"requiring only the variable name instead of the full sed command.")
 		if mkline.VarassignComment() == "" && len(tokens) == 2 && tokens[0] == "-e" {
-			// TODO: Extract the alignment computation somewhere else, so that it is generally available.
-			alignBefore := tabWidth(mkline.ValueAlign())
-			alignAfter := tabWidth(varop + "\t")
-			tabs := strings.Repeat("\t", imax((alignAfter-alignBefore)/8, 0))
-			fix.Replace(mkline.Text, varop+"\t"+tabs+varname)
+			fix.Replace(mkline.Text, alignWith(varop, mkline.ValueAlign())+varname)
 		}
 		fix.Anyway()
 		fix.Apply()
 
 		ctx.curr.seenVars = true
 	}
+}
+
+// extractVarname extracts the variable name from a sed command of the form
+// s,@VARNAME@,${VARNAME}, and some related variants thereof.
+func (*SubstContext) extractVarname(token string) string {
+	parser := NewMkParser(nil, token)
+	lexer := parser.lexer
+	if !lexer.SkipByte('s') {
+		return ""
+	}
+
+	separator := lexer.NextByteSet(textproc.XPrint) // Really any character works
+	if separator == -1 {
+		return ""
+	}
+
+	if !lexer.SkipByte('@') {
+		return ""
+	}
+
+	varname := parser.Varname()
+	if !lexer.SkipByte('@') || !lexer.SkipByte(byte(separator)) {
+		return ""
+	}
+
+	varuse := parser.VarUse()
+	if varuse == nil || varuse.varname != varname {
+		return ""
+	}
+
+	switch varuse.Mod() {
+	case "", ":Q":
+		break
+	default:
+		return ""
+	}
+
+	if !lexer.SkipByte(byte(separator)) {
+		return ""
+	}
+
+	return varname
 }

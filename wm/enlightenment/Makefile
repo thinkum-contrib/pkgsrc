@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.69 2018/08/22 09:47:21 wiz Exp $
+# $NetBSD: Makefile,v 1.71 2019/07/06 16:46:10 nia Exp $
 
 DISTNAME=	e16-0.16.8.8
 PKGNAME=	${DISTNAME:S/e16/enlightenment/}
@@ -7,7 +7,7 @@ CATEGORIES=	x11 gnome wm
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=enlightenment/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://enlightenment.org/
+HOMEPAGE=	https://enlightenment.org/
 COMMENT=	Highly themeable and configurable window manager
 
 USE_TOOLS+=		bison perl:run pkg-config
@@ -32,9 +32,9 @@ REPLACE_PERL+=		scripts/e_gen_menu
 SUBST_CLASSES+=		paths
 SUBST_STAGE.paths=	pre-configure
 SUBST_FILES.paths=	scripts/e_gen_menu
-SUBST_SED.paths=	-e 's,@LOCALBASE@,${LOCALBASE},g'
-SUBST_SED.paths+=	-e 's,@PREFIX@,${PREFIX},g'
-SUBST_SED.paths+=	-e 's,@X11BASE@,${X11BASE},g'
+SUBST_VARS.paths=	LOCALBASE
+SUBST_VARS.paths+=	PREFIX
+SUBST_VARS.paths+=	X11BASE
 
 PLIST_VARS+=	libhack
 

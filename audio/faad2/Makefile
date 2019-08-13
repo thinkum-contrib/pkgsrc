@@ -1,12 +1,13 @@
-# $NetBSD: Makefile,v 1.50 2017/12/01 11:17:51 adam Exp $
+# $NetBSD: Makefile,v 1.53 2019/07/11 09:03:35 nia Exp $
 # IMPORTANT: Do not forget to update audio/xmms-faad
 
-DISTNAME=	faad2-2.8.6
+DISTNAME=	faad2-2.8.8
+PKGREVISION=	1
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=faac/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://faac.sourceforge.net/
+HOMEPAGE=	https://www.audiocoding.com/
 COMMENT=	AAC decoding library
 LICENSE=	gnu-gpl-v2
 
@@ -15,6 +16,9 @@ USE_LIBTOOL=		yes
 USE_TOOLS+=		autoconf automake autoreconf gmake
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--includedir=${PREFIX}/include/faad2
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52624
+GCC_REQD+=		4.8
 
 LIBS+=			-lm
 CPPFLAGS.SunOS+=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1

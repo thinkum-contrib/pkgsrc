@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.22 2018/07/04 13:40:40 jperkin Exp $
+# $NetBSD: Makefile,v 1.24 2019/07/20 22:46:55 wiz Exp $
 
 DISTNAME=	aws-${AWS_VERSION}
 PKGNAME=	aws-demos-${AWS_VERSION}
-PKGREVISION=	9
+PKGREVISION=	10
 CATEGORIES=	www
 MASTER_SITES=	http://downloads.dragonlace.net/src/
 EXTRACT_SUFX=	.tar.bz2
@@ -35,7 +35,7 @@ SUBST_CLASSES+= 	lpath
 SUBST_STAGE.lpath=	pre-configure
 SUBST_MESSAGE.lpath=	Add library path for ldap
 SUBST_FILES.lpath=	demos/test_ldap/test_ldap.gpr
-SUBST_SED.lpath=	-e 's|@PREFIX@|${PREFIX}|g'
+SUBST_VARS.lpath=	PREFIX
 
 DEMO_DIRS+=	auth
 DEMO_DIRS+=	autobahn

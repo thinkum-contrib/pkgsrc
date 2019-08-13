@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1031 2019/04/24 15:52:31 adam Exp $
+# $NetBSD: Makefile,v 1.1041 2019/07/31 13:55:04 brook Exp $
 #
 
 COMMENT=	Text processing utilities (does not include desktop publishing)
@@ -11,12 +11,20 @@ SUBDIR+=	GutenMark-words
 SUBDIR+=	LDoc
 SUBDIR+=	Markdown
 SUBDIR+=	OdfConverter
+SUBDIR+=	R-cellranger
+SUBDIR+=	R-data.table
 SUBDIR+=	R-formatR
 SUBDIR+=	R-gsubfn
+SUBDIR+=	R-haven
 SUBDIR+=	R-highr
+SUBDIR+=	R-htmlTable
 SUBDIR+=	R-htmltools
 SUBDIR+=	R-jsonlite
 SUBDIR+=	R-markdown
+SUBDIR+=	R-openxlsx
+SUBDIR+=	R-readr
+SUBDIR+=	R-readstata13
+SUBDIR+=	R-readxl
 SUBDIR+=	R-stringi
 SUBDIR+=	R-stringr
 SUBDIR+=	R-utf8
@@ -120,6 +128,7 @@ SUBDIR+=	aspell-yi
 SUBDIR+=	aspell-zu
 SUBDIR+=	aspic
 SUBDIR+=	awf
+SUBDIR+=	bat
 SUBDIR+=	bibclean
 SUBDIR+=	biblook
 SUBDIR+=	bibparse
@@ -816,6 +825,7 @@ SUBDIR+=	py-mkdocs
 SUBDIR+=	py-mkdocs-bootstrap
 SUBDIR+=	py-mkdocs-bootswatch
 SUBDIR+=	py-natsort
+SUBDIR+=	py-nltk
 SUBDIR+=	py-numpydoc
 SUBDIR+=	py-odfpy
 SUBDIR+=	py-openpyxl

@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.32 2019/05/08 17:19:41 nia Exp $
+# $NetBSD: Makefile,v 1.36 2019/07/21 22:24:31 wiz Exp $
 
 DISTNAME=	hexchat-2.14.2
+PKGREVISION=	1
 CATEGORIES=	chat
 MASTER_SITES=	https://dl.hexchat.net/hexchat/
 EXTRACT_SUFX=	.tar.xz
@@ -40,20 +41,6 @@ SOEXT.*=		so
 PLIST_SUBST+=		SOEXT=${SOEXT}
 
 LDFLAGS.SunOS+=		-lsocket -lnsl
-
-# I have no idea why it sometimes isn't doing this, causing the build
-# to fail without the generated files.
-post-configure:
-	${PYTHONBIN} ${WRKSRC}/src/common/make-te.py \
-		${WRKSRC}/src/common/textevents.in \
-		${WRKSRC}/src/common/textevents.h \
-		${WRKSRC}/src/common/textenums.h
-	cd ${WRKSRC} && ${PREFIX}/bin/glib-genmarshal \
-		--prefix _hexchat_marshal --internal \
-		--output src/common/marshal.c \
-		--body src/common/marshalers.list \
-		--include-header marshal.h
-
 
 .include "../../devel/py-meson/build.mk"
 .include "../../textproc/iso-codes/buildlink3.mk"

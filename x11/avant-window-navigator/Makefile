@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.49 2019/04/26 13:14:23 maya Exp $
+# $NetBSD: Makefile,v 1.51 2019/07/21 22:25:55 wiz Exp $
 
 DISTNAME=	avant-window-navigator-0.4.0
-PKGREVISION=	34
+PKGREVISION=	35
 CATEGORIES=	x11
 MASTER_SITES=	https://launchpad.net/awn/0.4/0.4.0/+download/
 
@@ -29,7 +29,7 @@ SUBST_CLASSES+=		python
 SUBST_STAGE.python=	pre-configure
 SUBST_MESSAGE.python=	Fixing python path
 SUBST_FILES.python=	applet-activation/main.c
-SUBST_SED.python=	-e "s,@PYTHONBIN@,${PYTHONBIN},"
+SUBST_VARS.python=	PYTHONBIN
 
 SUBST_CLASSES+=		pathfix
 SUBST_STAGE.pathfix=	pre-configure

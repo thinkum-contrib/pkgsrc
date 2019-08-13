@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.73 2019/04/25 07:33:30 maya Exp $
+# $NetBSD: Makefile,v 1.75 2019/07/01 04:07:54 ryoon Exp $
 
 DISTNAME=	kde-workspace-4.11.22
 PKGNAME=	${DISTNAME:S/-4/4-4/}
-PKGREVISION=	18
+PKGREVISION=	19
 CATEGORIES=	x11
 COMMENT=	Base workspace for the KDE 4 integrated X11 desktop
 MASTER_SITES=	${MASTER_SITE_KDE:=applications/15.08.0/src/}
@@ -86,7 +86,7 @@ CONF_FILES+=		${PREFIX}/share/examples/kde4-dbus/org.kde.powerdevil.backlighthel
 
 SUBST_CLASSES+=		paths
 SUBST_FILES.paths=	kdm/kcm/main.cpp
-SUBST_SED.paths=	-e 's,@PKG_SYSCONFDIR@,${PKG_SYSCONFDIR},g'
+SUBST_VARS.paths=	PKG_SYSCONFDIR
 SUBST_STAGE.paths=	pre-configure
 
 SUBST_CLASSES+=		qtpath
