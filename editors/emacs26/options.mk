@@ -114,7 +114,7 @@ CONFIGURE_ARGS+=	--without-xaw3d
 .include "../../graphics/libotf/buildlink3.mk"
 .include "../../graphics/freetype2/buildlink3.mk"
 .include "../../x11/libXft/buildlink3.mk"
-.if ${OPSYS} = "Linux"
+.if ${OPSYS} == "Linux"
 CONFIGURE_ARGS+=	 --without-m17n-flt
 .else
 .include "../../devel/m17n-lib/buildlink3.mk"
