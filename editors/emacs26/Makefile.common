@@ -3,12 +3,12 @@
 # used by editors/emacs26/Makefile
 # used by editors/emacs26-nox11/Makefile
 
-.include "../../mk/bsd.prefs.mk"
-
 DISTNAME=	emacs-${EMACS_VERSION}
 PKGNAME?=	${DISTNAME:S/emacs/emacs26/}
 CATEGORIES=	editors
 MASTER_SITES=	${MASTER_SITE_GNU:=emacs/}
+
+.include "../../mk/bsd.prefs.mk"
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://www.gnu.org/software/emacs/
