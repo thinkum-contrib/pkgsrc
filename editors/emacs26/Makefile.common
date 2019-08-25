@@ -72,8 +72,10 @@ CPPFLAGS+=	-DTERMINFO
 
 .include "../../mk/oss.buildlink3.mk"
 
+.if !defined(EMACS_GIT_COMMON_MK)
 post-extract:
 	cp ${.CURDIR}/../../editors/emacs26/files/site-init.el ${WRKSRC}/lisp
 	${CHMOD} -R go-w ${WRKSRC}
+.endif
 
 .include "../../devel/libgetopt/buildlink3.mk"
