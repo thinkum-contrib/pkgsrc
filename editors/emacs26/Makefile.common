@@ -2,6 +2,10 @@
 #
 # used by editors/emacs26/Makefile
 # used by editors/emacs26-nox11/Makefile
+# used by wip/emacs-git/Makefile.common
+
+.if !defined(EMACS_COMMON_MK)
+EMACS_COMMON_MK=	#defined
 
 DISTNAME=	emacs-${EMACS_VERSION}
 PKGNAME?=	${DISTNAME:S/emacs/emacs26/}
@@ -79,3 +83,5 @@ post-extract:
 .endif
 
 .include "../../devel/libgetopt/buildlink3.mk"
+
+.endif ## EMACS_COMMON_MK
