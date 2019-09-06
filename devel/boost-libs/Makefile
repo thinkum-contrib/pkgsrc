@@ -5,6 +5,11 @@ BOOST_COMMENT=		(binary libraries)
 BOOST_CONFIG=		installed
 BOOST_INSTALL_LIBS=	yes
 
+## FIXME - build with host GCC on Debian 10 is failing
+## somewhere in boost-jam py-make hacks
+##
+## see also: Makefile.new
+
 .include "../../meta-pkgs/boost/Makefile.common"
 
 INSTALLATION_DIRS+=	lib
@@ -44,9 +49,27 @@ PLIST.longdbl=		yes
 # libboost_stacktrace_backtrace requires libbacktrace.
 # FIXME: The condition needs to be refined for non-Debian/Ubuntu
 # platforms shipped with libbacktrace.
-.if ${OPSYS} == "Linux" && exists(/etc/debian_version)
+#
+# The backtrace.h and corresponding object files are probably
+# provided via GCC, in some distributions of GCC - e.g Debian -
+# in review of <WRKSRC>/libs/stacktrace/build/has_backtrace.cpp
+#
+# (Fails to build, when using host LLVM as a compiler on Debian 10)
+# (No libbacktrace.so)
+.if !empty(OPSYS:MLinux) && !empty(PKGSRC_COMPILER:Mgcc) \
+	&& !empty(USE_NATIVE_GCC:M[Yy][Ee][Ss])
 PLIST.backtrace=	yes
 .endif
+
+## FIXME - addr2line path for boost stacktrace//backtrace support
+## in review of <WRKSRC>/libs/stacktrace/build/has_addr2line.cpp
+# .if exists(${LOCALBASE}/gnu/bin/addr2line)
+# ## howto - bjam args ??
+# ALL_ENV+=	BOOST_STACKTRACE_ADDR2LINE_LOCATION=${LOCALBASE}/gnu/bin/addr2line
+# ALL_ENV+=	BOOST_STACKTRACE_USE_ADDR2LINE=Defined
+# ## FIXME - move this to options.mk so that it can optionally pull in binutils
+# #DEPENDS+=	binutils-[0-9]:../../devel/binutils
+# .endif
 
 UNLIMIT_RESOURCES+=	stacksize
 
@@ -57,6 +80,9 @@ MAKE_ENV+=	EXPAT_LIBPATH=${BUILDLINK_PREFIX.expat}/lib
 MAKE_ENV+=	ICU_PATH=${BUILDLINK_PREFIX.icu}
 MAKE_ENV+=	ZLIB_INCLUDE=${BUILDLINK_PREFIX.zlib}/include
 MAKE_ENV+=	ZLIB_LIBPATH=${BUILDLINK_PREFIX.zlib}/lib
+
+## NB: LZMA
+## TBD: 'zstd' @ configure - build w/ LLVM (GCC??) on Linux (GCC builds breaking)
 
 .include "../../devel/boost-jam/bjam.mk"
 
