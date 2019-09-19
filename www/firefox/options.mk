@@ -1,4 +1,4 @@
-# $NetBSD: options.mk,v 1.46 2019/06/09 03:44:50 gutteridge Exp $
+# $NetBSD: options.mk,v 1.49 2019/09/11 16:30:05 gutteridge Exp $
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.firefox
 
@@ -10,7 +10,7 @@ PLIST_VARS+=		gnome jemalloc debug
 .if ${OPSYS} == "Linux"
 PKG_SUGGESTED_OPTIONS+=	pulseaudio mozilla-jemalloc dbus
 .else
-PKG_SUGGESTED_OPTIONS+=	oss dbus
+PKG_SUGGESTED_OPTIONS+=	dbus
 .endif
 
 PKG_SUGGESTED_OPTIONS.Linux+=	webrtc
@@ -37,18 +37,8 @@ CONFIGURE_ARGS+=	--enable-replace-malloc
 CONFIGURE_ARGS+=	--disable-jemalloc
 .endif
 
-.include "../../mk/compiler.mk"
-.if !empty(PKGSRC_COMPILER:Mgcc)
-.if ${CC_VERSION:S/gcc-//:S/.//g} >= 480
-# Modern gcc does not run any "tracking" passes when compiling with -O0,
-# which makes the generated debug info mostly useless. So explicitly
-# request them.
-O0TRACKING=-fvar-tracking-assignments -fvar-tracking
-.endif
-.endif
-
 .if !empty(PKG_OPTIONS:Mdebug)
-CONFIGURE_ARGS+=	--enable-debug="-g -O0 ${O0TRACKING}"
+CONFIGURE_ARGS+=	--enable-debug="-g -O0"
 CONFIGURE_ARGS+=	--disable-optimize
 CONFIGURE_ARGS+=	--enable-debug-js-modules
 CONFIGURE_ARGS+=	--disable-install-strip

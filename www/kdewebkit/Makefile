@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.26 2019/04/25 21:10:45 markd Exp $
+# $NetBSD: Makefile,v 1.28 2019/09/18 14:17:18 ryoon Exp $
 
 DISTNAME=	kdewebkit-${KF5VER}
+PKGREVISION=	1
 CATEGORIES=	www
 
 HOMEPAGE=	https://community.kde.org/Frameworks
@@ -8,6 +9,7 @@ COMMENT=	KDE Integration for QtWebKit
 LICENSE=	gnu-lgpl-v2.1
 
 .include "../../meta-pkgs/kde/kf5.mk"
+MASTER_SITES=	${MASTER_SITE_KDE:=frameworks/${KF5VER:R}/portingAids/}
 
 USE_TOOLS+=	msgmerge
 

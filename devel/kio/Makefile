@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.31 2019/04/25 20:50:23 markd Exp $
+# $NetBSD: Makefile,v 1.33 2019/09/18 14:17:08 ryoon Exp $
 
 DISTNAME=	kio-${KF5VER}
+PKGREVISION=	1
 CATEGORIES=	devel
 
 HOMEPAGE=	https://community.kde.org/Frameworks
@@ -27,8 +28,6 @@ CONF_FILES+=	${PREFIX}/share/examples/kde-xdg/accept-languages.codes \
 		${PKG_SYSCONFDIR}/xdg/accept-languages.codes
 CONF_FILES+=	${PREFIX}/share/examples/kde-xdg/kshorturifilterrc \
 		${PKG_SYSCONFDIR}/xdg/kshorturifilterrc
-CONF_FILES+=	${PREFIX}/share/examples/kde-xdg/kio.categories \
-		${PKG_SYSCONFDIR}/xdg/kio.categories
 
 # generation of kcookieserver.moc fails when ${PREFIX}/include in the moc include path
 SUBST_CLASSES+=		fix-moc

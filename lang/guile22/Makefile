@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.11 2019/07/20 21:01:19 wiz Exp $
+# $NetBSD: Makefile,v 1.13 2019/09/10 03:47:27 gutteridge Exp $
 
 DISTNAME=	guile-2.2.6
 PKGNAME=	${DISTNAME:S/guile/guile22/}
+PKGREVISION=	2
 CATEGORIES=	lang
 MASTER_SITES=	ftp://ftp.gnu.org/gnu/guile/
 
@@ -55,6 +56,7 @@ CONFIGURE_ARGS+=		--mandir=${PREFIX}/${PKGMANDIR}
 INFO_FILES=	yes
 USE_LIBTOOL=	yes
 USE_TOOLS+=	gmake pkg-config
+USE_TOOLS.Darwin+=	gsed
 
 PKGCONFIG_OVERRIDE+=	meta/guile-2.2.pc.in
 # known broken: test-loose-ends on NetBSD/current
@@ -77,6 +79,14 @@ GUILE_LIBNAME.*=	so.22.8.1
 
 PLIST_SUBST+=		GUILE_LIBNAME=${GUILE_LIBNAME}
 PRINT_PLIST_AWK+=	{gsub(/${GUILE_LIBNAME}/, "$${GUILE_LIBNAME}");}
+
+.include "../../mk/bsd.prefs.mk"
+
+# If not Darwin, an extra charset.alias file is installed
+PLIST_VARS+=	charset
+.if ${OPSYS} != "Darwin"
+PLIST.charset=	yes
+.endif
 
 # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=24002
 post-configure:

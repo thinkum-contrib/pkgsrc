@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.829 2019/08/15 08:45:07 fcambus Exp $
+# $NetBSD: Makefile,v 1.834 2019/09/16 10:57:31 nia Exp $
 #
 
 COMMENT=	System utilities
@@ -213,9 +213,6 @@ SUBDIR+=	gnome-menus
 SUBDIR+=	gnome-mount
 SUBDIR+=	gnome-nds-thumbnailer
 SUBDIR+=	gnome-pkgview
-SUBDIR+=	gnome-power-manager
-SUBDIR+=	gnome-settings-daemon
-SUBDIR+=	gnome-system-monitor
 SUBDIR+=	gnome-system-tools
 SUBDIR+=	gnome-vfs
 SUBDIR+=	gnome-vfs-monikers
@@ -391,9 +388,9 @@ SUBDIR+=	mtools
 SUBDIR+=	mtoolsfm
 SUBDIR+=	mtscan
 SUBDIR+=	mtx
-SUBDIR+=	munin-doc
+SUBDIR+=	munin-common
+SUBDIR+=	munin-master
 SUBDIR+=	munin-node
-SUBDIR+=	munin-server
 SUBDIR+=	nautilus
 SUBDIR+=	nautilus-sendto
 SUBDIR+=	nbase
@@ -670,6 +667,7 @@ SUBDIR+=	u-boot-pocketchip
 SUBDIR+=	u-boot-rock64
 SUBDIR+=	u-boot-rockpro64
 SUBDIR+=	u-boot-sopine-baseboard
+SUBDIR+=	u-boot-tinker
 SUBDIR+=	u-boot-zynq-zybo-z7
 SUBDIR+=	upower
 SUBDIR+=	ups-nut

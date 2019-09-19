@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.511 2019/08/09 18:29:50 brook Exp $
+# $NetBSD: Makefile,v 1.513 2019/09/18 09:32:08 nia Exp $
 #
 
 COMMENT=	Miscellaneous utilities
@@ -81,8 +81,6 @@ SUBDIR+=	gkrellm-launch
 SUBDIR+=	gkrellm-leds
 SUBDIR+=	gkrellm-moon
 SUBDIR+=	gkrellm-weather
-SUBDIR+=	gnome-devel-docs
-SUBDIR+=	gnome-user-docs
 SUBDIR+=	gnome-utils
 SUBDIR+=	gnuls
 SUBDIR+=	go-genproto

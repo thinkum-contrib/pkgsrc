@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.17 2019/07/21 22:24:18 wiz Exp $
+# $NetBSD: Makefile,v 1.19 2019/09/09 12:59:06 nia Exp $
 
-PKGREVISION= 1
+PKGREVISION= 2
 .include "../../meta-pkgs/mate/Makefile.common"
 
 DISTNAME=	mate-control-center-${VERSION:R}.1
@@ -23,9 +23,10 @@ MAKE_DIRS+=	${PKG_SYSCONFDIR}/xdg/menus
 CONF_FILES+=	${PREFIX}/share/examples/${PKGBASE}/xdg/menus/matecc.menu \
 		${PKG_SYSCONFDIR}/xdg/menus/matecc.menu
 
+.include "options.mk"
+
 .include "../../devel/glib2/schemas.mk"
 
-.include "../../devel/libappindicator3/buildlink3.mk"
 .include "../../x11/libmatekbd/buildlink3.mk"
 .include "../../x11/mate-desktop/buildlink3.mk"
 .include "../../x11/mate-menus/buildlink3.mk"

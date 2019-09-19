@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.227 2019/08/02 10:24:01 leot Exp $
+# $NetBSD: Makefile,v 1.229 2019/09/13 10:24:13 nia Exp $
 #
 
 COMMENT=	Communication programs
@@ -37,7 +37,6 @@ SUBDIR+=	gajim
 SUBDIR+=	gajim-plugin-omemo
 SUBDIR+=	gg2
 SUBDIR+=	gloox
-SUBDIR+=	gnomeicu
 SUBDIR+=	goofey
 SUBDIR+=	gossip
 SUBDIR+=	hexchat
@@ -52,7 +51,6 @@ SUBDIR+=	inspircd3
 SUBDIR+=	ircII
 SUBDIR+=	ircd-hybrid
 SUBDIR+=	irchat-pj
-SUBDIR+=	ircservices
 SUBDIR+=	ircu
 SUBDIR+=	iroffer
 SUBDIR+=	irssi

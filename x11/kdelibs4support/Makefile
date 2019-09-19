@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.32 2019/08/11 13:25:13 wiz Exp $
+# $NetBSD: Makefile,v 1.34 2019/09/18 14:17:19 ryoon Exp $
 
 DISTNAME=	kdelibs4support-${KF5VER}
 PKGREVISION=	1

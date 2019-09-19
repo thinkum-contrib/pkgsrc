@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.40 2019/07/21 22:24:09 wiz Exp $
+# $NetBSD: Makefile,v 1.42 2019/09/18 14:17:16 ryoon Exp $
 
 DISTNAME=	kdnssd-${KF5VER}
 PKGREVISION=	1

@@ -1,4 +1,4 @@
-# $NetBSD: mozilla-common.mk,v 1.136 2019/07/12 03:52:13 gutteridge Exp $
+# $NetBSD: mozilla-common.mk,v 1.138 2019/09/11 14:19:08 ryoon Exp $
 #
 # common Makefile fragment for mozilla packages based on gecko 2.0.
 #
@@ -51,11 +51,6 @@ test:
 TOOLS_PLATFORM.tar=	${TOOLS_PATH.bsdtar}
 USE_TOOLS+=		bsdtar
 .endif
-GCC_REQD+=		6.1
-.if !empty(MACHINE_PLATFORM:MNetBSD-[0-7]**-*) || \
-	!empty(MACHINE_PLATFORM:MNetBSD-8.[0-8]*-*)
-USE_PKGSRC_GCC_RUNTIME=	yes
-.endif
 .if ${MACHINE_ARCH} == "i386"
 # Fix for PR pkg/48152.
 CXXFLAGS+=		-march=i586
@@ -78,7 +73,6 @@ CONFIGURE_ARGS+=	--enable-release
 # Disable Rust SIMD option to fix build with lang/rust-1.33.0
 # This should be enabled later again.
 #CONFIGURE_ARGS+=	--enable-rust-simd
-CONFIGURE_ARGS+=	--enable-webrender=build
 CONFIGURE_ARGS+=	--disable-tests
 # Mozilla Bug 1432751
 #CONFIGURE_ARGS+=	--enable-system-cairo
@@ -103,6 +97,8 @@ CONFIGURE_ARGS+=	--disable-gconf
 #CONFIGURE_ARGS+=	--enable-readline
 CONFIGURE_ARGS+=	--disable-icf
 CONFIGURE_ARGS+=	--disable-updater
+
+#CONFIGURE_ARGS+=	--with-libclang-path=${PREFIX}/lib
 
 SUBST_CLASSES+=			fix-paths
 SUBST_STAGE.fix-paths=		pre-configure
@@ -225,6 +221,8 @@ BUILDLINK_API_DEPENDS.nss+=	nss>=3.44.1
 #.include "../../graphics/cairo/buildlink3.mk"
 BUILDLINK_API_DEPENDS.libwebp+=	libwebp>=1.0.2
 .include "../../graphics/libwebp/buildlink3.mk"
+PKG_CC=		clang
+PKG_CXX=	clang++
 BUILDLINK_DEPMETHOD.clang=	build
 BUILDLINK_API_DEPENDS.clang+=	clang>=6.0.1nb1
 .include "../../lang/clang/buildlink3.mk"

@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.34 2019/08/11 13:20:27 wiz Exp $
+# $NetBSD: Makefile,v 1.39 2019/09/15 18:53:16 schmonz Exp $
 
-DISTNAME=		Test-BDD-Cucumber-0.57
+DISTNAME=		Test-BDD-Cucumber-0.64
 PKGNAME=		p5-${DISTNAME}
-PKGREVISION=		1
 CATEGORIES=		devel perl5
 MASTER_SITES=		${MASTER_SITE_PERL_CPAN:=Test/}
 
@@ -12,7 +11,6 @@ COMMENT=		Feature-complete Cucumber-style testing in Perl
 LICENSE=		${PERL5_LICENSE}
 
 DEPENDS+=		p5-Clone-[0-9]*:../../devel/p5-Clone
-DEPENDS+=		p5-Devel-Refcount-[0-9]*:../../devel/p5-Devel-Refcount
 DEPENDS+=		p5-File-Find-Rule-[0-9]*:../../devel/p5-File-Find-Rule
 DEPENDS+=		p5-JSON-MaybeXS>=1.001000:../../converters/p5-JSON-MaybeXS
 DEPENDS+=		p5-List-MoreUtils-[0-9]*:../../devel/p5-List-MoreUtils

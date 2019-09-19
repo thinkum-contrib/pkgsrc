@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1046 2019/08/26 18:32:43 ng0 Exp $
+# $NetBSD: Makefile,v 1.1053 2019/09/19 03:06:30 jnemeth Exp $
 #
 
 COMMENT=	Text processing utilities (does not include desktop publishing)
@@ -391,6 +391,7 @@ SUBDIR+=	libodfgen
 SUBDIR+=	libpinyin
 SUBDIR+=	libplist
 SUBDIR+=	libunicode
+SUBDIR+=	libuninameslist
 SUBDIR+=	libunistring
 SUBDIR+=	libxls
 SUBDIR+=	libxlsxwriter
@@ -407,6 +408,7 @@ SUBDIR+=	lowdown
 SUBDIR+=	lq-sp
 SUBDIR+=	lua-cjson
 SUBDIR+=	lua-expat
+SUBDIR+=	lua-lustache
 SUBDIR+=	lua-slnunicode
 SUBDIR+=	lua-xapian
 SUBDIR+=	lucene++
@@ -601,6 +603,7 @@ SUBDIR+=	p5-Text-Markdown
 SUBDIR+=	p5-Text-Markdown-Discount
 SUBDIR+=	p5-Text-MicroTemplate
 SUBDIR+=	p5-Text-Microformat
+SUBDIR+=	p5-Text-MultiMarkdown
 SUBDIR+=	p5-Text-Ngram
 SUBDIR+=	p5-Text-Nimble
 SUBDIR+=	p5-Text-PDF
@@ -722,6 +725,7 @@ SUBDIR+=	p5-mecab
 SUBDIR+=	p5-mobiperl
 SUBDIR+=	p5-native-hyperestraier
 SUBDIR+=	p5-podlators
+SUBDIR+=	p5-sdf
 SUBDIR+=	p5-yamcha
 SUBDIR+=	par
 SUBDIR+=	pdfgrep
@@ -956,6 +960,7 @@ SUBDIR+=	ruby-rdiscount
 SUBDIR+=	ruby-rdtool
 SUBDIR+=	ruby-redcarpet
 SUBDIR+=	ruby-redcloth
+SUBDIR+=	ruby-review
 SUBDIR+=	ruby-rison
 SUBDIR+=	ruby-rttool
 SUBDIR+=	ruby-safe_yaml
@@ -1077,7 +1082,6 @@ SUBDIR+=	xxdiff
 SUBDIR+=	xxdiff-scripts
 SUBDIR+=	yamcha
 SUBDIR+=	yaml-cpp
-SUBDIR+=	yaml-cpp03
 SUBDIR+=	yelp-tools
 SUBDIR+=	yelp-xsl
 SUBDIR+=	yodl

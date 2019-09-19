@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.36 2019/08/22 12:22:49 ryoon Exp $
+# $NetBSD: Makefile,v 1.38 2019/09/18 14:17:04 ryoon Exp $
 
 DISTNAME=		Csound${CSOUND_VERSION}
 PKGNAME=		csound6-${CSOUND_VERSION}
-PKGREVISION=		25
+PKGREVISION=		26
 CATEGORIES=		audio
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=csound/csound6/Csound6.03/}
 WRKSRC=			${WRKDIR}/Csound${CSOUND_VERSION}
@@ -25,7 +25,7 @@ LDFLAGS+=		${COMPILER_RPATH_FLAG}${PREFIX}/lib/csound6
 # Has long files our tar doesn't understand.
 EXTRACT_USING=		bsdtar
 
-PYTHON_VERSIONS_INCOMPATIBLE=	36 37 # not yet ported as of 5.01
+PYTHON_VERSIONS_ACCEPTED=	27 # not yet ported as of 5.01
 
 INSTALLATION_DIRS=	bin
 
