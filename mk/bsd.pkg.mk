@@ -845,7 +845,7 @@ ${_MAKEVARS_MK.${_phase_}}: ${WRKDIR}
 ## Include any late site-local build configuration, if available in
 ## site .PATH
 ##
-## This may serve to permit for testing of specific build configrations,
+## This may serve to permit for testing of specific build configurations,
 ## such that may not be possible in mk.conf itself. This can be used,
 ## for instance, to dispatch on specific elements of USE_TOOLS, such
 ## as for adding dependencies to pkgsrc tools, in preference to those
