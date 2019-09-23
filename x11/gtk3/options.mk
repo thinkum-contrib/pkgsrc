@@ -2,7 +2,7 @@
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.gtk3
 PKG_SUPPORTED_OPTIONS+=	gtk3-atk-bridge cups debug
-PKG_SUPPORTED_OPTIONS+=	wayland x11 xdamage
+PKG_SUPPORTED_OPTIONS+=	wayland x11
 .if exists(/System/Library/Frameworks/Quartz.framework)
 PKG_SUPPORTED_OPTIONS+=	quartz
 .endif
@@ -56,13 +56,6 @@ BUILDLINK_API_DEPENDS.at-spi2-atk+=	at-spi2-atk>=2.6.1
 CONFIGURE_ARGS+=	--without-atk-bridge
 .  endif
 
-.  if !empty(PKG_OPTIONS:Mxdamage)
-.include "../../x11/libXdamage/buildlink3.mk"
-CONFIGURE_ARGS+=	--enable-xdamage
-.  else
-CONFIGURE_ARGS+=	--disable-xdamage
-.  endif
-
 BUILDLINK_API_DEPENDS.Xft2+=	Xft2>=2.1.2nb2
 
 .include "../../x11/xorgproto/buildlink3.mk"
@@ -77,6 +70,7 @@ BUILDLINK_API_DEPENDS.Xft2+=	Xft2>=2.1.2nb2
 .include "../../x11/libXt/buildlink3.mk"
 .include "../../x11/libXext/buildlink3.mk"
 .include "../../x11/libXcomposite/buildlink3.mk"
+.include "../../x11/libXdamage/buildlink3.mk"
 .else
 CONFIGURE_ARGS+=	--disable-x11-backend
 .endif
