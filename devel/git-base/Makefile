@@ -1,6 +1,6 @@
 # $NetBSD: Makefile,v 1.68 2019/08/22 12:23:00 ryoon Exp $
 
-PKGREVISION= 1
+PKGREVISION= 2
 .include "../../devel/git/Makefile.common"
 
 PKGNAME=	git-base-${GIT_VERSION}
@@ -16,7 +16,7 @@ DEPENDS+=	p5-Net-SMTP-SSL>=1.01:../../mail/p5-Net-SMTP-SSL
 DEPENDS+=	p5-Authen-SASL>=1.0:../../security/p5-Authen-SASL
 
 USE_LANGUAGES=		c99
-USE_TOOLS+=		perl:run sh:run msgfmt
+USE_TOOLS+=		perl:run sh:run msgfmt tar
 
 REPLACE_PERL+=		*.perl */*.perl */*/*.perl
 REPLACE_PERL+=		contrib/hooks/update-paranoid
@@ -71,6 +71,8 @@ MAKE_ENV+=		PERLLIBDIR=${PERL5_INSTALLVENDORLIB}
 GIT_TEMPLATE_INSTDIR=	${EGDIR}/${GIT_TEMPLATEDIR}
 MAKE_ENV+=		GIT_TEMPLATE_INSTDIR=${GIT_TEMPLATE_INSTDIR}
 MESSAGE_SUBST+=		GIT_TEMPLATE_INSTDIR=${GIT_TEMPLATE_INSTDIR}
+MAKE_ENV+=		template_instdir_SQ=${GIT_TEMPLATE_INSTDIR}
+MAKE_ENV+=		TAR=${TAR}
 
 .include "../../mk/bsd.prefs.mk"
 
