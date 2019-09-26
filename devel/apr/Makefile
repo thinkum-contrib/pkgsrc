@@ -7,6 +7,7 @@ DISTNAME=	apr-1.7.0
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_APACHE:=apr/}
 EXTRACT_SUFX=	.tar.bz2
+PKGREVISION=	2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://apr.apache.org/
@@ -24,6 +25,12 @@ LIBS.SunOS+=		-lnsl
 
 TEST_TARGET=		check
 
+SUBST_CLASSES+= 	jlibtool
+SUBST_STAGE.jlibtool=	post-configure
+SUBST_FILES.jlibtool=	build/jlibtool.c
+SUBST_SED.jlibtool=	-e 's,@AR@,${AR},;s,@RANLIB@,${RANLIB},'
+SUBST_MESSAGE.jlibtool= Set tool paths in jlibtool
+
 post-install:
 	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
 	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
@@ -32,4 +39,24 @@ post-install:
 .if ${OPSYS} == "Linux" || ${OPSYS} == "SunOS"
 .include "../../devel/libuuid/buildlink3.mk"
 .endif
+
+.include "options.mk"
+
+PTHREADS_OPTS?= 	optional
+.for V in CFLAGS CPPFLAGS LDFLAGS LIBS
+PTHREAD_AUTO_VARS+=	${V}
+.endfor
+
+.include "../../mk/pthread.buildlink3.mk"
+
+.if empty(PTHREAD_TYPE:Mnone)
+CONFIGURE_ARGS+=	--enable-threads
+. for V in CFLAGS CPPFLAGS LDFLAGS # LIBS
+${V}+=			${PTHREAD_${V}}
+CONFIGURE_ENV+= 	${V}=${${V}:Q}
+. endfor
+.else
+CONFIGURE_ARGS+=	--disable-threads
+.endif
+
 .include "../../mk/bsd.pkg.mk"
