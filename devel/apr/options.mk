@@ -13,6 +13,7 @@ CONFIGURE_ARGS+=	--disable-ipv6
 .endif
 
 .if !empty(PKG_OPTIONS:Mjlibtool)
+CONFIGURE_ARGS+=	--enable-experimental-libtool
 
 SUBST_CLASSES+= 	jlibtool
 ## Assumption: This will be run after patches are applied
