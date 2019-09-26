@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.80 2019/04/12 13:02:44 wiz Exp $
+# $NetBSD: Makefile,v 1.81 2020/01/18 23:30:22 rillig Exp $
 #
 # Take care, changelogs often include "PR 12345" strings
 # which cause GNATS indigestion.
@@ -10,7 +10,7 @@ EXTRACT_SUFX=	.tar.bz2
 PKGREVISION=	2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://apr.apache.org/
+HOMEPAGE=	https://apr.apache.org/
 COMMENT=	Apache Portable Runtime
 LICENSE=	apache-2.0
 
@@ -24,6 +24,16 @@ CONFIGURE_ENV+=		LIBS=${LIBS:M*:Q}
 LIBS.SunOS+=		-lnsl
 
 TEST_TARGET=		check
+
+SUBST_CLASSES+= 	jlibtool
+SUBST_STAGE.jlibtool=	post-configure
+SUBST_FILES.jlibtool=	build/jlibtool.c
+SUBST_SED.jlibtool=	-e 's,@AR@,${AR},;s,@RANLIB@,${RANLIB},'
+SUBST_MESSAGE.jlibtool= Set tool paths in jlibtool
+
+post-install:
+	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
+	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
 
 .include "../../mk/bsd.prefs.mk"
 .if ${OPSYS} == "Linux" || ${OPSYS} == "SunOS"
@@ -48,9 +58,5 @@ CONFIGURE_ENV+= 	${V}=${${V}:Q}
 .else
 CONFIGURE_ARGS+=	--disable-threads
 .endif
-
-post-install:
-	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
-	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
 
 .include "../../mk/bsd.pkg.mk"
