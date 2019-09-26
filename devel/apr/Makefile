@@ -25,16 +25,6 @@ LIBS.SunOS+=		-lnsl
 
 TEST_TARGET=		check
 
-SUBST_CLASSES+= 	jlibtool
-SUBST_STAGE.jlibtool=	post-configure
-SUBST_FILES.jlibtool=	build/jlibtool.c
-SUBST_SED.jlibtool=	-e 's,@AR@,${AR},;s,@RANLIB@,${RANLIB},'
-SUBST_MESSAGE.jlibtool= Set tool paths in jlibtool
-
-post-install:
-	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
-	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
-
 .include "../../mk/bsd.prefs.mk"
 .if ${OPSYS} == "Linux" || ${OPSYS} == "SunOS"
 .include "../../devel/libuuid/buildlink3.mk"
