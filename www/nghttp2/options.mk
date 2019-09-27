@@ -1,7 +1,7 @@
 # $NetBSD: options.mk,v 1.6 2019/01/14 17:22:18 gdt Exp $
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.nghttp2
-PKG_SUPPORTED_OPTIONS=	nghttp2-asio nghttp2-tools
+PKG_SUPPORTED_OPTIONS=	nghttp2-asio nghttp2-tools jemalloc
 PKG_SUGGESTED_OPTIONS=	#
 
 .include "../../mk/bsd.options.mk"
@@ -45,4 +45,14 @@ PLIST.tools=		yes
 .else
 CONFIGURE_ARGS+=	--disable-app
 CONFIGURE_ARGS+=	--disable-hpack-tools
+.endif
+
+##
+## Enable building with jemalloc
+##
+.if !empty(PKG_OPTIONS:Mjemalloc)
+.include "../../devel/jemalloc/buildlink3.mk"
+CONFIGURE_ARGS+=	--with-jemalloc
+.else
+CONFIGURE_ARGS+=	--without-jemalloc
 .endif
