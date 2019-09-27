@@ -14,6 +14,10 @@ LICENSE=	mit
 # Upstream documents that c++14 is required for C++ parts of the code;
 # the base package does not use C++.
 USE_LANGUAGES=		c
+# Upstream documents that gcc>=6 or clang >= 6 is required, but this
+# appears not to be true for the C parts.
+# https://github.com/nghttp2/nghttp2/issues/1293
+
 USE_LIBTOOL=		yes
 USE_TOOLS+=		gmake pkg-config
 GNU_CONFIGURE=		yes
