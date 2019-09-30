@@ -10,6 +10,8 @@ HOMEPAGE=	http://www.graphviz.org/
 COMMENT=	Graph Drawing Programs from AT&T Research and Lucent Bell Labs
 LICENSE=	epl-v1.0
 
+.include "../../mk/bsd.prefs.mk"
+
 CHECK_FILES_SKIP+=	${PREFIX}/lib/graphviz/config6
 
 PRIVILEGED_STAGES+=	clean
@@ -53,6 +55,15 @@ REPLACE_FILES.tclsh=	tclpkg/gv/demo/modgraph.tcl
 REPLACE_PERL+=		config/config_perl.pl \
 			tclpkg/gv/demo/modgraph.pl contrib/dotmcl.pl \
 			contrib/dirgraph/dirgraph.pl
+
+.if ( "${OPSYS}" == "FreeBSD")
+SUBST_CLASSES+= 	sfio
+SUBST_FILES.sfio=	lib/sfio/sfclrlock.c lib/sfio/sfio.h lib/sfio/sfio_t.h 
+SUBST_FILES.sfio+=	lib/sfio/sfnew.c lib/sfio/sfopen.c lib/sfio/sfset.c
+SUBST_STAGE.sfio=	post-patch
+SUBST_SED.sfio=		-e 's,SF_FLAGS,SFIO_FLAGS,g'
+SUBST_MESSAGE.sfio=	FreeBSD - update sfio to use SFIO_FLAGS
+.endif
 
 .include "../../mk/compiler.mk"
 .if !empty(CC_VERSION:Mgcc-2*)
