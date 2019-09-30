@@ -24,6 +24,8 @@ MAINTAINER=	pkgsrc-users@NetBSD.org
 ##
 ## - sfio is also available in AT&T libast
 ##   https://github.com/att/ast/tree/master/src/lib/libast
+##   which is used in pkgsrc under shells/ast-ksh
+##   WRKDIR subdirectory src/lib/libast/
 
 COMMENT=	Safe and Fast IO library
 
