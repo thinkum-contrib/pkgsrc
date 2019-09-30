@@ -18,6 +18,7 @@ WRKSRC=		${EXTRACT_DIR}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 #HOMEPAGE=	http://akpublic.research.att.com/sw/tools/sfio/
+HOMEPAGE=	https://github.com/att/ast/tree/master/src/lib/libast/sfio
 
 ## NB
 ## - graphics/graphviz is distributed with a bundled sfio source tree
