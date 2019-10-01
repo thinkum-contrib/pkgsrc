@@ -1,6 +1,6 @@
 $NetBSD: distinfo,v 1.54 2019/07/18 14:41:00 prlw1 Exp $
 
-SHA1 (atk-2.33.3.tar.xz) = 8f4275b646105d1ff0e2052b60310181d2d2d6ab
-RMD160 (atk-2.33.3.tar.xz) = 55bec7762bdc6d80c8f0f6d1c87ce5af63e8ec51
-SHA512 (atk-2.33.3.tar.xz) = a28f7dbc7bd4c997296fc89a16cb4f2f880524c3e120ddce53013b8d0cb746a7c6e1437ff812fe3fbf5238235a6efe190cd986b8fc1ef6b71cbec578b0dbac59
-Size (atk-2.33.3.tar.xz) = 293136 bytes
+SHA1 (atk-2.35.1.tar.xz) = 059aab368fc488e24537bc1c32e67cda55557e68
+RMD160 (atk-2.35.1.tar.xz) = 175d4da674e348dce588f0d476948a9c7b2d93f1
+SHA512 (atk-2.35.1.tar.xz) = da81cb4a6a5f2d8d83fa8a430b181b009e5407d906bb000a2d86481e7fea9fa6fb6e9dcd6790d4efdf513e5fe8fcb32ac3ec49d4ce3c76010145b8baacf2ae1b
+Size (atk-2.35.1.tar.xz) = 294224 bytes
