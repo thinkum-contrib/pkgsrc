@@ -1,6 +1,6 @@
 # $NetBSD: Makefile,v 1.31 2019/07/22 15:11:00 wiz Exp $
 
-DISTNAME=	at-spi2-core-2.33.2
+DISTNAME=	at-spi2-core-2.34.0
 PKGREVISION=	1
 CATEGORIES=	devel gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/at-spi2-core/${PKGVERSION_NOREV:R}/}
