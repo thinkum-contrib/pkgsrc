@@ -14,7 +14,6 @@ USE_PKGLOCALEDIR=	yes
 GNU_CONFIGURE=		yes
 USE_LIBTOOL=		yes
 USE_TOOLS+=		gmake makeinfo
-USE_LANGUAGES+= 	c
 INFO_FILES=		yes
 
 CONFIGURE_ARGS+=	--enable-boehm=system --enable-gmp=system
