@@ -14,9 +14,11 @@ USE_PKGLOCALEDIR=	yes
 GNU_CONFIGURE=		yes
 USE_LIBTOOL=		yes
 USE_TOOLS+=		gmake makeinfo
+USE_LANGUAGES+= 	c
 INFO_FILES=		yes
 
 CONFIGURE_ARGS+=	--enable-boehm=system --enable-gmp=system
+CONFIGURE_ARGS+=	--enable-libatomic=system
 
 SUBST_CLASSES+=			fix-libffi-include
 SUBST_STAGE.fix-libdir=		pre-configure
@@ -26,9 +28,14 @@ SUBST_SED.fix-libdir=		-e '/include.*<ffi/ffi.h>/s:ffi/ffi.h:ffi.h:'
 
 .include "options.mk"
 
+.if !empty(PKGSRC_COMPILER:Mclang) || !empty(PKGSRC_COMPILER:Mgcc)
+CFLAGS+=	-iquote${WRKSRC}/src/c
+.endif
+
 PLIST_SUBST=	PKGVERSION_MAJOR_MINOR=${PKGVERSION_NOREV:R} \
 		PKGVERSION_MAJOR=${PKGVERSION_NOREV:R:R}
 
+.include "../../devel/libatomic_ops/buildlink3.mk"
 .include "../../devel/boehm-gc/buildlink3.mk"
 .include "../../devel/gmp/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"
