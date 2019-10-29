@@ -1,0 +1,18 @@
+$Thinkum$
+
+Update bridge.el to use newer Emacs Lisp backquote syntax
+
+--- bridge.el.orig	2002-10-25 12:13:49.000000000 +0000
++++ bridge.el
+@@ -179,9 +179,8 @@
+        (message "bridge-handler \"%s\" failed %s (see bridge-last-failure)"
+ 		handler err)
+        (setq bridge-last-failure
+-	     (` ((funcall '(, handler) '(, proc) (, string))
+-		 "Caused: "
+-		 (, err))))))
++	     `((funcall (quote ,handler) (quote ,proc) ,string)
++               "Caused: " ,err))))
+     (not failed)))
+ 
+ ;;;%Handlers
