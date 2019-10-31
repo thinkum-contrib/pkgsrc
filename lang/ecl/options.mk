@@ -16,6 +16,9 @@ CONFIGURE_ARGS+=	--enable-debug
 .endif
 
 .if !empty(PKG_OPTIONS:Mthreads)
+. if empty(PKG_OPTIONS.boehm-gc:Mthreads)
+PKG_FAIL_REASON+=	"threads option specified in PKG_OPTIONS.ecl but not in PKG_OPTIONS.boehm-gc"
+. endif
 CONFIGURE_ARGS+=	--enable-threads
 CONFIGURE_ENV+=		THREAD_CFLAGS=${PTHREAD_CFLAGS:Q}
 CONFIGURE_ENV+=		THREAD_LDFLAGS=${BUILDLINK_LDFLAGS.pthread:Q}
