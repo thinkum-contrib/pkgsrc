@@ -1,6 +1,6 @@
 # $NetBSD: Makefile,v 1.2 2017/12/18 13:06:15 jperkin Exp $
 
-DISTNAME=	fig2dev-3.2.6a
+DISTNAME=	fig2dev-3.2.7b
 CATEGORIES=	graphics print
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=mcj/}
 EXTRACT_SUFX=	.tar.xz
@@ -12,6 +12,9 @@ COMMENT=	Convert .fig files to graphical or printable formats
 GNU_CONFIGURE=	yes
 
 LDFLAGS.SunOS+=	-liconv
+
+DEPENDS+=	rgb-[0-9]*:../../x11/rgb
+CONFIGURE_ARGS+=--with-rgbfile=${PREFIX}/share/X11/rgb.txt
 
 .include "../../graphics/png/buildlink3.mk"
 .include "../../converters/libiconv/buildlink3.mk"
