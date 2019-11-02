@@ -132,4 +132,3 @@ do-doc-pdf-install: do-doc-pdf-build .PHONY
 ## NB not a default configure setting
 # CONFIGURE_ARGS+=	--without-debug-cflags
 # .endif
-
