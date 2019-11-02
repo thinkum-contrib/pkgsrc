@@ -32,6 +32,12 @@ SUBST_SED.fix-libdir=		-e '/include.*<ffi/ffi.h>/s:ffi/ffi.h:ffi.h:'
 CFLAGS+=	-iquote${WRKSRC}/src/c
 .endif
 
+do-doc-build: ${DOC_BUILD_TARGETS} .PHONY
+
+do-doc-install: do-doc-build ${DOC_INSTALL_TARGETS} .PHONY
+
+pre-install: do-doc-build do-doc-install
+
 PLIST_SUBST=	PKGVERSION_MAJOR_MINOR=${PKGVERSION_NOREV:R} \
 		PKGVERSION_MAJOR=${PKGVERSION_NOREV:R:R}
 
