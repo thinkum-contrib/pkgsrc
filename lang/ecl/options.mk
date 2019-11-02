@@ -1,7 +1,7 @@
 # $NetBSD: options.mk,v 1.11 2019/03/01 13:30:52 leot Exp $
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.ecl
-PKG_SUPPORTED_OPTIONS+=		debug threads unicode ffi doc # gengc precisegc debug
+PKG_SUPPORTED_OPTIONS+=		debug threads unicode ffi doc # gengc precisegc
 PKG_SUGGESTED_OPTIONS+=		unicode ffi
 # Unicode support proved to break Axioms.
 # Threads are off, since threaded ECL requires threads support
@@ -122,13 +122,4 @@ do-doc-pdf-install: do-doc-pdf-build .PHONY
 #
 # .if !empty(PKG_OPTIONS:Mprecisegc)
 # CONFIGURE_ARGS+=	--enable-precisegc
-# .endif
-
-## Debug options
-# .if !empty(PKG_OPTIONS:Mdebug)
-# CONFIGURE_ARGS+=	--enable-debug
-# CONFIGURE_ARGS+=	--with-debug-cflags
-# .else
-## NB not a default configure setting
-# CONFIGURE_ARGS+=	--without-debug-cflags
 # .endif
