@@ -123,3 +123,13 @@ do-doc-pdf-install: do-doc-pdf-build .PHONY
 # .if !empty(PKG_OPTIONS:Mprecisegc)
 # CONFIGURE_ARGS+=	--enable-precisegc
 # .endif
+
+## Extended Debug options (TBD)
+# .if !empty(PKG_OPTIONS:Mdebug)
+# CONFIGURE_ARGS+=	--enable-debug
+# CONFIGURE_ARGS+=	--with-debug-cflags
+# .else
+## NB not a default configure setting
+# CONFIGURE_ARGS+=	--without-debug-cflags
+# .endif
+
