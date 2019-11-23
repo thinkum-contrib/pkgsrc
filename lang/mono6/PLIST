@@ -928,13 +928,13 @@ lib/mono/4.5.2-api/mscorlib.dll
 lib/mono/4.5/Accessibility.dll
 lib/mono/4.5/Commons.Xml.Relaxng.dll
 lib/mono/4.5/CustomMarshalers.dll
-lib/mono/4.5/csc.exe.so
-lib/mono/4.5/mcs.exe.so
-lib/mono/4.5/Microsoft.CodeAnalysis.CSharp.dll.so
-lib/mono/4.5/Microsoft.CodeAnalysis.dll.so
-lib/mono/4.5/mscorlib.dll.so
-lib/mono/4.5/System.Collections.Immutable.dll.so
-lib/mono/4.5/System.Reflection.Metadata.dll.so
+${PLIST.aotso}lib/mono/4.5/csc.exe.so
+${PLIST.aotso}lib/mono/4.5/mcs.exe.so
+${PLIST.aotso}lib/mono/4.5/Microsoft.CodeAnalysis.CSharp.dll.so
+${PLIST.aotso}lib/mono/4.5/Microsoft.CodeAnalysis.dll.so
+${PLIST.aotso}lib/mono/4.5/mscorlib.dll.so
+${PLIST.aotso}lib/mono/4.5/System.Collections.Immutable.dll.so
+${PLIST.aotso}lib/mono/4.5/System.Reflection.Metadata.dll.so
 lib/mono/4.5/Facades/Microsoft.Win32.Primitives.dll
 lib/mono/4.5/Facades/Microsoft.Win32.Registry.AccessControl.dll
 lib/mono/4.5/Facades/Microsoft.Win32.Registry.AccessControl.pdb
@@ -2674,8 +2674,8 @@ lib/mono/gac/Mono.CSharp/4.0.0.0__0738eb9f132ed756/Mono.CSharp.dll
 lib/mono/gac/Mono.CSharp/4.0.0.0__0738eb9f132ed756/Mono.CSharp.pdb
 lib/mono/gac/Mono.Cairo/4.0.0.0__0738eb9f132ed756/Mono.Cairo.dll
 lib/mono/gac/Mono.Cairo/4.0.0.0__0738eb9f132ed756/Mono.Cairo.pdb
-lib/mono/gac/Mono.Cecil/0.10.3.0__0738eb9f132ed756/Mono.Cecil.dll
-lib/mono/gac/Mono.Cecil/0.10.3.0__0738eb9f132ed756/Mono.Cecil.pdb
+lib/mono/gac/Mono.Cecil/0.11.0.0__0738eb9f132ed756/Mono.Cecil.dll
+lib/mono/gac/Mono.Cecil/0.11.0.0__0738eb9f132ed756/Mono.Cecil.pdb
 lib/mono/gac/Mono.Cecil/0.9.5.0__0738eb9f132ed756/Mono.Cecil.dll
 lib/mono/gac/Mono.Cecil/0.9.5.0__0738eb9f132ed756/Mono.Cecil.pdb
 lib/mono/gac/Mono.CodeContracts/4.0.0.0__0738eb9f132ed756/Mono.CodeContracts.dll
@@ -2929,6 +2929,7 @@ lib/mono/msbuild/Current/bin/Roslyn/Microsoft.CodeAnalysis.Scripting.dll
 lib/mono/msbuild/Current/bin/Roslyn/Microsoft.CodeAnalysis.VisualBasic.dll
 lib/mono/msbuild/Current/bin/Roslyn/Microsoft.CodeAnalysis.dll
 lib/mono/msbuild/Current/bin/Roslyn/Microsoft.Managed.Core.targets
+lib/mono/msbuild/Current/bin/Roslyn/Microsoft.Managed.EditorConfig.targets
 lib/mono/msbuild/Current/bin/Roslyn/Microsoft.VisualBasic.Core.targets
 lib/mono/msbuild/Current/bin/Roslyn/System.Collections.Immutable.dll
 lib/mono/msbuild/Current/bin/Roslyn/System.Memory.dll
@@ -3192,3 +3193,7 @@ share/locale/pt_BR/LC_MESSAGES/mcs.mo
 share/mono-2.0/mono/cil/cil-opcodes.xml
 share/mono-2.0/mono/eglib/eglib-config.h
 share/mono-2.0/mono/profiler/mono-profiler-coverage.suppression
+${PLIST.btls}lib/libmono-btls-shared.so
+${PLIST.btls}lib/mono/4.5/Mono.Btls.Interface.dll
+${PLIST.btls}lib/mono/gac/Mono.Btls.Interface/4.0.0.0__0738eb9f132ed756/Mono.Btls.Interface.dll
+${PLIST.btls}lib/mono/gac/Mono.Btls.Interface/4.0.0.0__0738eb9f132ed756/Mono.Btls.Interface.pdb

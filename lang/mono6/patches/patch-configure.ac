@@ -3,9 +3,9 @@ $NetBSD: patch-configure.ac,v 1.1 2019/08/25 16:37:01 maya Exp $
 Add netbsd support
 https://github.com/mono/mono/pull/15938
 
---- configure.ac.orig	2019-07-18 07:52:31.000000000 +0000
+--- configure.ac.orig	2019-09-19 07:53:55.000000000 +0000
 +++ configure.ac
-@@ -4066,10 +4066,10 @@ LIBC="libc.so.6"
+@@ -4155,10 +4155,10 @@
  INTL="libc.so.6"
  SQLITE="libsqlite.so.0"
  SQLITE3="libsqlite3.so.0"
@@ -20,7 +20,7 @@ https://github.com/mono/mono/pull/15938
  
  sizeof_register="SIZEOF_VOID_P"
  
-@@ -6177,6 +6177,22 @@ elif test x$platform_android = xyes; the
+@@ -6309,6 +6309,22 @@
  	MONO_NATIVE_PLATFORM=android
  
  	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_ANDROID"
@@ -43,11 +43,11 @@ https://github.com/mono/mono/pull/15938
  else
  	mono_native=no
  	mono_native_text="no"
-@@ -6218,6 +6234,7 @@ AM_CONDITIONAL(MONO_NATIVE_PLATFORM_IOS,
+@@ -6350,6 +6366,7 @@
  AM_CONDITIONAL(MONO_NATIVE_PLATFORM_LINUX, test x$MONO_NATIVE_PLATFORM = xlinux)
  AM_CONDITIONAL(MONO_NATIVE_PLATFORM_AIX, test x$MONO_NATIVE_PLATFORM = xaix)
  AM_CONDITIONAL(MONO_NATIVE_PLATFORM_ANDROID, test x$MONO_NATIVE_PLATFORM = xandroid)
 +AM_CONDITIONAL(MONO_NATIVE_PLATFORM_NETBSD, test x$MONO_NATIVE_PLATFORM = xnetbsd)
+ AM_CONDITIONAL(MONO_NATIVE_PLATFORM_FREEBSD, test x$MONO_NATIVE_PLATFORM = xfreebsd)
  
  MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
- MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_UNIFIED"
