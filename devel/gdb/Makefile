@@ -1,7 +1,7 @@
 # $NetBSD: Makefile,v 1.63 2019/08/11 13:18:42 wiz Exp $
 
 DISTNAME=	gdb-8.1
-PKGREVISION=	4
+PKGREVISION=	5
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_GNU:=gdb/}
 
@@ -93,6 +93,17 @@ post-install:
 		break;						\
 	     fi;						\
 	  done;	)
+#
+# gcore.1 might not be installed under some PLIST.gcore == "yes",
+# was installed under OPSYS == "Linux".
+
+.if ${PLIST.gcore} == "yes"
+	${RUN} _DEST=${DESTDIR}${PREFIX}/${PKGMANDIR}/man1/gcore.1; \
+	if ! [ -e $${_DEST} ]; then \
+	  ${SETENV} ${INSTALL_ENV} ${INSTALL_MAN} ${WRKSRC}/gdb/doc/gcore.1 $${_DEST}; \
+	fi
+.endif
+
 
 .include "../../mk/termcap.buildlink3.mk"
 .include "../../devel/gettext-lib/buildlink3.mk"
