@@ -25,6 +25,10 @@ pkgbase := cairo
 .include "../../x11/libXrender/buildlink3.mk"
 .endif
 
+.if !empty(PKG_BUILD_OPTIONS.cairo:Mopengl)
+.include "../../graphics/MesaLib/buildlink3.mk"
+.endif
+
 .include "../../archivers/lzo/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
 .include "../../fonts/fontconfig/buildlink3.mk"

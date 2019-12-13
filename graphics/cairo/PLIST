@@ -3,6 +3,7 @@ bin/cairo-trace
 include/cairo/cairo-deprecated.h
 include/cairo/cairo-features.h
 include/cairo/cairo-ft.h
+${PLIST.opengl}include/cairo/cairo-gl.h
 include/cairo/cairo-pdf.h
 include/cairo/cairo-ps.h
 ${PLIST.quartz}include/cairo/cairo-quartz-image.h
@@ -20,7 +21,10 @@ lib/cairo/cairo-fdr.la
 lib/cairo/libcairo-trace.la
 lib/libcairo-script-interpreter.la
 lib/libcairo.la
+${PLIST.opengl-egl}lib/pkgconfig/cairo-egl.pc
 lib/pkgconfig/cairo-fc.pc
+${PLIST.opengl}lib/pkgconfig/cairo-gl.pc
+${PLIST.opengl-glx}lib/pkgconfig/cairo-glx.pc
 lib/pkgconfig/cairo-ft.pc
 lib/pkgconfig/cairo-pdf.pc
 lib/pkgconfig/cairo-png.pc
