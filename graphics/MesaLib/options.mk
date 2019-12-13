@@ -1,4 +1,4 @@
-# $NetBSD: options.mk,v 1.77 2019/12/08 13:07:20 nia Exp $
+# $NetBSD: options.mk,v 1.77+ 2019/12/08 13:07:20 nia Exp $
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.MesaLib
 
@@ -8,6 +8,10 @@ PKG_SUPPORTED_OPTIONS+=		llvm vulkan x11
 
 .if ${MESALIB_SUPPORTS_DRI} == "yes"
 PKG_SUPPORTED_OPTIONS+=		wayland
+.  include "../../devel/wayland/platform.mk"
+.  if ${PLATFORM_SUPPORTS_WAYLAND} == "yes"
+PKG_SUGGESTED_OPTIONS+=		wayland
+.  endif
 .endif
 
 PKG_SUGGESTED_OPTIONS+=		x11
@@ -41,7 +45,7 @@ PLIST_VARS+=	vdpau
 #
 .if !empty(PKG_OPTIONS:Mllvm)
 MESON_ARGS+=		-Dllvm=true
-BUILDLINK_API_DEPENDS.libLLVM+=	libLLVM>=7.0.1nb2
+BUILDLINK_API_DEPENDS.libLLVM+= libLLVM>=7.0.1nb2
 BUILDLINK_PKGSRCDIR.libLLVM?=	../../lang/libLLVM/
 .  include "../../devel/libelf/buildlink3.mk"
 .  include "${BUILDLINK_PKGSRCDIR.libLLVM}/buildlink3.mk"
