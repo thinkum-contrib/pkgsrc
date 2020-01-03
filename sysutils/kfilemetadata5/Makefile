@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.53 2019/08/27 20:39:06 markd Exp $
+# $NetBSD: Makefile,v 1.56 2019/11/11 08:55:57 markd Exp $
 
 DISTNAME=	kfilemetadata-${KF5VER}
 PKGNAME=	${DISTNAME:S/-/5-/}

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.192 2019/09/15 13:38:03 nia Exp $
+# $NetBSD: Makefile,v 1.197 2019/10/31 03:05:26 jnemeth Exp $
 #
 
 COMMENT=	Editors
@@ -43,7 +43,7 @@ SUBDIR+=	ex
 SUBDIR+=	fe
 SUBDIR+=	gate
 SUBDIR+=	gconf-editor
-SUBDIR+=	gedit3
+SUBDIR+=	gedit
 SUBDIR+=	ghex
 SUBDIR+=	gice
 SUBDIR+=	gnuserv
@@ -63,6 +63,7 @@ SUBDIR+=	kakoune
 SUBDIR+=	kate
 SUBDIR+=	kile
 SUBDIR+=	kilo
+SUBDIR+=	l3afpad
 SUBDIR+=	le
 SUBDIR+=	leafpad
 SUBDIR+=	leim20
@@ -166,6 +167,7 @@ SUBDIR+=	xemacs-packages
 SUBDIR+=	xfce4-mousepad
 SUBDIR+=	xjed
 SUBDIR+=	xournal
+SUBDIR+=	xournalpp
 SUBDIR+=	xvile
 SUBDIR+=	xwpe
 SUBDIR+=	yed

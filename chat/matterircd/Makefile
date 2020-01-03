@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.16 2019/08/14 15:45:32 bsiegert Exp $
+# $NetBSD: Makefile,v 1.20 2019/12/13 07:43:47 bsiegert Exp $
 
 DISTNAME=	matterircd-0.18.4
 MASTER_SITES=	${MASTER_SITE_GITHUB:=42wim/}
-PKGREVISION=	6
+PKGREVISION=	9
 CATEGORIES=	chat
 GITHUB_TAG=	v${PKGVERSION_NOREV}
 EXTRACT_USING=	bsdtar
@@ -12,8 +12,8 @@ HOMEPAGE=	https://github.com/42wim/matterircd
 COMMENT=	Minimal IRC server which integrates with Mattermost and Slack
 LICENSE=	mit
 
-GO_DIST_BASE=	${PKGNAME_NOREV}
-GO_SRCPATH=	github.com/42wim/matterircd
+GO_DIST_BASE=		${PKGNAME_NOREV}
+GO_SRCPATH=		github.com/42wim/matterircd
 GO_BUILD_PATTERN=	${GO_SRCPATH}
 
 pre-configure:

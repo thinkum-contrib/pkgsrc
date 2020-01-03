@@ -1,17 +1,15 @@
-# $NetBSD: Makefile,v 1.22 2019/08/05 19:06:50 adam Exp $
+# $NetBSD: Makefile,v 1.25 2019/12/29 15:31:21 adam Exp $
 
-DISTNAME=	lldb-8.0.1.src
+.include "../../lang/llvm/version.mk"
+
+DISTNAME=	lldb-${LLVM_VERSION}.src
 PKGNAME=	${DISTNAME:S/.src//}
 CATEGORIES=	lang devel
-MASTER_SITES=	${MASTER_SITE_GITHUB:=llvm/}
-GITHUB_PROJECT=	llvm-project
-GITHUB_RELEASE=	llvmorg-${PKGVERSION_NOREV}
-EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://lldb.org/
 COMMENT=	Next generation, high-performance debugger
-LICENSE=	modified-bsd
+LICENSE=	apache-2.0
 
 DEPENDS+=	llvm-${PKGVERSION_NOREV}{,nb*}:../../lang/llvm
 DEPENDS+=	clang-${PKGVERSION_NOREV}{,nb*}:../../lang/clang

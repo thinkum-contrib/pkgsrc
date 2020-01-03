@@ -1,13 +1,14 @@
-# $NetBSD: Makefile,v 1.145 2019/09/15 17:55:09 nia Exp $
+# $NetBSD: Makefile,v 1.149 2019/11/11 10:36:37 nia Exp $
 
 DISTNAME=	anjuta-3.34.0
+PKGREVISION=	2
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/anjuta/3.34/}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://www.anjuta.org/
-COMMENT=	Gnome based IDE for C and C++
+COMMENT=	GTK+ based IDE for C and C++
 LICENSE=	gnu-gpl-v2
 
 DEPENDS+=	autogen-[0-9]*:../../devel/autogen
@@ -15,6 +16,7 @@ DEPENDS+=	autoconf>=2.59:../../devel/autoconf
 DEPENDS+=	automake>=1.8.2:../../devel/automake
 DEPENDS+=	gsettings-desktop-schemas-[0-9]*:../../sysutils/gsettings-desktop-schemas
 DEPENDS+=	libtool>=1.5.2:../../devel/libtool
+DEPENDS+=	itstool-[0-9]*:../../textproc/itstool
 
 USE_LANGUAGES=		c c++
 USE_LIBTOOL=		yes
@@ -31,8 +33,8 @@ CONFIGURE_ARGS+=	--enable-introspection=no
 CONFIGURE_ARGS+=	--disable-plugin-subversion
 # devhelp3 unavailable in pkgsrc currently
 CONFIGURE_ARGS+=	--disable-plugin-devhelp
-# glade3 unavailable in pkgsrc currently
-CONFIGURE_ARGS+=	--disable-plugin-glade
+
+CONFIGURE_ARGS+=	--disable-plugin-vala
 
 CONFIGURE_ARGS+=	YACC="bison -y"
 
@@ -45,10 +47,10 @@ BUILDLINK_TRANSFORM+=	rm:-Werror=format=2
 .include "../../databases/libgda/buildlink3.mk"
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/gdl/buildlink3.mk"
+.include "../../devel/glade/buildlink3.mk"
 .include "../../devel/glib2/schemas.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../lang/python/pyversion.mk"
-.include "../../lang/vala/buildlink3.mk"
 .include "../../textproc/gtk-doc/buildlink3.mk"
 .include "../../textproc/libxml2/buildlink3.mk"
 .include "../../x11/gtk3/buildlink3.mk"

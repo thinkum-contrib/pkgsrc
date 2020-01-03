@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.261 2019/08/16 11:58:17 wiz Exp $
+# $NetBSD: Makefile,v 1.263 2019/11/02 22:37:53 rillig Exp $
 
 .include "Makefile.common"
 
@@ -14,8 +14,6 @@ USE_TOOLS+=		gmake pkg-config:run
 CONFIGURE_ARGS+=	--disable-assert
 CONFIGURE_ARGS+=	--with-fontconfig
 CONFIGURE_ARGS+=	--with-jpeg
-CONFIGURE_ARGS+=	--with-ltdl-include=${BUILDLINK_PREFIX.libltdl}/include
-CONFIGURE_ARGS+=	--with-ltdl-lib=${BUILDLINK_PREFIX.libltdl}/lib
 CONFIGURE_ARGS+=	--with-xml=yes
 CONFIGURE_ARGS+=	--without-perl
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFBASEDIR}
@@ -45,17 +43,17 @@ CFLAGS+=		-O
 .endif
 
 PKG_SYSCONFSUBDIR=	ImageMagick-${IM_MAJOR_LIB_VER}
-EGDIR=		${PREFIX}/share/examples/ImageMagick
-CONF_FILES+=	${EGDIR}/colors.xml ${PKG_SYSCONFDIR}/colors.xml
-CONF_FILES+=	${EGDIR}/delegates.xml ${PKG_SYSCONFDIR}/delegates.xml
-CONF_FILES+=	${EGDIR}/log.xml ${PKG_SYSCONFDIR}/log.xml
-CONF_FILES+=	${EGDIR}/mime.xml ${PKG_SYSCONFDIR}/mime.xml
-CONF_FILES+=	${EGDIR}/policy.xml ${PKG_SYSCONFDIR}/policy.xml
-CONF_FILES+=	${EGDIR}/thresholds.xml ${PKG_SYSCONFDIR}/thresholds.xml
-CONF_FILES+=	${EGDIR}/type-dejavu.xml ${PKG_SYSCONFDIR}/type-dejavu.xml
-CONF_FILES+=	${EGDIR}/type-ghostscript.xml ${PKG_SYSCONFDIR}/type-ghostscript.xml
-CONF_FILES+=	${EGDIR}/type-windows.xml ${PKG_SYSCONFDIR}/type-windows.xml
-CONF_FILES+=	${EGDIR}/type.xml ${PKG_SYSCONFDIR}/type.xml
+EGDIR=			${PREFIX}/share/examples/ImageMagick
+CONF_FILES+=		${EGDIR}/colors.xml ${PKG_SYSCONFDIR}/colors.xml
+CONF_FILES+=		${EGDIR}/delegates.xml ${PKG_SYSCONFDIR}/delegates.xml
+CONF_FILES+=		${EGDIR}/log.xml ${PKG_SYSCONFDIR}/log.xml
+CONF_FILES+=		${EGDIR}/mime.xml ${PKG_SYSCONFDIR}/mime.xml
+CONF_FILES+=		${EGDIR}/policy.xml ${PKG_SYSCONFDIR}/policy.xml
+CONF_FILES+=		${EGDIR}/thresholds.xml ${PKG_SYSCONFDIR}/thresholds.xml
+CONF_FILES+=		${EGDIR}/type-dejavu.xml ${PKG_SYSCONFDIR}/type-dejavu.xml
+CONF_FILES+=		${EGDIR}/type-ghostscript.xml ${PKG_SYSCONFDIR}/type-ghostscript.xml
+CONF_FILES+=		${EGDIR}/type-windows.xml ${PKG_SYSCONFDIR}/type-windows.xml
+CONF_FILES+=		${EGDIR}/type.xml ${PKG_SYSCONFDIR}/type.xml
 
 SUBST_CLASSES+=		fix-cfg
 SUBST_STAGE.fix-cfg=	pre-configure
@@ -69,11 +67,11 @@ SUBST_MESSAGE.fix-etc=	Handle configuration files.
 SUBST_FILES.fix-etc=	Makefile.in
 SUBST_SED.fix-etc=	-e 's,^configlibdir =.*,configlibdir = $$(DATA_DIR)/examples/ImageMagick,'
 
-SUBST_CLASSES+=		fix-tools
-SUBST_STAGE.fix-tools=	pre-install
-SUBST_MESSAGE.fix-tools=Unwrapping tools path in delegate paths.
-SUBST_FILES.fix-tools=	config/delegates.xml
-SUBST_SED.fix-tools=	-e 's,${TOOLS_DIR},,g'
+SUBST_CLASSES+=			fix-tools
+SUBST_STAGE.fix-tools=		pre-install
+SUBST_MESSAGE.fix-tools=	Unwrapping tools path in delegate paths.
+SUBST_FILES.fix-tools=		config/delegates.xml
+SUBST_SED.fix-tools=		-e 's,${TOOLS_DIR},,g'
 
 SUBST_CLASSES+=		fix-pc
 SUBST_STAGE.fix-pc=	pre-configure

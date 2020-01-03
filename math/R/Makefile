@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.203 2019/08/22 12:23:29 ryoon Exp $
+# $NetBSD: Makefile,v 1.205 2019/10/20 03:29:10 markd Exp $
 
 DISTNAME=	R-3.6.1
 PKGREVISION=	1
 CATEGORIES=	math
 MASTER_SITES=	${MASTER_SITE_R_CRAN:=base/R-3/}
 
-MAINTAINER=	markd@NetBSD.org
+MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://www.R-project.org/
 COMMENT=	Statistical language for data analysis and graphics
 LICENSE=	gnu-gpl-v2
@@ -31,11 +31,6 @@ CONFIGURE_ARGS+=	--with-lapack
 CONFIGURE_ARGS+=	--with-tcltk
 CONFIGURE_ARGS+=	--with-tcl-config=${BUILDLINK_PREFIX.tcl}/lib/tclConfig.sh
 CONFIGURE_ARGS+=	--with-tk-config=${BUILDLINK_PREFIX.tk}/lib/tkConfig.sh
-CONFIGURE_ARGS+=	--without-gnome		# not yet stable
-CONFIGURE_ARGS+=	--with-system-zlib
-CONFIGURE_ARGS+=	--with-system-bzlib
-CONFIGURE_ARGS+=	--with-system-pcre
-CONFIGURE_ARGS+=	--with-system-xz
 
 .include "../../mk/bsd.prefs.mk"
 .if ${OPSYS} == "NetBSD" || ${OPSYS} == "FreeBSD"
@@ -63,12 +58,8 @@ PLIST.x11=		yes
 .if exists(/System/Library/Frameworks/Accelerate.framework)
 CONFIGURE_ARGS+=	--with-blas="-framework Accelerate"
 .else
-CONFIGURE_ARGS+=	--without-atlas
 CONFIGURE_ARGS+=	--disable-BLAS-shlib
 CONFIGURE_ARGS+=	--with-blas
-CONFIGURE_ARGS+=	--without-blas_risc
-CONFIGURE_ARGS+=	--without-dxml
-CONFIGURE_ARGS+=	--without-libmoto
 .endif
 
 # Work around missing MAIN__() definition used in -lF77 by AC_CHECK_LIB.

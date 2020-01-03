@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.23 2019/07/22 14:03:33 rjs Exp $
+# $NetBSD: Makefile,v 1.26 2019/11/02 22:37:57 rillig Exp $
 
 DISTNAME=	gdk-pixbuf-${PIXBUF2_VERSION}
 PKGNAME=	gdk-pixbuf2-xlib-${PIXBUF2_VERSION}
-PKGREVISION=	1
 CATEGORIES=	graphics
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gdk-pixbuf/${MSITE_VERSION}/}
 EXTRACT_SUFX=	.tar.xz
@@ -22,10 +21,10 @@ CONFLICTS+=	gtk2+<2.22
 USE_TOOLS+=	gmake pkg-config
 MAKE_ENV+=	LD_LIBRARY_PATH=${WRKSRC}/output/gdk-pixbuf
 
-MESON_ARGS+=	-D installed_tests=false
-MESON_ARGS+=	-D x11=true
-PKGCONFIG_OVERRIDE_STAGE=pre-install
-PKGCONFIG_OVERRIDE=    output/meson-private/gdk-pixbuf-xlib-2.0.pc
+MESON_ARGS+=			-D installed_tests=false
+MESON_ARGS+=			-D x11=true
+PKGCONFIG_OVERRIDE_STAGE=	pre-install
+PKGCONFIG_OVERRIDE=		output/meson-private/gdk-pixbuf-xlib-2.0.pc
 
 post-install:
 	${RM} -rf ${DESTDIR}${PREFIX}/*
@@ -39,7 +38,7 @@ post-install:
 	${INSTALL_LIB} ${WRKSRC}/output/contrib/gdk-pixbuf-xlib/*.so* ${DESTDIR}${PREFIX}/lib
 	${INSTALL_DATA} ${WRKSRC}/output/meson-private/gdk-pixbuf-xlib-2.0.pc ${DESTDIR}${PREFIX}/lib/pkgconfig
 
-.include "../../devel/py-meson/build.mk"
+.include "../../devel/meson/build.mk"
 .include "../../databases/shared-mime-info/buildlink3.mk"
 .include "../../graphics/gdk-pixbuf2/buildlink3.mk"
 .include "../../mk/jpeg.buildlink3.mk"

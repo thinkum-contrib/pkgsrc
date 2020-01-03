@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.66 2019/07/18 13:38:18 taca Exp $
+@comment $NetBSD: PLIST,v 1.68 2019/12/05 09:34:06 adam Exp $
 bin/doveadm
 bin/doveconf
 bin/dsync
@@ -26,7 +26,6 @@ include/dovecot/auth-master-connection.h
 include/dovecot/auth-master.h
 include/dovecot/auth-penalty.h
 include/dovecot/auth-policy.h
-include/dovecot/auth-postfix-connection.h
 include/dovecot/auth-request-handler.h
 include/dovecot/auth-request-stats.h
 include/dovecot/auth-request-var-expand.h
@@ -41,7 +40,6 @@ include/dovecot/backtrace-string.h
 include/dovecot/base32.h
 include/dovecot/base64.h
 include/dovecot/bits.h
-include/dovecot/bloomfilter.h
 include/dovecot/bsearch-insert-pos.h
 include/dovecot/buffer.h
 include/dovecot/byteorder.h
@@ -430,7 +428,6 @@ include/dovecot/mmap-util.h
 include/dovecot/module-context.h
 include/dovecot/module-dir.h
 include/dovecot/mountpoint.h
-include/dovecot/murmurhash3.h
 include/dovecot/mycrypt.h
 include/dovecot/net.h
 include/dovecot/nfs-workarounds.h
@@ -525,6 +522,7 @@ include/dovecot/sha1.h
 include/dovecot/sha2.h
 include/dovecot/sha3.h
 include/dovecot/shared-storage.h
+include/dovecot/sleep.h
 include/dovecot/smtp-address.h
 include/dovecot/smtp-client-command.h
 include/dovecot/smtp-client-connection.h
@@ -653,6 +651,7 @@ libexec/dovecot/dns-client
 libexec/dovecot/doveadm-server
 libexec/dovecot/dovecot-lda
 libexec/dovecot/gdbhelper
+libexec/dovecot/health-check.sh
 libexec/dovecot/imap
 libexec/dovecot/imap-hibernate
 libexec/dovecot/imap-login

@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.11 2019/09/13 17:20:41 wiz Exp $
+# $NetBSD: Makefile,v 1.14 2019/11/06 15:45:07 wiz Exp $
 
-DISTNAME=	enigmail-2.0.12
+DISTNAME=	enigmail-2.1.3
 PKGNAME=	thunderbird-${DISTNAME}
-PKGREVISION=	1
 CATEGORIES=	mail security
 MASTER_SITES=	http://www.enigmail.net/download/source/
 
@@ -12,7 +11,7 @@ COMMENT=	GnuPG support for mail/thunderbird
 LICENSE=	(mpl-1.1 OR gnu-gpl-v2 OR gnu-lgpl-v2.1) AND mpl-2.0
 
 # Minimal requirements are here: https://www.enigmail.net/download/source.php
-DEPENDS+=		thunderbird>=38:../../mail/thunderbird
+DEPENDS+=		thunderbird>=68:../../mail/thunderbird
 
 # Path used during the install stage
 XPIDIR=		${PREFIX}/lib/thunderbird/extensions
@@ -29,19 +28,15 @@ DEPENDS+=		pinentry-gtk2-[0-9]*:../../security/pinentry-gtk2
 REPLACE_PERL+=	util/fixlang.pl
 REPLACE_PERL+=	util/make-lang-xpi.pl
 
-PYTHON_VERSIONS_ACCEPTED=	 27 # as of 1.8.2
-REPLACE_PYTHON+=	util/checkFiles.py
-REPLACE_PYTHON+=	util/header.py
-REPLACE_PYTHON+=	util/typelib.py
-REPLACE_PYTHON+=	util/header.py
-REPLACE_PYTHON+=	util/xpidl.py
-REPLACE_PYTHON+=	util/xpt.py
+PYTHON_VERSIONS_ACCEPTED=	27 # as of 2.1.2
+REPLACE_PYTHON+=		util/checkFiles.py
+REPLACE_PYTHON+=		util/run-tests.py
 
 WRKSRC=		${WRKDIR}/enigmail
 GNU_CONFIGURE=	yes
 
 ENIGMAILXPI=	enigmail-${PKGVERSION_NOREV}.xpi
-XPIFILE=	${WRKSRC}/build/${ENIGMAILXPI}
+XPIFILE=	${WRKSRC}/build-tb/${ENIGMAILXPI}
 
 # Build instructions: https://www.enigmail.net/download/build_instructions.php
 # Installation of extensions: http://kb.mozillazine.org/Installing_extensions

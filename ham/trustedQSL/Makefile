@@ -1,12 +1,11 @@
-# $NetBSD: Makefile,v 1.41 2019/08/22 12:23:24 ryoon Exp $
+# $NetBSD: Makefile,v 1.43 2019/11/03 19:32:08 rillig Exp $
 
-DISTNAME=		tqsl-2.4.2
-PKGREVISION=		5
+DISTNAME=		tqsl-2.4.7
 CATEGORIES=		ham
-MASTER_SITES=		https://sourceforge.net/projects/trustedqsl/files/TrustedQSL/v${PKGVERSION_NOREV}/
+MASTER_SITES=		http://www.arrl.org/files/file/LoTW%20Instructions/
 
 MAINTAINER=		makoto@ki.nu
-HOMEPAGE=		https://sourceforge.net/projects/trustedqsl/
+HOMEPAGE=		http://www.arrl.org/quick-start-tqsl
 COMMENT=		TrustedQSL, uploading QSL Data to LoTW of ARRL
 LICENSE=		arrl-license
 
@@ -27,11 +26,11 @@ USE_CMAKE=		yes
 # usage in Makefile.am, without matching -R.
 
 # remove the string $(LIB_SUFFIX), tested with NetBSD at least
-SUBST_CLASSES+=		lib-suffix
-SUBST_MESSAGE.lib-suffix= Removing $$(LIB_SUFFIX) from src/CMakeLists.txt
-SUBST_STAGE.lib-suffix= pre-configure
-SUBST_FILES.lib-suffix= src/CMakeLists.txt
-SUBST_SED.lib-suffix= 	-e s/\$$\(LIB_SUFFIX\)//
+SUBST_CLASSES+=			lib-suffix
+SUBST_MESSAGE.lib-suffix=	Removing $$(LIB_SUFFIX) from src/CMakeLists.txt
+SUBST_STAGE.lib-suffix=		pre-configure
+SUBST_FILES.lib-suffix=		src/CMakeLists.txt
+SUBST_SED.lib-suffix=		-e s/\$$\(LIB_SUFFIX\)//
 
 do-configure:
 	(cd ${WRKSRC} ; \

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.35 2019/08/22 12:23:15 ryoon Exp $
+# $NetBSD: Makefile,v 1.37 2019/10/27 17:44:33 bouyer Exp $
 
 DISTNAME=	OpenCPN-5.0.0
 PKGNAME=	${DISTNAME:S/OpenCPN/opencpn/}
@@ -41,12 +41,16 @@ SUBST_SED.prefix=	-e s,"/usr/local,"${PREFIX},g
 # Ensure we export symbols in the linked shared object.
 LDFLAGS+=	${EXPORT_SYMBOLS_LDFLAGS}
 
+# hack so that pango find harfbuzz's headers
+CFLAGS+=	-I${PREFIX}/include/harfbuzz
+CXXFLAGS+=	-I${PREFIX}/include/harfbuzz
+
 .include "../../audio/libsndfile/buildlink3.mk"
 .include "../../devel/cmake/buildlink3.mk"
 .include "../../x11/wxGTK30/buildlink3.mk"
 .include "../../graphics/libexif/buildlink3.mk"
 .include "../../archivers/bzip2/buildlink3.mk"
-.include "../../audio/portaudio-devel/buildlink3.mk"
+.include "../../audio/portaudio/buildlink3.mk"
 .include "../../textproc/tinyxml/buildlink3.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"

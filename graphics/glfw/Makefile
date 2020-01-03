@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.4 2019/07/08 10:36:26 nia Exp $
-#
+# $NetBSD: Makefile,v 1.6 2019/12/21 23:42:35 joerg Exp $
 
-DISTNAME=	glfw-3.2.1
+DISTNAME=	glfw-3.3
 CATEGORIES=	graphics
 MASTER_SITES=	${MASTER_SITE_GITHUB:=glfw/}
 
@@ -22,6 +21,7 @@ CMAKE_ARGS+=	-DGLFW_BUILD_DOCS=OFF
 .include "../../x11/libX11/buildlink3.mk"
 .include "../../x11/libXext/buildlink3.mk"
 .include "../../x11/libXcursor/buildlink3.mk"
+.include "../../x11/libXi/buildlink3.mk"
 .include "../../x11/libXinerama/buildlink3.mk"
 .include "../../x11/libXrandr/buildlink3.mk"
 .include "../../x11/libxkbcommon/buildlink3.mk"

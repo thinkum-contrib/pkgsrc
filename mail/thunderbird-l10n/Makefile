@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.78 2019/07/11 11:58:00 ryoon Exp $
+# $NetBSD: Makefile,v 1.85 2019/12/29 00:52:02 ryoon Exp $
 #
 
-TB_VER=		60.8.0
+TB_VER=		68.3.1
 PKGNAME=	thunderbird-l10n-${TB_VER}
 DISTNAME=	# empty
 CATEGORIES=	mail
@@ -18,7 +18,7 @@ NO_BUILD=	yes
 
 INSTALLATION_DIRS=	lib/thunderbird/extensions
 
-TB_LOCALES=	        ar ast be bg br ca cs cy		\
+TB_LOCALES=		ar ast be bg br ca cs cy		\
                         da de dsb el en-GB en-US es-AR es-ES et	\
                         eu fi fr fy-NL ga-IE gd gl he hr hsb	\
                         hy-AM hu id is it ja ko			\

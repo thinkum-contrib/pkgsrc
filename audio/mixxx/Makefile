@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.6 2019/09/18 14:17:05 ryoon Exp $
+# $NetBSD: Makefile,v 1.9 2019/11/09 20:01:14 jperkin Exp $
 
-DISTNAME=	mixxx-2.2.1
-PKGREVISION=	3
+DISTNAME=	mixxx-2.2.2
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_GITHUB:=mixxxdj/}
 GITHUB_TAG=	release-${PKGVERSION_NOREV}
@@ -11,13 +10,15 @@ HOMEPAGE=	https://mixxx.org/
 COMMENT=	DJ mixing application
 LICENSE=	gnu-gpl-v2
 
-.include "../../mk/bsd.prefs.mk"
-
 USE_LANGUAGES=	c c++11
 USE_TOOLS+=	pkg-config
 
 # c++11
 GCC_REQD+=	4.9
+
+PLIST_SRCS+=	PLIST
+
+.include "../../mk/bsd.prefs.mk"
 
 SCONS_ARGS+=	-j${MAKE_JOBS:U1}
 
@@ -89,7 +90,7 @@ do-install:
 .include "../../audio/lilv/buildlink3.mk"
 .include "../../audio/lv2/buildlink3.mk"
 .include "../../audio/opusfile/buildlink3.mk"
-.include "../../audio/portaudio-devel/buildlink3.mk"
+.include "../../audio/portaudio/buildlink3.mk"
 .include "../../audio/rubberband/buildlink3.mk"
 .include "../../audio/soundtouch/buildlink3.mk"
 .include "../../audio/taglib/buildlink3.mk"

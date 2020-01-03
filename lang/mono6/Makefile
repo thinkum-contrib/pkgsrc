@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.6 2019/09/11 11:53:39 nia Exp $
+# $NetBSD: Makefile,v 1.8 2019/10/10 00:06:12 maya Exp $
 
 DISTNAME=	mono-6.4.0.198
 CATEGORIES=	lang
@@ -203,6 +203,8 @@ pre-configure:
 
 .if ${OPSYS} == "SunOS"
 CFLAGS+=		-D_XOPEN_SOURCE=600
+# Conflicts with the above settings
+CONFIGURE_ENV+=		ac_cv_func_madvise=no
 CONFIGURE_ARGS+=	--with-mcs-docs=no
 CONFIGURE_ARGS+=	--with-sgen=no
 CONFIGURE_ARGS+=	--with-sigaltstack=no
@@ -285,6 +287,7 @@ PLIST.aotso=	yes
 .include "../../devel/zlib/buildlink3.mk"
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../lang/python/application.mk"
+.include "../../lang/python/tool.mk"
 .include "../../textproc/icu/buildlink3.mk"
 .include "../../textproc/libxml2/buildlink3.mk"
 .include "../../textproc/libxslt/buildlink3.mk"

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.32 2019/09/14 14:02:32 nia Exp $
+# $NetBSD: Makefile,v 1.37 2019/11/09 11:22:20 nia Exp $
 
-DISTNAME=	ncmpc-0.34
+DISTNAME=	ncmpc-0.36
 CATEGORIES=	audio
 MASTER_SITES=	https://musicpd.org/download/ncmpc/0/
 EXTRACT_SUFX=	.tar.xz
@@ -14,7 +14,7 @@ USE_TOOLS+=	pkg-config xgettext
 USE_LANGUAGES=	c c++14
 FAKE_NCURSES=	yes
 
-TOOL_DEPENDS+=	${PYPKGPREFIX}-sphinx-[0-9]*:../../textproc/py-sphinx
+PYTHON_VERSIONED_DEPENDENCIES=	sphinx:tool
 
 MESON_ARGS+=	-Dlirc=disabled
 MESON_ARGS+=	-Dhtml_manual=false
@@ -23,7 +23,6 @@ MESON_ARGS+=	-Dhtml_manual=false
 GCC_REQD+=	4.9
 
 # make stderr readable
-CXXFLAGS+=	-Wno-noexcept-type
 CXXFLAGS+=	-Wno-undef
 
 LDFLAGS+=	${BUILDLINK_LDADD.curses}
@@ -40,10 +39,11 @@ SUBST_FILES.py+=	doc/meson.build
 SUBST_VARS.py+=		PYVERSSUFFIX
 
 .include "options.mk"
-.include "../../devel/py-meson/build.mk"
+.include "../../devel/meson/build.mk"
 .include "../../audio/libmpdclient/buildlink3.mk"
 .include "../../devel/boost-headers/buildlink3.mk"
 .include "../../devel/pcre/buildlink3.mk"
 .include "../../lang/python/tool.mk"
+.include "../../lang/python/versioned_dependencies.mk"
 .include "../../mk/pthread.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

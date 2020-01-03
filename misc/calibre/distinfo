@@ -1,4 +1,4 @@
-$NetBSD: distinfo,v 1.103 2019/03/25 13:11:56 wiz Exp $
+$NetBSD: distinfo,v 1.104 2019/09/24 16:39:50 kamil Exp $
 
 SHA1 (calibre-3.48.0.tar.xz) = e50216526d756132540e9e3393bc898b7c78b034
 RMD160 (calibre-3.48.0.tar.xz) = 7b42db0fff999a86210029d48361c98ab0de5351
@@ -6,4 +6,5 @@ SHA512 (calibre-3.48.0.tar.xz) = 6cee28fb560e2e00b8ac2f32756f094146c6fe744cfc343
 Size (calibre-3.48.0.tar.xz) = 38777408 bytes
 SHA1 (patch-setup_build.py) = f309c8f01af375fce1d09bf5c4bac9610cf4e0c5
 SHA1 (patch-setup_build__environment.py) = dd6160233c717e935205649ee685e71df3f1858e
+SHA1 (patch-src_calibre_headless_headless__integration.cpp) = 62ab6f5aaf6bd8bcbb875ab56eac1a474d8b446b
 SHA1 (patch-src_calibre_linux.py) = 16c3122a612ec9996f774c5c2c9d40a475723662

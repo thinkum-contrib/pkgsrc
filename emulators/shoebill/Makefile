@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.10 2019/08/11 13:20:58 wiz Exp $
+# $NetBSD: Makefile,v 1.12 2019/11/03 19:24:34 rillig Exp $
 
 DISTNAME=	shoebill-0.0.5
-PKGREVISION=	4
+PKGREVISION=	5
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_GITHUB:=pruten/}
 
@@ -21,8 +21,8 @@ REPLACE_PERL+=	core/macro.pl
 DOCDIR=		share/doc/shoebill
 INSTALLATION_DIRS= bin ${DOCDIR}
 
-CFLAGS+=	-g3
-INSTALL_UNSTRIPPED= yes
+CFLAGS+=		-g3
+INSTALL_UNSTRIPPED=	yes
 
 do-build:
 	( cd ${WRKSRC}/sdl-gui && \

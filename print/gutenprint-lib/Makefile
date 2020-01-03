@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.90 2019/08/11 13:22:39 wiz Exp $
+# $NetBSD: Makefile,v 1.92 2019/11/04 19:57:59 rillig Exp $
 
-VERSION=	5.2.15
+INSTALLVERSION=	5.3
+VERSION=	${INSTALLVERSION}.3
 DISTNAME=	gutenprint-${VERSION}
 PKGNAME=	gutenprint-lib-${VERSION}
-PKGREVISION=	4
 CATEGORIES=	print
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=gimp-print/}
-EXTRACT_SUFX=	.tar.bz2
+EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	gdt@NetBSD.org
 COMMENT=	Drivers for Canon, Epson, Lexmark, and PCL printers
@@ -16,8 +16,7 @@ LICENSE=	gnu-gpl-v2
 
 PREV_PKGPATH=	print/gutenprint51-lib
 
-INSTALLVERSION=	5.2
-PLIST_SUBST+=	INSTALLVERSION=${INSTALLVERSION}
+PLIST_SUBST+=		INSTALLVERSION=${INSTALLVERSION}
 PRINT_PLIST_AWK+=	{ gsub("gutenprint/${INSTALLVERSION}", \
 				"gutenprint/$${INSTALLVERSION}") }
 PRINT_PLIST_AWK+=	{ gsub(".${INSTALLVERSION}$$", \
@@ -68,7 +67,7 @@ CONFIGURE_ARGS+=	--disable-translated-cups-ppds
 # escputil is a utility for Epson printers.  It should arguably be in
 # a split package, but it's small and useful so splitting isn't worth
 # the effort.
-CONFIGURE_ARGS+= --enable-escputil
+CONFIGURE_ARGS+=	--enable-escputil
 
 # test pattern generator.  Small, so let it be built.
 #CONFIGURE_ARGS+=	--enable-test

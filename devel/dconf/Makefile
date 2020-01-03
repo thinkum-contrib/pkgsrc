@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.51 2019/08/16 10:54:51 wiz Exp $
+# $NetBSD: Makefile,v 1.54 2019/11/06 14:34:29 wiz Exp $
 
-DISTNAME=	dconf-0.32.0
+DISTNAME=	dconf-0.34.0
+PKGREVISION=	1
 CATEGORIES=	devel gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/dconf/${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.xz
@@ -15,7 +16,7 @@ BUILD_DEPENDS+=	libxslt-[0-9]*:../../textproc/libxslt
 BUILD_DEPENDS+=	docbook-xsl-[0-9]*:../../textproc/docbook-xsl
 
 USE_LANGUAGES=	c99
-USE_TOOLS+=	pkg-config gmake
+USE_TOOLS+=	pkg-config
 
 REPLACE_PYTHON+=	*.py
 
@@ -58,7 +59,7 @@ BUILDLINK_DEPMETHOD.vala=	build
 BUILDLINK_API_DEPENDS.glib2+=	glib2>=2.44.0
 #.include "../../textproc/gtk-doc/buildlink3.mk"
 .include "../../devel/glib2/modules.mk"
-.include "../../devel/py-meson/build.mk"
+.include "../../devel/meson/build.mk"
 .include "../../sysutils/dbus/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../mk/bsd.pkg.mk"

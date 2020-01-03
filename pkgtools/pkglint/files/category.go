@@ -1,17 +1,13 @@
 package pkglint
 
-import (
-	"fmt"
-	"netbsd.org/pkglint/textproc"
-	"strings"
-)
+import "netbsd.org/pkglint/textproc"
 
-func CheckdirCategory(dir string) {
+func CheckdirCategory(dir CurrPath) {
 	if trace.Tracing {
-		defer trace.Call1(dir)()
+		defer trace.Call(dir)()
 	}
 
-	mklines := LoadMk(dir+"/Makefile", NotEmpty|LogErrors)
+	mklines := LoadMk(dir.JoinNoClean("Makefile"), NotEmpty|LogErrors) // TODO: Remove the "./" here already
 	if mklines == nil {
 		return
 	}
@@ -26,21 +22,11 @@ func CheckdirCategory(dir string) {
 	if mlex.SkipIf(func(mkline *MkLine) bool { return mkline.IsVarassign() && mkline.Varname() == "COMMENT" }) {
 		mkline := mlex.PreviousMkLine()
 
-		lex := textproc.NewLexer(mkline.Value())
 		valid := textproc.NewByteSet("--- '(),/0-9A-Za-z")
-		invalid := valid.Inverse()
-		var uni strings.Builder
-
-		for !lex.EOF() {
-			_ = lex.NextBytesSet(valid)
-			ch := lex.NextByteSet(invalid)
-			if ch != -1 {
-				_, _ = fmt.Fprintf(&uni, " %U", ch)
-			}
-		}
-
-		if uni.Len() > 0 {
-			mkline.Warnf("%s contains invalid characters (%s).", mkline.Varname(), uni.String()[1:])
+		invalid := invalidCharacters(mkline.Value(), valid)
+		if invalid != "" {
+			mkline.Warnf("%s contains invalid characters (%s).",
+				mkline.Varname(), invalid)
 		}
 
 	} else {
@@ -49,7 +35,7 @@ func CheckdirCategory(dir string) {
 	mlex.SkipEmptyOrNote()
 
 	type subdir struct {
-		name string
+		name RelPath
 		line *MkLine
 	}
 
@@ -64,26 +50,26 @@ func CheckdirCategory(dir string) {
 	for !mlex.EOF() {
 		mkline := mlex.CurrentMkLine()
 
-		if (mkline.IsVarassignMaybeCommented()) && mkline.Varname() == "SUBDIR" {
+		if mkline.IsVarassignMaybeCommented() && mkline.Varname() == "SUBDIR" {
 			mlex.Skip()
 
-			name := mkline.Value()
-			if mkline.IsCommentedVarassign() && mkline.VarassignComment() == "" {
+			name := mkline.Value() // TODO: Maybe NewPath here already
+			if mkline.IsCommentedVarassign() && !mkline.HasComment() {
 				mkline.Warnf("%q commented out without giving a reason.", name)
 			}
 
 			if prev := seen[name]; prev != nil {
-				mkline.Errorf("%q must only appear once, already seen in %s.", name, mkline.RefTo(prev))
+				mkline.Errorf("%q must only appear once, already seen in %s.", name, mkline.RelMkLine(prev))
 			}
 			seen[name] = mkline
 
 			if len(mSubdirs) > 0 {
-				if prev := mSubdirs[len(mSubdirs)-1].name; name < prev {
+				if prev := mSubdirs[len(mSubdirs)-1].name; name < prev.String() {
 					mkline.Warnf("%q should come before %q.", name, prev)
 				}
 			}
 
-			mSubdirs = append(mSubdirs, subdir{name, mkline})
+			mSubdirs = append(mSubdirs, subdir{NewRelPathString(name), mkline})
 
 		} else {
 			if !mkline.IsEmpty() {
@@ -96,8 +82,8 @@ func CheckdirCategory(dir string) {
 	// To prevent unnecessary warnings about subdirectories that are
 	// in one list but not in the other, generate the sets of
 	// subdirs of each list.
-	fCheck := make(map[string]bool)
-	mCheck := make(map[string]bool)
+	fCheck := make(map[RelPath]bool)
+	mCheck := make(map[RelPath]bool)
 	for _, fsub := range fSubdirs {
 		fCheck[fsub] = true
 	}
@@ -122,7 +108,7 @@ func CheckdirCategory(dir string) {
 
 				fix := line.Autofix()
 				fix.Errorf("%q exists in the file system but not in the Makefile.", fCurrent)
-				fix.InsertBefore("SUBDIR+=\t" + fCurrent)
+				fix.InsertBefore("SUBDIR+=\t" + fCurrent.String())
 				fix.Apply()
 			}
 			fRest = fRest[1:]
@@ -148,19 +134,19 @@ func CheckdirCategory(dir string) {
 		mlex.SkipEmptyOrNote()
 		mlex.SkipContainsOrWarn(".include \"../mk/misc/category.mk\"")
 		if !mlex.EOF() {
-			mlex.CurrentLine().Errorf("The file should end here.")
+			mlex.CurrentLine().Errorf("The file must end here.")
 		}
 	}
 
 	mklines.SaveAutofixChanges()
 
 	if G.Opts.Recursive {
-		var recurseInto []string
+		var recurseInto []CurrPath
 		for _, msub := range mSubdirs {
 			if !msub.line.IsCommentedVarassign() {
-				recurseInto = append(recurseInto, dir+"/"+msub.name)
+				recurseInto = append(recurseInto, dir.JoinNoClean(msub.name))
 			}
 		}
-		G.Todo = append(recurseInto, G.Todo...)
+		G.Todo.PushFront(recurseInto...)
 	}
 }

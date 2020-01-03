@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.15 2019/08/14 15:45:35 bsiegert Exp $
+# $NetBSD: Makefile,v 1.18 2019/12/13 07:43:56 bsiegert Exp $
 #
 
 DISTNAME=		go-glog-20160125
-PKGREVISION=		14
+PKGREVISION=		17
 CATEGORIES=		devel
 MASTER_SITES=		${MASTER_SITE_GITHUB:=golang/}
 GITHUB_PROJECT=		glog

@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.126 2019/05/13 14:55:05 martin Exp $
+# $NetBSD: Makefile,v 1.128 2019/12/28 17:23:52 wiz Exp $
 
 DISTNAME=	icu4c-64_2-src
 PKGNAME=	${DISTNAME:S/4c//:S/-src//:S/_/./g}
-PKGREVISION=	1
+PKGREVISION=	2
 CATEGORIES=	textproc
 MASTER_SITES=	http://download.icu-project.org/files/icu4c/${PKGVERSION_NOREV}/
 EXTRACT_SUFX=	.tgz
@@ -23,6 +23,8 @@ CONFIGURE_ARGS+=	--enable-static
 CONFIGURE_ENV+=		U_MAKE=${TOOLS_GMAKE}
 
 CHECK_SSP_SKIP=		lib/libicudata.so*
+
+PYTHON_FOR_BUILD_ONLY=	tool
 
 .include "../../mk/pthread.buildlink3.mk"
 
@@ -93,12 +95,12 @@ PLIST_SUBST+=		MH_NAME=mh-qnx
 PLIST_SUBST+=		MH_NAME=mh-unknown
 .endif
 
-PKGCONFIG_OVERRIDE+=	config/icu-i18n.pc
-PKGCONFIG_OVERRIDE+=	config/icu-io.pc
-PKGCONFIG_OVERRIDE+=	config/icu-le.pc
-PKGCONFIG_OVERRIDE+=	config/icu-lx.pc
-PKGCONFIG_OVERRIDE+=	config/icu-uc.pc
-PKGCONFIG_OVERRIDE+=	config/icu.pc
+PKGCONFIG_OVERRIDE+=		config/icu-i18n.pc
+PKGCONFIG_OVERRIDE+=		config/icu-io.pc
+PKGCONFIG_OVERRIDE+=		config/icu-le.pc
+PKGCONFIG_OVERRIDE+=		config/icu-lx.pc
+PKGCONFIG_OVERRIDE+=		config/icu-uc.pc
+PKGCONFIG_OVERRIDE+=		config/icu.pc
 PKGCONFIG_OVERRIDE_STAGE=	post-build
 
 # work around ICU-20533 (build failure on big endian machines)

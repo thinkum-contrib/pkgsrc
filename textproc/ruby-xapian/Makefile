@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.6 2019/08/30 01:34:01 schmonz Exp $
+# $NetBSD: Makefile,v 1.8 2019/12/25 14:29:24 schmonz Exp $
 
 PKGNAME=		${RUBY_PKGPREFIX}-${PKGNAME_MODULE}
-PKGREVISION=		1
 COMMENT=		Ruby bindings for Xapian search engine
 HOMEPAGE=		https://xapian.org/docs/bindings/ruby/
 
@@ -11,14 +10,10 @@ MAKE_ENV+=		RUBY_PKGPREFIX=${RUBY_PKGPREFIX:Q}
 
 REPLACE_RUBY=		ruby/docs/examples/*.rb
 
-PLIST_VARS+=		jquery oldruby newruby
+PLIST_VARS+=		oldruby newruby
 PLIST_SUBST+=		XAPIAN_RDOC_PATH=${XAPIAN_RDOC_PATH:Q}
 
 .include "../../lang/ruby/rubyversion.mk"
-
-.if ${RUBY_VER} == 25
-PLIST.jquery=		yes
-.endif
 
 .if ${RUBY_VER} < 25
 PLIST.oldruby=		yes

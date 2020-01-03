@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.15 2019/08/22 12:22:54 ryoon Exp $
+# $NetBSD: Makefile,v 1.17 2019/12/21 23:29:04 joerg Exp $
 #
 # NOTE: when updating this package, there are two places that sound
 #       tarballs need to be checked; look in ${WRKSRC}/sounds/Makefile
@@ -149,8 +149,10 @@ DISTFILES+=	asterisk-extra-sounds-en-gsm-1.5.2.tar.gz
 
 # pjproject
 PJPROJ_VERSION=	2.7.2
-SITES.pjproject-${PJPROJ_VERSION}.tar.bz2=	-https://raw.githubusercontent.com/asterisk/third-party/master/pjproject/${PJPROJ_VERSION}/pjproject-${PJPROJ_VERSION}.tar.bz2
-SITES.pjproject-${PJPROJ_VERSION}.md5=	-https://raw.githubusercontent.com/asterisk/third-party/master/pjproject/${PJPROJ_VERSION}/MD5SUM.TXT
+SITES.pjproject-${PJPROJ_VERSION}.tar.bz2= \
+	-https://raw.githubusercontent.com/asterisk/third-party/master/pjproject/${PJPROJ_VERSION}/pjproject-${PJPROJ_VERSION}.tar.bz2
+SITES.pjproject-${PJPROJ_VERSION}.md5= \
+	-https://raw.githubusercontent.com/asterisk/third-party/master/pjproject/${PJPROJ_VERSION}/MD5SUM.TXT
 DISTFILES+=	pjproject-${PJPROJ_VERSION}.tar.bz2 pjproject-${PJPROJ_VERSION}.md5
 ALL_ENV+=	EXTERNALS_CACHE_DIR=${DISTDIR}/${DIST_SUBDIR}
 
@@ -290,6 +292,7 @@ post-install:
 
 .if ${OPSYS} != "Darwin" && ${PKGSRC_COMPILER} == "clang"
 .include "../../lang/libBlocksRuntime/buildlink3.mk"
+LDFLAGS+= -L${PREFIX}/lib
 .endif
 
 .include "../../databases/sqlite3/buildlink3.mk"

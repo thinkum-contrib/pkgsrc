@@ -38,7 +38,7 @@ func (m *MkTokensLexer) EOF() bool { return m.Lexer.EOF() && len(m.tokens) == 0 
 
 // Rest returns the string concatenation of the tokens that have not yet been consumed.
 func (m *MkTokensLexer) Rest() string {
-	var sb strings.Builder
+	sb := NewLazyStringBuilder(m.Lexer.Rest())
 	sb.WriteString(m.Lexer.Rest())
 	for _, token := range m.tokens {
 		sb.WriteString(token.Text)
@@ -48,12 +48,12 @@ func (m *MkTokensLexer) Rest() string {
 
 // NextVarUse returns the next varuse token, unless there is some plain text
 // before it. In that case or at EOF, it returns nil.
-func (m *MkTokensLexer) NextVarUse() *MkVarUse {
+func (m *MkTokensLexer) NextVarUse() *MkToken {
 	if m.Lexer.EOF() && len(m.tokens) > 0 && m.tokens[0].Varuse != nil {
 		token := m.tokens[0]
 		m.tokens = m.tokens[1:]
 		m.next()
-		return token.Varuse
+		return token
 	}
 	return nil
 }

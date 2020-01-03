@@ -1,19 +1,17 @@
-# $NetBSD: Makefile,v 1.8 2017/09/22 23:26:20 wiedi Exp $
+# $NetBSD: Makefile,v 1.10 2019/11/09 12:47:11 nia Exp $
 
-DISTNAME=       unshield-1.4.2
-PKGREVISION=	1
-MASTER_SITES=   ${MASTER_SITE_GITHUB:=twogood/}
-GITHUB_TAG=     ${PKGVERSION_NOREV}
-EXTRACT_SUFX=   .zip
-
+DISTNAME=	unshield-1.4.3
 CATEGORIES=	archivers
+MASTER_SITES=	${MASTER_SITE_GITHUB:=twogood/}
+
+MAINTAINER=	pkgsrc-users@NetBSD.org
+HOMEPAGE=	https://github.com/twogood/unshield
 COMMENT=	Extract InstallShield .CAB files
 LICENSE=	mit
 
-USE_LIBTOOL=		yes
-USE_TOOLS+=		pkg-config
-USE_CMAKE=		yes
-USE_LANGUAGES+=		c++ c
+USE_CMAKE=	yes
+USE_TOOLS+=	pkg-config
+USE_LANGUAGES=	c c++
 
 LDFLAGS+=	-liconv
 

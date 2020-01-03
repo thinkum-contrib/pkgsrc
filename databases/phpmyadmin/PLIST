@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.48 2019/06/07 10:09:43 tm Exp $
+@comment $NetBSD: PLIST,v 1.50 2019/12/03 12:42:28 tm Exp $
 share/doc/phpmyadmin/CODE_OF_CONDUCT.md
 share/doc/phpmyadmin/CONTRIBUTING.md
 share/doc/phpmyadmin/ChangeLog
@@ -308,7 +308,8 @@ share/phpmyadmin/js/vendor/tracekit.js
 share/phpmyadmin/js/vendor/u2f-api-polyfill.js
 share/phpmyadmin/js/vendor/zxcvbn.js
 share/phpmyadmin/js/whitelist.php
-share/phpmyadmin/libraries/advisory_rules.txt
+share/phpmyadmin/libraries/advisory_rules_generic.txt
+share/phpmyadmin/libraries/advisory_rules_mysql_before80003.txt
 share/phpmyadmin/libraries/certs/12d55845.0
 share/phpmyadmin/libraries/certs/2e5ac55d.0
 share/phpmyadmin/libraries/certs/4042bcee.0
@@ -380,6 +381,7 @@ share/phpmyadmin/libraries/classes/CreateAddField.php
 share/phpmyadmin/libraries/classes/Database/DatabaseList.php
 share/phpmyadmin/libraries/classes/Database/Designer.php
 share/phpmyadmin/libraries/classes/Database/Designer/Common.php
+share/phpmyadmin/libraries/classes/Database/Designer/DesignerTable.php
 share/phpmyadmin/libraries/classes/Database/MultiTableQuery.php
 share/phpmyadmin/libraries/classes/Database/Qbe.php
 share/phpmyadmin/libraries/classes/Database/Search.php
@@ -717,7 +719,6 @@ share/phpmyadmin/libraries/tbl_common.inc.php
 share/phpmyadmin/libraries/tbl_partition_definition.inc.php
 share/phpmyadmin/libraries/user_preferences.inc.php
 share/phpmyadmin/libraries/vendor_config.php
-share/phpmyadmin/libraries/vendor_config.php.orig
 share/phpmyadmin/license.php
 share/phpmyadmin/lint.php
 share/phpmyadmin/locale/ar/LC_MESSAGES/phpmyadmin.mo
@@ -759,6 +760,7 @@ share/phpmyadmin/locale/sl/LC_MESSAGES/phpmyadmin.mo
 share/phpmyadmin/locale/sq/LC_MESSAGES/phpmyadmin.mo
 share/phpmyadmin/locale/sr@latin/LC_MESSAGES/phpmyadmin.mo
 share/phpmyadmin/locale/sv/LC_MESSAGES/phpmyadmin.mo
+share/phpmyadmin/locale/th/LC_MESSAGES/phpmyadmin.mo
 share/phpmyadmin/locale/tr/LC_MESSAGES/phpmyadmin.mo
 share/phpmyadmin/locale/uk/LC_MESSAGES/phpmyadmin.mo
 share/phpmyadmin/locale/vi/LC_MESSAGES/phpmyadmin.mo
@@ -1877,6 +1879,7 @@ share/phpmyadmin/vendor/phpmyadmin/sql-parser/src/Utils/Routine.php
 share/phpmyadmin/vendor/phpmyadmin/sql-parser/src/Utils/Table.php
 share/phpmyadmin/vendor/phpmyadmin/sql-parser/src/Utils/Tokens.php
 share/phpmyadmin/vendor/phpseclib/phpseclib/AUTHORS
+share/phpmyadmin/vendor/phpseclib/phpseclib/BACKERS.md
 share/phpmyadmin/vendor/phpseclib/phpseclib/LICENSE
 share/phpmyadmin/vendor/phpseclib/phpseclib/README.md
 share/phpmyadmin/vendor/phpseclib/phpseclib/appveyor.yml
@@ -1986,6 +1989,7 @@ share/phpmyadmin/vendor/symfony/polyfill-util/composer.json
 share/phpmyadmin/vendor/tecnickcom/tcpdf/CHANGELOG.TXT
 share/phpmyadmin/vendor/tecnickcom/tcpdf/LICENSE.TXT
 share/phpmyadmin/vendor/tecnickcom/tcpdf/README.md
+share/phpmyadmin/vendor/tecnickcom/tcpdf/VERSION
 share/phpmyadmin/vendor/tecnickcom/tcpdf/composer.json
 share/phpmyadmin/vendor/tecnickcom/tcpdf/config/tcpdf_config.php
 share/phpmyadmin/vendor/tecnickcom/tcpdf/fonts/dejavu-fonts-ttf-2.34/AUTHORS
@@ -2264,7 +2268,6 @@ share/phpmyadmin/vendor/twig/twig/lib/Twig/TokenParserInterface.php
 share/phpmyadmin/vendor/twig/twig/lib/Twig/TokenStream.php
 share/phpmyadmin/vendor/twig/twig/lib/Twig/Util/DeprecationCollector.php
 share/phpmyadmin/vendor/twig/twig/lib/Twig/Util/TemplateDirIterator.php
-share/phpmyadmin/vendor/twig/twig/phpunit.xml.dist
 share/phpmyadmin/vendor/twig/twig/src/Cache/CacheInterface.php
 share/phpmyadmin/vendor/twig/twig/src/Cache/FilesystemCache.php
 share/phpmyadmin/vendor/twig/twig/src/Cache/NullCache.php

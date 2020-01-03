@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.102 2019/09/18 14:17:19 ryoon Exp $
+# $NetBSD: Makefile,v 1.105 2019/11/30 21:39:08 markd Exp $
 
 DISTNAME=	kde-runtime-15.12.0
 PKGNAME=	${DISTNAME:S/-1/4-1/}
-PKGREVISION=	37
+PKGREVISION=	38
 CATEGORIES=	x11
 COMMENT=	Runtime requirements for the KDE integrated X11 desktop
 MASTER_SITES=	${MASTER_SITE_KDE:=applications/15.12.0/src/}
@@ -11,6 +11,8 @@ MASTER_SITES=	${MASTER_SITE_KDE:=applications/15.12.0/src/}
 
 # BUILD_MAKE_FLAGS+= VERBOSE=1
 CMAKE_ARGS+=	-DWITH_LibSSH:BOOL=OFF
+CMAKE_ARGS+=	-DBUILD_khelpcenter=OFF
+
 .include "../../mk/bsd.prefs.mk"
 CMAKE_ARGS+=	-DLIBLZMA_INCLUDE_DIR:PATH=${BUILDLINK_PREFIX.xz}/include
 .if ${OPSYS} == "Darwin"
@@ -19,10 +21,11 @@ CMAKE_ARGS+=	-DLIBLZMA_LIBRARY:FILEPATH=${BUILDLINK_PREFIX.xz}/lib/liblzma.dylib
 CMAKE_ARGS+=	-DLIBLZMA_LIBRARY:FILEPATH=${BUILDLINK_PREFIX.xz}/lib/liblzma.so
 .endif
 
-DEPENDS+=	htdig>=3.2.0:../../www/htdig
+#DEPENDS+=	htdig>=3.2.0:../../www/htdig
 DEPENDS+=	oxygen-icons-[0-9]*:../../graphics/oxygen-icons
 
 USE_TOOLS+=		gmake
+USE_LANGUAGES+=		c++11
 
 CFLAGS.SunOS+=	-DPORTMAP
 LDFLAGS.SunOS+=	-lsocket -lnsl
@@ -43,11 +46,11 @@ PLIST.polkit=	yes
 PLIST.x11=	yes
 .endif
 
-SUBST_CLASSES+=		htdig
-SUBST_STAGE.htdig=	pre-configure
-SUBST_MESSAGE.htdig=	Fix htdig paths.
-SUBST_FILES.htdig=	khelpcenter/searchhandlers/khc_htsearch.pl
-SUBST_SED.htdig=	-e s:/srv/www/cgi-bin:${PREFIX}/libexec/cgi-bin:
+#SUBST_CLASSES+=		htdig
+#SUBST_STAGE.htdig=	pre-configure
+#SUBST_MESSAGE.htdig=	Fix htdig paths.
+#SUBST_FILES.htdig=	khelpcenter/searchhandlers/khc_htsearch.pl
+#SUBST_SED.htdig=	-e s:/srv/www/cgi-bin:${PREFIX}/libexec/cgi-bin:
 
 SUBST_CLASSES+=		paths
 SUBST_FILES.paths=	kioslave/info/kde-info2html.conf

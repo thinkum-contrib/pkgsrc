@@ -1,10 +1,12 @@
-# $NetBSD: options.mk,v 1.73 2019/09/01 09:36:16 nia Exp $
+# $NetBSD: options.mk,v 1.77 2019/12/08 13:07:20 nia Exp $
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.MesaLib
 
-PKG_SUPPORTED_OPTIONS+=		llvm x11
+.include "features.mk"
 
-.if ${OPSYS} != "Darwin" && ${OPSYS} != "Cygwin"
+PKG_SUPPORTED_OPTIONS+=		llvm vulkan x11
+
+.if ${MESALIB_SUPPORTS_DRI} == "yes"
 PKG_SUPPORTED_OPTIONS+=		wayland
 .endif
 
@@ -15,9 +17,8 @@ PKG_SUGGESTED_OPTIONS+=		x11
 #
 # Enable it by default on platforms where such GPUs might be encountered or
 # LLVM-accelerated software rendering might be useful.
-.if ${OPSYS} != "SunOS" && \
-    ${OPSYS} != "Darwin" && \
-    ${OPSYS} != "Cygwin" && \
+.if ${MESALIB_SUPPORTS_DRI} == "yes" && \
+    ${OPSYS} != "SunOS" && \
       (${MACHINE_ARCH} == "i386" || \
        ${MACHINE_ARCH} == "x86_64" || \
        ${MACHINE_ARCH} == "aarch64")
@@ -40,12 +41,15 @@ PLIST_VARS+=	vdpau
 #
 .if !empty(PKG_OPTIONS:Mllvm)
 MESON_ARGS+=		-Dllvm=true
-BUILDLINK_API_DEPENDS.libLLVM+= libLLVM>=7.0.1nb2
+BUILDLINK_API_DEPENDS.libLLVM+=	libLLVM>=7.0.1nb2
 BUILDLINK_PKGSRCDIR.libLLVM?=	../../lang/libLLVM/
 .  include "../../devel/libelf/buildlink3.mk"
 .  include "${BUILDLINK_PKGSRCDIR.libLLVM}/buildlink3.mk"
 
 .  if ${OPSYS} != "Darwin" && ${OPSYS} != "Cygwin"
+# This is the latest libdrm requirement for amdgpu.
+BUILDLINK_API_DEPENDS.libdrm+=	libdrm>=2.4.99
+
 PLIST.r600=		yes
 GALLIUM_DRIVERS+=	r600
 PLIST.radeonsi=		yes
@@ -56,13 +60,12 @@ MESON_ARGS+=		-Dllvm=false
 .endif
 
 #
-# Wayland support
+# Vulkan support - experimental
 #
-.if !empty(PKG_OPTIONS:Mwayland)
-MESA_PLATFORMS+=	wayland
-PLIST.wayland=		yes
-.  include "../../devel/wayland/buildlink3.mk"
-.  include "../../devel/wayland-protocols/buildlink3.mk"
+.if !empty(PKG_OPTIONS:Mvulkan)
+MESON_ARGS+=		-Dvulkan-drivers="auto"
+.else
+MESON_ARGS+=		-Dvulkan-drivers=""
 .endif
 
 #
@@ -71,10 +74,10 @@ PLIST.wayland=		yes
 .if !empty(PKG_OPTIONS:Mx11)
 MESA_PLATFORMS+=	x11
 PLIST.glx=		yes
-.  if ${OPSYS} != "Darwin" && ${OPSYS} != "Cygwin"
+.  if ${MESALIB_SUPPORTS_DRI} == "yes"
 MESON_ARGS+=		-Dglx=dri
 .    include "../../multimedia/libvdpau/available.mk"
-.    if ${OPSYS} != "SunOS" && ${VDPAU_AVAILABLE} == "yes"
+.    if ${VDPAU_AVAILABLE} == "yes"
 MESON_ARGS+=		-Dgallium-vdpau=true
 PLIST.vdpau=		yes
 .      include "../../multimedia/libvdpau/buildlink3.mk"
@@ -95,4 +98,14 @@ MESON_ARGS+=		-Dgallium-vdpau=false
 .else
 MESON_ARGS+=		-Dglx=disabled
 MESON_ARGS+=		-Dgallium-vdpau=false
+.endif
+
+#
+# Wayland support
+#
+.if !empty(PKG_OPTIONS:Mwayland)
+MESA_PLATFORMS+=	wayland
+PLIST.wayland=		yes
+.  include "../../devel/wayland/buildlink3.mk"
+.  include "../../devel/wayland-protocols/buildlink3.mk"
 .endif

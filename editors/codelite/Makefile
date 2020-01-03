@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.23 2019/08/28 09:09:19 wiz Exp $
+# $NetBSD: Makefile,v 1.25 2019/10/05 14:23:05 nia Exp $
 
 DISTNAME=	codelite-13.0
 PKGREVISION=	1
@@ -19,6 +19,9 @@ CMAKE_ARGS+=		-DPREFIX:STRING=${PREFIX}
 
 # For some reason CMAKE_ARGS.NetBSD+=-DIS_NETBSD:STRING=1 doesn't work for me
 .include "../../mk/bsd.prefs.mk"
+
+# Likely needed because pango's pkgconfig CFLAGS aren't being applied.
+CXXFLAGS+=		-I${BUILDLINK_DIR}/include/harfbuzz
 
 CHECK_PORTABILITY_SKIP+=	sdk/wxsqlite3/configure
 
@@ -66,6 +69,7 @@ REPLACE_PYTHON+=	codelite_open_helper.py
 LDFLAGS+=	${COMPILER_RPATH_FLAG}${PREFIX}/lib/codelite
 
 .include "../../lang/nodejs/application.mk"
+.include "../../lang/nodejs/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../databases/sqlite3/buildlink3.mk"
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"

@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.14 2019/08/11 13:18:49 wiz Exp $
+# $NetBSD: Makefile,v 1.20 2020/01/01 02:41:17 mef Exp $
 
-DISTNAME=	Alien-Build-1.51
+DISTNAME=	Alien-Build-1.94
 PKGNAME=	p5-${DISTNAME}
-PKGREVISION=	1
 CATEGORIES=	textproc perl5
 MASTER_SITES=	http://search.cpan.org/CPAN/authors/id/P/PL/PLICEASE/
 
@@ -11,7 +10,7 @@ HOMEPAGE=	https://metacpan.org/release/Alien-Build
 COMMENT=	Build external dependencies for use in CPAN
 LICENSE=	${PERL5_LICENSE}
 
-PERL5_PACKLIST=         auto/Alien/Build/.packlist
+PERL5_PACKLIST=		auto/Alien/Build/.packlist
 
 USE_TOOLS+=	pkg-config:run
 
@@ -23,9 +22,10 @@ DEPENDS+=	p5-Test2-Suite-[0-9]*:../../devel/p5-Test2-Suite
 DEPENDS+=	p5-FFI-CheckLib-[0-9]*:../../devel/p5-FFI-CheckLib
 DEPENDS+=	p5-HTML-LinkExtractor-[0-9]*:../../www/p5-HTML-LinkExtractor
 
-BUILD_DEPENDS+=	p5-Readonly-[0-9]*:../../devel/p5-Readonly
-BUILD_DEPENDS+=	p5-Sort-Versions-[0-9]*:../../devel/p5-Sort-Versions
-BUILD_DEPENDS+=	p5-Test2-Suite>=0.000060:../../devel/p5-Test2-Suite
+TEST_DEPENDS+=	p5-Readonly-[0-9]*:../../devel/p5-Readonly
+TEST_DEPENDS+=	p5-Sort-Versions-[0-9]*:../../devel/p5-Sort-Versions
+TEST_DEPENDS+=	p5-Test2-Suite>=0.000060:../../devel/p5-Test2-Suite
+TEST_DEPENDS+=	p5-Alien-Base-ModuleBuild-[0-9]*:../../devel/p5-Alien-Base-ModuleBuild
 
 .include "../../lang/perl5/module.mk"
 .include "../../mk/bsd.pkg.mk"

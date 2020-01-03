@@ -1,22 +1,23 @@
-# $NetBSD: Makefile,v 1.200 2019/09/18 15:27:05 ng0 Exp $
+# $NetBSD: Makefile,v 1.204 2019/12/06 14:00:08 nia Exp $
 
-DISTNAME=	gnutls-3.6.9
-PKGREVISION=	1
+DISTNAME=	gnutls-3.6.11.1
 CATEGORIES=	security devel
 MASTER_SITES=	https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://www.gnutls.org/
-COMMENT=	GNU Transport Layer Security library
+COMMENT=	Transport Layer Security library
 LICENSE=	gnu-gpl-v3 AND gnu-lgpl-v2.1
 
 DEPENDS+=	mozilla-rootcerts-[0-9]*:../../security/mozilla-rootcerts
 
+PLIST_SRC=	PLIST
+
 USE_LANGUAGES=			c c++
 USE_LIBTOOL=			yes
-USE_PKGLOCALEDIR=		yes
 USE_TOOLS+=			gmake gsed perl pkg-config bash
+USE_TOOLS+=			msgfmt msgmerge xgettext
 GNU_CONFIGURE=			yes
 # this library duplicates (and conflicts with) openssl
 CONFIGURE_ARGS+=		--disable-openssl-compatibility

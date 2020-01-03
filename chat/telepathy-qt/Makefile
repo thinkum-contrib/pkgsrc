@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.13 2019/09/02 13:19:52 adam Exp $
+# $NetBSD: Makefile,v 1.15 2019/12/21 16:43:59 nros Exp $
 
 DISTNAME=	telepathy-qt-0.9.6.1
 PKGREVISION=	3
@@ -14,13 +14,15 @@ USE_CMAKE=	yes
 USE_TOOLS+=	pkg-config
 USE_LANGUAGES=	c c++
 
+CMAKE_ARGS+=-DDISABLE_WERROR=ON
+
 PKGCONFIG_OVERRIDE+=	TelepathyQt/TelepathyQt.pc.in
 PKGCONFIG_OVERRIDE+=	TelepathyQt/TelepathyQtService.pc.in
 PKGCONFIG_OVERRIDE+=	TelepathyQt/Farstream/TelepathyQtFarstream.pc.in
 
-PYTHON_FOR_BUILD_ONLY=	yes
+PYTHON_FOR_BUILD_ONLY=		yes
 PYTHON_VERSIONS_ACCEPTED=	27 # not yet ported as of 0.24.1
-BUILD_DEPENDS+=		${PYPKGPREFIX}-expat-[0-9]*:../../textproc/py-expat
+BUILD_DEPENDS+=			${PYPKGPREFIX}-expat-[0-9]*:../../textproc/py-expat
 
 BUILDLINK_TRANSFORM.SunOS+=	rm:-Wl,--no-add-needed
 

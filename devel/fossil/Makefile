@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.50 2019/08/11 22:16:04 gutteridge Exp $
+# $NetBSD: Makefile,v 1.53 2019/11/03 10:39:11 rillig Exp $
 
-DISTNAME=	fossil-src-2.9
+PKGREVISION=	1
+DISTNAME=	fossil-src-2.10
 PKGNAME=	${DISTNAME:S/-src//}
 WRKSRC=		${WRKDIR}/${PKGNAME_NOREV}
 CATEGORIES=	devel scm
@@ -11,7 +12,7 @@ HOMEPAGE=	http://www.fossil-scm.org/
 COMMENT=	High-reliability, distributed software configuration management
 LICENSE=	2-clause-bsd
 
-HAS_CONFIGURE=	yes
+HAS_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--with-openssl=${BUILDLINK_PREFIX.openssl:Q}
 CONFIGURE_ARGS+=	--with-zlib=${BUILDLINK_PREFIX.zlib:Q}
 

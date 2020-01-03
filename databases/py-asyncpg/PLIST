@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.6 2018/11/02 11:51:38 adam Exp $
+@comment $NetBSD: PLIST,v 1.8 2019/11/22 09:32:37 adam Exp $
 ${PYSITELIB}/${EGG_INFODIR}/PKG-INFO
 ${PYSITELIB}/${EGG_INFODIR}/SOURCES.txt
 ${PYSITELIB}/${EGG_INFODIR}/dependency_links.txt
@@ -79,9 +79,12 @@ ${PYSITELIB}/asyncpg/pgproto/pgproto.c
 ${PYSITELIB}/asyncpg/pgproto/pgproto.pxd
 ${PYSITELIB}/asyncpg/pgproto/pgproto.pyx
 ${PYSITELIB}/asyncpg/pgproto/pgproto.so
+${PYSITELIB}/asyncpg/pgproto/tohex.h
+${PYSITELIB}/asyncpg/pgproto/tohex.pxd
 ${PYSITELIB}/asyncpg/pgproto/types.py
 ${PYSITELIB}/asyncpg/pgproto/types.pyc
 ${PYSITELIB}/asyncpg/pgproto/types.pyo
+${PYSITELIB}/asyncpg/pgproto/uuid.pyx
 ${PYSITELIB}/asyncpg/pool.py
 ${PYSITELIB}/asyncpg/pool.pyc
 ${PYSITELIB}/asyncpg/pool.pyo
@@ -116,6 +119,8 @@ ${PYSITELIB}/asyncpg/protocol/protocol.so
 ${PYSITELIB}/asyncpg/protocol/record/__init__.pxd
 ${PYSITELIB}/asyncpg/protocol/record/recordobj.c
 ${PYSITELIB}/asyncpg/protocol/record/recordobj.h
+${PYSITELIB}/asyncpg/protocol/scram.pxd
+${PYSITELIB}/asyncpg/protocol/scram.pyx
 ${PYSITELIB}/asyncpg/protocol/settings.pxd
 ${PYSITELIB}/asyncpg/protocol/settings.pyx
 ${PYSITELIB}/asyncpg/serverversion.py

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.139 2019/08/11 13:20:58 wiz Exp $
+# $NetBSD: Makefile,v 1.142 2020/01/01 16:31:52 rhialto Exp $
 
-DISTNAME=	vice-3.3
-PKGREVISION=	2
+DISTNAME=	vice-3.4
+PKGREVISION=	1
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=vice-emu/}
 
@@ -28,8 +28,6 @@ CONFIGURE_ENV+=		ac_cv_prog_TEXI2DVI=no
 CONFIGURE_ENV+=		ac_cv_prog_PDFTEX=no
 
 INFO_FILES=		yes
-FONTS_DIRS.x11=		${PREFIX}/share/vice/fonts
-REQD_DIRS+=		${PREFIX}/share/vice/fonts
 REQD_DIRS+=		${PREFIX}/share/vice
 
 BUILD_DEPENDS+=		xa65-[0-9]*:../../devel/xa65
@@ -37,8 +35,9 @@ BUILD_DEPENDS+=		xa65-[0-9]*:../../devel/xa65
 SUBST_CLASSES+=		prefix
 SUBST_STAGE.prefix=	post-configure
 SUBST_FILES.prefix=	man/vice.1
-SUBST_FILES.prefix+=	doc/html/vice_4.html
-SUBST_FILES.prefix+=	doc/vice.info
+SUBST_FILES.prefix+=	doc/html/index.html
+SUBST_FILES.prefix+=	doc/html/darwin.html
+SUBST_FILES.prefix+=	doc/vice.info-1
 SUBST_FILES.prefix+=	doc/vice.txt
 SUBST_SED.prefix=	-e 's|/usr/local|${PREFIX}|g'
 

@@ -1,8 +1,0 @@
-@comment $NetBSD: PLIST,v 1.2 2019/03/01 17:11:23 youri Exp $
-bin/compton
-bin/compton-convgen.py
-bin/compton-trans
-share/applications/compton.desktop
-share/examples/compton/compton.sample.conf
-share/icons/hicolor/48x48/apps/compton.png
-share/icons/hicolor/scalable/apps/compton.svg

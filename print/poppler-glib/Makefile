@@ -1,8 +1,9 @@
-# $NetBSD: Makefile,v 1.75 2019/05/09 09:28:22 adam Exp $
+# $NetBSD: Makefile,v 1.80 2019/12/08 13:56:25 wiz Exp $
 
 .include "../../print/poppler/Makefile.common"
 
 PKGNAME=	poppler-glib-${POPPLER_VERS}
+PKGREVISION=	1
 
 COMMENT=	PDF rendering library (GLib wrapper)
 
@@ -31,6 +32,9 @@ CMAKE_ARGS+=	-DENABLE_LIBCURL=OFF
 
 CFLAGS.FreeBSD+=	-DLLONG_MAX=__LLONG_MAX
 
+# The result binary of g-ir-scanner cannot find libpoppler-glib.so.
+MAKE_ENV+=	LD_LIBRARY_PATH=${WRKSRC}/glib
+
 BUILDLINK_API_DEPENDS.poppler+=     poppler-${POPPLER_VERS}{,nb*}
 .include "../../print/poppler/buildlink3.mk"
 
@@ -39,14 +43,14 @@ INSTALL_DIRS=		glib
 INSTALLATION_DIRS+=	lib/pkgconfig
 
 post-install:
-	${INSTALL_DATA} ${WRKSRC}/poppler-cairo.pc ${DESTDIR}${PREFIX}/lib/pkgconfig
 	${INSTALL_DATA} ${WRKSRC}/poppler-glib.pc ${DESTDIR}${PREFIX}/lib/pkgconfig
 
 .include "../../lang/python/tool.mk"
 BUILDLINK_ABI_DEPENDS.glib2+=	glib2>=2.41.0
 .include "../../devel/glib2/buildlink3.mk"
+.include "../../devel/gobject-introspection/buildlink3.mk"
+.include "../../graphics/cairo-gobject/buildlink3.mk"
 #.include "../../textproc/gtk-doc/buildlink3.mk"
-.include "../../graphics/cairo/buildlink3.mk"
 .include "../../mk/jpeg.buildlink3.mk"
 .include "../../mk/pthread.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

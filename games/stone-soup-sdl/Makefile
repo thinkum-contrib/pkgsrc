@@ -1,12 +1,13 @@
-# $NetBSD: Makefile,v 1.4 2019/09/15 14:49:24 nia Exp $
+# $NetBSD: Makefile,v 1.7 2019/10/28 12:24:28 nia Exp $
 
-PKGREVISION= 1
 .include "../../games/stone-soup/Makefile.common"
 
 PKGNAME=	${DISTNAME:S/_/-/:S/-soup/-soup-sdl/}
 
-MAINTAINER=	pkgsrc-users@NetBSD.org
+MAINTAINER=	nia@NetBSD.org
 COMMENT=	Dungeon Crawl Stone Soup - roguelike adventure (tileset version)
+
+CONFLICTS+=	stone-soup-[0-9]*
 
 MAKE_FLAGS+=	TILES=YesPlease
 MAKE_FLAGS+=	SOUND=YesPlease

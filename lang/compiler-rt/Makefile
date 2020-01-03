@@ -1,17 +1,15 @@
-# $NetBSD: Makefile,v 1.11 2019/08/05 19:06:50 adam Exp $
+# $NetBSD: Makefile,v 1.14 2019/12/29 15:31:21 adam Exp $
 
-DISTNAME=	compiler-rt-8.0.1.src
+.include "../../lang/llvm/version.mk"
+
+DISTNAME=	compiler-rt-${LLVM_VERSION}.src
 PKGNAME=	${DISTNAME:S/.src//}
 CATEGORIES=	lang devel
-MASTER_SITES=	${MASTER_SITE_GITHUB:=llvm/}
-GITHUB_PROJECT=	llvm-project
-GITHUB_RELEASE=	llvmorg-${PKGVERSION_NOREV}
-EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://compiler-rt.llvm.org/
 COMMENT=	LLVM runtime libraries
-LICENSE=	modified-bsd OR mit
+LICENSE=	apache-2.0
 
 NOT_FOR_PLATFORM=	NetBSD-[0-7].*-*
 

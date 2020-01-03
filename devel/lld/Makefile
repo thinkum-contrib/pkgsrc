@@ -1,18 +1,15 @@
-# $NetBSD: Makefile,v 1.6 2019/09/08 20:49:11 rjs Exp $
+# $NetBSD: Makefile,v 1.13 2019/12/29 15:31:21 adam Exp $
 
-DISTNAME=	lld-8.0.1.src
+.include "../../lang/llvm/version.mk"
+
+DISTNAME=	lld-${LLVM_VERSION}.src
 PKGNAME=	${DISTNAME:S/.src//}
-PKGREVISION=	1
 CATEGORIES=	devel
-MASTER_SITES=	${MASTER_SITE_GITHUB:=llvm/}
-GITHUB_PROJECT=	llvm-project
-GITHUB_RELEASE=	llvmorg-${PKGVERSION_NOREV}
-EXTRACT_SUFX=	.tar.xz
 
-MAINTAINER=	mgorny@NetBSD.org
+MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://lld.llvm.org/
 COMMENT=	The LLVM Linker
-LICENSE=	modified-bsd
+LICENSE=	apache-2.0
 
 USE_LANGUAGES=		c c++11
 USE_CMAKE=		yes
@@ -31,6 +28,6 @@ post-extract:
 	${MKDIR} ${WRKDIR}/build
 
 .include "options.mk"
-.include "../../lang/python/tool.mk"
 .include "../../lang/llvm/buildlink3.mk"
+.include "../../lang/python/tool.mk"
 .include "../../mk/bsd.pkg.mk"

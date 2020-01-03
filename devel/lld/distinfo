@@ -1,14 +1,17 @@
-$NetBSD: distinfo,v 1.4 2019/09/08 20:49:11 rjs Exp $
+$NetBSD: distinfo,v 1.9 2019/12/29 15:31:21 adam Exp $
 
-SHA1 (lld-8.0.1.src.tar.xz) = 67d84c054c8b858d29389aa8ad47a25f632e4a3a
-RMD160 (lld-8.0.1.src.tar.xz) = eb28179fe500862f1ccffe1633b6b1af7239d190
-SHA512 (lld-8.0.1.src.tar.xz) = 646418d4a4ce922d1a69e9bf2e472f5d758f25ec21b80a2c66dfe5effc59c9c312fb167cf64ee2d8a2ced986e7474ed3d2996a38be66fbf63c574229d28e0900
-Size (lld-8.0.1.src.tar.xz) = 996440 bytes
-SHA1 (patch-CMakeLists.txt) = df8e32f5f23bf2f2615a891177f61dc65359e955
-SHA1 (patch-ELF_Config.h) = de2578f6c447aade843c59f78189da4f1d79b29a
-SHA1 (patch-ELF_Driver.cpp) = 4ea55eb73e29dd90d369487528899d7e5930f2af
-SHA1 (patch-ELF_Driver.h) = e100fb0c86cc7d20b0f64919e73888a81a4836df
-SHA1 (patch-ELF_Options.td) = c8107a2c599b2444e52bdefe5f2dc539d277a092
-SHA1 (patch-ELF_Writer.cpp) = ab4ca25f832f20a5b4c80fe0f5f28822c09fb4ee
-SHA1 (patch-docs_ld.lld.1) = a6865d0099216094422aede3d65f43ee6fee22fe
-SHA1 (patch-test_ELF_gnustack.s) = b3827436dcfc67d51b8d293b11538808537ddeec
+SHA1 (lld-9.0.1.src.tar.xz) = ef5f529adfb9b57b33c394641d7d5e2d1f1b5ff6
+RMD160 (lld-9.0.1.src.tar.xz) = 541e85668c222755cb94f8f037b085d7ae9cb3e4
+SHA512 (lld-9.0.1.src.tar.xz) = ca57d1a5fc2e39c002e061dc8278a721df8493d4c05c2275fe32b626258362563b82113b51bbaa454815d8ac0440078803f866444a8788aaca4816d7463ed430
+Size (lld-9.0.1.src.tar.xz) = 1088260 bytes
+SHA1 (patch-CMakeLists.txt) = 87d32f66488541ba68e219f5fa83646b48bf9c71
+SHA1 (patch-ELF_Config.h) = f5663189adf47a13d2fa0a152ea5df04a3ed247d
+SHA1 (patch-ELF_Driver.cpp) = 4b08b50e75eb90a8703a331efaf4a950098d5a4d
+SHA1 (patch-ELF_Options.td) = 22a1f293681b86a9aac87624efcfeeb20a4ba51c
+SHA1 (patch-ELF_Writer.cpp) = b5b995b2566999579a35146a271d099908eb44c3
+SHA1 (patch-docs_ld.lld.1) = 8492f459425a6774d4b3e21c6f0f5d40d7044a1b
+SHA1 (patch-test_ELF_gnustack.s) = d2619221f09d6b40daa9c2206c993cd8342982a5
+SHA1 (patch-tools_lld_lld.cpp) = bc3662191bf6e50c808d188707c9abfdb4786dbf
+SHA1 (patch-tools_nb.lld_CMakeLists.txt) = 231ed112512d23001a8e9d1d1821838a483c2e37
+SHA1 (patch-tools_nb.lld_Options.td) = d56ff977f24d97eda30f10aae5818c618b3c7915
+SHA1 (patch-tools_nb.lld_nb.lld.cpp) = 2425426beb2f4d80f96781977e3a4019eed601fc

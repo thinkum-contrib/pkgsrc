@@ -1,8 +1,8 @@
-$NetBSD: distinfo,v 1.5 2019/08/05 19:06:50 adam Exp $
+$NetBSD: distinfo,v 1.7 2019/12/29 15:31:21 adam Exp $
 
-SHA1 (compiler-rt-8.0.1.src.tar.xz) = f6520fb47fae9cc4362a9d50abee22019c27457a
-RMD160 (compiler-rt-8.0.1.src.tar.xz) = 54aaf2d395a3206b3f373e75df2d1cac600ddff2
-SHA512 (compiler-rt-8.0.1.src.tar.xz) = 12bf1bdabe25c0c3a84cc73a718fe154573dd729ec3ff5e099bd5f74c6bec9c80521b87ded646d3b20dfdb9aa51dea0234281418c7eb81805e1dd5d3107d3d8e
-Size (compiler-rt-8.0.1.src.tar.xz) = 1954204 bytes
+SHA1 (compiler-rt-9.0.1.src.tar.xz) = b35bc6ed7ce40f18ac45c81f4cf02ffd1f14de82
+RMD160 (compiler-rt-9.0.1.src.tar.xz) = 0a2bcf2ae22362a3c6743e3a63d3943a3f284946
+SHA512 (compiler-rt-9.0.1.src.tar.xz) = edd7e87197581d3888d5298e0f4464071d1ecd351781687f3bec91097e5e72ea0d290036c4b6713b06978b79b0b124fbad1cac4028df2ec4d5198e19c0ba9c95
+Size (compiler-rt-9.0.1.src.tar.xz) = 1983828 bytes
 SHA1 (patch-cmake_config-ix.cmake) = e950d8781f00638310b523b6933889a9d15611c5
 SHA1 (patch-lib_sanitizer__common_sanitizer__linux__libcdep.cc) = 5acf50111dcbd8458c33453d32d597ea57be3880

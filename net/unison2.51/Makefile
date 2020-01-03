@@ -1,12 +1,17 @@
-# $NetBSD: Makefile,v 1.14 2019/07/21 22:25:35 wiz Exp $
+# $NetBSD: Makefile,v 1.20 2019/11/05 02:38:21 gdt Exp $
 
+# Currently, 2.51.x is the standard approach, and thus this package
+# produces a "unison-2.51.x" package which installs a "unison" binary.
+# When the next unison branch is released, we will likely again have
+# multiple unison packages, with whichever is the standard approach
+# using the unversioned name.
 DISTNAME=	unison-2.51.2
-PKGREVISION=	13
+PKGREVISION=	15
 CATEGORIES=	net
 MASTER_SITES=	${MASTER_SITE_GITHUB:=bcpierce00/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
 
-MAINTAINER=	tonio@NetBSD.org
+MAINTAINER=	gdt@NetBSD.org
 HOMEPAGE=	http://www.cis.upenn.edu/~bcpierce/unison/
 COMMENT=	File-synchronization tool
 LICENSE=	gnu-gpl-v3
@@ -15,15 +20,8 @@ LICENSE=	gnu-gpl-v3
 # Error: Unbound module Prefs
 #MAKE_JOBS_SAFE=	no
 
-.if (${MACHINE_ARCH} == "arm")
-BUILDLINK_ABI_DEPENDS.ocaml+=	ocaml>=3.12.0nb2
-.else
-BUILDLINK_ABI_DEPENDS.ocaml+=	ocaml>=3.11.2
-.endif
-BUILDLINK_API_DEPENDS.ocaml-lablgtk+= ocaml-lablgtk>=2.16.0
-
 # docs: unison-manual.pdf/html/ps/dvi
-#WRKSRC=		${WRKDIR}/src
+#WRKSRC=	${WRKDIR}/src
 USE_TOOLS+=	gmake
 MAKE_FLAGS+=	CFLAGS="" -C src
 MAKE_ENV+=	HOME=${WRKDIR:Q}

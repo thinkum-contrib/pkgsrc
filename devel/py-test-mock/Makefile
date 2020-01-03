@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.14 2019/04/24 15:04:21 adam Exp $
+# $NetBSD: Makefile,v 1.20 2019/12/11 10:32:34 adam Exp $
 
-DISTNAME=	pytest-mock-1.10.4
+DISTNAME=	pytest-mock-1.13.0
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:S/py//}
 CATEGORIES=	devel python
 MASTER_SITES=	${MASTER_SITE_PYPI:=p/pytest-mock/}
@@ -19,7 +19,7 @@ DEPENDS+=	${PYPKGPREFIX}-mock-[0-9]*:../../devel/py-mock
 .endif
 
 do-test:
-	cd ${WRKSRC} && py.test-${PYVERSSUFFIX}
+	cd ${WRKSRC} && pytest-${PYVERSSUFFIX}
 
 .include "../../lang/python/egg.mk"
 .include "../../mk/bsd.pkg.mk"

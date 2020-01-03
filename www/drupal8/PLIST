@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.21 2019/09/17 09:39:53 prlw1 Exp $
+@comment $NetBSD: PLIST,v 1.24 2019/12/19 00:39:29 taca Exp $
 share/drupal/.csslintrc
 share/drupal/.editorconfig
 share/drupal/.eslintignore
@@ -2375,6 +2375,7 @@ share/drupal/core/lib/Drupal/Core/Test/FunctionalTestSetupTrait.php
 share/drupal/core/lib/Drupal/Core/Test/HttpClientMiddleware/TestHttpClientMiddleware.php
 share/drupal/core/lib/Drupal/Core/Test/ObjectSerialization.php
 share/drupal/core/lib/Drupal/Core/Test/RefreshVariablesTrait.php
+share/drupal/core/lib/Drupal/Core/Test/RunTests/TestFileParser.php
 share/drupal/core/lib/Drupal/Core/Test/TestDatabase.php
 share/drupal/core/lib/Drupal/Core/Test/TestKernel.php
 share/drupal/core/lib/Drupal/Core/Test/TestRunnerKernel.php
@@ -6407,6 +6408,8 @@ share/drupal/core/modules/media/tests/fixtures/oembed/providers.json
 share/drupal/core/modules/media/tests/fixtures/oembed/rich_twitter.json
 share/drupal/core/modules/media/tests/fixtures/oembed/video_collegehumor.html
 share/drupal/core/modules/media/tests/fixtures/oembed/video_collegehumor.xml
+share/drupal/core/modules/media/tests/fixtures/oembed/video_vimeo-no-title.html
+share/drupal/core/modules/media/tests/fixtures/oembed/video_vimeo-no-title.json
 share/drupal/core/modules/media/tests/fixtures/oembed/video_vimeo.html
 share/drupal/core/modules/media/tests/fixtures/oembed/video_vimeo.json
 share/drupal/core/modules/media/tests/fixtures/oembed/video_youtube.html
@@ -8979,9 +8982,11 @@ share/drupal/core/modules/system/tests/modules/entity_test_update/config/schema/
 share/drupal/core/modules/system/tests/modules/entity_test_update/entity_test_update.info.yml
 share/drupal/core/modules/system/tests/modules/entity_test_update/entity_test_update.install
 share/drupal/core/modules/system/tests/modules/entity_test_update/entity_test_update.module
+share/drupal/core/modules/system/tests/modules/entity_test_update/entity_test_update.services.yml
 share/drupal/core/modules/system/tests/modules/entity_test_update/src/Entity/EntityTestUpdate.php
 share/drupal/core/modules/system/tests/modules/entity_test_update/src/EntityTestUpdateStorage.php
 share/drupal/core/modules/system/tests/modules/entity_test_update/src/EntityTestUpdateStorageSchema.php
+share/drupal/core/modules/system/tests/modules/entity_test_update/src/EventSubscriber/EntitySchemaSubscriber.php
 share/drupal/core/modules/system/tests/modules/entity_test_update/src/Plugin/Field/FieldType/MultiValueTestItem.php
 share/drupal/core/modules/system/tests/modules/entity_test_update/update/entity_rev_pub_updates_8400.inc
 share/drupal/core/modules/system/tests/modules/error_service_test/error_service_test.info.yml
@@ -11066,6 +11071,7 @@ share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views
 share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views.view.test_dropbutton.yml
 share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views.view.test_duplicate_field_handlers.yml
 share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views.view.test_entity_area.yml
+share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views.view.test_entity_field_renderered_entity.yml
 share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views.view.test_entity_field_renderers.yml
 share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views.view.test_entity_multivalue_basefield.yml
 share/drupal/core/modules/views/tests/modules/views_test_config/test_views/views.view.test_entity_operations.yml
@@ -11234,6 +11240,7 @@ share/drupal/core/modules/views/tests/src/Functional/DefaultViewsTest.php
 share/drupal/core/modules/views/tests/src/Functional/Entity/BaseFieldAccessTest.php
 share/drupal/core/modules/views/tests/src/Functional/Entity/FieldEntityTest.php
 share/drupal/core/modules/views/tests/src/Functional/Entity/FieldEntityTranslationTest.php
+share/drupal/core/modules/views/tests/src/Functional/Entity/FieldRenderedEntityTranslationTest.php
 share/drupal/core/modules/views/tests/src/Functional/Entity/ViewNonTranslatableEntityTest.php
 share/drupal/core/modules/views/tests/src/Functional/GlossaryTest.php
 share/drupal/core/modules/views/tests/src/Functional/Hal/ViewHalJsonAnonTest.php
@@ -12430,6 +12437,8 @@ share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerExistingSettin
 share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerExistingSettingsTest.php
 share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerLanguageDirectionTest.php
 share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerLanguagePageTest.php
+share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerNonEnglishProfileWithoutLocaleModuleTest.php
+share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerPostInstallTest.php
 share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerProfileRequirementsTest.php
 share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerSiteConfigProfileTest.php
 share/drupal/core/tests/Drupal/FunctionalTests/Installer/InstallerSkipPermissionHardeningTest.php
@@ -12805,6 +12814,7 @@ share/drupal/core/tests/Drupal/KernelTests/Core/Theme/TwigMarkupInterfaceTest.ph
 share/drupal/core/tests/Drupal/KernelTests/Core/Theme/TwigWhiteListTest.php
 share/drupal/core/tests/Drupal/KernelTests/Core/TypedData/AllowedValuesConstraintValidatorTest.php
 share/drupal/core/tests/Drupal/KernelTests/Core/TypedData/ComplexDataConstraintValidatorTest.php
+share/drupal/core/tests/Drupal/KernelTests/Core/TypedData/RecursiveContextualValidatorTest.php
 share/drupal/core/tests/Drupal/KernelTests/Core/TypedData/TypedDataDefinitionTest.php
 share/drupal/core/tests/Drupal/KernelTests/Core/TypedData/TypedDataTest.php
 share/drupal/core/tests/Drupal/KernelTests/Core/Update/CompatibilityFixTest.php
@@ -13345,6 +13355,7 @@ share/drupal/core/tests/Drupal/Tests/Core/Test/KernelTestBaseTest.php
 share/drupal/core/tests/Drupal/Tests/Core/Test/PhpUnitAutoloaderTest.php
 share/drupal/core/tests/Drupal/Tests/Core/Test/PhpUnitBridgeIsolatedTest.php
 share/drupal/core/tests/Drupal/Tests/Core/Test/PhpUnitBridgeTest.php
+share/drupal/core/tests/Drupal/Tests/Core/Test/RunTests/TestFileParserTest.php
 share/drupal/core/tests/Drupal/Tests/Core/Test/TestDatabaseTest.php
 share/drupal/core/tests/Drupal/Tests/Core/Test/TestSetupTraitTest.php
 share/drupal/core/tests/Drupal/Tests/Core/Test/TestSuiteBaseTest.php
@@ -15394,6 +15405,11 @@ share/drupal/vendor/symfony/polyfill-mbstring/Resources/unidata/titleCaseRegexp.
 share/drupal/vendor/symfony/polyfill-mbstring/Resources/unidata/upperCase.php
 share/drupal/vendor/symfony/polyfill-mbstring/bootstrap.php
 share/drupal/vendor/symfony/polyfill-mbstring/composer.json
+share/drupal/vendor/symfony/polyfill-php56/LICENSE
+share/drupal/vendor/symfony/polyfill-php56/Php56.php
+share/drupal/vendor/symfony/polyfill-php56/README.md
+share/drupal/vendor/symfony/polyfill-php56/bootstrap.php
+share/drupal/vendor/symfony/polyfill-php56/composer.json
 share/drupal/vendor/symfony/polyfill-php70/LICENSE
 share/drupal/vendor/symfony/polyfill-php70/Php70.php
 share/drupal/vendor/symfony/polyfill-php70/README.md
@@ -15406,6 +15422,17 @@ share/drupal/vendor/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestam
 share/drupal/vendor/symfony/polyfill-php70/Resources/stubs/TypeError.php
 share/drupal/vendor/symfony/polyfill-php70/bootstrap.php
 share/drupal/vendor/symfony/polyfill-php70/composer.json
+share/drupal/vendor/symfony/polyfill-util/Binary.php
+share/drupal/vendor/symfony/polyfill-util/BinaryNoFuncOverload.php
+share/drupal/vendor/symfony/polyfill-util/BinaryOnFuncOverload.php
+share/drupal/vendor/symfony/polyfill-util/LICENSE
+share/drupal/vendor/symfony/polyfill-util/README.md
+share/drupal/vendor/symfony/polyfill-util/TestListener.php
+share/drupal/vendor/symfony/polyfill-util/TestListenerForV5.php
+share/drupal/vendor/symfony/polyfill-util/TestListenerForV6.php
+share/drupal/vendor/symfony/polyfill-util/TestListenerForV7.php
+share/drupal/vendor/symfony/polyfill-util/TestListenerTrait.php
+share/drupal/vendor/symfony/polyfill-util/composer.json
 share/drupal/vendor/symfony/process/.gitignore
 share/drupal/vendor/symfony/process/CHANGELOG.md
 share/drupal/vendor/symfony/process/Exception/ExceptionInterface.php

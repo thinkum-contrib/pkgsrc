@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.2 2019/03/19 14:19:45 wiz Exp $
+# $NetBSD: Makefile,v 1.5 2019/11/08 13:41:32 micha Exp $
 
-DISTNAME=	schily-2019-03-11
+DISTNAME=	schily-2019-10-25
 PKGNAME=	smake-1.3
-PKGREVISION=	3
+PKGREVISION=	7
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=schilytools/}
 EXTRACT_SUFX=	.tar.bz2
 
-MAINTAINER=	michael.baeuerle@gmx.net
+MAINTAINER=	micha@NetBSD.org
 COMMENT=	Highly portable UNIX make implementation
 LICENSE=	cddl-1.0
 

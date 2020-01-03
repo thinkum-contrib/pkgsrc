@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.52 2019/06/12 13:26:27 ryoon Exp $
+# $NetBSD: Makefile,v 1.55 2019/11/27 13:30:53 ryoon Exp $
 
-DISTNAME=	notmuch-0.29.1
+DISTNAME=	notmuch-0.29.3
 CATEGORIES=	mail
 MASTER_SITES=	https://notmuchmail.org/releases/
 EXTRACT_SUFX=	.tar.xz
@@ -32,7 +32,7 @@ SUBST_FILES.gnuld=	lib/Makefile.local
 SUBST_SED.gnuld=	-e 's/-Wl,--[^ ]*//g'
 
 SUBST_CLASSES+=		sphinx
-SUBST_SED.sphinx+=	-e "s,sphinx-build,sphinx-build${PYVERSSUFFIX},"
+SUBST_SED.sphinx+=	-e "s,sphinx-build,sphinx-build-${PYVERSSUFFIX},"
 SUBST_FILES.sphinx+=	bindings/python/docs/Makefile configure doc/Makefile.local
 SUBST_STAGE.sphinx=	pre-configure
 SUBST_MESSAGE.sphinx=	Fix sphinx command names.

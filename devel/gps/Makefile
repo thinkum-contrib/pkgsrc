@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.62 2019/08/11 13:18:44 wiz Exp $
+# $NetBSD: Makefile,v 1.64 2019/11/03 10:39:13 rillig Exp $
 
 DISTNAME=	gps-${GPS_VERSION}
 PKGREVISION=	24
@@ -32,7 +32,7 @@ WRKSRC=			${WRKDIR}/gps-release-ide-${GPS_VERSION}-src
 
 CONFIGURE_ARGS+=	--disable-shared --with-gmp=${PREFIX}
 
-SUBST_CLASSES+= 	coll python
+SUBST_CLASSES+=		coll python
 SUBST_STAGE.coll=	pre-configure
 SUBST_FILES.coll=	gnatlib/src/gnatcoll_readline.gpr.in
 SUBST_VARS.coll=	PREFIX
@@ -41,7 +41,7 @@ SUBST_STAGE.python=	pre-configure
 SUBST_FILES.python=	share/plug-ins/gps_utils/console_process.py
 SUBST_SED.python=	-e "s|/usr/bin/python|${PYTHONBIN}|"
 
-GENERATE_PLIST= cd ${DESTDIR}${PREFIX}; \
+GENERATE_PLIST=	cd ${DESTDIR}${PREFIX}; \
 		${FIND} * \( -type f -or -type l \) | ${SORT};
 
 do-configure:
@@ -61,12 +61,13 @@ post-install:
 	${RM} -rf ${DESTDIR}${PREFIX}/share/doc/gps/html/users_guide/_sources
 	${RM} -rf ${DESTDIR}${PREFIX}/share/doc/gps/html/tutorial/_sources
 
-BUILD_DEPENDS+=	${PYPKGPREFIX}-sphinx-[0-9]*:../../textproc/py-sphinx
+PYTHON_VERSIONED_DEPENDENCIES=	sphinx:build
+
 BUILDLINK_DEPMETHOD.gprbuild-aux=	full
 
-.include "../../lang/python/application.mk"
-.include "../../x11/gtkada/buildlink3.mk"
-.include "../../textproc/xmlada/buildlink3.mk"
 .include "../../devel/gmp/buildlink3.mk"
 .include "../../devel/gprbuild-aux/buildlink3.mk"
+.include "../../lang/python/versioned_dependencies.mk"
+.include "../../textproc/xmlada/buildlink3.mk"
+.include "../../x11/gtkada/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

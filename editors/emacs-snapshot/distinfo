@@ -1,9 +1,7 @@
-$NetBSD: distinfo,v 1.71 2015/11/03 03:32:15 agc Exp $
+$NetBSD: distinfo,v 1.73 2019/12/31 17:32:41 mef Exp $
 
-SHA1 (emacs-snapshot_2015071614+bd8b5ac77250d9fe0634d58a30a3bf6d2497725a.orig.tar.xz) = 9d9516a5fe81068fc32e175ea0684eb2cd382cdb
-RMD160 (emacs-snapshot_2015071614+bd8b5ac77250d9fe0634d58a30a3bf6d2497725a.orig.tar.xz) = bc23b1eb226a180b535dabd35b74072d154c1677
-SHA512 (emacs-snapshot_2015071614+bd8b5ac77250d9fe0634d58a30a3bf6d2497725a.orig.tar.xz) = e1208da4e7b073c36b759155ff4b258d494967d983b95cc913caf77694c9edbaca8c7aaa096294acb08e5aeb84392b8d2f881721e923c5c9f9f1571f1d63e898
-Size (emacs-snapshot_2015071614+bd8b5ac77250d9fe0634d58a30a3bf6d2497725a.orig.tar.xz) = 25788584 bytes
-SHA1 (patch-ad) = 61769812ed721e8d881a954983bbdbba01537104
-SHA1 (patch-ag) = e30b57d3536e31adbd5b0f0c91696de0de2c0f35
-SHA1 (patch-src_process.c) = e3e9ae43f4bfa373e51eb3e6a1f864ebf1bbc308
+SHA1 (emacs-27.0.60_2019-12-29.tar.gz) = bcb220fb95a7c08a515afc9d8a91539db681d7c2
+RMD160 (emacs-27.0.60_2019-12-29.tar.gz) = cfc620dee53bfc0e6d28f960b66ae7a138a5b7b1
+SHA512 (emacs-27.0.60_2019-12-29.tar.gz) = 9c0df746f210a2d62305ccf9da0662b7b25752d08e058a842a414ec2a9ac2a4876dd57afbae422cc8f3e4c0b617ded524132fb95cbe3dc8d7e1d6af9668c3b61
+Size (emacs-27.0.60_2019-12-29.tar.gz) = 64590756 bytes
+SHA1 (patch-configure.ac) = c9731094e059ac80d25e5a32894404a14be64433

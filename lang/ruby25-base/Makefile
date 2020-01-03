@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.9 2019/03/16 14:34:56 taca Exp $
+# $NetBSD: Makefile,v 1.13 2019/11/03 19:04:07 rillig Exp $
 
 DISTNAME=	${RUBY_DISTNAME}
 PKGNAME=	${RUBY_PKGPREFIX}-base-${RUBY_VERSION}
+PKGREVISION=	1
 CATEGORIES=	lang ruby
 MASTER_SITES=	${MASTER_SITE_RUBY}
 
@@ -12,7 +13,6 @@ COMMENT=	Ruby ${RUBY_VERSION} release minimum base package
 RUBY_VERSIONS_ACCEPTED=	25
 
 USE_GCC_RUNTIME=	yes
-USE_LANGUAGES=		c
 USE_TOOLS+=		pax yacc pkg-config
 GNU_CONFIGURE=		yes
 TEST_TARGET=		test
@@ -23,15 +23,15 @@ WRKSRC=			${RUBY_WRKSRC}
 .include "../../lang/ruby/platform.mk"
 
 .if !empty(RUBY_SUFFIX)
-CONFIGURE_ARGS+= --program-suffix=${RUBY_SUFFIX}
-CONFIGURE_ARGS+= --with-soname=${RUBY_NAME}
-CONFIGURE_ARGS+= --with-ruby-version=${RUBY_VER_DIR}
-CONFIGURE_ARGS+= --with-ruby-pc="ruby-${RUBY_VERSION}.pc"
+CONFIGURE_ARGS+=	--program-suffix=${RUBY_SUFFIX}
+CONFIGURE_ARGS+=	--with-soname=${RUBY_NAME}
+CONFIGURE_ARGS+=	--with-ruby-version=${RUBY_VER_DIR}
+CONFIGURE_ARGS+=	--with-ruby-pc="ruby-${RUBY_VERSION}.pc"
 .endif
 
 CONFIGURE_ENV.Darwin+=	ac_cv_prog_dsymutil=
 
-DOCS=	BSDL COPYING COPYING.ja ChangeLog LEGAL NEWS README.EXT README.EXT.ja \
+DOCS=		BSDL COPYING COPYING.ja ChangeLog LEGAL NEWS README.EXT README.EXT.ja \
 	README.ja.md README.md doc/ChangeLog-1.8.0 doc/ChangeLog-1.9.3 \
 	doc/ChangeLog-2.0.0 doc/ChangeLog-2.1.0 doc/ChangeLog-2.2.0 \
 	doc/ChangeLog-2.3.0 doc/ChangeLog-2.4.0 doc/ChangeLog-2016 \
@@ -67,6 +67,8 @@ INSTALLATION_DIRS=	bin ${PKGMANDIR}/man1 ${RUBY_DOC}/images \
 			${RUBY_EG}/bigdecimal ${RUBY_EG}/pty
 # ${RUBY_ARCHINC} ${RUBY_ARCHLIB}
 EMPTY_DIRS=		generator/template markup/simple_markup
+
+NOT_PAX_MPROTECT_SAFE+=	bin/${RUBY_NAME}
 
 pre-configure:
 	${RM} -f ${WRKSRC}/ext/gdbm/extconf.rb

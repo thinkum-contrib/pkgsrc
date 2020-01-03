@@ -1,9 +1,8 @@
-# $NetBSD: Makefile,v 1.19 2019/09/09 12:59:06 nia Exp $
+# $NetBSD: Makefile,v 1.21 2019/12/30 22:48:17 gutteridge Exp $
 
-PKGREVISION= 2
 .include "../../meta-pkgs/mate/Makefile.common"
 
-DISTNAME=	mate-control-center-${VERSION:R}.1
+DISTNAME=	mate-control-center-${VERSION:R}.2
 CATEGORIES=	sysutils
 
 COMMENT=	MATE Control Center
@@ -44,7 +43,6 @@ CONF_FILES+=	${PREFIX}/share/examples/${PKGBASE}/xdg/menus/matecc.menu \
 .include "../../x11/libXi/buildlink3.mk"
 .include "../../x11/libXcursor/buildlink3.mk"
 .include "../../x11/libXft/buildlink3.mk"
-.include "../../x11/libXxf86misc/buildlink3.mk"
 .include "../../x11/libXScrnSaver/buildlink3.mk"
 .include "../../x11/libICE/buildlink3.mk"
 .include "../../databases/shared-mime-info/mimedb.mk"

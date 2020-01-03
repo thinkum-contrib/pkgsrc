@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.25 2017/09/03 08:53:16 wiz Exp $
+# $NetBSD: Makefile,v 1.29 2019/11/04 21:43:45 rillig Exp $
 
 PKGNAME=	${PYPKGPREFIX}-expat-${PY_DISTVERSION}
 CATEGORIES=	textproc python
@@ -8,13 +8,17 @@ HOMEPAGE=	https://www.python.org/
 COMMENT=	Python interface to expat
 
 EXTRACT_ELEMENTS=	${PYSUBDIR}/Modules/pyexpat.c
+.include "../../lang/python/pyversion.mk"
+.if ${_PYTHON_VERSION} != 27
+EXTRACT_ELEMENTS+=	${PYSUBDIR}/Modules/clinic/pyexpat.c.h
+.endif
 
 USE_GCC_RUNTIME=	yes
 
-PYDISTUTILSPKG=	yes
-PY_PATCHPLIST=	yes
-PY_SETUP_SUBST+= EXPATPREFIX=${BUILDLINK_DIR}
-PY_SETUP_SUBST+= EXPATRTPREFIX=${BUILDLINK_PREFIX.expat}
+PYDISTUTILSPKG=		yes
+PY_PATCHPLIST=		yes
+PY_SETUP_SUBST+=	EXPATPREFIX=${BUILDLINK_DIR}
+PY_SETUP_SUBST+=	EXPATRTPREFIX=${BUILDLINK_PREFIX.expat}
 
 PYSETUPINSTALLARGS+=	--install-lib ${PREFIX}/${PYLIB}/lib-dynload
 

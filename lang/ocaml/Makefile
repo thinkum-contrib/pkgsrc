@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.128 2019/08/27 05:37:38 jaapb Exp $
+# $NetBSD: Makefile,v 1.131 2019/11/24 09:23:13 adam Exp $
 
 .include "Makefile.common"
 
-PKGREVISION=		1
+PKGREVISION=		2
 
 BUILD_TARGET=		world
 MAKE_JOBS_SAFE=		no
@@ -38,7 +38,7 @@ PLIST.ocaml-stub=	yes
 BUILD_TARGET+=		opt opt.opt
 PLIST.ocaml-opt=	yes
 .  if empty(MACHINE_PLATFORM:MDarwin-*-powerpc) && \
-      empty(MACHINE_PLATFORM:MSunOS-*-i386) && \
+      empty(MACHINE_PLATFORM:MSunOS-*-*) && \
       (${MACHINE_ARCH} != "aarch64")
 PLIST.ocaml-prof=	yes
 .  endif
@@ -97,12 +97,15 @@ REPLACE_AWK+=		tools/ocaml-instr-report
 do-test:
 	cd ${WRKSRC}/testsuite && ${MAKE_PROGRAM} all
 
-#post-install:
-#	set -e ; cd ${DESTDIR}${PREFIX}/lib/ocaml/${PKGMANDIR}/man1;	\
-#	for m in *; do							\
-#	  ln -sf ${PREFIX}/lib/ocaml/${PKGMANDIR}/man1/$$m		\
-#		${DESTDIR}${PREFIX}/${PKGMANDIR}/man1/$$m;		\
-#	done
+.if ${OPSYS} == "Darwin"
+.PHONY: fix-darwin-install-name
+post-install: fix-darwin-install-name
+fix-darwin-install-name:
+	for f in ${DESTDIR}${PREFIX}/lib/ocaml/*.so \
+		${DESTDIR}${PREFIX}/lib/ocaml/stublibs/*.so; do \
+		install_name_tool -id `${ECHO} $$f | ${SED} -e 's,${DESTDIR},,g'` $$f; \
+	done
+.endif
 
 .include "../../mk/dlopen.buildlink3.mk"
 .include "../../mk/termcap.buildlink3.mk"

@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.72 2019/07/03 17:17:58 sevan Exp $
+# $NetBSD: Makefile,v 1.74 2019/11/04 21:12:54 rillig Exp $
 
 DISTNAME=	libgpg-error-1.36
+PKGREVISION=	1
 CATEGORIES=	security
 MASTER_SITES=	ftp://ftp.gnupg.org/gcrypt/libgpg-error/
 MASTER_SITES+=	ftp://ftp.ring.gr.jp/pub/net/gnupg/libgpg-error/
@@ -27,7 +28,7 @@ CONFIGURE_ENV+=		CC_FOR_BUILD=${CC:Q}\ ${CFLAGS:M*:Q}
 .endif
 
 .if !empty(MACHINE_PLATFORM:MDarwin-8.*-powerpc)
-CFLAGS+= 	-D__DARWIN_UNIX03
+CFLAGS+=	-D__DARWIN_UNIX03
 .endif
 
 .if !empty(MACHINE_PLATFORM:MSunOS-5.10-*)

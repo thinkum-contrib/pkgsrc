@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.2 2019/09/14 14:45:45 ng0 Exp $
+$NetBSD: distinfo,v 1.5 2020/01/01 01:30:19 ng0 Exp $
 
-SHA1 (doas-6.2p1.tar.gz) = cd1d7728b9b0491a2a453017359f4185bdcf3e90
-RMD160 (doas-6.2p1.tar.gz) = 5db2e6deed45192ea4a4f2434e829d2b50201911
-SHA512 (doas-6.2p1.tar.gz) = 0b4e14c87cf5ff441a5262ca4a7316c3fb162ff9ee27b1231ef3f5ec5619245c1e18bf6b8df611718c3c7c81e05f1f32d577b1b3455d95aefd6a77cb2ab0570c
-Size (doas-6.2p1.tar.gz) = 24523 bytes
+SHA1 (doas-6.2p4.tar.gz) = dd90972c3a120ae2b96432bae2c7a78c4c729166
+RMD160 (doas-6.2p4.tar.gz) = a8ed8677fbffd48bf87b4fa5c6b0dd98f0c5e428
+SHA512 (doas-6.2p4.tar.gz) = 951686a58300ab6ffcdd7b98502df832b35c43787234c52c71c42eaca9e4dbeb1c2e33e7535a9b8babdb2f38840f6cff1045f6a90fa609029590e7c1384b8a75
+Size (doas-6.2p4.tar.gz) = 26098 bytes

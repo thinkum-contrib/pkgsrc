@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.136 2019/07/21 22:25:14 wiz Exp $
+# $NetBSD: Makefile,v 1.139 2019/11/03 19:04:04 rillig Exp $
 
 JDK_MICRO=	141
 DISTNAME=	openjdk-1.7.${JDK_MICRO}-20170813
@@ -23,11 +23,11 @@ JAVA_HOME=	${PREFIX}/java/${JAVA_NAME}
 JAVA_WRAPPERS=	jar java javac javadoc javah javap jcmd jhat jps jstack \
 		keytool orbd policytool rmid rmiregistry servertool tnameserv
 
-NOT_PAX_MPROTECT_SAFE+=	java/openjdk7/bin/[a-ik-z]*
-NOT_PAX_MPROTECT_SAFE+=	java/openjdk7/bin/j[b-z]*
-NOT_PAX_MPROTECT_SAFE+=	java/openjdk7/bin/jar*
-NOT_PAX_MPROTECT_SAFE+=	java/openjdk7/bin/java
-NOT_PAX_MPROTECT_SAFE+=	java/openjdk7/bin/java[a-z]*
+NOT_PAX_MPROTECT_SAFE+=	java/${JAVA_NAME}/bin/[a-ik-z]*
+NOT_PAX_MPROTECT_SAFE+=	java/${JAVA_NAME}/bin/j[b-z]*
+NOT_PAX_MPROTECT_SAFE+=	java/${JAVA_NAME}/bin/jar*
+NOT_PAX_MPROTECT_SAFE+=	java/${JAVA_NAME}/bin/java
+NOT_PAX_MPROTECT_SAFE+=	java/${JAVA_NAME}/bin/java[a-z]*
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -55,9 +55,9 @@ USE_TOOLS+=		gmake pax unzip:run zip:run # patch
 UNLIMIT_RESOURCES=	datasize stacksize
 WRKSRC=			${WRKDIR}/openjdk
 PLIST_SRC+=		${PLIST_SRC_DFLT}
-CHECK_SHLIBS_SKIP=	java/openjdk7/jre/lib/${LIBDIR_ARCH}/libfontmanager.so
-CHECK_SHLIBS_SKIP+=	java/openjdk7/jre/lib/${LIBDIR_ARCH}/libjawt.so
-CHECK_SHLIBS_SKIP+=	java/openjdk7/jre/lib/${LIBDIR_ARCH}/libsunec.so
+CHECK_SHLIBS_SKIP=	java/${JAVA_NAME}/jre/lib/${LIBDIR_ARCH}/libfontmanager.so
+CHECK_SHLIBS_SKIP+=	java/${JAVA_NAME}/jre/lib/${LIBDIR_ARCH}/libjawt.so
+CHECK_SHLIBS_SKIP+=	java/${JAVA_NAME}/jre/lib/${LIBDIR_ARCH}/libsunec.so
 
 BUILDLINK_PASSTHRU_DIRS+=	${ALT_BOOTDIR}
 PREPEND_PATH+=			${ALT_BOOTDIR}/bin
@@ -87,13 +87,13 @@ MAKE_ENV+=	SKIP_COMPARE_IMAGES=true
 MAKE_ENV+=	JAVA_HOME=
 MAKE_ENV+=	CLASSPATH=
 
-BUILD_OPSYS=	${OPSYS:C/.*BSD/bsd/:S/DragonFly/bsd/:S/SunOS/solaris/}
-BUILD_ARCH=	${MACHINE_ARCH:S/i386/i586/:S/x86_64/amd64/:S/sparc64/sparcv9/:C/^e?arm.*$/arm/}
-LIBDIR_ARCH=	${MACHINE_ARCH:S/x86_64/amd64/:S/sparc64/sparcv9/:C/^e?arm.*$/arm/}
-BUILDDIR=	${WRKSRC}/build/${BUILD_OPSYS}-${BUILD_ARCH}
-LD_LIBRARY_PATH=	${WRKDIR}/bootstrap/jre/lib/${LIBDIR_ARCH}:${WRKDIR}/bootstrap/jre/lib/${LIBDIR_ARCH}/jli:${WRKDIR}/bootstrap/jre/lib/${LIBDIR_ARCH}/server
-MAKE_ENV+=	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
-BUILDLINK_PASSTHRU_RPATHDIRS+=	${PREFIX}/java/openjdk7/jre/lib/${LIBDIR_ARCH}
+BUILD_OPSYS=			${OPSYS:C/.*BSD/bsd/:S/DragonFly/bsd/:S/SunOS/solaris/}
+BUILD_ARCH=			${MACHINE_ARCH:S/i386/i586/:S/x86_64/amd64/:S/sparc64/sparcv9/:C/^e?arm.*$/arm/}
+LIBDIR_ARCH=			${MACHINE_ARCH:S/x86_64/amd64/:S/sparc64/sparcv9/:C/^e?arm.*$/arm/}
+BUILDDIR=			${WRKSRC}/build/${BUILD_OPSYS}-${BUILD_ARCH}
+LD_LIBRARY_PATH=		${WRKDIR}/bootstrap/jre/lib/${LIBDIR_ARCH}:${WRKDIR}/bootstrap/jre/lib/${LIBDIR_ARCH}/jli:${WRKDIR}/bootstrap/jre/lib/${LIBDIR_ARCH}/server
+MAKE_ENV+=			LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+BUILDLINK_PASSTHRU_RPATHDIRS+=	${PREFIX}/java/${JAVA_NAME}/jre/lib/${LIBDIR_ARCH}
 
 PLIST_SUBST+=	ARCH=${LIBDIR_ARCH}
 PLIST_SUBST+=	LOWER_OPSYS=${LOWER_OPSYS}
@@ -137,7 +137,7 @@ SUBST_SED.mapfix2=	-e '/environ/d'
 CFLAGS+=	-D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
 CXXFLAGS+=	-D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
 
-.if !empty(CC_VERSION:Mgcc-[67].*)
+.if !empty(PKGSRC_COMPILER:Mgcc) && empty(CC_VERSION:Mgcc-[2345].*)
 CFLAGS+=	-fno-lifetime-dse
 CFLAGS+=	-fno-delete-null-pointer-checks
 .endif
@@ -162,10 +162,10 @@ CWRAPPERS_APPEND.cxx+=	-Wno-parentheses -Wno-sign-conversion \
 			-Wno-delete-non-virtual-dtor \
 			-Wno-return-type -Wno-unused-parameter \
 			-Wno-parentheses-equality -Wno-empty-body
-.if ${OPSYS} != "FreeBSD"
+.  if ${OPSYS} != "FreeBSD"
 _WRAP_EXTRA_ARGS.CXX+=	-Wno-new-returns-null
 CWRAPPERS_APPEND.cxx+=	-Wno-new-returns-null
-.endif
+.  endif
 BUILDLINK_TRANSFORM+=	rm:-fcheck-new
 BUILDLINK_TRANSFORM+=	rm:-fpch-deps
 .  if ${MACHINE_ARCH} == "x86_64"

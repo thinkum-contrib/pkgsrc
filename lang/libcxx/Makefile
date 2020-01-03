@@ -1,17 +1,15 @@
-# $NetBSD: Makefile,v 1.5 2019/08/05 19:06:49 adam Exp $
+# $NetBSD: Makefile,v 1.9 2019/12/29 15:31:22 adam Exp $
 
-DISTNAME=	libcxx-8.0.1.src
+.include "../../lang/llvm/version.mk"
+
+DISTNAME=	libcxx-${LLVM_VERSION}.src
 PKGNAME=	${DISTNAME:S/.src//}
 CATEGORIES=	lang devel
-MASTER_SITES=	${MASTER_SITE_GITHUB:=llvm/}
-GITHUB_PROJECT=	llvm-project
-GITHUB_RELEASE=	llvmorg-${PKGVERSION_NOREV}
-EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://libcxx.llvm.org/
 COMMENT=	C++ Standard Library
-LICENSE=	modified-bsd OR mit
+LICENSE=	apache-2.0
 
 # libcxx requires libcxxabi's cxxabi.h to build, but libcxxabi requires
 # libcxx's includes to build, so we have this unholy extra distfiles thing

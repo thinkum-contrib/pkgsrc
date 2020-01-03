@@ -64,15 +64,16 @@ type ShSuite struct {
 
 var _ = check.Suite(&ShSuite{})
 
-func (s *ShSuite) SetUpTest(c *check.C) {
-	G = NewPkglint()
-}
-
-func (s *ShSuite) TearDownTest(c *check.C) {
+func (s *ShSuite) SetUpTest(*check.C) {
 	G = unusablePkglint()
 }
 
-func (s *ShSuite) Test_ShellParser__program(c *check.C) {
+func (s *ShSuite) TearDownTest(*check.C) {
+	s.t.ReportUncheckedOutput()
+	G = unusablePkglint()
+}
+
+func (s *ShSuite) Test_parseShellProgram__program(c *check.C) {
 	b := s.init(c)
 
 	s.test("",
@@ -149,7 +150,7 @@ func (s *ShSuite) Test_ShellParser__program(c *check.C) {
 			b.List().AddCommand(b.SimpleCommand("action2")).AddSemicolon())))
 }
 
-func (s *ShSuite) Test_ShellParser__list(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__list(c *check.C) {
 	b := s.init(c)
 
 	s.test("echo1 && echo2",
@@ -171,7 +172,7 @@ func (s *ShSuite) Test_ShellParser__list(c *check.C) {
 			AddBackground())
 }
 
-func (s *ShSuite) Test_ShellParser__and_or(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__and_or(c *check.C) {
 	b := s.init(c)
 
 	s.test("echo1 | echo2",
@@ -200,7 +201,7 @@ func (s *ShSuite) Test_ShellParser__and_or(c *check.C) {
 				b.SimpleCommand("echo4")))))
 }
 
-func (s *ShSuite) Test_ShellParser__pipeline(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__pipeline(c *check.C) {
 	b := s.init(c)
 
 	s.test("command1 | command2",
@@ -214,7 +215,7 @@ func (s *ShSuite) Test_ShellParser__pipeline(c *check.C) {
 			b.SimpleCommand("command2")))))
 }
 
-func (s *ShSuite) Test_ShellParser__pipe_sequence(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__pipe_sequence(c *check.C) {
 	b := s.init(c)
 
 	s.test("command1 | if true ; then : ; fi",
@@ -225,7 +226,7 @@ func (s *ShSuite) Test_ShellParser__pipe_sequence(c *check.C) {
 				b.List().AddCommand(b.SimpleCommand(":")).AddSemicolon())))))
 }
 
-func (s *ShSuite) Test_ShellParser__command(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__command(c *check.C) {
 	b := s.init(c)
 
 	s.test("simple_command",
@@ -251,7 +252,7 @@ func (s *ShSuite) Test_ShellParser__command(c *check.C) {
 			b.Redirection(2, ">&", "1"))))
 }
 
-func (s *ShSuite) Test_ShellParser__compound_command(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__compound_command(c *check.C) {
 	b := s.init(c)
 
 	s.test("{ brace ; }",
@@ -268,13 +269,24 @@ func (s *ShSuite) Test_ShellParser__compound_command(c *check.C) {
 			b.Words("*"),
 			b.List().AddCommand(b.SimpleCommand("echo", "$i")).AddSemicolon())))
 
+	s.t.CheckOutputLines(
+		"WARN: MkShBuilder.Token.mk:1: $i is ambiguous. Use ${i} if you "+
+			"mean a Make variable or $$i if you mean a shell variable.",
+		"WARN: ShSuite.test.mk:1: $i is ambiguous. Use ${i} if you "+
+			"mean a Make variable or $$i if you mean a shell variable.")
+
 	s.test("case $i in esac",
 		b.List().AddCommand(b.Case(
 			b.Token("$i"))))
 
+	s.t.CheckOutputLines(
+		"WARN: MkShBuilder.Token.mk:1: $i is ambiguous. Use ${i} if you "+
+			"mean a Make variable or $$i if you mean a shell variable.",
+		"WARN: ShSuite.test.mk:1: $i is ambiguous. Use ${i} if you "+
+			"mean a Make variable or $$i if you mean a shell variable.")
 }
 
-func (s *ShSuite) Test_ShellParser__subshell(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__subshell(c *check.C) {
 	b := s.init(c)
 
 	sub3 := b.Subshell(b.List().AddCommand(b.SimpleCommand("sub3")))
@@ -283,7 +295,7 @@ func (s *ShSuite) Test_ShellParser__subshell(c *check.C) {
 	s.test("( ( ( sub3 ) ; sub2 ) ; sub1 )", b.List().AddCommand(sub1))
 }
 
-func (s *ShSuite) Test_ShellParser__compound_list(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__compound_list(c *check.C) {
 	b := s.init(c)
 
 	s.test("( \n echo )",
@@ -291,7 +303,7 @@ func (s *ShSuite) Test_ShellParser__compound_list(c *check.C) {
 			b.List().AddCommand(b.SimpleCommand("echo")))))
 }
 
-func (s *ShSuite) Test_ShellParser__term(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__term(c *check.C) {
 	b := s.init(c)
 
 	s.test("echo1 ; echo2 ;",
@@ -302,7 +314,7 @@ func (s *ShSuite) Test_ShellParser__term(c *check.C) {
 			AddSemicolon())
 }
 
-func (s *ShSuite) Test_ShellParser__for_clause(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__for_clause(c *check.C) {
 	b := s.init(c)
 
 	// If this test fails, the cause might be in shell.y, in the for_clause rule.
@@ -312,6 +324,12 @@ func (s *ShSuite) Test_ShellParser__for_clause(c *check.C) {
 			b.Words("\"$$@\""),
 			b.List().AddCommand(b.SimpleCommand("echo", "$var")).AddSemicolon())))
 
+	s.t.CheckOutputLines(
+		"ERROR: MkShBuilder.Token.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.",
+		"ERROR: ShSuite.test.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.")
+
 	// Only linebreak is allowed, but not semicolon.
 	s.test("for var \n do echo $var ; done",
 		b.List().AddCommand(b.For(
@@ -319,11 +337,23 @@ func (s *ShSuite) Test_ShellParser__for_clause(c *check.C) {
 			b.Words("\"$$@\""),
 			b.List().AddCommand(b.SimpleCommand("echo", "$var")).AddSemicolon())))
 
+	s.t.CheckOutputLines(
+		"ERROR: MkShBuilder.Token.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.",
+		"ERROR: ShSuite.test.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.")
+
 	s.test("for var in a b c ; do echo $var ; done",
 		b.List().AddCommand(b.For(
 			"var",
 			b.Words("a", "b", "c"),
 			b.List().AddCommand(b.SimpleCommand("echo", "$var")).AddSemicolon())))
+
+	s.t.CheckOutputLines(
+		"ERROR: MkShBuilder.Token.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.",
+		"ERROR: ShSuite.test.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.")
 
 	s.test("for var \n \n \n in a b c ; do echo $var ; done",
 		b.List().AddCommand(b.For(
@@ -331,11 +361,41 @@ func (s *ShSuite) Test_ShellParser__for_clause(c *check.C) {
 			b.Words("a", "b", "c"),
 			b.List().AddCommand(b.SimpleCommand("echo", "$var")).AddSemicolon())))
 
+	s.t.CheckOutputLines(
+		"ERROR: MkShBuilder.Token.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.",
+		"ERROR: ShSuite.test.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.")
+
+	s.test("for var \n in ; do echo $var ; done",
+		b.List().AddCommand(b.For(
+			"var",
+			nil,
+			b.List().AddCommand(b.SimpleCommand("echo", "$var")).AddSemicolon())))
+
+	s.t.CheckOutputLines(
+		"ERROR: MkShBuilder.Token.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.",
+		"ERROR: ShSuite.test.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.")
+
 	s.test("for var in in esac ; do echo $var ; done",
 		b.List().AddCommand(b.For(
 			"var",
 			b.Words("in", "esac"),
 			b.List().AddCommand(b.SimpleCommand("echo", "$var")).AddSemicolon())))
+
+	s.t.CheckOutputLines(
+		"ERROR: MkShBuilder.Token.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.",
+		"ERROR: ShSuite.test.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.")
+
+	s.test("for var in \n do : ; done",
+		b.List().AddCommand(b.For(
+			"var",
+			nil,
+			b.List().AddCommand(b.SimpleCommand(":")).AddSemicolon())))
 
 	// No semicolon necessary between the two "done".
 	s.test("for i in 1; do for j in 1; do echo $$i$$j; done done",
@@ -348,11 +408,18 @@ func (s *ShSuite) Test_ShellParser__for_clause(c *check.C) {
 				b.List().AddCommand(b.SimpleCommand("echo", "$$i$$j")).AddSemicolon())))))
 }
 
-func (s *ShSuite) Test_ShellParser__case_clause(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__case_clause(c *check.C) {
 	b := s.init(c)
 
 	s.test("case $var in esac",
 		b.List().AddCommand(b.Case(b.Token("$var"))))
+
+	s.t.CheckOutputLines(
+		"ERROR: MkShBuilder.Token.mk:1: $var is ambiguous. "+
+			"Use ${var} if you mean a Make variable "+
+			"or $$var if you mean a shell variable.",
+		"ERROR: ShSuite.test.mk:1: $var is ambiguous. Use ${var} if you "+
+			"mean a Make variable or $$var if you mean a shell variable.")
 
 	s.test("case selector in pattern) ;; pattern) esac",
 		b.List().AddCommand(b.Case(
@@ -385,6 +452,20 @@ func (s *ShSuite) Test_ShellParser__case_clause(c *check.C) {
 				b.Words("pattern"),
 				b.List().AddCommand(b.SimpleCommand("case-item-action")), sepNone))))
 
+	s.test("case selector in pattern) \n case-item-action ; esac",
+		b.List().AddCommand(b.Case(
+			b.Token("selector"),
+			b.CaseItem(
+				b.Words("pattern"),
+				b.List().AddCommand(b.SimpleCommand("case-item-action")), sepSemicolon))))
+
+	s.test("case selector in pattern) action \n esac",
+		b.List().AddCommand(b.Case(
+			b.Token("selector"),
+			b.CaseItem(
+				b.Words("pattern"),
+				b.List().AddCommand(b.SimpleCommand("action")), sepNone))))
+
 	s.test("case $$expr in (if|then|else) ;; esac",
 		b.List().AddCommand(b.Case(
 			b.Token("$$expr"),
@@ -416,7 +497,7 @@ func (s *ShSuite) Test_ShellParser__case_clause(c *check.C) {
 		[]string{}...)
 }
 
-func (s *ShSuite) Test_ShellParser__if_clause(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__if_clause(c *check.C) {
 	b := s.init(c)
 
 	s.test(
@@ -433,9 +514,17 @@ func (s *ShSuite) Test_ShellParser__if_clause(c *check.C) {
 			b.List().AddCommand(b.If(
 				b.List().AddCommand(b.SimpleCommand("cond2")).AddSemicolon(),
 				b.List().AddCommand(b.SimpleCommand("action")).AddSemicolon())))))
+
+	s.test("if cond1; then action1; elif cond2; then action2; else action3; fi",
+		b.List().AddCommand(b.If(
+			b.List().AddCommand(b.SimpleCommand("cond1")).AddSemicolon(),
+			b.List().AddCommand(b.SimpleCommand("action1")).AddSemicolon(),
+			b.List().AddCommand(b.SimpleCommand("cond2")).AddSemicolon(),
+			b.List().AddCommand(b.SimpleCommand("action2")).AddSemicolon(),
+			b.List().AddCommand(b.SimpleCommand("action3")).AddSemicolon())))
 }
 
-func (s *ShSuite) Test_ShellParser__while_clause(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__while_clause(c *check.C) {
 	b := s.init(c)
 
 	s.test("while condition ; do action ; done",
@@ -444,7 +533,7 @@ func (s *ShSuite) Test_ShellParser__while_clause(c *check.C) {
 			b.List().AddCommand(b.SimpleCommand("action")).AddSemicolon())))
 }
 
-func (s *ShSuite) Test_ShellParser__until_clause(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__until_clause(c *check.C) {
 	b := s.init(c)
 
 	s.test("until condition ; do action ; done",
@@ -453,7 +542,7 @@ func (s *ShSuite) Test_ShellParser__until_clause(c *check.C) {
 			b.List().AddCommand(b.SimpleCommand("action")).AddSemicolon())))
 }
 
-func (s *ShSuite) Test_ShellParser__function_definition(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__function_definition(c *check.C) {
 	b := s.init(c)
 
 	s.test("fn() { simple-command; }",
@@ -468,7 +557,7 @@ func (s *ShSuite) Test_ShellParser__function_definition(c *check.C) {
 	// a single command without braces or parentheses.
 }
 
-func (s *ShSuite) Test_ShellParser__brace_group(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__brace_group(c *check.C) {
 	b := s.init(c)
 
 	// No semicolon necessary after the closing brace.
@@ -479,7 +568,7 @@ func (s *ShSuite) Test_ShellParser__brace_group(c *check.C) {
 				b.List().AddCommand(b.SimpleCommand("echo", "yes")).AddSemicolon())))))
 }
 
-func (s *ShSuite) Test_ShellParser__simple_command(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__simple_command(c *check.C) {
 	b := s.init(c)
 
 	s.test(
@@ -520,13 +609,13 @@ func (s *ShSuite) Test_ShellParser__simple_command(c *check.C) {
 		b.List().AddCommand(b.SimpleCommand("{OpenGrok", "args")))
 }
 
-func (s *ShSuite) Test_ShellParser__io_redirect(c *check.C) {
+func (s *ShSuite) Test_parseShellProgram__io_redirect(c *check.C) {
 	b := s.init(c)
 
 	s.test("echo >> ${PLIST_SRC}",
 		b.List().AddCommand(b.SimpleCommand("echo", ">>${PLIST_SRC}")))
 
-	s.test("echo 1>output 2>>append 3>|clobber 4>&5 6<input >>append",
+	s.test("echo 1>output 2>>append 3>|clobber 4>&5 6<input >>append <&input <>diamond <<-here",
 		b.List().AddCommand(&MkShCommand{Simple: &MkShSimpleCommand{
 			Assignments: nil,
 			Name:        b.Token("echo"),
@@ -537,9 +626,12 @@ func (s *ShSuite) Test_ShellParser__io_redirect(c *check.C) {
 				{3, ">|", b.Token("clobber")},
 				{4, ">&", b.Token("5")},
 				{6, "<", b.Token("input")},
-				{-1, ">>", b.Token("append")}}}}))
+				{-1, ">>", b.Token("append")},
+				{-1, "<&", b.Token("input")},
+				{-1, "<>", b.Token("diamond")},
+				{-1, "<<-", b.Token("here")}}}}))
 
-	s.test("echo 1> output 2>> append 3>| clobber 4>& 5 6< input >> append",
+	s.test("echo 1> output 2>> append 3>| clobber 4>& 5 6< input >> append <& input <> diamond <<- here",
 		b.List().AddCommand(&MkShCommand{Simple: &MkShSimpleCommand{
 			Assignments: nil,
 			Name:        b.Token("echo"),
@@ -550,7 +642,10 @@ func (s *ShSuite) Test_ShellParser__io_redirect(c *check.C) {
 				{3, ">|", b.Token("clobber")},
 				{4, ">&", b.Token("5")},
 				{6, "<", b.Token("input")},
-				{-1, ">>", b.Token("append")}}}}))
+				{-1, ">>", b.Token("append")},
+				{-1, "<&", b.Token("input")},
+				{-1, "<>", b.Token("diamond")},
+				{-1, "<<-", b.Token("here")}}}}))
 
 	s.test("${MAKE} print-summary-data  2>&1 > /dev/stderr",
 		b.List().AddCommand(&MkShCommand{Simple: &MkShSimpleCommand{
@@ -560,32 +655,81 @@ func (s *ShSuite) Test_ShellParser__io_redirect(c *check.C) {
 			Redirections: []*MkShRedirection{
 				{2, ">&", b.Token("1")},
 				{-1, ">", b.Token("/dev/stderr")}}}}))
+
+	s.test("1> output command",
+		b.List().AddCommand(&MkShCommand{Simple: &MkShSimpleCommand{
+			Name: b.Token("command"),
+			Redirections: []*MkShRedirection{
+				{1, ">", b.Token("output")}}}}))
+
+	s.test("ENV=value 1> output command",
+		b.List().AddCommand(&MkShCommand{Simple: &MkShSimpleCommand{
+			Assignments: []*ShToken{b.Token("ENV=value")},
+			Name:        b.Token("command"),
+			Redirections: []*MkShRedirection{
+				{1, ">", b.Token("output")}}}}))
 }
 
-func (s *ShSuite) Test_ShellParser__io_here(c *check.C) {
-	// In pkgsrc Makefiles, the IO here-documents cannot be used since all the text
-	// is joined into a single line. Therefore there are no tests here.
+func (s *ShSuite) Test_parseShellProgram__redirect_list(c *check.C) {
+	b := s.init(c)
+
+	s.test("(:) 1>out",
+		b.List().AddCommand(
+			b.Redirected(
+				b.Subshell(b.List().AddCommand(b.SimpleCommand(":"))),
+				b.Redirection(1, ">", "out"))))
+
+	s.test("(:) 1>out 2>out",
+		b.List().AddCommand(
+			b.Redirected(
+				b.Subshell(b.List().AddCommand(b.SimpleCommand(":"))),
+				b.Redirection(1, ">", "out"),
+				b.Redirection(2, ">", "out"))))
+}
+
+func (s *ShSuite) Test_parseShellProgram__io_here(c *check.C) {
+	// In pkgsrc Makefiles, the IO here-documents cannot be used since
+	// all the text is joined into a single line. Therefore these test
+	// cases only show that pkglint can indeed not parse <<EOF
+	// redirections.
+	b := s.init(c)
+
+	s.test("<<EOF\ntext\nEOF",
+		b.List().
+			AddCommand(b.SimpleCommand("<<EOF")).
+			AddNewline().
+			AddCommand(b.SimpleCommand("text")). // This is wrong.
+			AddNewline().
+			AddCommand(b.SimpleCommand("EOF"))) // This is wrong.
+
+	s.test("1<<EOF\ntext\nEOF",
+		b.List().
+			AddCommand(b.SimpleCommand("1<<EOF")).
+			AddNewline().
+			AddCommand(b.SimpleCommand("text")). // This is wrong.
+			AddNewline().
+			AddCommand(b.SimpleCommand("EOF"))) // This is wrong.
 }
 
 func (s *ShSuite) init(c *check.C) *MkShBuilder {
 	s.c = c
-	s.t = &Tester{c: c, testName: c.TestName()}
+	tmpdir := NewCurrPath("The ShSuite tests don't need a temporary directory")
+	s.t = &Tester{c: c, testName: c.TestName(), tmpdir: tmpdir}
+	G = NewPkglint(&s.t.stdout, &s.t.stderr)
 	return NewMkShBuilder()
 }
 
 func (s *ShSuite) test(program string, expected *MkShList) {
 	t := s.t
 
-	tokens, rest := splitIntoShellTokens(dummyLine, program)
+	// See parseShellProgram
+	line := t.NewLine("ShSuite.test.mk", 1, "")
+	tokens, rest := splitIntoShellTokens(line, program)
 	t.CheckEquals(rest, "")
-	lexer := ShellLexer{
-		current:        "",
-		remaining:      tokens,
-		atCommandStart: true,
-		error:          ""}
+	lexer := NewShellLexer(tokens, rest)
 	parser := shyyParserImpl{}
 
-	zeroMeansSuccess := parser.Parse(&lexer)
+	zeroMeansSuccess := parser.Parse(lexer)
 
 	c := s.c
 
@@ -605,7 +749,8 @@ func (s *ShSuite) test(program string, expected *MkShList) {
 func (s *ShSuite) testFail(program string, expectedRemaining ...string) {
 	t := s.t
 
-	tokens, rest := splitIntoShellTokens(dummyLine, program)
+	line := t.NewLine("ShSuite.testFail.mk", 1, "")
+	tokens, rest := splitIntoShellTokens(line, program)
 	t.CheckEquals(rest, "")
 	lexer := ShellLexer{remaining: tokens, atCommandStart: true}
 	parser := shyyParserImpl{}
@@ -618,9 +763,11 @@ func (s *ShSuite) testFail(program string, expectedRemaining ...string) {
 }
 
 func (s *ShSuite) Test_ShellLexer_Lex__redirects(c *check.C) {
+	_ = s.init(c)
 	t := s.t
 
-	tokens, rest := splitIntoShellTokens(dummyLine, "2>&1 <& <>file >>file <<EOF <<-EOF > /dev/stderr")
+	line := t.NewLine("filename.mk", 1, "")
+	tokens, rest := splitIntoShellTokens(line, "2>&1 <& <>file >>file <<EOF <<-EOF > /dev/stderr")
 
 	t.CheckDeepEquals(tokens, []string{"2>&", "1", "<&", "<>", "file", ">>", "file", "<<", "EOF", "<<-", "EOF", ">", "/dev/stderr"})
 	t.CheckEquals(rest, "")
@@ -671,7 +818,8 @@ func (s *ShSuite) Test_ShellLexer_Lex__keywords(c *check.C) {
 	t := s.t
 
 	testErr := func(program, error, remaining string) {
-		tokens, rest := splitIntoShellTokens(dummyLine, program)
+		line := t.NewLine("filename.mk", 1, "")
+		tokens, rest := splitIntoShellTokens(line, program)
 		t.CheckEquals(rest, "")
 
 		lexer := ShellLexer{
@@ -766,6 +914,9 @@ func (b *MkShBuilder) Pipeline(negated bool, cmds ...*MkShCommand) *MkShPipeline
 	return NewMkShPipeline(negated, cmds)
 }
 
+// SimpleCommand classifies the given arguments into variable assignments
+// (only at the beginning of the command), the command name, arguments and
+// redirections. It is not intended to cover any edge cases.
 func (b *MkShBuilder) SimpleCommand(words ...string) *MkShCommand {
 	cmd := MkShSimpleCommand{}
 	assignments := true
@@ -787,6 +938,9 @@ func (b *MkShBuilder) SimpleCommand(words ...string) *MkShCommand {
 	return &MkShCommand{Simple: &cmd}
 }
 
+// If creates an if-then-elif-then-else sequence.
+// The first arguments are pairs of conditions and actions.
+// The remaining argument, if any, is the else action.
 func (b *MkShBuilder) If(condActionElse ...*MkShList) *MkShCommand {
 	ifClause := MkShIf{}
 	for i, part := range condActionElse {
@@ -846,8 +1000,14 @@ func (b *MkShBuilder) Subshell(list *MkShList) *MkShCommand {
 	return &MkShCommand{Compound: &MkShCompoundCommand{Subshell: list}}
 }
 
+func (b *MkShBuilder) Redirected(cmd *MkShCommand, redirects ...*MkShRedirection) *MkShCommand {
+	cmd.Redirects = redirects
+	return cmd
+}
+
 func (b *MkShBuilder) Token(mktext string) *ShToken {
-	tokenizer := NewShTokenizer(dummyLine, mktext, false)
+	line := NewLine("MkShBuilder.Token.mk", 1, "", &RawLine{1, "\n", "\n"})
+	tokenizer := NewShTokenizer(line, mktext)
 	token := tokenizer.ShToken()
 	assertf(tokenizer.parser.EOF(), "Invalid token: %q", tokenizer.parser.Rest())
 	return token

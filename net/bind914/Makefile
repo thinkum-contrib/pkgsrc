@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.10 2019/09/18 15:19:31 taca Exp $
+# $NetBSD: Makefile,v 1.14 2019/11/21 05:37:06 taca Exp $
 
 DISTNAME=	bind-${BIND_VERSION}
 PKGNAME=	${DISTNAME:S/-P/pl/}
@@ -14,7 +14,7 @@ CONFLICTS+=	host-[0-9]*
 
 MAKE_JOBS_SAFE=	no
 
-BIND_VERSION=	9.14.5
+BIND_VERSION=	9.14.8
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -26,17 +26,19 @@ USE_TOOLS+=		pax perl
 USE_LIBTOOL=		yes
 GNU_CONFIGURE=		yes
 
-CONFIGURE_ARGS+=	--with-libtool
-CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR}
-CONFIGURE_ARGS+=	--localstatedir=${VARBASE}
-CONFIGURE_ARGS+=	--with-openssl=${SSLBASE:Q}
-CONFIGURE_ARGS+=	--with-python=no
+CONFIGURE_ARGS+=		--with-libtool
+CONFIGURE_ARGS+=		--sysconfdir=${PKG_SYSCONFDIR}
+CONFIGURE_ARGS+=		--localstatedir=${VARBASE}
+CONFIGURE_ARGS+=		--with-openssl=${SSLBASE:Q}
+CONFIGURE_ARGS+=		--with-python=no
 .if !empty(MACHINE_PLATFORM:MNetBSD-*-m68k) || \
     !empty(MACHINE_PLATFORM:MNetBSD-*-mipsel) || \
     !empty(MACHINE_PLATFORM:MNetBSD-*-vax)
-CONFIGURE_ARGS+=	--disable-atomic
+CONFIGURE_ARGS+=		--disable-atomic
 .endif
 CONFIGURE_ARGS.DragonFly+=	--disable-kqueue
+
+BUILDLINK_TRANSFORM.SunOS+=	rm:-zrelax=transtls
 
 PKG_GROUPS_VARS+=	BIND_GROUP
 PKG_USERS_VARS=		BIND_USER
@@ -72,4 +74,5 @@ post-install:
 	${INSTALL_DATA} ${WRKSRC}/doc/arm/*.html ${DESTDIR}${PREFIX}/${DOCDIR}/arm
 
 .include "../../security/openssl/buildlink3.mk"
+.include "../../devel/zlib/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

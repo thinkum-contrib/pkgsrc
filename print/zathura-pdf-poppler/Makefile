@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.38 2019/07/23 17:20:01 wiz Exp $
+# $NetBSD: Makefile,v 1.41 2019/11/07 12:38:08 wiz Exp $
 
 DISTNAME=	zathura-pdf-poppler-0.2.9
-PKGREVISION=	10
+PKGREVISION=	12
 CATEGORIES=	print
 MASTER_SITES=	https://pwmt.org/projects/zathura/plugins/download/
 EXTRACT_SUFX=	.tar.xz
@@ -13,7 +13,7 @@ LICENSE=	zlib
 
 USE_TOOLS+=	pkg-config
 
-.include "../../devel/py-meson/build.mk"
+.include "../../devel/meson/build.mk"
 .include "../../graphics/cairo/buildlink3.mk"
 .include "../../print/poppler-glib/buildlink3.mk"
 .include "../../print/zathura/buildlink3.mk"

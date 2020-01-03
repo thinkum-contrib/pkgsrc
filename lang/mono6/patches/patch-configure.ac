@@ -3,9 +3,33 @@ $NetBSD: patch-configure.ac,v 1.1 2019/08/25 16:37:01 maya Exp $
 Add netbsd support
 https://github.com/mono/mono/pull/15938
 
+Disable libgc in cases it has build issues (netbsd/aarch64, solaris)
+
 --- configure.ac.orig	2019-09-19 07:53:55.000000000 +0000
 +++ configure.ac
-@@ -4155,10 +4155,10 @@
+@@ -202,6 +202,12 @@ case "$host" in
+ 		libgc_threads=pthreads
+ 		with_sigaltstack=no
+ 		use_sigposix=yes
++		case "$host" in
++		aarch64-*)
++			support_boehm=no
++			with_gc=sgen
++			;;
++		esac
+ 		with_sgen_default_concurrent=yes
+ 		;;
+ 	*-*-kfreebsd*-gnu)
+@@ -394,6 +400,8 @@ case "$host" in
+ 		has_dtrace=yes
+ 		use_sigposix=yes
+ 		enable_solaris_tar_check=yes
++		support_boehm=no
++		with_gc=sgen
+ 		;;
+ 	*-*-darwin*)
+ 		parallel_mark="Disabled_Currently_Hangs_On_MacOSX"
+@@ -4155,10 +4163,10 @@ LIBC="libc.so.6"
  INTL="libc.so.6"
  SQLITE="libsqlite.so.0"
  SQLITE3="libsqlite3.so.0"
@@ -51,3 +75,4 @@ https://github.com/mono/mono/pull/15938
  AM_CONDITIONAL(MONO_NATIVE_PLATFORM_FREEBSD, test x$MONO_NATIVE_PLATFORM = xfreebsd)
  
  MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
+ MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_UNIFIED"

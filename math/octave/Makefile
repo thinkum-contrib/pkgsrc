@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.194 2019/09/18 14:17:12 ryoon Exp $
+# $NetBSD: Makefile,v 1.196 2019/12/24 01:59:15 dbj Exp $
 
 DISTNAME=	octave-5.1.0
 PKGREVISION=	8
@@ -28,7 +28,6 @@ USE_LANGUAGES=		c c++ fortran77
 
 # needed for loading of shared objects such as those in the
 # octave-forge package or user written ones compiled with mkoctfile
-CONFIGURE_ARGS+=	--enable-dl
 CONFIGURE_ARGS+=	--enable-static
 CONFIGURE_ARGS+=	--enable-shared
 
@@ -47,16 +46,16 @@ CONFIGURE_ENV+=		MKOCTFILE_F77=${FCPATH}
 # which conflicts with the one in the X11 headers, so avoid pulling in X11.
 CONFIGURE_ARGS.Darwin+=	--without-x
 
-# The OpenGL framework doesn't have osmesa and the X11 one has header conflicts with the framework
-CONFIGURE_ARGS.Darwin+=	--without-OSMesa
+# This is needed on Darwin or we get link failures on modules.
+CONFIGURE_ARGS.Darwin+=	--enable-link-all-dependencies
 
 # We use this to install .oct files so it doesn't strip them.
 CONFIGURE_ENV+=		INSTALL_LIB=${INSTALL_LIB:Q}
 
 .include "options.mk"
 
-INFO_FILES=	yes
-OCTAVE_DOC=	doc/interpreter/octave.pdf doc/liboctave/liboctave.pdf \
+INFO_FILES=		yes
+OCTAVE_DOC=		doc/interpreter/octave.pdf doc/liboctave/liboctave.pdf \
 		doc/refcard/refcard-a4.pdf doc/refcard/refcard-legal.pdf \
 		doc/refcard/refcard-letter.pdf
 INSTALLATION_DIRS+=	share/octave/${PKGVERSION_NOREV}/doc

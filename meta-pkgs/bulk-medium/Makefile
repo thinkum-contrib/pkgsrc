@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.60 2019/06/16 19:25:10 adam Exp $
+# $NetBSD: Makefile,v 1.62 2019/12/16 16:00:15 taca Exp $
 
-DISTNAME=	bulk-medium-20190518
+DISTNAME=	bulk-medium-20191216
 CATEGORIES=	meta-pkgs
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -77,7 +77,7 @@ BUILD_DEPENDS+=	gnuplot-[0-9]*:../../graphics/gnuplot
 BUILD_DEPENDS+=	netpbm-[0-9]*:../../graphics/netpbm
 BUILD_DEPENDS+=	${PYPKGPREFIX}-matplotlib-[0-9]*:../../graphics/py-matplotlib
 BUILD_DEPENDS+=	gawk-[0-9]*:../../lang/gawk
-BUILD_DEPENDS+=	php>=7.1<7.2:../../lang/php71
+BUILD_DEPENDS+=	php>=7.3<7.4:../../lang/php73
 BUILD_DEPENDS+=	ruby24-base-[0-9]*:../../lang/ruby24-base
 BUILD_DEPENDS+=	ruby25-base-[0-9]*:../../lang/ruby25-base
 BUILD_DEPENDS+=	ruby26-base-[0-9]*:../../lang/ruby26-base
@@ -95,7 +95,6 @@ BUILD_DEPENDS+=	mutt-[0-9]*:../../mail/mutt
 BUILD_DEPENDS+=	re-alpine-[0-9]*:../../mail/re-alpine
 BUILD_DEPENDS+=	spamassassin-[0-9]*:../../mail/spamassassin
 BUILD_DEPENDS+=	bind>=9.11<9.12:../../net/bind911
-BUILD_DEPENDS+=	bind>=9.12<9.13:../../net/bind912
 BUILD_DEPENDS+=	bind>=9.14<9.15:../../net/bind914
 BUILD_DEPENDS+=	clive-[0-9]*:../../net/clive
 BUILD_DEPENDS+=	nmap-[0-9]*:../../net/nmap

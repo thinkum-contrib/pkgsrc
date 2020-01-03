@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.217 2019/08/22 12:23:05 ryoon Exp $
+# $NetBSD: Makefile,v 1.222 2019/12/15 18:35:25 adam Exp $
 
-DISTNAME=	qemu-4.1.0
-PKGREVISION=	1
+DISTNAME=	qemu-4.2.0
 CATEGORIES=	emulators
 MASTER_SITES=	https://download.qemu.org/
 EXTRACT_SUFX=	.tar.xz
@@ -19,7 +18,8 @@ UNLIMIT_RESOURCES=	datasize
 HAS_CONFIGURE=		yes
 
 GMAKE_REQD=		4.1 # needed for docs
-TOOL_DEPENDS+=		${PYPKGPREFIX}-sphinx-[0-9]*:../../textproc/py-sphinx
+
+PYTHON_VERSIONED_DEPENDENCIES=	sphinx:tool
 
 SUBST_CLASSES+=			prefix
 SUBST_STAGE.prefix=		pre-configure
@@ -33,7 +33,7 @@ SUBST_MESSAGE.sphinx-build=	Fix hardcoded sphinx-build
 SUBST_FILES.sphinx-build+=	Makefile configure
 SUBST_FILES.sphinx-build+=	roms/skiboot/doc/Makefile
 SUBST_FILES.sphinx-build+=	roms/u-boot/Documentation/Makefile
-SUBST_SED.sphinx-build+=	-e 's/sphinx-build/sphinx-build${PYVERSSUFFIX}/g'
+SUBST_SED.sphinx-build+=	-e 's/sphinx-build/sphinx-build-${PYVERSSUFFIX}/g'
 
 .include "options.mk"
 
@@ -109,25 +109,26 @@ UE_ARCHS+=		tilegx
 UE_ARCHS+=		x86_64 xtensa xtensaeb
 
 .if ${OPSYS} == "NetBSD"
-USER_EMUL=		i386 x86_64 sparc sparc64
-PLIST.nbd=		yes
+USER_EMUL=			i386 x86_64 sparc sparc64
+PLIST.nbd=			yes
 .elif !empty(OPSYS:M*BSD) || ${OPSYS} == "DragonFly"
-USER_EMUL=		i386 x86_64 sparc sparc64
-PLIST.nbd=		yes
+USER_EMUL=			i386 x86_64 sparc sparc64
+PLIST.nbd=			yes
 .elif ${OPSYS} == "Darwin"
 USER_EMUL=
-CONFIGURE_ARGS+=	--disable-bsd-user
-PLIST.nbd=		yes
+CONFIGURE_ARGS+=		--disable-bsd-user
+PLIST.nbd=			yes
 .elif ${OPSYS} == "Linux"
-USER_EMUL=		${UE_ARCHS}
-PLIST.bridge-helper=	yes
-PLIST.nbd=		yes
-PLIST.ivshmem=		yes
-PLIST.pr-helper=	yes
-PLIST.virtfs-proxy-helper=yes
+USER_EMUL=			${UE_ARCHS}
+PLIST.bridge-helper=		yes
+PLIST.nbd=			yes
+PLIST.ivshmem=			yes
+PLIST.pr-helper=		yes
+PLIST.virtfs-proxy-helper=	yes
 .elif !empty(MACHINE_PLATFORM:MSunOS-5.11-*)
-PLIST.nbd=		yes
-CONFIGURE_ARGS+=	--disable-coroutine-pool
+PLIST.ivshmem=			yes
+PLIST.nbd=			yes
+CONFIGURE_ARGS+=		--disable-coroutine-pool
 .endif
 
 PLIST_VARS+=		${UE_ARCHS} bridge-helper ivshmem nbd pr-helper virtfs-proxy-helper
@@ -135,12 +136,24 @@ PLIST_VARS+=		${UE_ARCHS} bridge-helper ivshmem nbd pr-helper virtfs-proxy-helpe
 PLIST.${pvar}=		yes
 .endfor
 
+# different versions of Sphinx generate different static files
+PLIST_SRC=	PLIST ${WRKDIR}/PLIST.STATIC
+
 TEST_TARGET=		check
+
+# Some dependencies aren't correct and this tries to be re-made on install,
+# failing due to configure bugs.
+post-build:
+	${TOUCH} ${WRKSRC}/config-host.mak
 
 post-install:
 	${INSTALL_DATA} ${FILESDIR}/Makefile.multinode-NetBSD \
 		${DESTDIR}${PREFIX}/share/doc/qemu/
 	${RM} -f ${DESTDIR}${PREFIX}/share/doc/qemu/interop/.buildinfo
+	${RM} -f ${DESTDIR}${PREFIX}/share/doc/qemu/specs/.buildinfo
+	${RM} -f ${WRKDIR}/PLIST.STATIC
+	cd ${DESTDIR}${PREFIX} && \
+	${FIND} share/doc/qemu -path '*/_static/*' -type f -print > ${WRKDIR}/PLIST.STATIC
 
 # On Darwin, qemu uses Cocoa and CoreAudio
 .if ${OPSYS} != "Darwin"
@@ -154,6 +167,7 @@ post-install:
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
 .include "../../lang/python/extension.mk"
+.include "../../lang/python/versioned_dependencies.mk"
 .include "../../security/libgcrypt/buildlink3.mk"
 .include "../../www/curl/buildlink3.mk"
 .include "../../x11/pixman/buildlink3.mk"

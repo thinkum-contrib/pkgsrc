@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.58 2019/09/02 13:19:59 adam Exp $
+# $NetBSD: Makefile,v 1.60 2019/11/03 19:24:33 rillig Exp $
 
 DISTNAME=		openmsx-0.15.0
 CATEGORIES=		emulators
@@ -17,8 +17,8 @@ HAS_CONFIGURE=		yes
 
 MAKE_FILE=		GNUmakefile
 MAKE_ENV+=		OPENMSX_FLAVOUR=opt
-CONFIGURE_ENV+= 	OPENMSX_FLAVOUR=opt
-CONFIGURE_ENV+= 	LOCALBASE=${PREFIX}
+CONFIGURE_ENV+=		OPENMSX_FLAVOUR=opt
+CONFIGURE_ENV+=		LOCALBASE=${PREFIX}
 INSTALLATION_DIRS+=	bin
 INSTALL_MAKE_FLAGS+=	SYMLINK_FOR_BINARY=false
 INSTALL_MAKE_FLAGS+=	INSTALL_BASE=${PREFIX}/openmsx
@@ -41,13 +41,7 @@ GCC_REQD+=	5
 .include "../../mk/bsd.prefs.mk"
 
 do-configure:
-.if !empty(PKGSRC_COMPILER:M*clang*)
-	cd ${WRKSRC} && ${CONFIGURE_ENV} \
-	    ${GMAKE} -f build/main.mk probe CXX=clang++
-.else
-	cd ${WRKSRC} && ${CONFIGURE_ENV} \
-	    ${GMAKE} -f build/main.mk probe CXX=g++
-.endif
+	cd ${WRKSRC} && ${CONFIGURE_ENV} ${GMAKE} -f build/main.mk probe
 
 post-extract:
 	${CP} ${WRKSRC}/build/platform-freebsd.mk \

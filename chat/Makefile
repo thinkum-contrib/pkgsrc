@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.229 2019/09/13 10:24:13 nia Exp $
+# $NetBSD: Makefile,v 1.232 2019/12/12 16:44:53 nros Exp $
 #
 
 COMMENT=	Communication programs
@@ -27,7 +27,6 @@ SUBDIR+=	ejabberd
 SUBDIR+=	ekg
 SUBDIR+=	emacs-jabber
 SUBDIR+=	emech
-SUBDIR+=	empathy
 SUBDIR+=	epic4
 SUBDIR+=	epic4-doc
 SUBDIR+=	farstream
@@ -127,7 +126,6 @@ SUBDIR+=	skypeweb-purple
 SUBDIR+=	spectrum
 SUBDIR+=	swift
 SUBDIR+=	telegram-purple
-SUBDIR+=	telepathy-farsight
 SUBDIR+=	telepathy-farstream
 SUBDIR+=	telepathy-gabble
 SUBDIR+=	telepathy-glib
@@ -137,6 +135,7 @@ SUBDIR+=	telepathy-logger
 SUBDIR+=	telepathy-mission-control
 SUBDIR+=	telepathy-mission-control5
 SUBDIR+=	telepathy-qt
+SUBDIR+=	telepathy-qt5
 SUBDIR+=	tik
 SUBDIR+=	tirc
 SUBDIR+=	tkabber

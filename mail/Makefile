@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.531 2019/09/13 12:56:23 nia Exp $
+# $NetBSD: Makefile,v 1.536 2019/11/17 05:42:30 markd Exp $
 #
 
 COMMENT=	Electronic mail utilities
@@ -86,7 +86,6 @@ SUBDIR+=	etach
 SUBDIR+=	etpan
 SUBDIR+=	evolution
 SUBDIR+=	evolution-data-server
-SUBDIR+=	evolution-exchange
 SUBDIR+=	exim
 SUBDIR+=	exim-html
 SUBDIR+=	exim3
@@ -129,6 +128,10 @@ SUBDIR+=	ingo
 SUBDIR+=	isync
 SUBDIR+=	ja-mh
 SUBDIR+=	jchkmail
+SUBDIR+=	kimap
+SUBDIR+=	kmbox
+SUBDIR+=	kmime
+SUBDIR+=	ksmtp
 SUBDIR+=	libesmtp
 SUBDIR+=	libetpan
 SUBDIR+=	libmilter
@@ -292,6 +295,7 @@ SUBDIR+=	postsrsd
 SUBDIR+=	prayer
 SUBDIR+=	procmail
 SUBDIR+=	proxsmtp
+SUBDIR+=	pst-utils
 SUBDIR+=	pulsar
 SUBDIR+=	py-aiosmtpd
 SUBDIR+=	py-authres
@@ -380,6 +384,8 @@ SUBDIR+=	thunderbird-enigmail
 SUBDIR+=	thunderbird-l10n
 SUBDIR+=	thunderbird52
 SUBDIR+=	thunderbird52-l10n
+SUBDIR+=	thunderbird60
+SUBDIR+=	thunderbird60-l10n
 SUBDIR+=	tmda
 SUBDIR+=	tnef
 SUBDIR+=	tnef2txt

@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.14 2019/08/14 15:45:49 bsiegert Exp $
+# $NetBSD: Makefile,v 1.18 2019/12/13 07:43:51 bsiegert Exp $
 
 DISTNAME=	sentences-1.0.6
 PKGNAME=	go-${DISTNAME}
-PKGREVISION=	11
+PKGREVISION=	14
 MASTER_SITES=	${MASTER_SITE_GITHUB:=neurosnap/}
 CATEGORIES=	textproc
 GITHUB_TAG=	v${PKGVERSION_NOREV}
-GITHUB_PROJECT= ${PKGBASE:S/^go-//}
+GITHUB_PROJECT=	${PKGBASE:S/^go-//}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://github.com/neurosnap/sentences

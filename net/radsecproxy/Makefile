@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.6 2019/09/11 11:51:22 he Exp $
+# $NetBSD: Makefile,v 1.8 2019/11/03 11:45:52 rillig Exp $
 
-VERSION=	1.8.0
+VERSION=	1.8.1
 DISTNAME=	radsecproxy-${VERSION}
 CATEGORIES=	net
 MASTER_SITES=	${MASTER_SITE_GITHUB:=radsecproxy/}
@@ -13,7 +13,7 @@ LICENSE=	modified-bsd
 
 USE_TOOLS+=	gmake
 
-GNU_CONFIGURE=	YES
+GNU_CONFIGURE=		YES
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFBASEDIR:Q}
 CONFIGURE_ARGS+=	--with-ssl=${BUILDLINK_PREFIX.openssl}
 

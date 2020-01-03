@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.11 2019/09/10 08:46:37 nia Exp $
+# $NetBSD: Makefile,v 1.19 2019/12/13 07:44:05 bsiegert Exp $
 
-DISTNAME=	gitea-1.9.3
+DISTNAME=	gitea-1.10.1
 MASTER_SITES=	${MASTER_SITE_GITHUB:=go-gitea/}
+PKGREVISION=	1
 CATEGORIES=	www
 GITHUB_TAG=	v${PKGVERSION_NOREV}
 
@@ -13,6 +14,7 @@ LICENSE=	mit
 GO_DIST_BASE=		${DISTNAME}
 GO_SRCPATH=		code.gitea.io/gitea
 
+.include "../../lang/go/go-vars.mk"
 .include "options.mk"
 
 .if !empty(GO_TAGS)
@@ -32,8 +34,6 @@ EGDIR=		${PREFIX}/share/examples/gitea
 OWN_DIRS_PERMS+=	${VARBASE}/log/gitea ${GITEA_USER} ${GITEA_GROUP} 0755
 OWN_DIRS_PERMS+=	${VARBASE}/db/gitea ${GITEA_USER} ${GITEA_GROUP} 0755
 OWN_DIRS_PERMS+=	${PKG_SYSCONFDIR}/conf ${GITEA_USER} ${GITEA_GROUP} 0755
-
-.include "../../mk/bsd.prefs.mk"
 
 GITEA_USER?=	git
 GITEA_GROUP?=	git
@@ -67,8 +67,6 @@ MAKE_DIRS+=	${PKG_SYSCONFDIR}/conf
 
 CONF_FILES_PERMS+=	${EGDIR}/app.ini.sample ${PKG_SYSCONFDIR}/conf/app.ini \
 			${GITEA_USER} ${GITEA_GROUP} 0600
-
-.include "../../mk/bsd.prefs.mk"
 
 FILES_SUBST+=	GITEA_USER=${GITEA_USER}
 FILES_SUBST+=	GITEA_GROUP=${GITEA_GROUP}

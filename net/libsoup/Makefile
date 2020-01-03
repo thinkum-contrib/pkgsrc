@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.54 2019/08/19 20:01:52 otis Exp $
+# $NetBSD: Makefile,v 1.59 2019/12/31 11:39:27 wiz Exp $
 
-DISTNAME=	libsoup-2.66.2
-PKGREVISION=	1
+DISTNAME=	libsoup-2.68.3
 CATEGORIES=	net gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/libsoup/${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.xz
@@ -15,15 +14,13 @@ DEPENDS+=	glib-networking-[0-9]*:../../net/glib-networking
 
 USE_TOOLS+=		pkg-config gmake intltool msgfmt
 
-PKGCONFIG_OVERRIDE+=	output/meson-private/libsoup-2.4.pc
-PKGCONFIG_OVERRIDE+=	output/meson-private/libsoup-gnome-2.4.pc
-PKGCONFIG_OVERRIDE_STAGE=pre-install
-MAKE_ENV+=		LD_LIBRARY_PATH=${WRKSRC}/output/${PKGBASE}
+PKGCONFIG_OVERRIDE+=		output/meson-private/libsoup-2.4.pc
+PKGCONFIG_OVERRIDE+=		output/meson-private/libsoup-gnome-2.4.pc
+PKGCONFIG_OVERRIDE_STAGE=	pre-install
+MAKE_ENV+=			LD_LIBRARY_PATH=${WRKSRC}/output/${PKGBASE}
 
 # disable vala detection
-MESON_ARGS+=		-Dvapi=false
-
-LDFLAGS.SunOS+=		-lsocket
+MESON_ARGS+=		-Dvapi=disabled
 
 .include "../../mk/compiler.mk"
 .if !empty(PKGSRC_COMPILER:Mclang)
@@ -34,6 +31,7 @@ CWRAPPERS_APPEND.cc+=	-Wno-error=format-nonliteral
 
 .include "options.mk"
 
+.include "../../archivers/brotli/buildlink3.mk"
 .include "../../databases/sqlite3/buildlink3.mk"
 BUILDLINK_API_DEPENDS.glib2+=	glib2>=2.38.0
 .include "../../devel/glib2/buildlink3.mk"
@@ -42,5 +40,5 @@ BUILDLINK_DEPMETHOD.gobject-introspection=	build
 .include "../../devel/gobject-introspection/buildlink3.mk"
 .include "../../textproc/libxml2/buildlink3.mk"
 .include "../../www/libpsl/buildlink3.mk"
-.include "../../devel/py-meson/build.mk"
+.include "../../devel/meson/build.mk"
 .include "../../mk/bsd.pkg.mk"

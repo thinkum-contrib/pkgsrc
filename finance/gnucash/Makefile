@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.283 2019/09/10 22:53:54 leot Exp $
+# $NetBSD: Makefile,v 1.285 2019/11/19 16:54:19 wiz Exp $
 
-DISTNAME=		gnucash-3.6
-PKGREVISION=		3
+DISTNAME=		gnucash-3.7
 CATEGORIES=		finance
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=gnucash/}
 EXTRACT_SUFX=		.tar.bz2
@@ -29,6 +28,9 @@ USE_TOOLS+=		gmake
 # build failure in test-tx_import and a couple test failures
 # https://bugzilla.gnome.org/show_bug.cgi?id=795251
 TEST_TARGET=		check
+
+# too fragile
+BUILDLINK_TRANSFORM+=	rm:-Werror
 
 LDFLAGS+=		${COMPILER_RPATH_FLAG}${PREFIX}/lib/gnucash
 CXXFLAGS+=		-Wno-deprecated-declarations

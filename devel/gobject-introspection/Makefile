@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.64 2019/08/20 13:56:40 wiz Exp $
+# $NetBSD: Makefile,v 1.66 2019/10/14 03:28:01 gutteridge Exp $
 
 DISTNAME=	gobject-introspection-1.62.0
 CATEGORIES=	devel gnome
@@ -12,6 +12,8 @@ LICENSE=	gnu-gpl-v2 AND gnu-lgpl-v2
 
 DEPENDS+=	${PYPKGPREFIX}-cElementTree-[0-9]*:../../textproc/py-cElementTree
 DEPENDS+=	${PYPKGPREFIX}-expat-[0-9]*:../../textproc/py-expat
+
+PYTHON_VERSIONS_INCOMPATIBLE=	27
 
 USE_TOOLS+=	pkg-config flex bison
 
@@ -35,11 +37,14 @@ SUBST_SED.timet+=	-e 's,@TIMET_CTYPE@,glong,g'
 
 MAKE_ENV+=	LD_LIBRARY_PATH=${WRKSRC}/output/girepository
 
+do-test:
+	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} ninja -C output test
+
 BUILDLINK_API_DEPENDS.glib2+= glib2>=2.58.0
 .include "../../devel/glib2/buildlink3.mk"
 BUILDLINK_API_DEPENDS.libffi+= libffi>=3.0.0
 .include "../../devel/libffi/buildlink3.mk"
-.include "../../devel/py-meson/build.mk"
+.include "../../devel/meson/build.mk"
 .include "../../lang/python/application.mk"
 .include "../../lang/python/extension.mk"
 .include "../../mk/bsd.pkg.mk"

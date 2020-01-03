@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.2 2018/11/18 13:08:19 bsiegert Exp $
+# $NetBSD: buildlink3.mk,v 1.4 2019/11/04 21:43:35 rillig Exp $
 
 BUILDLINK_TREE+=	enchant2
 
@@ -7,13 +7,14 @@ ENCHANT2_BUILDLINK3_MK:=
 
 BUILDLINK_API_DEPENDS.enchant2+=	enchant2>=2
 BUILDLINK_ABI_DEPENDS.enchant2+=	enchant2>=2.2.3
-BUILDLINK_PKGSRCDIR.enchant2?=	../../textproc/enchant2
+BUILDLINK_PKGSRCDIR.enchant2?=		../../textproc/enchant2
 
 # Lots of older software looks for enchant.pc instead of enchant-2.pc.
 ${BUILDLINK_DIR}/lib/pkgconfig/enchant.pc:
 	${MKDIR} ${BUILDLINK_DIR}/lib/pkgconfig
 	cd ${BUILDLINK_DIR}/lib/pkgconfig && ${LN} -sf enchant-2.pc enchant.pc
 
+.PHONY: buildlink-enchant2-cookie
 buildlink-enchant2-cookie: ${BUILDLINK_DIR}/lib/pkgconfig/enchant.pc
 
 # spelling libraries are loaded dynamically and do not need

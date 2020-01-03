@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.86 2018/11/12 14:40:22 jperkin Exp $
+# $NetBSD: Makefile,v 1.89 2019/12/22 15:57:36 jmcneill Exp $
 
 DISTNAME=		apcupsd-3.14.13r2365
-PKGREVISION=		3
+PKGREVISION=		5
 CATEGORIES=		sysutils
 #MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=apcupsd/}
 MASTER_SITES=		${MASTER_SITE_LOCAL}
@@ -58,16 +58,16 @@ CONFIGURE_ARGS.NetBSD+=	ac_cv_path_SHUTDOWN=/sbin/shutdown
 
 EGDIR=		${PREFIX}/share/examples/apcupsd
 
-CONF_FILES_PERMS+= ${EGDIR}/apcupsd.conf ${PKG_SYSCONFDIR}/apcupsd.conf ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 644
-CONF_FILES_PERMS+= ${EGDIR}/apcupsd.css ${PKG_SYSCONFDIR}/apcupsd.css ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 644
-CONF_FILES_PERMS+= ${EGDIR}/changeme ${PKG_SYSCONFDIR}/changeme ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
-CONF_FILES_PERMS+= ${EGDIR}/commfailure ${PKG_SYSCONFDIR}/commfailure ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
-CONF_FILES_PERMS+= ${EGDIR}/commok ${PKG_SYSCONFDIR}/commok ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
-CONF_FILES_PERMS+= ${EGDIR}/multimon.conf ${PKG_SYSCONFDIR}/multimon.conf  ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
-CONF_FILES_PERMS+= ${EGDIR}/hosts.conf ${PKG_SYSCONFDIR}/hosts.conf  ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
-CONF_FILES_PERMS+= ${EGDIR}/offbattery ${PKG_SYSCONFDIR}/offbattery ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
-CONF_FILES_PERMS+= ${EGDIR}/onbattery ${PKG_SYSCONFDIR}/onbattery ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
-CONF_FILES_PERMS+= ${EGDIR}/apccontrol ${PKG_SYSCONFDIR}/apccontrol ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/apcupsd.conf ${PKG_SYSCONFDIR}/apcupsd.conf ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 644
+CONF_FILES_PERMS+=	${EGDIR}/apcupsd.css ${PKG_SYSCONFDIR}/apcupsd.css ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 644
+CONF_FILES_PERMS+=	${EGDIR}/changeme ${PKG_SYSCONFDIR}/changeme ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/commfailure ${PKG_SYSCONFDIR}/commfailure ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/commok ${PKG_SYSCONFDIR}/commok ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/multimon.conf ${PKG_SYSCONFDIR}/multimon.conf  ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/hosts.conf ${PKG_SYSCONFDIR}/hosts.conf  ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/offbattery ${PKG_SYSCONFDIR}/offbattery ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/onbattery ${PKG_SYSCONFDIR}/onbattery ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
+CONF_FILES_PERMS+=	${EGDIR}/apccontrol ${PKG_SYSCONFDIR}/apccontrol ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 755
 
 RCD_SCRIPTS=	apcupsd
 
@@ -78,11 +78,11 @@ PLATFORM_SUBDIR.*=		${OPSYS:tl}
 
 RCD_SCRIPT_SRC.apcupsd=	${WRKSRC}/platforms/${PLATFORM_SUBDIR}/apcupsd
 
-EGFILES= ${PLATFORM_SUBDIR}/apccontrol etc/changeme etc/commfailure etc/commok \
-    etc/offbattery etc/onbattery etc/multimon.conf etc/hosts.conf
+EGFILES=	${PLATFORM_SUBDIR}/apccontrol etc/changeme etc/commfailure etc/commok \
+		etc/offbattery etc/onbattery etc/multimon.conf etc/hosts.conf
 
 INSTALLATION_DIRS=	share/examples/apcupsd share/examples/rc.d \
-			share/doc/html/apcupsd share/doc/html/apcupsd/manual
+			share/doc/apcupsd share/doc/apcupsd/manual
 
 SUBST_CLASSES+=		strip
 SUBST_STAGE.strip=	pre-configure
@@ -110,9 +110,9 @@ post-install:
 .endfor
 .for file in ${HTMLDOCS}
 	${INSTALL_DATA} ${WRKSRC}/doc/manual/${file} \
-		${DESTDIR}${PREFIX}/share/doc/html/apcupsd
+		${DESTDIR}${PREFIX}/share/doc/apcupsd
 .endfor
 
 .include "../../devel/gettext-lib/buildlink3.mk"
-.include "../../devel/libusb/buildlink3.mk"
+.include "../../mk/libusb.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

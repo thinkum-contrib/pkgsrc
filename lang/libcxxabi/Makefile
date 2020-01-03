@@ -1,17 +1,15 @@
-# $NetBSD: Makefile,v 1.5 2019/08/05 19:06:49 adam Exp $
+# $NetBSD: Makefile,v 1.8 2019/12/29 15:31:22 adam Exp $
 
-DISTNAME=	libcxxabi-8.0.1.src
+.include "../../lang/llvm/version.mk"
+
+DISTNAME=	libcxxabi-${LLVM_VERSION}.src
 PKGNAME=	${DISTNAME:S/.src//}
 CATEGORIES=	lang devel
-MASTER_SITES=	${MASTER_SITE_GITHUB:=llvm/}
-GITHUB_PROJECT=	llvm-project
-GITHUB_RELEASE=	llvmorg-${PKGVERSION_NOREV}
-EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://libcxxabi.llvm.org/
 COMMENT=	C++ Standard Library
-LICENSE=	modified-bsd OR mit
+LICENSE=	apache-2.0
 
 # libcxx requires libcxxabi's cxxabi.h to build, but libcxxabi requires
 # libcxx's includes to build, so we have this unholy extra distfiles thing
@@ -19,7 +17,7 @@ LICENSE=	modified-bsd OR mit
 # circular dependencies.  This must be kept in sync with libcxxabi/Makefile.
 LIBCXX=			${DISTNAME:S/cxxabi/cxx/}
 _EXTRA_DIST=		${LIBCXX}${EXTRACT_SUFX}
-SITES.${_EXTRA_DIST}=	${MASTER_SITES:=${GITHUB_PROJECT}/releases/download/${GITHUB_RELEASE}/}
+#SITES.${_EXTRA_DIST}=	${MASTER_SITES:=${GITHUB_PROJECT}/releases/download/${GITHUB_RELEASE}/}
 
 DISTFILES=	${DEFAULT_DISTFILES} ${_EXTRA_DIST}
 

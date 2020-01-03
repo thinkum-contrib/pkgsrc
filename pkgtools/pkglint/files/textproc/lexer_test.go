@@ -99,6 +99,13 @@ func (s *Suite) Test_Lexer_NextString(c *check.C) {
 	c.Check(lexer.NextString("xt"), equals, "xt")
 }
 
+func (s *Suite) Test_Lexer_NextString__EOF(c *check.C) {
+	lexer := NewLexer("text")
+	lexer.NextString("text")
+
+	c.Check(lexer.EOF(), equals, true)
+}
+
 func (s *Suite) Test_Lexer_SkipString(c *check.C) {
 	lexer := NewLexer("text")
 
@@ -141,6 +148,16 @@ func (s *Suite) Test_Lexer_SkipByte(c *check.C) {
 	c.Check(lexer.SkipByte('t'), equals, true)
 	c.Check(lexer.SkipByte('e'), equals, true)
 	c.Check(lexer.SkipByte(0), equals, false) // This is not a C string.
+}
+
+func (s *Suite) Test_Lexer_NextByte(c *check.C) {
+	lexer := NewLexer("byte")
+
+	c.Check(lexer.NextByte(), equals, byte('b'))
+	c.Check(lexer.NextByte(), equals, byte('y'))
+	c.Check(lexer.NextByte(), equals, byte('t'))
+	c.Check(lexer.NextByte(), equals, byte('e'))
+	c.Check(lexer.NextByte, check.PanicMatches, "^runtime error: index out of range.*")
 }
 
 func (s *Suite) Test_Lexer_NextBytesFunc(c *check.C) {
@@ -281,13 +298,6 @@ func (s *Suite) Test_Lexer_Reset__multiple(c *check.C) {
 	c.Check(lexer.Rest(), equals, "")
 }
 
-func (s *Suite) Test_Lexer__NextString_then_EOF(c *check.C) {
-	lexer := NewLexer("text")
-	lexer.NextString("text")
-
-	c.Check(lexer.EOF(), equals, true)
-}
-
 func (s *Suite) Test_Lexer_Since(c *check.C) {
 	lexer := NewLexer("text")
 	mark := lexer.Mark()
@@ -403,10 +413,8 @@ func (s *Suite) Test__Alpha(c *check.C) {
 	c.Check(set.Contains('z'), equals, true)
 }
 
-func (s *Suite) Test__test_names(c *check.C) {
-	ck := intqa.NewTestNameChecker(c)
-	ck.AllowCamelCaseDescriptions(
-		"NextString_then_EOF")
-	ck.ShowWarnings(false)
+func (s *Suite) Test__qa(c *check.C) {
+	ck := intqa.NewQAChecker(c.Errorf)
+	ck.Configure("*", "*", "*", -intqa.EMissingTest)
 	ck.Check()
 }

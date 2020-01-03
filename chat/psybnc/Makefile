@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.5 2019/05/23 19:22:56 rillig Exp $
-#
+# $NetBSD: Makefile,v 1.7 2019/12/28 11:19:53 wiz Exp $
 
 DISTNAME=	psyBNC-2.4BETA2
 PKGNAME=	psybnc-2.4b2
+PKGREVISION=	1
 CATEGORIES=	chat
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=psybnc/}
 
@@ -30,7 +30,7 @@ SUBST_FILES.prefix=	tools/autoconf.c
 SUBST_VARS.prefix=	PREFIX
 SUBST_STAGE.prefix=	pre-configure
 
-SUBST_CLASSES+=         openssl
+SUBST_CLASSES+=		openssl
 SUBST_FILES.openssl=	makefile.out
 SUBST_SED.openssl=	-e "s|/usr/bin/openssl|openssl|g"
 SUBST_SED.openssl=	-e "s|req -new|req -new -batch|g"

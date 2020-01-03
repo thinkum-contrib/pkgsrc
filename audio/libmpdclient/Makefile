@@ -1,16 +1,18 @@
-# $NetBSD: Makefile,v 1.13 2018/12/01 11:33:08 wiz Exp $
+# $NetBSD: Makefile,v 1.16 2019/12/06 00:15:39 nia Exp $
 
-DISTNAME=	libmpdclient-2.16
+DISTNAME=	libmpdclient-2.17
 CATEGORIES=	audio
-MASTER_SITES=	http://www.musicpd.org/download/libmpdclient/2/
+MASTER_SITES=	https://www.musicpd.org/download/libmpdclient/2/
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://mpd.wikia.com/wiki/ClientLib:libmpdclient
+HOMEPAGE=	https://github.com/MusicPlayerDaemon/libmpdclient
 COMMENT=	Asynchronous API library for interfacing MPD
 LICENSE=	modified-bsd
 
 LDFLAGS.SunOS+=	-lsocket
 
-.include "../../devel/py-meson/build.mk"
+PYTHON_FOR_BUILD_ONLY=	tool
+
+.include "../../devel/meson/build.mk"
 .include "../../mk/bsd.pkg.mk"

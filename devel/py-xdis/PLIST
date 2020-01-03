@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.7 2019/08/03 08:55:10 adam Exp $
+@comment $NetBSD: PLIST,v 1.10 2019/12/11 13:18:25 adam Exp $
 bin/pydisasm-${PYVERSSUFFIX}
 ${PYSITELIB}/${EGG_INFODIR}/PKG-INFO
 ${PYSITELIB}/${EGG_INFODIR}/SOURCES.txt
@@ -51,6 +51,12 @@ ${PYSITELIB}/xdis/opcodes/base.pyo
 ${PYSITELIB}/xdis/opcodes/check-stackeffect.py
 ${PYSITELIB}/xdis/opcodes/check-stackeffect.pyc
 ${PYSITELIB}/xdis/opcodes/check-stackeffect.pyo
+${PYSITELIB}/xdis/opcodes/opcode_10.py
+${PYSITELIB}/xdis/opcodes/opcode_10.pyc
+${PYSITELIB}/xdis/opcodes/opcode_10.pyo
+${PYSITELIB}/xdis/opcodes/opcode_11.py
+${PYSITELIB}/xdis/opcodes/opcode_11.pyc
+${PYSITELIB}/xdis/opcodes/opcode_11.pyo
 ${PYSITELIB}/xdis/opcodes/opcode_13.py
 ${PYSITELIB}/xdis/opcodes/opcode_13.pyc
 ${PYSITELIB}/xdis/opcodes/opcode_13.pyo
@@ -60,6 +66,9 @@ ${PYSITELIB}/xdis/opcodes/opcode_14.pyo
 ${PYSITELIB}/xdis/opcodes/opcode_15.py
 ${PYSITELIB}/xdis/opcodes/opcode_15.pyc
 ${PYSITELIB}/xdis/opcodes/opcode_15.pyo
+${PYSITELIB}/xdis/opcodes/opcode_16.py
+${PYSITELIB}/xdis/opcodes/opcode_16.pyc
+${PYSITELIB}/xdis/opcodes/opcode_16.pyo
 ${PYSITELIB}/xdis/opcodes/opcode_20.py
 ${PYSITELIB}/xdis/opcodes/opcode_20.pyc
 ${PYSITELIB}/xdis/opcodes/opcode_20.pyo
@@ -108,6 +117,9 @@ ${PYSITELIB}/xdis/opcodes/opcode_32pypy.pyo
 ${PYSITELIB}/xdis/opcodes/opcode_33.py
 ${PYSITELIB}/xdis/opcodes/opcode_33.pyc
 ${PYSITELIB}/xdis/opcodes/opcode_33.pyo
+${PYSITELIB}/xdis/opcodes/opcode_33pypy.py
+${PYSITELIB}/xdis/opcodes/opcode_33pypy.pyc
+${PYSITELIB}/xdis/opcodes/opcode_33pypy.pyo
 ${PYSITELIB}/xdis/opcodes/opcode_34.py
 ${PYSITELIB}/xdis/opcodes/opcode_34.pyc
 ${PYSITELIB}/xdis/opcodes/opcode_34.pyo
@@ -129,6 +141,9 @@ ${PYSITELIB}/xdis/opcodes/opcode_37.pyo
 ${PYSITELIB}/xdis/opcodes/opcode_38.py
 ${PYSITELIB}/xdis/opcodes/opcode_38.pyc
 ${PYSITELIB}/xdis/opcodes/opcode_38.pyo
+${PYSITELIB}/xdis/opcodes/opcode_39.py
+${PYSITELIB}/xdis/opcodes/opcode_39.pyc
+${PYSITELIB}/xdis/opcodes/opcode_39.pyo
 ${PYSITELIB}/xdis/opcodes/opcode_3x.py
 ${PYSITELIB}/xdis/opcodes/opcode_3x.pyc
 ${PYSITELIB}/xdis/opcodes/opcode_3x.pyo

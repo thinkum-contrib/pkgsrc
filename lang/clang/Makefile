@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.50 2019/06/02 08:39:28 adam Exp $
+# $NetBSD: Makefile,v 1.54 2019/12/29 15:31:22 adam Exp $
 
 .include "Makefile.common"
 
-PKGNAME=	${DISTNAME:S/.src//:S/cfe/clang/}
+PKGNAME=	${DISTNAME:S/.src//}
 
 CMAKE_ARGS+=	-DCLANG_ENABLE_STATIC_ANALYZER=OFF
 

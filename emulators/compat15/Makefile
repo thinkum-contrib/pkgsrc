@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.4 2007/11/27 19:20:42 jlam Exp $
+# $NetBSD: Makefile,v 1.6 2019/11/03 19:24:32 rillig Exp $
 
 COMPAT_PKG=		compat15	# for compat_netbsd/Makefile.common
 NETBSD_VERSION=		1.5
@@ -36,7 +36,7 @@ COMPAT_VERSION=		1.5.3
 # just depend on the compat16 for the missing shared libraries.
 #
 .if defined(NETBSD_COMPAT32)
-COMPAT_EXTRAS=  # empty
+COMPAT_EXTRAS=	# empty
 .  for _netbsd_ in ${ACCEPTABLE_NETBSD}
 COMPAT_EXTRAS=	netbsd32_compat15-extras-${COMPAT_VERSION}{,nb*}:../../emulators/netbsd32_compat15-extras
 .  endfor
@@ -61,5 +61,7 @@ DEPENDS+=	netbsd32_compat16>=1.6:../../emulators/netbsd32_compat16
       empty(OS_VERSION:M1.6) && empty(OS_VERSION:M1.6.*)
 DEPENDS+=	compat16>=1.6:../../emulators/compat16
 .endif
+
+CHECK_RELRO_SKIP=	*
 
 .include "../../mk/bsd.pkg.mk"

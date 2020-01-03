@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.29 2019/05/02 09:16:47 adam Exp $
+# $NetBSD: Makefile,v 1.34 2019/11/07 10:56:42 adam Exp $
 
-DISTNAME=	astroid-2.2.5
+DISTNAME=	astroid-2.3.3
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	devel python
 MASTER_SITES=	${MASTER_SITE_PYPI:=a/astroid/}
@@ -10,7 +10,7 @@ HOMEPAGE=	https://github.com/pycqa/astroid
 COMMENT=	Rebuild a new abstract syntax tree from Python's ast
 LICENSE=	gnu-lgpl-v3
 
-DEPENDS+=	${PYPKGPREFIX}-lazy-object-proxy-[0-9]*:../../devel/py-lazy-object-proxy
+DEPENDS+=	${PYPKGPREFIX}-lazy-object-proxy>=1.4.0:../../devel/py-lazy-object-proxy
 DEPENDS+=	${PYPKGPREFIX}-six-[0-9]*:../../lang/py-six
 DEPENDS+=	${PYPKGPREFIX}-typed-ast-[0-9]*:../../devel/py-typed-ast
 DEPENDS+=	${PYPKGPREFIX}-wrapt-[0-9]*:../../devel/py-wrapt
