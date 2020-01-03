@@ -504,6 +504,4 @@ share/fontconfig/conf.avail/80-delicious.conf
 share/fontconfig/conf.avail/90-synthetic.conf
 share/gettext/its/fontconfig.its
 share/gettext/its/fontconfig.loc
-share/locale/zh_CN/LC_MESSAGES/fontconfig-conf.mo
-share/locale/zh_CN/LC_MESSAGES/fontconfig.mo
 share/xml/fontconfig/fonts.dtd
