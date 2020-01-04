@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.67 2019/12/12 10:46:15 markd Exp $
+# $NetBSD: Makefile,v 1.69 2020/01/03 06:24:42 adam Exp $
 
 PKGNAME=	${PYPKGPREFIX}-Tk-${PY_DISTVERSION}
 PKGREVISION=	5
@@ -14,7 +14,6 @@ USE_GCC_RUNTIME=	yes
 EXTRACT_ELEMENTS=	${PYSUBDIR}/Modules/_tkinter.c \
 			${PYSUBDIR}/Modules/tkappinit.c
 PYDISTUTILSPKG=		yes
-PY_PATCHPLIST=		yes
 PY_SETUP_SUBST+=	BLPREFIX=${LOCALBASE}
 PY_SETUP_SUBST+=	TCLRTPREFIX=${BUILDLINK_PREFIX.tcl}
 PY_SETUP_SUBST+=	TKRTPREFIX=${BUILDLINK_PREFIX.tk}
@@ -34,9 +33,6 @@ PY_SETUP_SUBST+=	X11LIB=\'X11\'
 
 .if ${_PYTHON_VERSION} >= 27
 EXTRACT_ELEMENTS+=	${PYSUBDIR}/Modules/tkinter.h
-.endif
-.if ${_PYTHON_VERSION} >= 38
-EXTRACT_ELEMENTS+=	${PYSUBDIR}/Modules/clinic
 .endif
 
 # ignore errors due to missing files (EXTRACT_ELEMENTS!)
