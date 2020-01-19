@@ -1,6 +1,8 @@
-$NetBSD: patch-src_http_ngx__http__special__response.c,v 1.1 2020/01/19 07:28:36 kim Exp $
+$NetBSD: patch-src_http_ngx__http__special__response.c,v 1.2 2020/01/19 07:42:42 kim Exp $
 
 Discard request body when redirecting to a URL via error_page.
+
+Fixes CVE-2019-20372.
 
 https://github.com/nginx/nginx/commit/c1be55f97211d38b69ac0c2027e6812ab8b1b94e.patch
 
