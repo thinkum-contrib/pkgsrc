@@ -1,4 +1,4 @@
-# $NetBSD: options.mk,v 1.77+ 2019/12/08 13:07:20 nia Exp $
+# $NetBSD: options.mk,v 1.79 2020/01/04 01:53:55 nia Exp $
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.MesaLib
 
