@@ -21,7 +21,7 @@ MAKE_ENV+=	CMAKE=${TOOLS_PATH.false}
 do-configure: meson-configure
 meson-configure:
 .for d in ${CONFIGURE_DIRS}
-	cd ${WRKSRC} && cd ${d} && ${SETENV} ${MAKE_ENV} meson \
+	${RUN} cd ${WRKSRC} && cd ${d} && ${SETENV} ${MAKE_ENV} meson \
 		--prefix ${PREFIX} --libdir lib --mandir ${PKGMANDIR} \
 		--sysconfdir ${PKG_SYSCONFDIR} --buildtype=plain ${MESON_ARGS} . output
 .endfor
@@ -29,22 +29,22 @@ meson-configure:
 do-build: meson-build
 meson-build:
 .for d in ${BUILD_DIRS}
-	cd ${WRKSRC} && cd ${d} && ${SETENV} ${MAKE_ENV} ninja -j ${MAKE_JOBS:U1} -C output
+	${RUN} cd ${WRKSRC} && cd ${d} && ${SETENV} ${MAKE_ENV} ninja -j ${MAKE_JOBS:U1} -C output
 .endfor
 
 do-install: meson-install
 meson-install:
 .for d in ${INSTALL_DIRS}
-	if [ -f ${WRKSRC}/meson_post_install.py ]; then		\
+	${RUN} if [ -f ${WRKSRC}/meson_post_install.py ]; then		\
 		${CHMOD} +x ${WRKSRC}/meson_post_install.py;	\
 	fi
-	cd ${WRKSRC} && cd ${d} && ${SETENV} ${INSTALL_ENV} ${MAKE_ENV} ninja -C output install
+	${RUN} cd ${WRKSRC} && cd ${d} && ${SETENV} ${INSTALL_ENV} ${MAKE_ENV} ninja -C output install
 .endfor
 
 do-test: meson-test
 meson-test:
 .for d in ${TEST_DIRS}
-	cd ${WRKSRC} && cd ${d} && ${SETENV} ${TEST_ENV} ninja -C output test
+	${RUN} cd ${WRKSRC} && cd ${d} && ${SETENV} ${TEST_ENV} ninja -C output test
 .endfor
 
 .include "../../lang/python/application.mk"
