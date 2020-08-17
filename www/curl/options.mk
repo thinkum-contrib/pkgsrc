@@ -2,11 +2,25 @@
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.curl
 PKG_SUPPORTED_OPTIONS=		inet6 libssh2 gssapi ldap rtmp idn http2
-PKG_SUGGESTED_OPTIONS=		http2 inet6 idn
+PKG_SUGGESTED_OPTIONS=		inet6 idn
 PKG_OPTIONS_LEGACY_OPTS=	libidn:idn
 
 # Kerberos is built in - no additional dependency
 PKG_SUGGESTED_OPTIONS.NetBSD+=	gssapi
+
+.if exists(${LOCALBASE}/lib/pkgconfig/libnghttp2.pc) || \
+	empty(PKG_OPTIONS.nghttp2:Mnghttp2-tools)
+##
+## Try to prevent a circular dependency during initial curl builds, e.g
+## [curl-7.66.0nb1 cmake-3.15.3 libcares-1.15.0nb1 nghttp2-1.39.2nb2 curl-7.66.0nb1] 
+## listed from latest to earliest, in that dependency loop.
+## 
+## This loop may occur when PKG_OPTIONS.nghttp2 += nghttp2-tools such that 
+## may introduce the libcares dependency during the nghttp2 build,
+## furthermore when PKG_OPTIONS.curl += http2
+##
+PKG_SUGGESTED_OPTIONS+=		http2 
+.endif
 
 .include "../../mk/bsd.options.mk"
 

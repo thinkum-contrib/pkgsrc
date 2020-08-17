@@ -59,4 +59,8 @@ CONFIGURE_ENV+= 	${V}=${${V}:Q}
 CONFIGURE_ARGS+=	--disable-threads
 .endif
 
+post-install:
+	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
+	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
+
 .include "../../mk/bsd.pkg.mk"

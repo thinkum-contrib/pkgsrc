@@ -1,0 +1,17 @@
+$Thinkum$
+
+Update ilisp-def.el to use newer Emacs Lisp backquote syntax
+
+--- ilisp-def.el.orig	2002-09-21 03:00:07.000000000 +0000
++++ ilisp-def.el
+@@ -43,8 +43,8 @@
+ ;;;
+ (defmacro deflocal (variable default &optional documentation)
+   "Define an ilisp local variable."
+-  (` (progn (lisp-deflocal '(, variable))
+-	    (defvar (, variable) (, default) (, documentation)))))
++  `(progn (lisp-deflocal (quote ,variable))
++	  (defvar ,variable ,default ,documentation)))
+ 
+ ;;;%%Simple customization
+ 

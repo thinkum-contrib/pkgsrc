@@ -17,17 +17,61 @@ $NetBSD: patch-meson.build,v 1.10 2020/03/04 15:11:48 wiz Exp $
   glib bug #1777
   c.f., PR pkg/54909 and PR pkg/54298
 
---- meson.build.orig	2020-02-27 16:12:52.000000000 +0000
+--- meson.build.orig	2019-09-05 16:56:49.000000000 +0000
 +++ meson.build
-@@ -677,6 +677,7 @@ if host_system == 'darwin'
-                                       #error "Detected GNUstep, not Cocoa"
-                                       #endif''',
-                                    name : 'Mac OS X Cocoa support')
-+  glib_have_cocoa = glib_have_cocoa and get_option('use_cocoa')
+@@ -1619,28 +1619,15 @@
+ }
+ '''
  
-   if glib_have_cocoa
-     glib_conf.set('HAVE_COCOA', true)
-@@ -1904,7 +1905,7 @@ endif
+-atomicdefine = '''
+-#ifndef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4
+-#error "compiler has atomic ops, but doesn't define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4"
+-#endif
+-'''
+-
+ # We know that we can always use real ("lock free") atomic operations with MSVC
+ if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl' or cc.links(atomictest, name : 'atomic ops')
+-  have_atomic_lock_free = true
+-  if cc.get_id() == 'gcc' and not cc.compiles(atomicdefine, name : 'atomic ops define')
+-    # Old gcc release may provide
+-    # __sync_bool_compare_and_swap but doesn't define
+-    # __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4
+-    glib_conf.set('__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4', true)
+-  endif
++  glibconfig_conf.set('G_ATOMIC_LOCK_FREE', true)
+ else
+-  have_atomic_lock_free = false
+   if host_machine.cpu_family() == 'x86' and cc.links(atomictest, args : '-march=i486')
+     error('GLib must be built with -march=i486 or later.')
+   endif
++  glibconfig_conf.set('G_ATOMIC_LOCK_FREE', false)
+ endif
+-glibconfig_conf.set('G_ATOMIC_LOCK_FREE', have_atomic_lock_free)
+ 
+ # === Threads ===
+ 
+@@ -1756,12 +1743,14 @@
+ else
+   found_iconv = false
+   if ['auto', 'libc'].contains(iconv_opt) and cc.has_function('iconv_open')
+-    libiconv = []
+-    found_iconv = true
+-  endif
+-  if not found_iconv and ['auto', 'external'].contains(iconv_opt) and cc.has_header_symbol('iconv.h', 'iconv_open')
+-    libiconv = [cc.find_library('iconv')]
+-    found_iconv = true
++     if cc.has_header_symbol('iconv.h', 'libiconv_open')
++       glib_conf.set('USE_LIBICONV_GNU', true)
++	libiconv = [cc.find_library('iconv')]
++	found_iconv = true
++     else
++       libiconv = []
++       found_iconv = true
++     endif
+   endif
+ 
+   if not found_iconv
+@@ -1835,7 +1824,7 @@
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -36,7 +80,7 @@ $NetBSD: patch-meson.build,v 1.10 2020/03/04 15:11:48 wiz Exp $
    libintl = []
    have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
  else
-@@ -1955,16 +1956,15 @@ if host_system != 'windows' and get_opti
+@@ -1886,16 +1875,15 @@
    if cc.has_function('getxattr') and cc.has_header('sys/xattr.h')
      glib_conf.set('HAVE_SYS_XATTR_H', 1)
      glib_conf_prefix = glib_conf_prefix + '#define @0@ 1\n'.format('HAVE_SYS_XATTR_H')
@@ -55,7 +99,7 @@ $NetBSD: patch-meson.build,v 1.10 2020/03/04 15:11:48 wiz Exp $
    if cc.compiles(glib_conf_prefix + '''
                   #include <stdio.h>
                   #ifdef HAVE_SYS_TYPES_H
-@@ -2058,9 +2058,11 @@ endif
+@@ -1989,9 +1977,11 @@
  
  glib_conf.set('HAVE_PROC_SELF_CMDLINE', have_proc_self_cmdline)
  
@@ -69,8 +113,8 @@ $NetBSD: patch-meson.build,v 1.10 2020/03/04 15:11:48 wiz Exp $
 +python_name = python.path()
  
  python_version = python.language_version()
- python_version_req = '>=3.5'
-@@ -2069,7 +2071,7 @@ if not python_version.version_compare(py
+ python_version_req = '>=3.4'
+@@ -2000,7 +1990,7 @@
  endif
  
  # Determine which user environment-dependent files that we want to install
@@ -79,8 +123,7 @@ $NetBSD: patch-meson.build,v 1.10 2020/03/04 15:11:48 wiz Exp $
  have_sh = find_program('sh', required : false).found() # For glib-gettextize
  
  # Some installed tests require a custom environment
-@@ -2077,8 +2079,7 @@ env_program = find_program('env', requir
- 
+@@ -2009,7 +1999,7 @@
  # FIXME: How to detect Solaris? https://github.com/mesonbuild/meson/issues/1578
  if host_system == 'sunos'
 -  glib_conf.set('_XOPEN_SOURCE_EXTENDED', 1)

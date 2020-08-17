@@ -4,15 +4,19 @@ DISTNAME=	audiofile-0.3.6
 PKGNAME=	lib${DISTNAME}
 PKGREVISION=	1
 CATEGORIES=	audio
-MASTER_SITES=	https://audiofile.68k.org/
+MASTER_SITES=	${MASTER_SITE_GITHUB:=mpruett/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://audiofile.68k.org/
-#HOMEPAGE=	https://github.com/mpruett/audiofile/
+#HOMEPAGE=	http://andromeda.68k.org/~michael/audiofile/
+HOMEPAGE=	https://github.com/mpruett/audiofile/
 COMMENT=	Sound library for SGI audio file
 LICENSE=	gnu-gpl-v2 AND gnu-lgpl-v2.1
 
+GITHUB_PROJECT= audiofile
+GITHUB_TAG=	audiofile-0.3.6
+
 USE_LANGUAGES=		c99 c++
+USE_TOOLS+=		autoconf automake gmake
 USE_LIBTOOL=		yes
 GNU_CONFIGURE=		yes
 PKGCONFIG_OVERRIDE=	audiofile.pc.in
@@ -21,6 +25,14 @@ TEST_TARGET=		check
 DOCDIR=			${PREFIX}/share/doc/libaudiofile
 
 INSTALLATION_DIRS=	${DOCDIR}
+
+BUILD_DEPENDS+=		asciidoc-[0-9]*:../../textproc/asciidoc
+
+CONFIGURE_ENV+=		A2X=${PREFIX}/bin/a2x
+CONFIGURE_ENV+=		ASCIIDOC=${PREFIX}/bin/asciidoc
+
+do-configure:
+	cd ${WRKSRC} && ${SETENV} ${CONFIGURE_ENV} ${SH} ./autogen.sh ${CONFIGURE_ARGS}
 
 post-build:
 	cd ${WRKSRC}/docs && \

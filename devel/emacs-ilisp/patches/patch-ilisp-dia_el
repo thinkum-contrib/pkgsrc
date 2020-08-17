@@ -4,15 +4,200 @@ $NetBSD: patch-ilisp-dia_el,v 1.1 2013/06/19 13:12:01 mef Exp $
 In toplevel form:
 ilisp-acl.el:33:1:Error: Invalid function: (\` (progn (defvar ((\, hook)) 
 
---- ilisp-dia.el.orig	2002-01-25 20:48:33.000000000 +0900
-+++ ilisp-dia.el	2013-06-19 13:58:23.000000000 +0900
-@@ -120,8 +120,7 @@ inferior LISP.  PARENT is the name of th
- 	(hook (read (format "%s-hook" dialect)))
- 	(program (read (format "%s-program" dialect)))
+[added 2019/10/26]
+- provide ilisp-dia as an Emacs feature. Ensure that this
+  source file will be loaded, using 'require', in souce files calling
+  the ilisp defdialect macro 
+- Update defdialect - use intern and lieu of read, for creating symbols; 
+  use newer Emacs Lisp backquote syntax
+
+--- ilisp-dia.el.orig	2002-01-25 11:48:33.000000000 +0000
++++ ilisp-dia.el
+@@ -116,31 +116,31 @@
+ will be DIALECT-program.  FULL-NAME is a string that describes the
+ inferior LISP.  PARENT is the name of the parent dialect."
+ 
+-  (let ((setup (read (format "setup-%s" dialect)))
+-	(hook (read (format "%s-hook" dialect)))
+-	(program (read (format "%s-program" dialect)))
++  (let ((setup (intern (format "setup-%s" dialect)))
++        (setup-parent (intern (format "setup-%s" parent)))
++	(hook (intern (format "%s-hook" dialect)))
++	(program (intern (format "%s-program" dialect)))
  	(dialects (format "%s" dialect)))
 -    (`
 -     (progn
-+    (` (progn
-        (defvar (, hook) nil (, (format "*Inferior %s hook." full-name)))
-        (defvar (, program) nil
- 	 (, (format "*Inferior %s default program." full-name)))
+-       (defvar (, hook) nil (, (format "*Inferior %s hook." full-name)))
+-       (defvar (, program) nil
+-	 (, (format "*Inferior %s default program." full-name)))
+-       (defun (, setup) (buffer)
+-	 (, (format "Set up for interacting with %s." full-name))
+-	 (, (read (format "(setup-%s buffer)" parent)))
+-	 (,@ body)
+-	 (setq ilisp-program (or (, program) ilisp-program)
+-	       ilisp-dialect (cons '(, dialect) ilisp-dialect))
+-	 (run-hooks '(, (read (format "%s-hook" dialect)))))
+-       (defun (, dialect) (&optional buffer program)
+-	 (, (format "Create an inferior %s.  With prefix, prompt for buffer and program."
+-		   full-name))
++    `(progn
++       (defvar ,hook nil ,(format "*Inferior %s hook." full-name))
++       (defvar ,program nil
++	 ,(format "*Inferior %s default program." full-name))
++       (defun ,setup (buffer)
++	 ,(format "Set up for interacting with %s." full-name)
++	 (,setup-parent buffer)
++	 ,@body
++	 (setq ilisp-program (or ,program ilisp-program)
++	       ilisp-dialect (cons (quote ,dialect) ilisp-dialect))
++	 (run-hooks (quote ,(intern (format "%s-hook" dialect)))))
++       (defun ,dialect (&optional buffer program)
++	 ,(format "Create an inferior %s.  With prefix, prompt for buffer and program."
++		   full-name)
+ 	 (interactive (list nil nil))
+-	 (ilisp-start-dialect (or buffer (, dialects)) 
+-			      program 
+-			      '(, setup))
+-	 (setq (, program) ilisp-program))
+-       (lisp-add-dialect (, dialects))))))
++	 (ilisp-start-dialect (or buffer ,dialects)
++			      program
++			      (quote ,setup))
++	 (setq ,program ilisp-program))
++       (lisp-add-dialect ,dialects))))
+ 
+ ;;;%%ilisp
+ (defun setup-ilisp (buffer)
+@@ -223,4 +223,6 @@
+ 	(call-interactively (read dialect)))))
+ 
+ 
++(provide 'ilisp-dia)
++
+ ;;; end of file -- ilisp-dia.lisp --
+--- ilisp-cl.el.orig	2002-09-24 21:39:53.000000000 +0000
++++ ilisp-cl.el
+@@ -11,6 +11,8 @@
+ ;;;
+ ;;; $Id: ilisp-cl.el,v 1.10 2002/09/24 21:39:53 anisotropy9 Exp $
+ 
++(require 'ilisp-dia)
++
+ (defvar ilisp-cl-ilisp-package-file "ilisp-pkg.lisp")
+ 
+ (defvar ilisp-cl-ilisp-init-file "cl-ilisp.lisp")
+--- ilisp-ccl.el.orig	2002-08-23 21:40:09.000000000 +0000
++++ ilisp-ccl.el
+@@ -26,6 +26,7 @@
+ ;;; Since 1.4 (fixed with 1.41) there is a debugger with corman.
+ 
+ (require 'cl)
++(require 'ilisp-dia)
+ 
+ ;;; cormanlisp --
+ ;;;
+--- ilisp-cmu.el.orig	2002-08-23 21:40:09.000000000 +0000
++++ ilisp-cmu.el
+@@ -12,6 +12,8 @@
+ ;;;
+ ;;; $Id: ilisp-cmu.el,v 1.5 2002/08/23 21:40:09 anisotropy9 Exp $
+ 
++(require 'ilisp-dia)
++
+ (defvar cmulisp-source-directory-regexp 
+   "\\/afs\\/cs\\.cmu\\.edu\\/project\\/clisp\\/src\\/[0-9]*\\/"
+   "*Regexp to match cmulisp source code directory.")
+--- ilisp-sbcl.el.orig	2002-08-23 21:40:09.000000000 +0000
++++ ilisp-sbcl.el
+@@ -12,6 +12,9 @@
+ ;;; $Id: ilisp-sbcl.el,v 1.14 2002/08/23 21:40:09 anisotropy9 Exp $
+ 
+ ;;;%%%Steel Bank Common Lisp
++
++(require 'ilisp-dia)
++
+     
+ (defvar ilisp-sbcl-init-file
+   ;; Note: The init file source extension (".lisp") needs to be
+--- ilisp-chs.el.orig	2019-10-26 07:30:52.088698269 +0000
++++ ilisp-chs.el
+@@ -12,6 +12,7 @@
+ ;;; $Id: ilisp-chs.el,v 1.7 2002/08/20 11:36:41 anisotropy9 Exp $
+ 
+ (require 'cl)
++(require 'ilisp-dia)
+ 
+ ;;; clisp-hs-check-prompt doesn't after the first break because the
+ ;;; number of ">" characters doesn't increase.
+--- ilisp-acl.el.orig	2019-10-26 07:31:51.652573832 +0000
++++ ilisp-acl.el
+@@ -15,6 +15,7 @@
+ ;;;
+ ;;; $Id: ilisp-acl.el,v 1.3 2002/08/23 21:40:09 anisotropy9 Exp $
+ 
++(require 'ilisp-dia)
+ 
+ ;;;%%%Allegro
+ (defvar ilisp-allegro-init-file "allegro.lisp")
+--- ilisp-kcl.el.orig	2002-02-24 16:02:23.000000000 +0000
++++ ilisp-kcl.el
+@@ -11,6 +11,8 @@
+ ;;;
+ ;;; $Id: ilisp-kcl.el,v 1.5 2002/02/24 16:02:23 amoroso Exp $
+ 
++(require 'ilisp-dia)
++
+ ;;;%%%KCL--these dialects by Tom Emerson
+ ;;; kcl-check-prompt doesn't after the first break because the
+ ;;; number of ">" characters doesn't increase.
+--- ilisp-hlw.el.orig	2002-08-23 21:40:09.000000000 +0000
++++ ilisp-hlw.el
+@@ -19,6 +19,7 @@
+ ;;;
+ ;;; $Id: ilisp-hlw.el,v 1.3 2002/08/23 21:40:09 anisotropy9 Exp $
+ 
++(require 'ilisp-dia)
+ 
+ (defvar ilisp-lispworks-init-file "lispworks.lisp")
+ 
+--- ilisp-luc.el.orig	2002-08-23 21:40:09.000000000 +0000
++++ ilisp-luc.el
+@@ -11,6 +11,8 @@
+ ;;;
+ ;;; $Id: ilisp-luc.el,v 1.3 2002/08/23 21:40:09 anisotropy9 Exp $
+ 
++(require 'ilisp-dia)
++
+ ;;;%%%Lucid
+ (defvar ilisp-lucid-init-file "lucid.lisp")
+ 
+--- ilisp-xls.el.orig	2001-05-12 22:10:53.000000000 +0000
++++ ilisp-xls.el
+@@ -13,6 +13,7 @@
+ 
+ ;;; Thanks to John Walker for supplying this file.
+ 
++(require 'ilisp-dia)
+ 
+ (defdialect xlisp "Xlisp" ilisp
+   (setq ilisp-load-command "(load \"%s\")"
+--- ilisp-openmcl.el.orig	2002-08-23 21:40:09.000000000 +0000
++++ ilisp-openmcl.el
+@@ -13,6 +13,7 @@
+ ;;;
+ ;;;
+ 
++(require 'ilisp-dia)
+ 
+ ;;;%%%OpenMCL
+ (defvar ilisp-openmcl-init-file "openmcl.lisp")
+--- ilisp-sch.el.orig	2002-06-28 13:01:16.000000000 +0000
++++ ilisp-sch.el
+@@ -13,6 +13,7 @@
+ 
+ (require 'cl)				; Sorry. I couldn't resist
+ 					; 19990818 Marco Antoniotti
++(require 'ilisp-dia)
+ 
+ ;;; Scheme
+ 

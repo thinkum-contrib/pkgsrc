@@ -33,7 +33,7 @@ lib/girepository-1.0/GdkPixbuf-2.0.typelib
 lib/girepository-1.0/GdkPixdata-2.0.typelib
 lib/libgdk_pixbuf-2.0.so
 lib/libgdk_pixbuf-2.0.so.0
-lib/libgdk_pixbuf-2.0.so.0.4000.0
+lib/libgdk_pixbuf-2.0.so.0.3902.0
 lib/pkgconfig/gdk-pixbuf-2.0.pc
 share/gir-1.0/GdkPixbuf-2.0.gir
 share/gir-1.0/GdkPixdata-2.0.gir

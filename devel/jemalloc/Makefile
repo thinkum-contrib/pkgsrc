@@ -15,7 +15,7 @@ LICENSE=	2-clause-bsd
 BUILD_DEPENDS+=		libxslt-[0-9]*:../../textproc/libxslt
 BUILD_DEPENDS+=		docbook-xsl-[0-9]*:../../textproc/docbook-xsl
 
-USE_LANGUAGES=		c
+USE_LANGUAGES=		c c++
 USE_TOOLS+=		autoconf automake aclocal gmake perl:run
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--enable-xmalloc

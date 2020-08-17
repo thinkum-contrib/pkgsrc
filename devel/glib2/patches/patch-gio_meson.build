@@ -2,9 +2,17 @@ $NetBSD: patch-gio_meson.build,v 1.7 2019/11/14 11:40:30 wiz Exp $
 
 Disable inotify on SunOS.
 
---- gio/meson.build.orig	2019-10-04 11:44:23.000000000 +0000
+--- gio/meson.build.orig	2019-09-05 16:56:48.000000000 +0000
 +++ gio/meson.build
-@@ -760,7 +760,7 @@ gioenumtypes_c = custom_target('gioenumt
+@@ -421,6 +421,7 @@
+       unix_sources += files('gcocoanotificationbackend.m')
+     endif
+     application_headers += files('gosxappinfo.h')
++    gio_unix_include_headers += files('gdesktopappinfo.h')
+   else
+     contenttype_sources += files('gcontenttype.c')
+     appinfo_sources += files('gdesktopappinfo.c')
+@@ -760,7 +761,7 @@
  gioenumtypes_dep = declare_dependency(sources : [gioenumtypes_h, glib_enumtypes_h])
  
  # inotify
@@ -13,3 +21,15 @@ Disable inotify on SunOS.
    subdir('inotify')
    internal_deps += [ inotify_lib ]
    internal_objects += [inotify_lib.extract_all_objects()]
+@@ -1009,11 +1010,6 @@
+ endif
+ 
+ subdir('fam')
+-# Don’t build the tests unless we can run them (either natively or in an exe wrapper)
+-build_tests = not meson.is_cross_build() or (meson.is_cross_build() and meson.has_exe_wrapper())
+-if build_tests
+-    subdir('tests')
+-endif
+ 
+ # The following is an example for building internal marshallers that are used
+ # by GIO. We cannot guarantee glib-genmarshal availability while building GLib

@@ -1,19 +1,20 @@
 $NetBSD: patch-ac,v 1.3 2013/06/19 13:12:01 mef Exp $
 
 Add Version specific module to byte-compile
+- now handled with common +ilisp-emacs-version-id+ binding as fsf-21
+  in ilcompat.el, for all Emacs version 21 and later
 
---- ilisp-mak.el.orig	2002-05-31 20:47:57.000000000 +0900
-+++ ilisp-mak.el	2013-06-19 15:13:05.000000000 +0900
-@@ -48,6 +48,12 @@
-            (byte-compile-file "illuc19.el"))
-           ((eq +ilisp-emacs-version-id+ 'xemacs)
-            (byte-compile-file "ilxemacs.el"))
-+          ((eq +ilisp-emacs-version-id+ 'fsf-24)
-+           (byte-compile-file "ilfsf21.el"))
-+          ((eq +ilisp-emacs-version-id+ 'fsf-23)
-+           (byte-compile-file "ilfsf21.el"))
-+          ((eq +ilisp-emacs-version-id+ 'fsf-22)
-+           (byte-compile-file "ilfsf21.el"))
-           ((eq +ilisp-emacs-version-id+ 'fsf-21)
-            (byte-compile-file "ilfsf21.el"))
-           ((eq +ilisp-emacs-version-id+ 'fsf-20)
+Ensure that the build fails if any file compiles with errors
+
+--- ilisp-mak.el.orig	2002-05-31 11:47:57.000000000 +0000
++++ ilisp-mak.el	2019-10-26 07:55:57.785667825 +0000
+@@ -119,7 +119,8 @@
+ 
+ 		   )))
+       (dolist (f files)
+-        (byte-compile-file (format "%s.el" f) 0))
++        (or (byte-compile-file (format "%s.el" f) 0)
++            (error "Errors while byte compiling %s" f)))
+       ;;Main mode file
+       (byte-compile-file "ilisp.el")
+       (message "Done compiling and loading ILISP."))))

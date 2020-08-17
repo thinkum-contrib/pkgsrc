@@ -3,5 +3,5 @@
 # used by graphics/gdk-pixbuf2/Makefile
 # used by graphics/gdk-pixbuf2-xlib/Makefile
 
-PIXBUF2_VERSION=	2.40.0
+PIXBUF2_VERSION=	2.39.2
 MSITE_VERSION=		${PIXBUF2_VERSION:R}

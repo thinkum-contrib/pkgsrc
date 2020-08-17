@@ -1,11 +1,26 @@
 # $NetBSD: options.mk,v 1.12 2019/11/03 19:03:57 rillig Exp $
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.ecl
-PKG_SUPPORTED_OPTIONS+=		debug threads unicode ffi
+PKG_SUPPORTED_OPTIONS+=		debug threads unicode ffi doc # gengc precisegc debug
 PKG_SUGGESTED_OPTIONS+=		unicode ffi
 # Unicode support proved to break Axioms.
 # Threads are off, since threaded ECL requires threads support
 # in Boehm GC (off by default).
+
+PKG_OPTIONS_OPTIONAL_GROUPS+=	doc
+PKG_OPTIONS_GROUP.doc=		doc doc-html doc-pdf
+## A summary of the 'doc' group options:
+# doc
+#  - Build and install HTML and PDF files
+# doc-html
+#  - Build and install HTML files for the ECL documentation in XML
+#  - uses xmlto
+#  - ECL provides a corresponding CSS file for the HTML, such that will
+#    be installed along with the HTML files
+# doc-pdf
+#  - Build and install a PDF file for the ECL documentation in XML
+#  - uses dblatex
+
 
 .include "../../mk/bsd.options.mk"
 
@@ -16,6 +31,9 @@ CONFIGURE_ARGS+=	--enable-debug
 .endif
 
 .if !empty(PKG_OPTIONS:Mthreads)
+. if empty(PKG_OPTIONS.boehm-gc:Mthreads)
+PKG_FAIL_REASON+=	"threads option specified in PKG_OPTIONS.ecl but not in PKG_OPTIONS.boehm-gc"
+. endif
 CONFIGURE_ARGS+=	--enable-threads
 CONFIGURE_ENV+=		THREAD_CFLAGS=${PTHREAD_CFLAGS:Q}
 CONFIGURE_ENV+=		THREAD_LDFLAGS=${BUILDLINK_LDFLAGS.pthread:Q}
@@ -106,7 +124,7 @@ do-doc-pdf-install: do-doc-pdf-build .PHONY
 # CONFIGURE_ARGS+=	--enable-precisegc
 # .endif
 
-## Extended Debug options (TBD)
+## Debug options
 # .if !empty(PKG_OPTIONS:Mdebug)
 # CONFIGURE_ARGS+=	--enable-debug
 # CONFIGURE_ARGS+=	--with-debug-cflags
@@ -114,4 +132,3 @@ do-doc-pdf-install: do-doc-pdf-build .PHONY
 ## NB not a default configure setting
 # CONFIGURE_ARGS+=	--without-debug-cflags
 # .endif
-

@@ -1,7 +1,6 @@
 # $NetBSD: Makefile,v 1.6 2020/05/16 02:15:06 joerg Exp $
 
 DISTNAME=	fig2dev-3.2.7b
-PKGREVISION=	1
 CATEGORIES=	graphics print
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=mcj/}
 EXTRACT_SUFX=	.tar.xz
@@ -14,7 +13,8 @@ GNU_CONFIGURE=	yes
 
 LDFLAGS.SunOS+=	-liconv
 
-USE_TOOLS+=	gs:run
+DEPENDS+=	rgb-[0-9]*:../../x11/rgb
+CONFIGURE_ARGS+=--with-rgbfile=${PREFIX}/share/X11/rgb.txt
 
 .include "../../graphics/png/buildlink3.mk"
 .include "../../converters/libiconv/buildlink3.mk"

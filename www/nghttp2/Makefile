@@ -1,6 +1,11 @@
 # $NetBSD: Makefile,v 1.63 2020/06/02 19:12:55 adam Exp $
 
-.include "Makefile.common"
+DISTNAME=	nghttp2-1.39.2
+PKGREVISION=	2
+CATEGORIES=	www
+MASTER_SITES=	${MASTER_SITE_GITHUB:=tatsuhiro-t/}
+EXTRACT_SUFX=	.tar.xz
+GITHUB_RELEASE=	v${PKGVERSION_NOREV}
 
 COMMENT=	Implementation of HTTP/2 in C
 

@@ -5,17 +5,9 @@ Use _XOPEN_NAME_MAX in lieu of NAME_MAX for SunOS.
 Include <sys/filio.h> for FIONREAD on SunOS.
 https://gitlab.gnome.org/GNOME/glib/merge_requests/889
 
---- gio/inotify/inotify-kernel.c.orig	2019-10-04 11:44:23.000000000 +0000
+--- gio/inotify/inotify-kernel.c.orig	2019-09-05 16:56:48.000000000 +0000
 +++ gio/inotify/inotify-kernel.c
-@@ -33,11 +33,17 @@
- #ifdef HAVE_SYS_FILIO_H
- #include <sys/filio.h>
- #endif
-+#ifdef HAVE_SYS_FILIO_H
-+#include <sys/filio.h>
-+#endif
- #include <glib/glib-unix.h>
- 
+@@ -38,6 +38,9 @@
  #include "glib-private.h"
  
  /* From inotify(7) */
