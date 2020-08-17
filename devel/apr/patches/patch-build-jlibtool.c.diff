@@ -1,0 +1,132 @@
+$Thinkum$
+
+Patch jlibtool.c for subst patterns in tool pathnames
+
+--- build/jlibtool.c.orig	2013-10-03 07:11:44.000000000 -0700
++++ build/jlibtool.c	2019-09-26 13:47:24.658780825 -0700
+@@ -28,7 +28,7 @@
+ #include <assert.h>
+ 
+ #ifdef __EMX__
+-#  define SHELL_CMD  "sh"
++#  define SHELL_CMD  "@SH@"
+ #  define GEN_EXPORTS "emxexp"
+ #  define DEF2IMPLIB_CMD "emximp"
+ #  define SHARE_SW   "-Zdll -Zmtd"
+@@ -41,27 +41,27 @@
+      /* OMF is the native format under OS/2 */
+ #    define STATIC_LIB_EXT "lib"
+ #    define OBJECT_EXT     "obj"
+-#    define LIBRARIAN      "emxomfar"
++#    define LIBRARIAN      "@AR@"
+ #    define LIBRARIAN_OPTS "cr"
+ #  else
+      /* but the alternative, a.out, can fork() which is sometimes necessary */
+ #    define STATIC_LIB_EXT "a"
+ #    define OBJECT_EXT     "o"
+-#    define LIBRARIAN      "ar"
++#    define LIBRARIAN      "@AR@"
+ #    define LIBRARIAN_OPTS "cr"
+ #  endif
+ #endif
+ 
+ #if defined(__APPLE__)
+-#  define SHELL_CMD  "/bin/sh"
++#  define SHELL_CMD  "@SH@"
+ #  define DYNAMIC_LIB_EXT "dylib"
+ #  define MODULE_LIB_EXT  "bundle"
+ #  define STATIC_LIB_EXT "a"
+ #  define OBJECT_EXT     "o"
+-#  define LIBRARIAN      "ar"
++#  define LIBRARIAN      "@AR@"
+ #  define LIBRARIAN_OPTS "cr"
+ /* man libtool(1) documents ranlib option of -c.  */
+-#  define RANLIB "ranlib"
++#  define RANLIB "@RANLIB@"
+ #  define PIC_FLAG "-fPIC -fno-common"
+ #  define SHARED_OPTS "-dynamiclib"
+ #  define MODULE_OPTS "-bundle -dynamic"
+@@ -76,14 +76,14 @@
+ #endif
+ 
+ #if defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)
+-#  define SHELL_CMD  "/bin/sh"
++#  define SHELL_CMD  "@SH@"
+ #  define DYNAMIC_LIB_EXT "so"
+ #  define MODULE_LIB_EXT  "so"
+ #  define STATIC_LIB_EXT "a"
+ #  define OBJECT_EXT     "o"
+-#  define LIBRARIAN      "ar"
++#  define LIBRARIAN      "@AR@"
+ #  define LIBRARIAN_OPTS "cr"
+-#  define RANLIB "ranlib"
++#  define RANLIB "@RANLIB@"
+ #  define PIC_FLAG "-fPIC"
+ #  define RPATH "-rpath"
+ #  define SHARED_OPTS "-shared"
+@@ -96,14 +96,14 @@
+ #endif
+ 
+ #if defined(sun)
+-#  define SHELL_CMD  "/bin/sh"
++#  define SHELL_CMD  "@SH@"
+ #  define DYNAMIC_LIB_EXT "so"
+ #  define MODULE_LIB_EXT  "so"
+ #  define STATIC_LIB_EXT "a"
+ #  define OBJECT_EXT     "o"
+-#  define LIBRARIAN      "ar"
++#  define LIBRARIAN      "@AR@"
+ #  define LIBRARIAN_OPTS "cr"
+-#  define RANLIB "ranlib"
++#  define RANLIB "@RANLIB@"
+ #  define PIC_FLAG "-KPIC"
+ #  define RPATH "-R"
+ #  define SHARED_OPTS "-G"
+@@ -117,12 +117,12 @@
+ #endif
+ 
+ #if defined(_OSD_POSIX)
+-#  define SHELL_CMD  "/usr/bin/sh"
++#  define SHELL_CMD  "@SH@"
+ #  define DYNAMIC_LIB_EXT "so"
+ #  define MODULE_LIB_EXT  "so"
+ #  define STATIC_LIB_EXT "a"
+ #  define OBJECT_EXT     "o"
+-#  define LIBRARIAN      "ar"
++#  define LIBRARIAN      "@AR@"
+ #  define LIBRARIAN_OPTS "cr"
+ #  define SHARED_OPTS "-G"
+ #  define MODULE_OPTS "-G"
+@@ -131,12 +131,12 @@
+ #endif
+ 
+ #if defined(sinix) && defined(mips) && defined(__SNI_TARG_UNIX)
+-#  define SHELL_CMD  "/usr/bin/sh"
++#  define SHELL_CMD  "@SH@"
+ #  define DYNAMIC_LIB_EXT "so"
+ #  define MODULE_LIB_EXT  "so"
+ #  define STATIC_LIB_EXT "a"
+ #  define OBJECT_EXT     "o"
+-#  define LIBRARIAN      "ar"
++#  define LIBRARIAN      "@AR@"
+ #  define LIBRARIAN_OPTS "cr"
+ #  define RPATH "-Brpath"
+ #  define SHARED_OPTS "-G"
+@@ -149,14 +149,14 @@
+ #endif
+ 
+ #if defined(__MINGW32__)
+-#  define SHELL_CMD "sh"
++#  define SHELL_CMD "@SH@"
+ #  define DYNAMIC_LIB_EXT "dll"
+ #  define MODULE_LIB_EXT  "dll"
+ #  define STATIC_LIB_EXT "a"
+ #  define OBJECT_EXT     "o"
+-#  define LIBRARIAN      "ar"
++#  define LIBRARIAN      "@AR@"
+ #  define LIBRARIAN_OPTS "cr"
+-#  define RANLIB "ranlib"
++#  define RANLIB "@RANLIB@"
+ #  define LINKER_FLAG_PREFIX "-Wl,"
+ #  define SHARED_OPTS "-shared"
+ #  define MODULE_OPTS "-shared"
