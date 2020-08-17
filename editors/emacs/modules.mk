@@ -1,4 +1,4 @@
-# $NetBSD: modules.mk,v 1.27 2020/08/12 14:19:50 ryoon Exp $
+# $NetBSD$
 #
 # This Makefile fragment handles Emacs Lisp Packages (== ELPs).
 #
@@ -230,9 +230,8 @@ BUILD_DEFS_EFFECTS+=	${_SYS_VARS.emacs}
 #
 
 _EMACS_VERSIONS_ALL= \
-	emacs20 emacs21 emacs21nox emacs25 emacs25nox emacs26 emacs26nox \
-	emacs27 emacs27nox \
-	xemacs214 xemacs214nox xemacs215 xemacs215nox
+	emacs20 emacs21 emacs21nox emacs25 emacs25nox emacs26 emacs26nox\
+	emacs27 emacs27nox xemacs214 xemacs214nox xemacs215 xemacs215nox
 
 _EMACS_PKGDIR_MAP= \
 	emacs20@../../editors/emacs20 \
@@ -242,8 +241,8 @@ _EMACS_PKGDIR_MAP= \
 	emacs25nox@../../editors/emacs25-nox11 \
 	emacs26@../../editors/emacs26 \
 	emacs26nox@../../editors/emacs26-nox11 \
-	emacs27@../../editors/emacs27 \
-	emacs27nox@../../editors/emacs27-nox11 \
+	emacs27@../../wip/emacs-git \
+	emacs27nox@../../wip/emacs-nox11-git \
 	xemacs214@../../editors/xemacs \
 	xemacs214nox@../../editors/xemacs-nox11 \
 	xemacs215@../../editors/xemacs-current \
@@ -355,7 +354,7 @@ PRINT_PLIST_AWK+=	{ gsub(/${EMACS_LISPPREFIX:S|${PREFIX}/||:S|/|\\/|g}/, \
 .if defined(EMACS_BUILDLINK)
 _EMACS_DIR=	${BUILDLINK_DIR}/share/emacs
 #  development version usually claims three digit, say, 27.0.50 etc
-.  if ${EMACS_TYPE} == emacs27
+.  if !empty(EMACS_TYPE:Memacs27*)
 ALL_ENV+=	EMACSLOADPATH=${_EMACS_DIR}/${_EMACS_VERSION_MAJOR}.${_EMACS_VERSION_MINOR}.${_EMACS_VERSION_MICRO}/lisp:${_EMACS_DIR}/site-lisp
 .  else
 ALL_ENV+=	EMACSLOADPATH=${_EMACS_DIR}/${_EMACS_VERSION_MAJOR}.${_EMACS_VERSION_MINOR}/lisp:${_EMACS_DIR}/site-lisp

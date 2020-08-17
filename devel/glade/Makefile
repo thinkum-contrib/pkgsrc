@@ -23,6 +23,7 @@ _TOOLS_USE_PKGSRC.msgfmt=	yes
 
 PKGCONFIG_OVERRIDE+=	data/gladeui-2.0.pc.in
 
+.include "../../x11/libXdamage/buildlink3.mk"
 .include "../../x11/gtk3/buildlink3.mk"
 .include "../../textproc/libxml2/buildlink3.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"

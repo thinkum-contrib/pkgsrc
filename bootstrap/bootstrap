@@ -1024,9 +1024,9 @@ sunpro)
 	echo "CPP=			\${CC} -E" >> ${TARGET_MKCONF}
 	;;
 clang)
-	echo "CC=			clang"     >> ${TARGET_MKCONF}
-	echo "CXX=			clang++"   >> ${TARGET_MKCONF}
-	echo "CPP=			\${CC} -E" >> ${TARGET_MKCONF}
+	echo "CC=			${CC:-clang}"        >> ${TARGET_MKCONF}
+	echo "CXX=			${CXX:-clang++}"     >> ${TARGET_MKCONF}
+	echo "CPP=			${CPP:-\$\{CC\} -E}" >> ${TARGET_MKCONF}
 	if [ -z "$CLANGBASE" -a -f "/usr/bin/clang" ]; then
 		CLANGBASE="/usr"
 	fi

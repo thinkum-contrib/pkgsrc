@@ -131,7 +131,6 @@ guile/2.2/include/guile/2.2/libguile/weak-vector.h
 guile/2.2/include/guile/2.2/readline.h
 guile/2.2/info/guile.info
 guile/2.2/info/r5rs.info
-${PLIST.charset}guile/2.2/lib/charset.alias
 guile/2.2/lib/guile/2.2/ccache/ice-9/and-let-star.go
 guile/2.2/lib/guile/2.2/ccache/ice-9/arrays.go
 guile/2.2/lib/guile/2.2/ccache/ice-9/atomic.go

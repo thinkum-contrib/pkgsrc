@@ -33,4 +33,5 @@ post-install:
 	${INSTALL_DATA} ${WRKSRC}/doc/reference.html ${DESTDIR}${DOCDIR}
 	${INSTALL_DATA} ${WRKSRC}/doc/style.css ${DESTDIR}${DOCDIR}
 
+.include "../../mk/docbook2X.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

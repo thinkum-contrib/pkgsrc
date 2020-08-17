@@ -15,6 +15,23 @@ LICENSE=	gnu-lgpl-v3
 GUILE_SUBDIR=	guile/2.2
 #GUILE_SUBDIR=	# empty
 
+## Handle the logic about charset.alias installation
+## vis a vis need_charset_alias in WRKSRC/lib/Makefile
+##
+## The charset.alias file may be built, but is reportedly redundant,
+## when glibc-2.1 or later is the libc implementation in LOCALBASE
+## ... referring to the same Makefile.
+##
+## Assumption: If the guile makefiles installed charset.alias
+## under DESTDIR, then it may be needed in the pkg
+.if empty(GUILE_SUBDIR)
+GENERATE_PLIST+=if [ -e ${DESTDIR}${LOCALBASE}/lib/charset.alias ]; then \
+  echo lib/charset.alias; fi
+.else
+GENERATE_PLIST+=if [ -e ${DESTDIR}${LOCALBASE}/${GUILE_SUBDIR}/lib/charset.alias ]; then \
+  echo ${GUILE_SUBDIR}/lib/charset.alias; fi
+.endif
+
 # guile does not like the --build and --host triplets on NetBSD
 HAS_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--disable-shared

@@ -2,13 +2,17 @@
 #
 # used by editors/emacs26/Makefile
 # used by editors/emacs26-nox11/Makefile
+# used by wip/emacs-git/Makefile.common
 
-.include "../../mk/bsd.prefs.mk"
+.if !defined(EMACS_COMMON_MK)
+EMACS_COMMON_MK=	#defined
 
 DISTNAME=	emacs-${EMACS_VERSION}
 PKGNAME?=	${DISTNAME:S/emacs/emacs26/}
 CATEGORIES=	editors
 MASTER_SITES=	${MASTER_SITE_GNU:=emacs/}
+
+.include "../../mk/bsd.prefs.mk"
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://www.gnu.org/software/emacs/
@@ -72,8 +76,12 @@ CPPFLAGS+=	-DTERMINFO
 
 .include "../../mk/oss.buildlink3.mk"
 
+.if !defined(EMACS_GIT_COMMON_MK)
 post-extract:
 	cp ${.CURDIR}/../../editors/emacs26/files/site-init.el ${WRKSRC}/lisp
 	${CHMOD} -R go-w ${WRKSRC}
+.endif
 
 .include "../../devel/libgetopt/buildlink3.mk"
+
+.endif ## EMACS_COMMON_MK

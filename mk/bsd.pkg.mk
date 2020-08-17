@@ -845,3 +845,17 @@ ${_MAKEVARS_MK.${_phase_}}: ${WRKDIR}
 .endif
 .include "misc/warnings.mk"
 .include "misc/can-be-built-here.mk"
+
+## Include any late site-local build configuration, if available in
+## site .PATH
+##
+## This may serve to permit for testing of specific build configrations,
+## such that may not be possible in mk.conf itself. This can be used,
+## for instance, to dispatch on specific elements of USE_TOOLS, such
+## as for adding dependencies to pkgsrc tools, in preference to those
+## installed on the host, e.g makeinfo
+##
+## The .PATH variable can be appended to, in using the special .PATH
+## target e.g in mk.conf
+##
+.-include "site.pkg.mk"

@@ -2,6 +2,7 @@
 
 DISTNAME=	krb5-1.18
 PKGNAME=	mit-${DISTNAME}
+PKGREVISION=	4
 CATEGORIES=	security
 MASTER_SITES=	http://web.mit.edu/kerberos/dist/krb5/${PKGVERSION_NOREV}/
 
