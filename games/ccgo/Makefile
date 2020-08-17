@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.66 2019/07/21 22:24:49 wiz Exp $
+# $NetBSD: Makefile,v 1.70 2020/06/02 08:23:49 adam Exp $
 
 DISTNAME=	ccgo-0.3.6.5
-PKGREVISION=	7
+PKGREVISION=	10
 CATEGORIES=	games
 MASTER_SITES=	https://ccdw.org/~cjj/prog/ccgo/src/
 
@@ -19,7 +19,7 @@ GNU_CONFIGURE=		yes
 
 SUBST_CLASSES+=		ccgo
 SUBST_STAGE.ccgo=	pre-configure
-SUBST_FILES.ccgo=	game_setup.cc settings.cc
+SUBST_FILES.ccgo=	game_setup.cc
 SUBST_MESSAGE.ccgo=	Fixing paths to gnugo.
 SUBST_SED.ccgo=		-e 's|/usr/games/gnugo|${LOCALBASE}/bin/gnugo|g'
 

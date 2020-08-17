@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.108 2020/01/18 23:30:45 rillig Exp $
+# $NetBSD: Makefile,v 1.114 2020/06/05 12:49:05 jperkin Exp $
 
 DISTNAME=		kile-2.1.3
-PKGREVISION=		33
+PKGREVISION=		38
 CATEGORIES=		editors kde
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=kile/}
 EXTRACT_SUFX=		.tar.bz2
 
 MAINTAINER=		markd@NetBSD.org
-HOMEPAGE=		https://kile.sourceforge.net/
+HOMEPAGE=		https://kile.sourceforge.io/
 COMMENT=		LaTeX source editor - TeX shell - Gnuplot front end
 
 BUILD_DEPENDS+=	automoc4>=0.9.87:../../devel/automoc4

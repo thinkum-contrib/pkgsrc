@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.37 2020/01/18 23:35:06 rillig Exp $
+# $NetBSD: Makefile,v 1.39 2020/05/09 18:29:24 rillig Exp $
 #
 
 DISTNAME=	aide-0.15.1
@@ -7,12 +7,14 @@ CATEGORIES=	security
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=aide/}
 
 MAINTAINER=	pettai@NetBSD.org
-HOMEPAGE=	https://aide.sourceforge.net/
+HOMEPAGE=	http://aide.sourceforge.net/
 COMMENT=	Free intrusion detection system for checking file integrity
 LICENSE=	artistic
 
 GNU_CONFIGURE=	yes
 USE_TOOLS+=	bison flex gmake
+
+CHECK_PORTABILITY_SKIP=	contrib/gpg2_update.sh # not needed
 
 .include "../../mk/bsd.prefs.mk"
 

@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.57 2020/01/18 23:30:50 rillig Exp $
+# $NetBSD: Makefile,v 1.60 2020/03/20 11:57:35 nia Exp $
 #
 
 DISTNAME=	gpsim-0.26.1
-PKGREVISION=	12
+PKGREVISION=	14
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=gpsim/}
 
 MAINTAINER=	snoonan@tbearsiberians.com
-HOMEPAGE=	https://gpsim.sourceforge.net/
+HOMEPAGE=	http://gpsim.sourceforge.net/
 COMMENT=	PIC emulator with X interface
 
 GNU_CONFIGURE=	YES

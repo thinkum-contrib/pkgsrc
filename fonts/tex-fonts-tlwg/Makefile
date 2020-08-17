@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.6 2020/01/18 23:31:32 rillig Exp $
+# $NetBSD: Makefile,v 1.8 2020/05/21 10:30:27 markd Exp $
 
 DISTNAME=	fonts-tlwg
-PKGNAME=	tex-${DISTNAME}-0.7.1
-TEXLIVE_REV=	49085
+PKGNAME=	tex-${DISTNAME}-0.7.2
+TEXLIVE_REV=	54994
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://ctan.org/pkg/fonts-tlwg
@@ -14,6 +14,5 @@ TEX_MAP_FILES+=	nf.map
 TEX_MAP_FILES+=	sipa.map
 TEX_MAP_FILES+=	tlwg.map
 
-TEXLIVE_UNVERSIONED=	yes
 .include "../../print/texlive/package.mk"
 .include "../../mk/bsd.pkg.mk"

@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.119 2020/01/18 21:48:09 jperkin Exp $
+# $NetBSD: Makefile,v 1.124 2020/07/27 20:48:53 adam Exp $
 
 PKGNAME=	subversion-base-${SVNVER}
-PKGREVISION=	1
 COMMENT=	Version control system, base programs and libraries
 
 # on at least solaris, configure fails to figure out
@@ -11,6 +10,7 @@ BROKEN_GETTEXT_DETECTION=	yes
 .include "../../devel/subversion/Makefile.common"
 
 USE_TOOLS+=		msgfmt pkg-config
+TOOLS_BROKEN+=		perl
 
 CONFIGURE_ARGS+=	--without-apxs
 

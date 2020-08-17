@@ -1,9 +1,8 @@
-# $NetBSD: Makefile,v 1.52 2019/12/15 18:28:55 taca Exp $
+# $NetBSD: Makefile,v 1.54 2020/04/25 15:51:47 taca Exp $
 #
 
-DISTNAME=	PEAR-1.10.10
+DISTNAME=	PEAR-1.10.12
 PKGNAME=	${PHP_PKG_PREFIX}-${DISTNAME:S/PEAR/pear/}
-PKGREVISION=	1
 CATEGORIES=	lang
 MASTER_SITES=	http://download.pear.php.net/package/
 EXTRACT_SUFX=	.tgz
@@ -47,7 +46,7 @@ EXTRACT_ONLY+=		${CONSOLE_SRCS}
 STRUCTURES_SRCS=	Structures_Graph-1.1.1${EXTRACT_SUFX}
 DISTFILES+=		${STRUCTURES_SRCS}
 
-XMLUTIL_SRCS=		XML_Util-1.4.4${EXTRACT_SUFX}
+XMLUTIL_SRCS=		XML_Util-1.4.5${EXTRACT_SUFX}
 DISTFILES+=		${XMLUTIL_SRCS}
 
 #
@@ -60,7 +59,7 @@ SUBST_VARS.config=	WRKSRC
 SUBST_VARS.config+=	PREFIX
 SUBST_MESSAGE.config=	Fixing configuration files.
 
-REPLACE_SH+=		script/pear.sh
+REPLACE_SH+=		scripts/pear.sh
 
 INSTALLATION_DIRS+=	share/examples/pear
 

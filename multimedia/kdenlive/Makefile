@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.55 2020/01/18 21:50:06 jperkin Exp $
+# $NetBSD: Makefile,v 1.61 2020/06/09 11:56:17 markd Exp $
 
 DISTNAME=	kdenlive-${KAPPSVER}
-PKGREVISION=	1
 CATEGORIES=	multimedia
 
 HOMEPAGE=	https://www.kdenlive.org/
@@ -10,7 +9,7 @@ LICENSE=	gnu-gpl-v2
 
 .include "../../meta-pkgs/kde/applications.mk"
 
-BUILD_DEPENDS+=	kdoctools>=${KF5VER}:../../devel/kdoctools
+BUILD_DEPENDS+=	kdoctools>=5.19.0:../../devel/kdoctools
 DEPENDS+=	dvdauthor>=0.6.18:../../multimedia/dvdauthor
 DEPENDS+=	ffplay4-[0-9]*:../../multimedia/ffplay4
 
@@ -47,5 +46,6 @@ CONF_FILES+=	${PREFIX}/share/examples/kde-xdg/kdenlive_wipes.knsrc \
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
 .include "../../sysutils/kfilemetadata5/buildlink3.mk"
 .include "../../x11/qt5-qtbase/buildlink3.mk"
+.include "../../x11/qt5-qtquickcontrols2/buildlink3.mk"
 .include "../../x11/qt5-qtwebkit/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

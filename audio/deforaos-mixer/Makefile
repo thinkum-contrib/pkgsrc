@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.24 2020/01/13 01:26:03 khorben Exp $
+# $NetBSD: Makefile,v 1.27 2020/04/18 04:13:51 mef Exp $
 
 DISTNAME=	Mixer-0.4.0
 PKGNAME=	deforaos-mixer-0.4.0
+PKGREVISION=	2
 CATEGORIES=	audio
 MASTER_SITES=	https://ftp.defora.org/pub/DeforaOS/Apps/Desktop/src/Mixer/
 
@@ -16,6 +17,8 @@ USE_TOOLS+=	xgettext
 
 BUILD_DEPENDS+=	libxslt-[0-9]*:../../textproc/libxslt
 BUILD_DEPENDS+=	docbook-xsl-[0-9]*:../../textproc/docbook-xsl
+
+CFLAGS+=	-fPIC
 
 MAKE_FLAGS+=	DESTDIR=${DESTDIR}
 MAKE_FLAGS+=	PREFIX=${PREFIX}

@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.21 2020/01/18 23:35:15 rillig Exp $
+# $NetBSD: Makefile,v 1.24 2020/05/02 14:58:17 rillig Exp $
 
-DISTNAME=	dbus-python-1.2.14
+DISTNAME=	dbus-python-1.2.16
 PKGNAME=	${DISTNAME:S/python/python-common/}
+PKGREVISION=	1
 CATEGORIES=	sysutils
 MASTER_SITES=	http://dbus.freedesktop.org/releases/dbus-python/
 
@@ -19,7 +20,7 @@ PYTHON_FOR_BUILD_ONLY=		yes
 
 USE_TOOLS+=		pkg-config gmake
 GNU_CONFIGURE=		yes
-CONFIGURE_ARGS+=	--disable-html-docs --disable-api-docs
+CONFIGURE_ARGS+=	--disable-documentation
 
 BUILDLINK_TRANSFORM.SunOS+=	rm:-std=c9x
 

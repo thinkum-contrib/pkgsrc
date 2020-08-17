@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.22 2020/01/18 23:30:50 rillig Exp $
+# $NetBSD: Makefile,v 1.24 2020/05/14 19:33:30 joerg Exp $
 
 DISTNAME=		pearpc-0.5
 CATEGORIES=		emulators
@@ -6,7 +6,7 @@ MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=pearpc/}
 EXTRACT_SUFX=		.tar.bz2
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://pearpc.sourceforge.net/
+HOMEPAGE=		http://pearpc.sourceforge.net/
 COMMENT=		PowerPC emulator
 
 GNU_CONFIGURE=		yes
@@ -18,8 +18,14 @@ EGDIR=			${PREFIX}/share/examples/${PKGBASE}
 CONF_FILES=		${EGDIR}/ppccfg.example ${PKG_SYSCONFDIR}/ppccfg.conf
 
 .include "../../mk/bsd.prefs.mk"
+.include "../../mk/compiler.mk"
 
-.if !empty(MACHINE_ARCH:Mi386)
+.if !empty(PKGSRC_COMPILER:Mclang) && ${MACHINE_ARCH} == "x86_64"
+CCASFLAGS+=	-fno-integrated-as
+MAKE_ENV+=	AM_CCASFLAGS=${CCASFLAGS:Q}
+.endif
+
+.if ${MACHINE_ARCH} == "i386"
 BUILD_DEPENDS+=		nasm-[0-9]*:../../devel/nasm
 CONFIGURE_ARGS+=	--enable-cpu=jitc_x86
 .endif

@@ -1,12 +1,14 @@
-# $NetBSD: Makefile,v 1.70 2020/01/18 21:48:35 jperkin Exp $
+# $NetBSD: Makefile,v 1.72 2020/05/17 22:08:10 rillig Exp $
 
-PKGREVISION= 4
+PKGREVISION= 5
 .include "../../x11/qt4-libs/Makefile.common"
 
 PKGNAME=	qt4-tools-${QTVERSION}
 COMMENT=	QT GUI (WYSIWYG) builder and other tools
 
 DEPENDS+=	libtool-base-[0-9]*:../../devel/libtool-base
+
+TOOLS_BROKEN+=		perl
 
 CONFIGURE_ARGS+=	-I${QTDIR}/include -L${QTDIR}/lib
 CONFIGURE_ARGS+=	-DQT_NO_DBUS

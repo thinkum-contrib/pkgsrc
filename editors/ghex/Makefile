@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.56 2020/01/23 16:06:01 nia Exp $
+# $NetBSD: Makefile,v 1.60 2020/04/20 00:32:56 joerg Exp $
 
 DISTNAME=	ghex-3.18.4
+PKGREVISION=	2
 CATEGORIES=	editors gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/ghex/3.18/}
 EXTRACT_SUFX=	.tar.xz
@@ -10,7 +11,9 @@ HOMEPAGE=	https://wiki.gnome.org/Apps/Ghex
 COMMENT=	Hex editor
 LICENSE=	gnu-gpl-v2
 
-USE_TOOLS+=	pkg-config
+TOOL_DEPENDS+=	itstool-[0-9]*:../../textproc/itstool
+
+USE_TOOLS+=	pkg-config msgfmt
 
 PYTHON_FOR_BUILD_ONLY=	tool
 

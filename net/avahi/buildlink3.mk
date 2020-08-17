@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.41 2019/10/27 14:46:09 kamil Exp $
+# $NetBSD: buildlink3.mk,v 1.44 2020/03/23 15:56:55 wiz Exp $
 
 BUILDLINK_TREE+=	avahi
 
@@ -6,7 +6,7 @@ BUILDLINK_TREE+=	avahi
 AVAHI_BUILDLINK3_MK:=
 
 BUILDLINK_API_DEPENDS.avahi+=	avahi>=0.6.23
-BUILDLINK_ABI_DEPENDS.avahi+=	avahi>=0.6.32nb19
+BUILDLINK_ABI_DEPENDS.avahi+=	avahi>=0.6.32nb21
 BUILDLINK_PKGSRCDIR.avahi?=	../../net/avahi
 
 pkgbase := avahi
@@ -14,10 +14,6 @@ pkgbase := avahi
 
 .if !empty(PKG_BUILD_OPTIONS.avahi:Mgdbm)
 .  include "../../databases/gdbm/buildlink3.mk"
-.endif
-
-.if !empty(PKG_BUILD_OPTIONS.avahi:Mgtk2)
-.include "../../x11/gtk2/buildlink3.mk"
 .endif
 
 .if !empty(PKG_BUILD_OPTIONS.avahi:Mgtk3)

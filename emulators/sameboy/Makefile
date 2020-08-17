@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1 2019/07/18 10:44:57 nia Exp $
+# $NetBSD: Makefile,v 1.3 2020/06/03 13:47:21 nia Exp $
 
 .include "Makefile.common"
 

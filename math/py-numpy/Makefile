@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.61 2019/06/14 14:33:07 adam Exp $
+# $NetBSD: Makefile,v 1.69 2020/08/11 05:58:29 mef Exp $
 
-DISTNAME=	numpy-1.16.4
+DISTNAME=	numpy-1.19.1
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	math python
 MASTER_SITES=	${MASTER_SITE_PYPI:=n/numpy/}
@@ -11,6 +11,7 @@ HOMEPAGE=	http://www.numpy.org/
 COMMENT=	Array processing for numbers, strings, records, and objects
 LICENSE=	modified-bsd
 
+TEST_DEPENDS+=	${PYPKGPREFIX}-hypothesis-[0-9]*:../../devel/py-hypothesis
 TEST_DEPENDS+=	${PYPKGPREFIX}-nose-[0-9]*:../../devel/py-nose
 TEST_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
 
@@ -18,6 +19,8 @@ USE_LANGUAGES=		c fortran
 MAKE_ENV+=		ATLAS=None
 
 REPLACE_PYTHON+=	*.py */*.py */*/*.py */*/*/*.py */*/*/*/*.py
+
+PYTHON_VERSIONS_INCOMPATIBLE=	27 # since 1.17
 
 # XXX Avoid picking up other compilers when installed
 .include "../../mk/compiler.mk"
@@ -48,6 +51,7 @@ do-test:
 	cd ${WRKDIR} && \
 	${RUN} PYTHONPATH=${DESTDIR}${PREFIX}/${PYSITELIB} ${PYTHONBIN} -c "import numpy; numpy.test()"
 
+BUILDLINK_API_DEPENDS.py-cython+=	${PYPKGPREFIX}-cython>=0.29.21
 .include "../../devel/py-cython/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../lang/python/egg.mk"

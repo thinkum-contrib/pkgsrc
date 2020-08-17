@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.29 2020/01/18 21:50:12 jperkin Exp $
+# $NetBSD: Makefile,v 1.33 2020/06/02 08:24:30 adam Exp $
 
 DISTNAME=	flickcurl-1.26
-PKGREVISION=	14
+PKGREVISION=	18
 CATEGORIES=	net
 MASTER_SITES=	http://download.dajobe.org/flickcurl/
 

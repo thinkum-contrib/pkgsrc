@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.25 2020/01/18 21:50:01 jperkin Exp $
+# $NetBSD: Makefile,v 1.31 2020/06/09 11:56:15 markd Exp $
 
 DISTNAME=	kteatime-${KAPPSVER}
-PKGREVISION=	1
 CATEGORIES=	misc
 
 HOMEPAGE=	https://kde.org/applications/games/kteatime/
@@ -10,7 +9,7 @@ LICENSE=	gnu-lgpl-v2 AND gnu-gpl-v3 AND gnu-fdl-v1.2
 
 .include "../../meta-pkgs/kde/applications.mk"
 
-BUILD_DEPENDS+=	kdoctools>=${KF5VER}:../../devel/kdoctools
+BUILD_DEPENDS+=	kdoctools>=5.19.0:../../devel/kdoctools
 
 USE_TOOLS+=	msgmerge
 

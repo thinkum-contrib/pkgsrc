@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.57 2020/01/18 21:48:44 jperkin Exp $
+# $NetBSD: Makefile,v 1.63 2020/07/07 12:40:58 nia Exp $
 
-DISTNAME=	lmms_1.2.1
+DISTNAME=	lmms_1.2.2
 PKGNAME=	${DISTNAME:S/_/-/1}
-PKGREVISION=	1
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_GITHUB:=LMMS/}
 GITHUB_PROJECT=	lmms
@@ -16,10 +15,10 @@ LICENSE=	gnu-gpl-v2
 
 TOOL_DEPENDS+=	qt5-qttools-[0-9]*:../../x11/qt5-qttools
 
-WRKSRC=		${WRKDIR}/${PKGNAME_NOREV}
+WRKSRC=		${WRKDIR}/lmms
 USE_CMAKE=	yes
 USE_TOOLS+=	pkg-config
-USE_LANGUAGES=	c c++03
+USE_LANGUAGES=	c c++
 
 .include "../../mk/oss.buildlink3.mk"
 
@@ -36,10 +35,12 @@ CMAKE_ARGS+=	-DWANT_SOUNDIO=OFF # requires libsoundio
 CMAKE_ARGS+=	-DWANT_SNDIO=OFF # requires sndio
 CMAKE_ARGS+=	-DWANT_VST_NOWINE=ON
 
+# for libzynaddsubfx.so in plugins/zynaddsubfx/.
+LDFLAGS+=	${COMPILER_RPATH_FLAG}${PREFIX}/lib/lmms
+
 BUILDLINK_TRANSFORM+=	rm:-floop-optimize2 rm:-fgcse-las
 
-# for libzynaddsubfx.so in plugins/zynaddsubfx/.
-LDFLAGS+=		${COMPILER_RPATH_FLAG}${PREFIX}/lib/lmms
+CHECK_PORTABILITY_SKIP+=	cmake/linux/package_linux.sh.in
 
 .include "options.mk"
 .include "../../audio/fluidsynth/buildlink3.mk"
@@ -52,7 +53,9 @@ LDFLAGS+=		${COMPILER_RPATH_FLAG}${PREFIX}/lib/lmms
 .include "../../multimedia/libogg/buildlink3.mk"
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
 .include "../../x11/qt5-qtbase/buildlink3.mk"
-.include "../../x11/qt5-qtx11extras/buildlink3.mk"
+.if ${OPSYS} != "Darwin"
+.  include "../../x11/qt5-qtx11extras/buildlink3.mk"
+.endif
 .include "../../mk/dlopen.buildlink3.mk"
 .include "../../mk/pthread.buildlink3.mk"
 BUILDLINK_TRANSFORM+=	opt:-ldl:${BUILDLINK_LDADD.dl:Q}

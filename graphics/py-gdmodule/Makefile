@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.17 2019/09/02 13:20:18 adam Exp $
+# $NetBSD: Makefile,v 1.19 2020/07/13 20:05:11 wiz Exp $
 
 DISTNAME=	gdmodule-0.59
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
-PKGREVISION=	2
+PKGREVISION=	3
 CATEGORIES=	graphics python
 MASTER_SITES=	${MASTER_SITE_GITHUB:=Solomoriah/}
 GITHUB_PROJECT=	gdmodule
 GITHUB_TAG=	v0.59
 
-MAINTAINER=	darcy@NetBSD.org
+MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://github.com/Solomoriah/gdmodule
 COMMENT=	Python interface to gd graphics library
 LICENSE=	original-bsd

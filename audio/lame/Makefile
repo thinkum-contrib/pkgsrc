@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.84 2020/01/18 23:30:00 rillig Exp $
+# $NetBSD: Makefile,v 1.86 2020/04/07 09:21:20 wiz Exp $
 
 DISTNAME=	lame-3.100
 CATEGORIES=	audio
@@ -6,7 +6,7 @@ PKGREVISION=	1
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=lame/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://lame.sourceforge.net/
+HOMEPAGE=	https://lame.sourceforge.io/
 COMMENT=	Fast, high quality MP3 encoder
 LICENSE=	gnu-lgpl-v2
 
@@ -17,6 +17,7 @@ USE_LANGUAGES=		c c++
 USE_FEATURES+=		strnlen
 
 LDFLAGS.SunOS+=		-lm
+LDFLAGS.NetBSD+=	-ltermcap
 
 .include "options.mk"
 
@@ -36,4 +37,5 @@ CONFIGURE_ARGS+=	--enable-nasm
 .endif
 
 .include "../../mk/curses.buildlink3.mk"
+.include "../../mk/termcap.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

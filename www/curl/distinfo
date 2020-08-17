@@ -1,8 +1,8 @@
-$NetBSD: distinfo,v 1.159 2020/01/08 11:59:18 leot Exp $
+$NetBSD: distinfo,v 1.164 2020/07/01 07:54:09 adam Exp $
 
-SHA1 (curl-7.68.0.tar.xz) = 9a7c6aca20065581315fd1327b938185297d05a4
-RMD160 (curl-7.68.0.tar.xz) = e6c7e2cfbabca69cd36be4025ab3fa0c209bd28e
-SHA512 (curl-7.68.0.tar.xz) = bf365609c9a66a05b3a263d02bcd3f81f905570c5739c8ec522a296b4b8e2a479d64d5524e8345e14eafad28995ee22d923522f1a45fa40eb46db38759c2eb2c
-Size (curl-7.68.0.tar.xz) = 2442788 bytes
-SHA1 (patch-configure) = daf5fd2ceca72cca80f992be1973ef70f63135e2
-SHA1 (patch-curl-config.in) = 363359665985cc14f36ddf47fc3480f1200e3533
+SHA1 (curl-7.71.1.tar.xz) = 243b6ab55421c20500cae8224409c3242d10bcce
+RMD160 (curl-7.71.1.tar.xz) = d41a8efd64fe6d831948bc5ab7ef033a23b5179d
+SHA512 (curl-7.71.1.tar.xz) = 631e0ee8562e5029fe022bfab4222836a3e6d666e82e2bfbd78311fe5985105218a36d1ea68c93472fc57a12b713957a3bcca6e385eda4e58a47ca8d5d50265b
+Size (curl-7.71.1.tar.xz) = 2387660 bytes
+SHA1 (patch-configure) = 8dcc112bd2950e146a77bed7638e490e24a5aa71
+SHA1 (patch-curl-config.in) = 16d50c2720e56fd56a9188f58c5cc2717f98e49f

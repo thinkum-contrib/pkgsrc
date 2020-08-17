@@ -12,13 +12,13 @@ func (s *Suite) Test_MkParser_MkCond(c *check.C) {
 	cmp := func(left MkCondTerm, op string, right MkCondTerm) *MkCond {
 		return &MkCond{Compare: &MkCondCompare{left, op, right}}
 	}
-	cvar := func(name string, modifiers ...string) MkCondTerm {
+	cvar := func(name string, modifiers ...MkVarUseModifier) MkCondTerm {
 		return MkCondTerm{Var: b.VarUse(name, modifiers...)}
 	}
 	cstr := func(s string) MkCondTerm { return MkCondTerm{Str: s} }
 	cnum := func(s string) MkCondTerm { return MkCondTerm{Num: s} }
 
-	termVar := func(varname string, mods ...string) *MkCond {
+	termVar := func(varname string, mods ...MkVarUseModifier) *MkCond {
 		return &MkCond{Term: &MkCondTerm{Var: b.VarUse(varname, mods...)}}
 	}
 	termNum := func(num string) *MkCond {
@@ -34,7 +34,7 @@ func (s *Suite) Test_MkParser_MkCond(c *check.C) {
 	call := func(name string, arg string) *MkCond {
 		return &MkCond{Call: &MkCondCall{name, arg}}
 	}
-	empty := func(varname string, mods ...string) *MkCond {
+	empty := func(varname string, mods ...MkVarUseModifier) *MkCond {
 		return &MkCond{Empty: b.VarUse(varname, mods...)}
 	}
 	defined := func(varname string) *MkCond { return &MkCond{Defined: varname} }
@@ -495,7 +495,7 @@ func (s *Suite) Test_MkCondWalker_Walk(c *check.C) {
 		strs := make([]string, 1+len(varuse.modifiers))
 		strs[0] = varuse.varname
 		for i, mod := range varuse.modifiers {
-			strs[1+i] = mod.Text
+			strs[1+i] = mod.String()
 		}
 		return strings.Join(strs, ":")
 	}
@@ -504,9 +504,13 @@ func (s *Suite) Test_MkCondWalker_Walk(c *check.C) {
 		events = append(events, sprintf("%14s  %s", name, strings.Join(args, ", ")))
 	}
 
-	// XXX: Add callbacks for And and Or if needed.
+	// XXX: Add callbacks for Or if needed.
+	//  A good use case would be to check for unsatisfiable .elif conditions.
 
 	mkline.Cond().Walk(&MkCondCallback{
+		func(conds []*MkCond) {
+			addEvent("and")
+		},
 		func(cond *MkCond) {
 			addEvent("not")
 		},
@@ -550,6 +554,7 @@ func (s *Suite) Test_MkCondWalker_Walk(c *check.C) {
 		"        varUse  VAR",
 		"        varUse  PRE",
 		"        varUse  POST",
+		"           and  ",
 		" compareVarNum  NUM, 3",
 		"        varUse  NUM",
 		"       defined  VAR",

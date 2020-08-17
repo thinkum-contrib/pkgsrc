@@ -1,10 +1,9 @@
-# $NetBSD: Makefile,v 1.23 2020/01/18 21:49:42 jperkin Exp $
+# $NetBSD: Makefile,v 1.28 2020/07/11 04:06:07 taca Exp $
 
 #
 # We can't omit PKGNAME here to handle PKG_OPTIONS.
 #
 PKGNAME=		php-${PHP_VERSION:S/RC/rc/}
-PKGREVISION=		1
 
 COMMENT=		PHP Hypertext Preprocessor version 7.2
 LICENSE=		php
@@ -15,7 +14,7 @@ USE_TOOLS+=		gmake lex pkg-config
 LIBTOOL_OVERRIDE=	# empty
 PHP_CHECK_INSTALLED=	No
 
-PHP_VERSIONS_ACCEPTED=		72
+PHP_VERSIONS_ACCEPTED=	72
 
 .include "Makefile.php"
 
@@ -34,11 +33,9 @@ REPLACE_PHP=		ext/phar/phar/phar.php run-tests.php
 SUBST_CLASSES+=		path
 SUBST_MESSAGE.path=	Fixing common paths.
 SUBST_STAGE.path=	pre-configure
-SUBST_FILES.path=	ext/phar/phar/phar.php
-SUBST_FILES.path+=	php.ini-development php.ini-production run-tests.php
+SUBST_FILES.path=	php.ini-development php.ini-production
 SUBST_FILES.path+=	sapi/cgi/Makefile.frag
-SUBST_VARS.path=	CGIDIR
-SUBST_VARS.path+=	PREFIX
+SUBST_VARS.path=	CGIDIR PREFIX
 
 INSTALLATION_DIRS+=	${CGIDIR} ${PHP_EXTENSION_DIR} ${EGDIR} share/php
 

@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.21 2020/01/10 13:32:13 bsiegert Exp $
+# $NetBSD: Makefile,v 1.28 2020/08/14 20:01:20 bsiegert Exp $
 
 DISTNAME=		pup-0.4.0
-PKGREVISION=		17
+PKGREVISION=		23
 CATEGORIES=		www
 MASTER_SITES=		${MASTER_SITE_GITHUB:=ericchiang/}
 GITHUB_TAG=		v${PKGVERSION_NOREV}
 
-MAINTAINER=		fhajny@NetBSD.org
+MAINTAINER=		pkgsrc-users@NetBSD.org
 HOMEPAGE=		https://github.com/ericchiang/pup/
 COMMENT=		Parsing HTML at the command line
 LICENSE=		mit

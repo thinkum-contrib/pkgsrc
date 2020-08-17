@@ -1,0 +1,6 @@
+$NetBSD: distinfo,v 1.6 2020/05/12 18:42:30 adam Exp $
+
+SHA1 (importlib_resources-1.5.0.tar.gz) = 7fe714bd58d153a8861f2f586d26dbcc48cc24a7
+RMD160 (importlib_resources-1.5.0.tar.gz) = a46cdc176023f7f037123eadf075c9438e02f976
+SHA512 (importlib_resources-1.5.0.tar.gz) = 34d14c1ff3121cc6f9ef1d3d4417831e3476e9facfcc9b35152c28a59a2c75d7723f171f4b48852f79ec46cbf54b066580745744bc54d349e2bfe12a353a9aed
+Size (importlib_resources-1.5.0.tar.gz) = 23660 bytes

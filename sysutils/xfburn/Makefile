@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.12 2019/07/21 22:25:46 wiz Exp $
+# $NetBSD: Makefile,v 1.15 2020/04/11 05:05:40 gutteridge Exp $
 
-DISTNAME=	xfburn-0.5.5
-PKGREVISION=	3
+VERSION=	0.6.2
+DISTNAME=	xfburn-${VERSION}
 CATEGORIES=	sysutils
-MASTER_SITES=	http://archive.xfce.org/src/apps/xfburn/0.5/
+MASTER_SITES=	https://archive.xfce.org/src/apps/xfburn/${VERSION:R}/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
@@ -22,5 +22,5 @@ USE_TOOLS+=	gmake intltool msgfmt pkg-config
 .include "../../sysutils/libisofs/buildlink3.mk"
 .include "../../x11/libxfce4ui/buildlink3.mk"
 .include "../../x11/xfce4-exo/buildlink3.mk"
-.include "../../x11/gtk2/buildlink3.mk"
+.include "../../x11/gtk3/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

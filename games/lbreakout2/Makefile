@@ -1,20 +1,21 @@
-# $NetBSD: Makefile,v 1.44 2020/01/18 23:32:03 rillig Exp $
+# $NetBSD: Makefile,v 1.47 2020/05/31 15:22:21 rillig Exp $
 
 DISTNAME=	lbreakout2-2.6.5
 CATEGORIES=	games
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=lgames/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://lgames.sourceforge.net/LBreakout2/
+HOMEPAGE=	http://lgames.sourceforge.net/LBreakout2/
 COMMENT=	Breakout-style arcade game
 LICENSE=	gnu-gpl-v2
 
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--localstatedir=${VARBASE}/games
-CONFIGURE_ARGS+=	--with-highscore-path=${PREFIX}/share/games/
 CONFIGURE_ARGS+=	--with-docdir=${PREFIX}/share/doc
 
 LDFLAGS.SunOS+=	-lsocket -lnsl
+
+CHECK_PORTABILITY_SKIP+=	configure.in
 
 .include "../../mk/compiler.mk"
 .if !empty(PKGSRC_COMPILER:Msunpro)

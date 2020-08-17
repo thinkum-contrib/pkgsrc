@@ -1,10 +1,12 @@
-# $NetBSD: Makefile,v 1.52 2020/01/18 21:51:14 jperkin Exp $
+# $NetBSD: Makefile,v 1.54 2020/05/28 15:24:13 rillig Exp $
 
-PKGREVISION= 4
+PKGREVISION= 5
 .include "../../x11/qt4-libs/Makefile.common"
 
 PKGNAME=	qt4-pgsql-${QTVERSION}
 COMMENT=	QT postgresql driver
+
+TOOLS_BROKEN+=		perl
 
 CONFIGURE_ARGS+=	-I${QTDIR}/include
 CONFIGURE_ARGS+=	-I${PGSQL_PREFIX}/include/postgresql/server

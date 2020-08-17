@@ -1,4 +1,4 @@
-# $NetBSD: options.mk,v 1.3 2019/11/03 11:45:30 rillig Exp $
+# $NetBSD: options.mk,v 1.5 2020/06/30 17:27:06 tron Exp $
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.bind914
 PKG_SUPPORTED_OPTIONS=	bind-dig-sigchase bind-xml-statistics-server
@@ -23,7 +23,7 @@ PKG_SUGGESTED_OPTIONS+=	threads
 .endif
 
 .if ${OPSYS} == "NetBSD"
-.  if !empty(OS_VERSION:M[8-9].*)
+.  if exists(/usr/include/blacklist.h)
 PKG_SUGGESTED_OPTIONS+=	blacklist
 .  endif
 .endif
@@ -116,9 +116,6 @@ CONFIGURE_ARGS+=	--without-libjson
 ###
 .if !empty(PKG_OPTIONS:Mthreads)
 PTHREAD_AUTO_VARS=	yes
-CONFIGURE_ARGS+=	--enable-threads
-.else
-CONFIGURE_ARGS+=	--disable-threads
 .endif
 
 ###

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.20 2020/01/23 10:11:44 adam Exp $
+# $NetBSD: Makefile,v 1.22 2020/05/16 16:35:24 adam Exp $
 
-DISTNAME=	setuptools_scm-3.4.3
+DISTNAME=	setuptools_scm-3.5.0
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	devel python
 MASTER_SITES=	${MASTER_SITE_PYPI:=s/setuptools_scm/}
@@ -12,8 +12,9 @@ LICENSE=	mit
 
 DEPENDS+=	${PYPKGPREFIX}-toml-[0-9]*:../../textproc/py-toml
 TEST_DEPENDS+=	${PYPKGPREFIX}-pip-[0-9]*:../../devel/py-pip
-TEST_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
 TEST_DEPENDS+=	${PYPKGPREFIX}-mercurial-[0-9]*:../../devel/py-mercurial
+
+PYTHON_VERSIONED_DEPENDENCIES=	test:test
 
 USE_LANGUAGES=	# none
 
@@ -21,4 +22,5 @@ do-test:
 	cd ${WRKSRC} && pytest-${PYVERSSUFFIX} testing
 
 .include "../../lang/python/egg.mk"
+.include "../../lang/python/versioned_dependencies.mk"
 .include "../../mk/bsd.pkg.mk"

@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.12 2020/01/10 13:32:13 bsiegert Exp $
+# $NetBSD: Makefile,v 1.18 2020/08/14 20:01:21 bsiegert Exp $
 
 DISTNAME=	urlesc-0.0.0.20170810
 PKGNAME=	go-${DISTNAME}
-PKGREVISION=	11
+PKGREVISION=	17
 MASTER_SITES=	${MASTER_SITE_GITHUB:=PuerkitoBio/}
 CATEGORIES=	www
 GITHUB_PROJECT=	urlesc

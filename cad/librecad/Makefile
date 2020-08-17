@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.51 2020/01/18 21:48:47 jperkin Exp $
+# $NetBSD: Makefile,v 1.57 2020/06/02 08:23:16 adam Exp $
 
 GITHUB_PROJECT=	LibreCAD
 DISTNAME=	LibreCAD-2.2.0.rc1
 PKGNAME=	${DISTNAME:tl}
-PKGREVISION=	2
+PKGREVISION=	7
 CATEGORIES=	cad
 MASTER_SITES=	${MASTER_SITE_GITHUB:=LibreCAD/}
 GITHUB_TAG=	${PKGVERSION_NOREV:C/.rc1/-rc1/}
 
 MAINTAINER=	ryoon@NetBSD.org
-HOMEPAGE=	http://librecad.org/
+HOMEPAGE=	https://librecad.org/
 COMMENT=	Free Open Source personal CAD application
 LICENSE=	gnu-gpl-v2
 

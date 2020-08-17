@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.30 2020/01/02 16:52:28 gutteridge Exp $
+# $NetBSD: Makefile,v 1.32 2020/03/18 18:01:23 joerg Exp $
 
 DISTNAME=	json-glib-1.4.4
+PKGREVISION=	1
 CATEGORIES=	textproc gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/json-glib/${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.xz
@@ -13,6 +14,13 @@ LICENSE=	gnu-lgpl-v2.1
 USE_TOOLS+=	gmake msgfmt msgmerge pkg-config xgettext
 
 CONFIGURE_ARGS+=	--disable-man
+
+.include "../../mk/compiler.mk"
+
+.if !empty(PKGSRC_COMPILER:Mclang)
+_WRAP_EXTRA_ARGS.CC+=	-Wno-error=void-pointer-to-int-cast
+CWRAPPERS_APPEND.cc+=	-Wno-error=void-pointer-to-int-cast
+.endif
 
 # workaround for build failure
 # https://gitlab.gnome.org/GNOME/json-glib/issues/35

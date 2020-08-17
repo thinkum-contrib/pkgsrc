@@ -1,8 +1,9 @@
-# $NetBSD: Makefile,v 1.44 2019/09/02 16:08:33 nia Exp $
+# $NetBSD: Makefile,v 1.46 2020/03/10 22:11:04 wiz Exp $
 
 VERSION=	0.5.4.14
 DISTNAME=	xarchiver-${VERSION}
 PKGNAME=	xfce4-xarchiver-${VERSION}
+PKGREVISION=	2
 CATEGORIES=	sysutils
 MASTER_SITES=	${MASTER_SITE_GITHUB:=ib/}
 GITHUB_PROJECT=	xarchiver

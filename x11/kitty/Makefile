@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.12 2020/01/12 23:00:26 joerg Exp $
+# $NetBSD: Makefile,v 1.17 2020/05/22 05:57:10 rillig Exp $
 
-DISTNAME=	kitty-0.15.1
+DISTNAME=	kitty-0.16.0
+PKGREVISION=	2
 CATEGORIES=	x11
 MASTER_SITES=	${MASTER_SITE_GITHUB:=kovidgoyal/}
 GITHUB_PROJECT=	kitty
@@ -28,13 +29,10 @@ TOOL_DEPENDS+=	${PYPKGPREFIX}-setuptools-[0-9]*:../../devel/py-setuptools
 SUBST_CLASSES+=		python
 SUBST_STAGE.python=	pre-build
 SUBST_MESSAGE.python=	Replacing path to Sphinx.
-SUBST_FILES.python+=	Makefile
-SUBST_FILES.python+=	docs/Makefile
+SUBST_FILES.python=	docs/Makefile
 SUBST_SED.python+=	-e "s,sphinx-build,sphinx-build-${PYVERSSUFFIX},g"
 
-REPLACE_PYTHON+=	kitty/launcher/kitty
-
-INSTALLATION_DIRS+=	man/man1
+INSTALLATION_DIRS+=	${PKGMANDIR}/man1
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27
 PYTHON_VERSIONED_DEPENDENCIES=	sphinx:tool
@@ -57,6 +55,7 @@ do-install:
 .include "../../fonts/fontconfig/buildlink3.mk"
 .endif
 
+.include "options.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../devel/ncurses/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"

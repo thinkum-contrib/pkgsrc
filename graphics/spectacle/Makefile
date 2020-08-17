@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.2 2020/01/18 21:49:39 jperkin Exp $
+# $NetBSD: Makefile,v 1.8 2020/06/09 11:56:13 markd Exp $
 
 DISTNAME=	spectacle-${KAPPSVER}
-PKGREVISION=	1
 CATEGORIES=	graphics
 
 HOMEPAGE=	https://kde.org/applications/graphics/kruler/

@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.11 2020/01/18 23:32:18 rillig Exp $
+# $NetBSD: Makefile,v 1.13 2020/03/20 11:57:52 nia Exp $
 #
 
 DISTNAME=	quesoglc-0.7.1-free
 PKGNAME=	${DISTNAME:S/-free$//}
-PKGREVISION=	8
+PKGREVISION=	9
 CATEGORIES=	graphics
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=quesoglc/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://quesoglc.sourceforge.net/
+HOMEPAGE=	http://quesoglc.sourceforge.net/
 COMMENT=	Free implementation of the OpenGL Character Renderer (GLC)
 
 WRKSRC=		${WRKDIR}/quesoglc-0.7.1

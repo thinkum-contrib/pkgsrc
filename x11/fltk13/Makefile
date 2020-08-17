@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.32 2019/11/03 09:14:08 rillig Exp $
+# $NetBSD: Makefile,v 1.35 2020/03/26 11:37:22 nia Exp $
 
 DISTNAME=	fltk-1.3.5-source
 PKGNAME=	${DISTNAME:S/-source//}
@@ -24,11 +24,12 @@ PKG_SUGGESTED_OPTIONS=	opengl # cairo
 #PLIST_VARS+=		cairo
 PLIST_VARS+=		opengl
 
-.include "../../mk/bsd.prefs.mk"
 .include "../../mk/bsd.options.mk"
 
 PTHREAD_OPTS+=		require
 GNU_CONFIGURE=		yes
+GNU_CONFIGURE_STRICT=	no	# --enable-libtool is not officially known,
+				# it is added partly in patch-ac.
 CONFIGURE_ARGS+=	--enable-libtool=${LIBTOOL:Q}
 CONFIGURE_ARGS+=	--enable-threads
 CONFIGURE_ARGS+=	ac_cv_have_overlay=yes
@@ -63,6 +64,7 @@ CONFIGURE_ARGS+=	--enable-shared
 CONFIGURE_ARGS+=	--disable-localjpeg --disable-localzlib --disable-localpng
 
 .if ${OPSYS} != "Darwin"
+.  include "../../x11/libXcursor/buildlink3.mk"
 .  include "../../x11/libXext/buildlink3.mk"
 .  include "../../x11/libXft/buildlink3.mk"
 .  include "../../x11/libXinerama/buildlink3.mk"

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.19 2020/01/18 21:49:31 jperkin Exp $
+# $NetBSD: Makefile,v 1.25 2020/05/22 10:56:09 adam Exp $
 
-PKGNAME=		supertux-0.6.0
-PKGREVISION=		4
+PKGNAME=		supertux-0.6.2
+PKGREVISION=		1
 DISTNAME=		SuperTux-v${PKGVERSION_NOREV}-Source
 CATEGORIES=		games
 MASTER_SITES=		${MASTER_SITE_GITHUB:=SuperTux/}
@@ -9,17 +9,20 @@ GITHUB_RELEASE=		v${PKGVERSION_NOREV}
 
 MAINTAINER=		hernani@vecirex.net
 HOMEPAGE=		https://www.supertux.org/
-COMMENT=		2D jump\'n run game in the style of the Super Mario ones
+COMMENT=		2D jump and run game in the style of the Super Mario ones
 LICENSE=		gnu-gpl-v2
 
 USE_CMAKE=		yes
 CMAKE_ARGS+=		-DINSTALL_SUBDIR_BIN=bin
 CMAKE_ARGS+=		-DBUILD_SHARED_LIBS=off
-USE_TOOLS+=		gmake pkg-config
+USE_TOOLS+=		pkg-config
 USE_LANGUAGES=		c c++14
 
 # C++14
 GCC_REQD+=		5
+
+# We already patch 'configure'...
+CHECK_PORTABILITY_SKIP+=	external/SDL_ttf/configure.in
 
 .include "../../audio/libvorbis/buildlink3.mk"
 .include "../../audio/openal-soft/buildlink3.mk"

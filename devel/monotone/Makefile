@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.111 2019/11/03 10:39:20 rillig Exp $
+# $NetBSD: Makefile,v 1.115 2020/06/02 08:23:39 adam Exp $
 
 DISTNAME=	monotone-1.1
-PKGREVISION=	19
+PKGREVISION=	22
 CATEGORIES=	devel scm
 MASTER_SITES=	http://www.monotone.ca/downloads/1.1/
 EXTRACT_SUFX=	.tar.bz2
@@ -19,8 +19,6 @@ USE_TOOLS+=		gmake makeinfo pax perl:run pkg-config
 USE_LANGUAGES=		c c++
 USE_PKGLOCALEDIR=	yes
 
-CONFIGURE_ARGS+=	--with-system-pcre
-
 INSTALL_MAKE_FLAGS+=	bashcompdir=${PREFIX:Q}/share/examples/monotone
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.monotone
@@ -31,7 +29,7 @@ CHECK_INTERPRETER_SKIP+=	share/monotone/contrib/*
 CHECK_PORTABILITY_SKIP+=	debian/*
 
 REPLACE_PERL=			extra/bin/mtn-cleanup
-REPLACE_SH=			mtnopt
+REPLACE_SH=			src/util/mtnopt.in
 # The following are optional scripts for hooks.  We do not replace their
 # interpreter because we want to avoid a dependency on them.  (Ideally they
 # should be in separate packages with appropriate dependencies.)

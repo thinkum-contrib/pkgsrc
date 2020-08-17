@@ -1,12 +1,11 @@
-# $NetBSD: Makefile,v 1.2 2020/01/18 21:51:15 jperkin Exp $
+# $NetBSD: Makefile,v 1.9 2020/07/31 20:01:40 pin Exp $
 
-DISTNAME=		qt5ct-0.41
-PKGREVISION=		1
+DISTNAME=		qt5ct-1.1
 CATEGORIES=		x11
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=qt5ct/}
 EXTRACT_SUFX=		.tar.bz2
 
-MAINTAINER=		voidpin@protonmail.com
+MAINTAINER=		pin@NetBSD.org
 HOMEPAGE=		https://sourceforge.net/projects/qt5ct/files/
 COMMENT=		Tool for customizing Qt5-apps outside KDE
 LICENSE=		2-clause-bsd

@@ -1,15 +1,28 @@
-$NetBSD: patch-gfx_thebes_gfxPlatform.cpp,v 1.5 2020/01/15 10:50:38 ryoon Exp $
+$NetBSD: patch-gfx_thebes_gfxPlatform.cpp,v 1.7 2020/06/14 18:42:19 maya Exp $
 
-* Hardware acceleration for up to 4K UHD.
+Don't rely on CrossProcessSemaphore on NetBSD. It has some implementation
+issues that cause issues (kern/55386, not available on NetBSD<9)
 
---- gfx/thebes/gfxPlatform.cpp.orig	2020-01-08 01:23:32.000000000 +0000
+This idea is borrowed from macOS which has the same limitation.
+
+--- gfx/thebes/gfxPlatform.cpp.orig	2020-06-03 01:04:50.000000000 +0000
 +++ gfx/thebes/gfxPlatform.cpp
-@@ -2935,7 +2935,7 @@ static void UpdateWRQualificationForInte
-   const int64_t kMaxPixels = 1920 * 1200;  // WUXGA
- #    else
-   // Allow up to 4k on Linux
--  const int64_t kMaxPixels = 3440 * 1440;  // UWQHD
-+  const int64_t kMaxPixels = 3840 * 2160;  // 4K UHD
- #    endif
-   if (aScreenPixels > kMaxPixels) {
-     aFeature.Disable(
+@@ -2922,6 +2922,10 @@ bool gfxPlatform::UsesOffMainThreadCompo
+ }
+ 
+ bool gfxPlatform::UsesTiling() const {
++#ifdef __NetBSD__
++  // Avoid relying on CrossProcessSemaphore
++  return true;
++#else
+   bool usesSkia = GetDefaultContentBackend() == BackendType::SKIA;
+ 
+   // We can't just test whether the PaintThread is initialized here because
+@@ -2934,6 +2938,7 @@ bool gfxPlatform::UsesTiling() const {
+   return StaticPrefs::layers_enable_tiles_AtStartup() ||
+          (StaticPrefs::layers_enable_tiles_if_skia_pomtp_AtStartup() &&
+           usesSkia && usesPOMTP);
++#endif
+ }
+ 
+ bool gfxPlatform::ContentUsesTiling() const {

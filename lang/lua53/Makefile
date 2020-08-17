@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.4 2020/01/16 23:51:29 nia Exp $
+# $NetBSD: Makefile,v 1.6 2020/07/02 10:15:20 nia Exp $
 
 DISTNAME=	lua-${LUA_VERSION}
 PKGNAME=	lua53-${LUA_VERSION}
-CATEGORIES=	lang
-MASTER_SITES=	http://www.lua.org/ftp/
+CATEGORIES=	lang lua
+MASTER_SITES=	https://www.lua.org/ftp/
 MASTER_SITES+=	http://www.tecgraf.puc-rio.br/lua/ftp/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.lua.org/
-COMMENT=	Powerful light-weight language for extending applications
+HOMEPAGE=	https://www.lua.org/
+COMMENT=	Lightweight, embeddable scripting language (v5.3)
 LICENSE=	mit
 
 .include "../../lang/lua53/version.mk"

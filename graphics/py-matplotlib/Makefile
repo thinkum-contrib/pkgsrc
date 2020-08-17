@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.56 2019/12/11 20:29:51 adam Exp $
+# $NetBSD: Makefile,v 1.59 2020/06/18 12:24:55 adam Exp $
 
-DISTNAME=	matplotlib-3.1.2
+DISTNAME=	matplotlib-3.2.2
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	graphics python
 MASTER_SITES=	${MASTER_SITE_PYPI:=m/matplotlib/}
@@ -21,13 +21,13 @@ TEST_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
 USE_LANGUAGES=	c c++
 USE_TOOLS+=	pkg-config
 
-PYTHON_VERSIONS_INCOMPATIBLE=	27
-
 PYSETUPTESTTARGET=	pytest
 
-.include "../../lang/python/egg.mk"
+PYTHON_VERSIONS_INCOMPATIBLE=	27
+
 .include "../../devel/zlib/buildlink3.mk"
 .include "../../graphics/freetype2/buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
+.include "../../lang/python/egg.mk"
 .include "../../math/py-numpy/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

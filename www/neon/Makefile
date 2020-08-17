@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.74 2020/01/18 21:48:30 jperkin Exp $
+# $NetBSD: Makefile,v 1.76 2020/05/22 10:55:53 adam Exp $
 
 DISTNAME=	neon-0.30.2
-PKGREVISION=	3
+PKGREVISION=	5
 CATEGORIES=	www
 #MASTER_SITES=	http://www.webdav.org/neon/
 
@@ -15,7 +15,6 @@ USE_TOOLS+=		pkg-config msgfmt
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--enable-shared
 CONFIGURE_ARGS+=	--with-expat
-CONFIGURE_ARGS+=	--with-ssl=yes
 
 PKGCONFIG_OVERRIDE=	neon.pc.in
 TEST_TARGET=		check
@@ -28,6 +27,5 @@ LDFLAGS.SunOS+=		-lintl
 
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
-.include "../../security/openssl/buildlink3.mk"
 .include "../../textproc/expat/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

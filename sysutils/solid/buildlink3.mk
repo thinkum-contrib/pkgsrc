@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.14 2020/01/18 21:48:26 jperkin Exp $
+# $NetBSD: buildlink3.mk,v 1.18 2020/06/02 08:22:57 adam Exp $
 
 BUILDLINK_TREE+=	solid
 
@@ -6,7 +6,7 @@ BUILDLINK_TREE+=	solid
 SOLID_BUILDLINK3_MK:=
 
 BUILDLINK_API_DEPENDS.solid+=	solid>=5.18.0
-BUILDLINK_ABI_DEPENDS.solid?=	solid>=5.64.0nb1
+BUILDLINK_ABI_DEPENDS.solid?=	solid>=5.66.0nb4
 BUILDLINK_PKGSRCDIR.solid?=	../../sysutils/solid
 
 .include "../../x11/qt5-qtdeclarative/buildlink3.mk"

@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.12 2020/01/18 23:35:23 rillig Exp $
+# $NetBSD: Makefile,v 1.15 2020/03/20 11:58:24 nia Exp $
 
 DISTNAME=	artha-1.0.3
-PKGREVISION=	9
+PKGREVISION=	11
 CATEGORIES=	textproc
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=artha/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://artha.sourceforge.net/
+HOMEPAGE=	http://artha.sourceforge.net/
 COMMENT=	Open Source WordNet-based thesaurus
 LICENSE=	gnu-gpl-v2
 

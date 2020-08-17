@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.34 2020/01/21 20:25:40 adam Exp $
+# $NetBSD: Makefile,v 1.39 2020/06/02 06:41:03 adam Exp $
 
 DISTNAME=	qtwebchannel-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtwebchannel-${QTVERSION}

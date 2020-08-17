@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.8 2019/04/25 12:54:05 adam Exp $
+$NetBSD: distinfo,v 1.10 2020/05/27 14:20:24 adam Exp $
 
-SHA1 (rope-0.14.0.tar.gz) = ef0242734b3fd75bece49f5ba96a67ed51311c37
-RMD160 (rope-0.14.0.tar.gz) = 6c7155942469a827e2de771da1ed786d498d0fd9
-SHA512 (rope-0.14.0.tar.gz) = 49da5a458cf3f899a5adee859e7a238673060cf6676d74530e52dc4507e617d439a0d6a3867ed0d320f65cacad0ad06f63486b0f600f16928f51e71413f4f936
-Size (rope-0.14.0.tar.gz) = 244089 bytes
+SHA1 (rope-0.17.0.tar.gz) = e0a7b7e2f8f2e6e95dbf98d6badd7652a2e23695
+RMD160 (rope-0.17.0.tar.gz) = 4bcd493b99050e32250675d052b19c6c2a03e326
+SHA512 (rope-0.17.0.tar.gz) = c27a17fdf73ed0ae85fe417132acd999452ae88a7b779d84fdf73134094fd34510ae08017dc24ddd7c34cb70353b5a43021229b88819002371790e7717b8ae46
+Size (rope-0.17.0.tar.gz) = 248629 bytes

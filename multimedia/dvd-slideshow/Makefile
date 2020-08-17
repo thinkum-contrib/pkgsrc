@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.20 2020/01/18 23:33:10 rillig Exp $
+# $NetBSD: Makefile,v 1.23 2020/07/13 20:05:12 wiz Exp $
 
 DISTNAME=	dvd-slideshow-0.7.5
-PKGREVISION=	12
+PKGREVISION=	13
 CATEGORIES=	multimedia
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=dvd-slideshow/}
 
-MAINTAINER=	darcy@NetBSD.org
-HOMEPAGE=	https://dvd-slideshow.sourceforge.net/
+MAINTAINER=	pkgsrc-users@NetBSD.org
+HOMEPAGE=	http://dvd-slideshow.sourceforge.net/
 COMMENT=	Script that creates a slideshow-style DVD with some simple menus
 
 DEPENDS+=	cdrtools-[0-9]*:../../sysutils/cdrtools
@@ -18,7 +18,7 @@ DEPENDS+=	dvd+rw-tools-[0-9]*:../../sysutils/dvd+rw-tools
 DEPENDS+=	ImageMagick-[0-9]*:../../graphics/ImageMagick
 # uses programs only (mplex, ffmpeg)
 DEPENDS+=	mjpegtools-[0-9]*:../../multimedia/mjpegtools
-DEPENDS+=	ffmpeg1-[0-9]*:../../multimedia/ffmpeg1
+DEPENDS+=	ffmpeg4-[0-9]*:../../multimedia/ffmpeg4
 
 USE_TOOLS+=	bash:run
 NO_BUILD=	yes

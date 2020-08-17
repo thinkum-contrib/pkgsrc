@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.9 2020/01/18 21:49:21 jperkin Exp $
+# $NetBSD: Makefile,v 1.16 2020/08/09 15:03:29 nia Exp $
 
-DISTNAME=	7kaa-2.15.3
-PKGREVISION=	2
+DISTNAME=	7kaa-2.15.4p1
 CATEGORIES=	games
 MASTER_SITES=	${MASTER_SITE_GITHUB:=the3dfxdude/}
 EXTRACT_SUFX=	.tar.xz
@@ -22,12 +21,16 @@ USE_TOOLS+=	pkg-config
 # C++11
 GCC_REQD+=	4.6
 
-LDFLAGS+=	${BUILDLINK_LDADD.iconv}
+LDFLAGS+=	${BUILDLINK_LDADD.gettext}
 
 CONFIGURE_ARGS+=	--disable-sdltest
 
 INSTALLATION_DIRS+=	share/applications
 INSTALLATION_DIRS+=	share/pixmaps
+
+# https://www.7kfans.com/forums/viewtopic.php?f=13&t=1150&p=8652
+# (bug report; requires login)
+BUILDLINK_TRANSFORM+=	rm:-Werror=char-subscripts
 
 post-extract:
 	${PREFIX}/bin/icotool -x -i 1 ${WRKSRC}/src/7k.ico -o ${WRKDIR}/7kaa.png

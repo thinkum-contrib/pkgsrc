@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.1 2019/12/07 21:34:17 bsiegert Exp $
+# $NetBSD: Makefile,v 1.5 2020/05/08 00:49:59 maya Exp $
 
 .include "../../lang/go/version.mk"
+.include "../../lang/go/bootstrap.mk"
 
 DISTNAME=	go${GO113_VERSION}.src
 PKGNAME=	go113-${GO113_VERSION}
@@ -9,7 +10,7 @@ MASTER_SITES=	https://storage.googleapis.com/golang/
 EXTRACT_USING=	gtar
 
 MAINTAINER=	bsiegert@NetBSD.org
-HOMEPAGE=	http://golang.org/
+HOMEPAGE=	https://golang.org/
 COMMENT=	The Go programming language
 LICENSE=	modified-bsd
 
@@ -75,12 +76,7 @@ CHECK_INTERPRETER_SKIP+=	go${GOVERSSUFFIX}/src/clean.rc
 CHECK_INTERPRETER_SKIP+=	go${GOVERSSUFFIX}/src/make.rc
 CHECK_INTERPRETER_SKIP+=	go${GOVERSSUFFIX}/src/run.rc
 
-BUILD_DEPENDS+=		go14-1.4*:../../lang/go14
-GOROOT_BOOTSTRAP=	${PREFIX}/go14
-
 PLIST_SUBST+=	GOVERSSUFFIX=${GOVERSSUFFIX}
-
-.include "../../mk/bsd.prefs.mk"
 
 PLIST_VARS+=	pty route
 
@@ -96,7 +92,13 @@ post-extract:
 	${RM} -r -f ${WRKSRC}/test/fixedbugs/issue27836*
 
 do-build:
-	cd ${WRKSRC}/src && env GOROOT_BOOTSTRAP=${GOROOT_BOOTSTRAP:Q} GOROOT_FINAL=${GOROOT_FINAL:Q} ${GOOPT} ${BASH} ./make.bash
+	cd ${WRKSRC}/src && \
+		env \
+		GOROOT_BOOTSTRAP=${GOROOT_BOOTSTRAP:Q} \
+		GOROOT_FINAL=${GOROOT_FINAL:Q} \
+		${GOOPT} \
+		GOCACHE=${WRKDIR}/.cache/go-build \
+		${BASH} ./make.bash
 # for RELRO build:
 #	cd ${WRKSRC}/src && env GOROOT_BOOTSTRAP=${GOROOT_BOOTSTRAP:Q} GOROOT_FINAL=${GOROOT_FINAL:Q} GO_LDFLAGS="-buildmode=pie" ${GOOPT} ${BASH} ./make.bash
 

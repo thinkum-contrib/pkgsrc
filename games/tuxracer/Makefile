@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.34 2020/01/18 23:32:05 rillig Exp $
+# $NetBSD: Makefile,v 1.36 2020/03/20 11:57:45 nia Exp $
 #
 
 DISTNAME=	tuxracer-0.61
@@ -8,8 +8,8 @@ MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=tuxracer/}
 DISTFILES=	${DISTNAME}${EXTRACT_SUFX} \
 		${PKGBASE}-data-${PKGVERSION:C/nb[0-9]*$//}${EXTRACT_SUFX}
 
-MAINTAINER=	david@silicium.ath.cx
-HOMEPAGE=	https://tuxracer.sourceforge.net/
+MAINTAINER=	pkgsrc-users@NetBSD.org
+HOMEPAGE=	http://tuxracer.sourceforge.net/
 COMMENT=	3D penguin racing game using OpenGL
 
 GNU_CONFIGURE=	YES

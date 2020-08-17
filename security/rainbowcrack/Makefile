@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.14 2020/01/18 21:50:47 jperkin Exp $
+# $NetBSD: Makefile,v 1.16 2020/04/24 11:41:38 nia Exp $
 
 PKGNAME=		rainbowcrack-1.2
 DISTNAME=		rainbowcrack-1.2-src
@@ -10,8 +10,10 @@ DISTFILES=		rainbowcrack-1.2-src.zip \
 			rainbowcrack-1.2-openbsd-diffs.tar.gz
 
 MAINTAINER=		dhowland@users.sourceforge.net
-HOMEPAGE=		http://project-rainbowcrack.com/
+HOMEPAGE=		https://project-rainbowcrack.com/
 COMMENT=		Hash cracker
+
+BROKEN=			"Fails to build with OpenSSL 1.1"
 
 BUILD_DIRS=		src
 USE_LANGUAGES=		c c++

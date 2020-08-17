@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.12 2020/01/18 23:31:58 rillig Exp $
+# $NetBSD: Makefile,v 1.15 2020/03/20 11:57:39 nia Exp $
 
 DISTNAME=	atque-1.1.2
-PKGREVISION=	9
+PKGREVISION=	11
 CATEGORIES=	games editors
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=igniferroque/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	christtrekker@users.sourceforge.net
-HOMEPAGE=	https://igniferroque.sourceforge.net/
+HOMEPAGE=	http://igniferroque.sourceforge.net/
 COMMENT=	Marathon game map utility
 LICENSE=	gnu-gpl-v2
 

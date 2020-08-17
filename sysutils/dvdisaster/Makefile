@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.42 2019/12/21 23:46:19 joerg Exp $
+# $NetBSD: Makefile,v 1.45 2020/04/12 23:59:43 joerg Exp $
 
 DISTNAME=	dvdisaster-0.79.5
-PKGREVISION=	5
+PKGREVISION=	7
 CATEGORIES=	sysutils
 MASTER_SITES=	http://dvdisaster.net/downloads/
 EXTRACT_SUFX=	.tar.bz2
 
-MAINTAINER=	shattered@NetBSD.org
+MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	http://www.dvdisaster.net/en/
 COMMENT=	Protects data on optical media with error correcting codes
 LICENSE=	gnu-gpl-v2

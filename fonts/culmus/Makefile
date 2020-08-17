@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.3 2020/01/18 23:31:01 rillig Exp $
+# $NetBSD: Makefile,v 1.5 2020/03/22 09:50:44 nia Exp $
 
-DISTNAME=	culmus-0.132
+DISTNAME=	culmus-0.133
 CATEGORIES=	fonts
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=culmus/}
 
 MAINTAINER=	maya@NetBSD.org
-HOMEPAGE=	https://culmus.sourceforge.net/
+HOMEPAGE=	http://culmus.sourceforge.net/
 COMMENT=	Culmus Hebrew fonts
 LICENSE=	gnu-gpl-v2
 

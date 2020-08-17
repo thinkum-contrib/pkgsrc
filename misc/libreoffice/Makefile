@@ -1,10 +1,9 @@
-# $NetBSD: Makefile,v 1.218 2020/01/18 21:50:02 jperkin Exp $
+# $NetBSD: Makefile,v 1.234 2020/08/11 16:07:38 ryoon Exp $
 
-VERREL=		6.3.4
-VERRC=		2
+VERREL=		7.0.0
+VERRC=		3
 VER=		${VERREL}.${VERRC}
 DISTNAME=	libreoffice-${VER}
-PKGREVISION=	2
 CATEGORIES=	misc
 MASTER_SITES=	http://download.documentfoundation.org/libreoffice/src/${VERREL}/
 EXTRACT_SUFX=	.tar.xz
@@ -14,13 +13,19 @@ HOMEPAGE=	https://www.libreoffice.org/
 COMMENT=	Office productivity suite from The Document Foundation
 LICENSE=	gnu-lgpl-v3
 
-USE_LANGUAGES=	c gnu++11
+UNLIMIT_RESOURCES+=	cputime
+
+USE_LANGUAGES=	c gnu++17
+
+# Do not use alloca(3) in libc at least on NetBSD.
+BUILDLINK_TRANSFORM+=	opt:-std=c++17:-std=gnu++17
+BUILDLINK_TRANSFORM+=	opt:-std=c++1z:-std=gnu++1z
+BUILDLINK_TRANSFORM+=	opt:-std=c++2a:-std=gnu++2a
 
 SUBST_CLASSES+=			use-bash
 SUBST_STAGE.use-bash=		pre-configure
 SUBST_MESSAGE.use-bash=		Using bash for configure script
 SUBST_FILES.use-bash+=		autogen.sh
-SUBST_FILES.use-bash+=		configure.ac
 SUBST_VARS.use-bash+=		BASH
 SUBST_VARS.use-bash+=		PREFIX
 
@@ -32,24 +37,15 @@ SUBST_VARS.font-path+=		X11BASE
 
 GCC_REQD+=	7
 
+BUILD_TARGET=	build
+
 .include "../../mk/bsd.prefs.mk"
-
-CHECK_BUILTIN.freetype2:=	yes
-.include "../../graphics/freetype2/builtin.mk"
-CHECK_BUILTIN.freetype2:=	no
-.if !empty(USE_BUILTIN.freetype2:M[Yy][Ee][Ss]) && \
-	!empty(BUILTIN_VERSION.freetype2:M2.10.0)
-CFLAGS+=			-D_FT_CONST=
-.else
-CFLAGS+=			-D_FT_CONST=const
-.endif
-
 .if !empty(MACHINE_PLATFORM:MNetBSD*)
 pre-build:
 	cd ${WRKSRC} && ${BUILD_MAKE_CMD} Executable_gengal && ${TOOLS_PLATFORM.paxctl} +m instdir/program/gengal.bin
 .endif
 
-PYTHON_VERSIONS_INCOMPATIBLE=	27 37 38
+PYTHON_VERSIONS_INCOMPATIBLE=	27
 
 CHECK_SHLIBS_SUPPORTED=	no
 # configure will be regenerated.
@@ -78,7 +74,7 @@ MORE_DISTFILES= \
 	907d6e99f241876695c19ff3db0b8923-source-code-pro-2.030R-ro-1.050R-it.tar.gz \
 	edc4d741888bc0d38e32dbaa17149596-source-sans-pro-2.010R-ro-1.065R-it.tar.gz \
 	source-serif-pro-3.000R.tar.gz \
-	xmlsec1-1.2.28.tar.gz \
+	xmlsec1-1.2.30.tar.gz \
 	3404ab6b1792ae5f16bbd603bd1e1d03-libformula-1.1.7.zip \
 	35c94d2df8893241173de1d16b6034c0-swingExSrc.zip \
 	39bb3fcea1514f1369fcfc87542390fd-sacjava-1.3.zip \
@@ -118,7 +114,9 @@ MORE_DISTFILES= \
 	lxml-4.1.1.tgz \
 	Amiri-0.111.zip \
 	ReemKufi-0.7.zip \
-	pdfium-3794.tar.bz2
+	pdfium-4137.tar.bz2 \
+	dtoa-20180411.tgz \
+	skia-m84-c1baf6e1c2a5454148adb516f0f833483b5a0353.tar.xz
 
 .for md in ${MORE_DISTFILES}
 DISTFILES+=		${md}
@@ -193,9 +191,9 @@ CONFIGURE_ARGS+=	--disable-sdremote-bluetooth
 CONFIGURE_ARGS+=	--disable-gio
 # Use PDFium instead of poppler for PDF import since 6.3.2.2nb1
 CONFIGURE_ARGS+=	--enable-pdfium --disable-poppler
+#CONFIGURE_ARGS+=	--disable-pdfium --disable-poppler --disable-pdfimport
 CONFIGURE_ARGS+=	--enable-gstreamer-1-0
 CONFIGURE_ARGS+=	--enable-python=system
-#CONFIGURE_ARGS+=	--enable-release-build
 CONFIGURE_ARGS+=	--enable-ext-wiki-publisher
 CONFIGURE_ARGS+=	--enable-ext-nlpsolver
 CONFIGURE_ARGS+=	--with-system-gpgmepp
@@ -262,6 +260,11 @@ BUILD_MAKE_FLAGS+=	VERBOSE=true
 
 .if ${OPSYS} != "Linux"
 BUILDLINK_TRANSFORM+=	rm:-ldl
+.endif
+
+.if ${MACHINE_ARCH} == "i386"
+# For 64 bit atomic ops (PR/54826)
+CXXFLAGS+=		-march=i586
 .endif
 
 INSTALLATION_DIRS=	bin share/applications
@@ -362,9 +365,13 @@ BUILDLINK_API_DEPENDS.libetonyek+=	libetonyek>=0.1.2
 .include "../../graphics/libepoxy/buildlink3.mk"
 .include "../../graphics/librsvg/buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
+.include "../../graphics/qr-code-generator/buildlink3.mk"
 #.include "../../graphics/sane-backends/buildlink3.mk"
 #.include "../../graphics/vigra/buildlink3.mk"
 .include "../../lang/python/application.mk"
+# workaround for dtoa.h conflict with python and dtoa:
+# Do not pass -I${PREFIX}/include/python?.? to CPPFLAGS/CFLAGS/CXXFLAGS always.
+BUILDLINK_INCDIRS.${PYPKGPREFIX:S/py/python/}=	# empty
 .include "../../lang/python/tool.mk"
 .include "../../math/coinmp/buildlink3.mk"
 .include "../../math/libnumbertext/buildlink3.mk"
@@ -401,7 +408,7 @@ BUILDLINK_API_DEPENDS.libodfgen+=       libodfgen>=0.1.4
 .include "../../www/curl/buildlink3.mk"
 .include "../../www/neon/buildlink3.mk"
 .include "../../www/serf/buildlink3.mk"
-.include "../../x11/gtk2/buildlink3.mk"
+.include "../../x11/gtk3/buildlink3.mk"
 .include "../../x11/libX11/buildlink3.mk"
 .include "../../x11/libXcursor/buildlink3.mk"
 .include "../../x11/libXext/buildlink3.mk"

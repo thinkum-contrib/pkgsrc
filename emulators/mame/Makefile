@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.107 2020/01/04 22:55:58 wiz Exp $
+# $NetBSD: Makefile,v 1.117 2020/07/13 20:33:56 wiz Exp $
 
-DISTNAME=	mame-0.217
+DISTNAME=	mame-0.222
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_GITHUB:=mamedev/}
 GITHUB_TAG=	${DISTNAME:S/-//S/.//}
 
 MAINTAINER=	wiz@NetBSD.org
-HOMEPAGE=	http://www.mamedev.org/
+HOMEPAGE=	https://www.mamedev.org/
 COMMENT=	Multiple Arcade Machine Emulator
 LICENSE=	modified-bsd AND gnu-gpl-v2
 
@@ -20,9 +20,9 @@ DEPENDS+=		liberation-ttf-[0-9]*:../../fonts/liberation-ttf
 BUILD_DEPENDS+=		${PYPKGPREFIX}-expat-[0-9]*:../../textproc/py-expat
 
 USE_LANGUAGES=		c99 c++
-GCC_REQD+=		7.2
+GCC_REQD+=		7
 USE_TOOLS+=		bsdtar gmake pkg-config
-UNLIMIT_RESOURCES+=	datasize
+UNLIMIT_RESOURCES+=	datasize virtualsize
 MAKE_FILE=		makefile
 EXTRACT_USING=		bsdtar
 
@@ -30,9 +30,16 @@ EXTRACT_USING=		bsdtar
 
 .if ${OPSYS} == "NetBSD"
 # needs kvm and I didn't find the right place to add it in the build system
-MAKE_ENV+=	LDOPTS="-Wl,-R${BUILDLINK_PREFIX.flac}/lib -L${BUILDLINK_PREFIX.flac}/lib -lkvm"
+MAKE_ENV+=	LDOPTS="${COMPILER_RPATH_FLAG}${BUILDLINK_PREFIX.flac}/lib -L${BUILDLINK_PREFIX.flac}/lib -lkvm"
 .else
-MAKE_ENV+=	LDOPTS="-Wl,-R${BUILDLINK_PREFIX.flac}/lib -L${BUILDLINK_PREFIX.flac}/lib"
+MAKE_ENV+=	LDOPTS="${COMPILER_RPATH_FLAG}${BUILDLINK_PREFIX.flac}/lib -L${BUILDLINK_PREFIX.flac}/lib"
+.endif
+
+.if ${MACHINE_ARCH} != "i386" && ${MACHINE_ARCH} != "x86_64"
+# \todo Arch detection for aarch64 fails, investigate why
+MAKE_FLAGS+=		NOASM=1
+BUILDLINK_TRANSFORM+=	rm:-m32
+BUILDLINK_TRANSFORM+=	rm:-m64
 .endif
 
 # -Werror is problematic
@@ -84,7 +91,7 @@ do-install:
 	${INSTALL_PROGRAM} ${WRKSRC}/mame64 ${DESTDIR}${PREFIX}/bin/mame
 	set -e; \
 	for prg in castool chdman floptool imgtool jedutil ldresample ldverify \
-		nltool nlwav pngcmp regrep romcmp split src2html srcclean unidasm; do \
+		nltool nlwav pngcmp regrep romcmp split srcclean unidasm; do \
 		${INSTALL_PROGRAM} ${WRKSRC}/"$$prg" ${DESTDIR}${PREFIX}/bin; \
 	done
 	${INSTALL_DATA} ${WRKSRC}/docs/man/*.1 ${DESTDIR}${PREFIX}/${PKGMANDIR}/man1

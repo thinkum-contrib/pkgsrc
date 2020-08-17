@@ -1,6 +1,7 @@
-$NetBSD: distinfo,v 1.73 2019/12/28 02:28:46 gdt Exp $
+$NetBSD: distinfo,v 1.80 2020/08/09 15:07:15 nia Exp $
 
-SHA1 (syncthing-source-v1.3.2.tar.gz) = 66a4c5c33bac267ecee2a805a6a38241c0ef0d39
-RMD160 (syncthing-source-v1.3.2.tar.gz) = 9912c24c3183b97257cd939029b2954ea93ac971
-SHA512 (syncthing-source-v1.3.2.tar.gz) = 58cc0e11345ba52bc64067b3036b6ebeca8db0f945749de87c6026d8ca3269fe25a8cbd83581ad14ab0050076417e562a6ee10d5195ccab6f785c336459db055
-Size (syncthing-source-v1.3.2.tar.gz) = 10337913 bytes
+SHA1 (syncthing-source-v1.7.1.tar.gz) = e1124a60390c61d7dfc2a9a9c43b93ccd08d1799
+RMD160 (syncthing-source-v1.7.1.tar.gz) = bfeffa2605cb38763ffbf06ec83c6cf8f3c51d94
+SHA512 (syncthing-source-v1.7.1.tar.gz) = 4500972c4dfc8f2e584dd03c43dc7537287a2ced1f8676909d225d133243296157cfd51d3e7749ca64391a0649db7dc980523af584fd9bcfff6c3a932225336c
+Size (syncthing-source-v1.7.1.tar.gz) = 11594346 bytes
+SHA1 (patch-vendor_golang.org_x_sys_cpu_cpu__arm64.go) = 86e6ff8b88c40c533da01631028341b7c59102cc

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.21 2019/11/04 19:58:00 rillig Exp $
+# $NetBSD: Makefile,v 1.24 2020/03/04 15:51:24 wiz Exp $
 
 .include "../../print/poppler/Makefile.common"
 
@@ -10,8 +10,6 @@ CONFLICTS+=	poppler<0.4.5nb1
 
 PKGCONFIG_OVERRIDE+=	${WRKSRC}/poppler-cpp.pc.cmake
 
-# Don't build the cairo graphics backend, required by glib.
-CMAKE_ARGS+=	-DENABLE_SPLASH=OFF
 # Don't compile GTK+ test program.
 CMAKE_ARGS+=	-DBUILD_GTK_TESTS=OFF
 # Don't compile GLib wrapper which also needs gtk2

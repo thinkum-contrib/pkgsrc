@@ -1,4 +1,4 @@
-# $NetBSD: show.mk,v 1.18 2019/09/08 09:01:04 rillig Exp $
+# $NetBSD: show.mk,v 1.23 2020/07/04 18:08:35 rillig Exp $
 #
 # This file contains some targets that print information gathered from
 # variables. They do not modify any variables.
@@ -153,7 +153,8 @@ _LABEL._USE_VARS=	use
 _LABEL._DEF_VARS=	def
 
 show-all: .PHONY
-.for g in ${_VARGROUPS:O:u}
+.for g in ${"${.TARGETS:Mshow-all*}":?${_VARGROUPS:O:u}:}
+.  for w in ${_VARGROUP_WIDTH.${g}:U23}
 
 show-all: show-all-${g}
 
@@ -165,57 +166,61 @@ show-all: show-all-${g}
 # using the :sh modifier may show warnings, for example because ${WRKDIR}
 # doesn't exist.
 
+_SHOW_ALL.d4=	$$$$		# see regress/infra-unittests/show-all.sh
+_SHOW_ALL.d8=	$$$$$$$$	# see regress/infra-unittests/show-all.sh
+
 show-all-${g}: .PHONY
 	@${RUN} printf '%s:\n' ${g:Q}
 
-.  for c in ${_SHOW_ALL_CATEGORIES}
-.    for v in ${${c}.${g}}
+.    for c in ${_SHOW_ALL_CATEGORIES}
+.      for v in ${${c}.${g}}
 
-.      if ${_SORTED_VARS.${g}:U:@pattern@ ${v:M${pattern}} @:M*}
+.        if ${_SORTED_VARS.${g}:U:@pattern@ ${v:M${pattern}} @:M*}
 
 # multi-valued variables, values are sorted
 	${RUN}								\
 	if ${!defined(${v}) :? true : false}; then			\
-	  printf '  %s\t%-23s # undefined\n' ${_LABEL.${c}} ${v:Q};	\
+	  printf '  %-6s%-${w}s # undefined\n' ${_LABEL.${c}} ${v:Q};	\
 	elif value=${${v}:U:M*:Q} && test "x$$value" = "x"; then	\
-	  printf '  %s\t%-23s # empty\n' ${_LABEL.${c}} ${v:Q}=;	\
+	  printf '  %-6s%-${w}s # empty\n' ${_LABEL.${c}} ${v:Q}=;	\
 	else								\
-	  printf '  %s\t%-23s \\\n' ${_LABEL.${c}} ${v:Q}=;		\
-	  printf '\t\t\t\t%s \\\n' ${${v}:O:@x@${x:Q}@};		\
-	  printf '\t\t\t\t# end of %s (sorted)\n' ${v:Q};		\
+	  printf '  %-6s%-${w}s \\\n' ${_LABEL.${c}} ${v:Q}=;		\
+	  printf '        %-${w}s %s \\\n' ${${v}:O:C,\\$$,${_SHOW_ALL.d8},g:@x@'' ${x:Q}@}; \
+	  printf '        %-${w}s # end of %s (sorted)\n' '' ${v:Q};	\
 	fi
 
-.      elif ${_LISTED_VARS.${g}:U:@pattern@ ${v:M${pattern}} @:M*}
+.        elif ${_LISTED_VARS.${g}:U:@pattern@ ${v:M${pattern}} @:M*}
 
 # multi-valued variables, preserving original order
 	${RUN}								\
 	if ${!defined(${v}) :? true : false}; then			\
-	  printf '  %s\t%-23s # undefined\n' ${_LABEL.${c}} ${v:Q};	\
+	  printf '  %-6s%-${w}s # undefined\n' ${_LABEL.${c}} ${v:Q};	\
 	elif value=${${v}:U:M*:Q} && test "x$$value" = "x"; then	\
-	  printf '  %s\t%-23s # empty\n' ${_LABEL.${c}} ${v:Q}=;	\
+	  printf '  %-6s%-${w}s # empty\n' ${_LABEL.${c}} ${v:Q}=;	\
 	else								\
-	  printf '  %s\t%-23s \\\n' ${_LABEL.${c}} ${v:Q}=;		\
-	  printf '\t\t\t\t%s \\\n' ${${v}:@x@${x:Q}@};			\
-	  printf '\t\t\t\t# end of %s\n' ${v:Q};			\
+	  printf '  %-6s%-${w}s \\\n' ${_LABEL.${c}} ${v:Q}=;		\
+	  printf '        %-${w}s %s \\\n' ${${v}:C,\\$$,${_SHOW_ALL.d8},g:@x@'' ${x:Q}@}; \
+	  printf '        %-${w}s # end of %s\n' '' ${v:Q};		\
 	fi
 
-.      else
+.        else
 
 # single-valued variables
 	${RUN}								\
 	if ${!defined(${v}) :? true : false}; then			\
-	  printf '  %s\t%-23s # undefined\n' ${_LABEL.${c}} ${v:Q};	\
-	elif value=${${v}:U:Q} && test "x$$value" = "x"; then		\
-	  printf '  %s\t%-23s # empty\n' ${_LABEL.${c}} ${v:Q}=;	\
+	  printf '  %-6s%-${w}s # undefined\n' ${_LABEL.${c}} ${v:Q};	\
+	elif value=${${v}:U:C,\\$$,${_SHOW_ALL.d4},gW:Q} && test "x$$value" = "x"; then \
+	  printf '  %-6s%-${w}s # empty\n' ${_LABEL.${c}} ${v:Q}=;	\
 	else								\
 	  case "$$value" in (*[\	\ ]) eol="# ends with space";; (*) eol=""; esac; \
-	  printf '  %s\t%-23s %s\n' ${_LABEL.${c}} ${v:Q}= "$$value$$eol"; \
+	  printf '  %-6s%-${w}s %s\n' ${_LABEL.${c}} ${v:Q}= "$$value$$eol"; \
 	fi
 
-.      endif
+.        endif
+.      endfor
 .    endfor
-.  endfor
 	${RUN} printf '\n'
+.  endfor
 .endfor
 
 .PHONY: show-depends-options

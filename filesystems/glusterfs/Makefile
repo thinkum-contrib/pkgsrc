@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.93 2020/01/18 21:49:21 jperkin Exp $
+# $NetBSD: Makefile,v 1.100 2020/07/27 16:06:08 manu Exp $
 
-DISTNAME=	glusterfs-3.12.8
-PKGREVISION=	5
+DISTNAME=	glusterfs-8.0
+PKGREVISION=	1
 CATEGORIES=	filesystems
 MASTER_SITES=	http://bits.gluster.org/pub/gluster/glusterfs/src/
 
@@ -15,6 +15,7 @@ USE_LIBTOOL=		yes
 USE_TOOLS+=		flex bison pkg-config bash
 
 CONFIGURE_ARGS+=	--disable-fusermount
+CONFIGURE_ARGS+=	--disable-fuse-notifications
 CONFIGURE_ARGS+=	--localstatedir=${VARBASE}
 
 # Make sure we do not attept to link with -lfl
@@ -63,13 +64,16 @@ REPLACE_BASH+=		extras/geo-rep/get-gfid.sh
 REPLACE_BASH+=		extras/geo-rep/gsync-upgrade.sh
 REPLACE_BASH+=		extras/geo-rep/slave-upgrade.sh
 REPLACE_BASH+=		extras/peer_add_secret_pub.in
-REPLACE_BASH+=		extras/peer_add_secret_pub.in
 REPLACE_BASH+=		extras/post-upgrade-script-for-quota.sh
 REPLACE_BASH+=		extras/pre-upgrade-script-for-quota.sh
 REPLACE_BASH+=		extras/stop-all-gluster-processes.sh
+REPLACE_BASH+=		extras/thin-arbiter/setup-thin-arbiter.sh
 REPLACE_BASH+=		geo-replication/src/gverify.sh
 REPLACE_BASH+=		geo-replication/src/peer_gsec_create.in
 REPLACE_BASH+=		geo-replication/src/set_geo_rep_pem_keys.sh
+
+# Explicit substitution of bash
+CHECK_PORTABILITY_SKIP+=	extras/peer_add_secret_pub.in
 
 
 SUBST_CLASSES+=		mtab
@@ -91,8 +95,8 @@ SUBST_STAGE.vol=	post-build
 SUBST_FILES.vol=	extras/Makefile
 SUBST_SED.vol=		-e "/vol_DATA/s/glusterd.vol/glusterd.vol.sample/g"
 
-EGDIR=			${PREFIX}/etc/glusterfs
-CONF_FILES+=		${EGDIR}/glusterd.vol.sample ${EGDIR}/glusterd.vol
+#EGDIR=			${PREFIX}/etc/glusterfs
+#CONF_FILES+=		${EGDIR}/glusterd.vol.sample ${EGDIR}/glusterd.vol
 OWN_DIRS+=		${VARBASE}/log/glusterfs
 BUILD_DEFS+=		VARBASE
 
@@ -115,7 +119,7 @@ post-install:
 	    ${DESTDIR}/${PREFIX}/sbin/mount_glusterfs
 
 # Debug
-CFLAGS+=		-g
+CFLAGS+=		-g 
 INSTALL_UNSTRIPPED=	yes
 CONFIGURE_ARGS+=	--enable-debug
 #.include "../../devel/boehm-gc/buildlink3.mk"
@@ -125,9 +129,12 @@ CONFIGURE_ARGS+=	--enable-debug
 
 .include "../../mk/bsd.prefs.mk"
 
+.include "../../devel/libuuid/buildlink3.mk"
+.include "../../devel/argp/buildlink3.mk"
 .include "../../security/openssl/buildlink3.mk"
 .include "../../textproc/libxml2/buildlink3.mk"
 .include "../../databases/sqlite3/buildlink3.mk"
+BUILDLINK_API_DEPENDS.userspace-rcu+=	userspace-rcu>=0.12.1
 .include "../../devel/userspace-rcu/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../lang/python/extension.mk"

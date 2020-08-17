@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.222 2020/01/18 23:32:16 rillig Exp $
+# $NetBSD: Makefile,v 1.225 2020/06/02 08:24:06 adam Exp $
 
 DISTNAME=	netpbm-10.79.04
-PKGREVISION=	3
+PKGREVISION=	4
 CATEGORIES=	graphics
 MASTER_SITES=	#
 # manually created from svn checkout of
@@ -15,7 +15,7 @@ MASTER_SITES=	#
 DISTFILES=	${DISTNAME}${EXTRACT_SUFX} netpbm-docs-r3052${EXTRACT_SUFX}
 
 MAINTAINER=	adam@NetBSD.org
-HOMEPAGE=	https://netpbm.sourceforge.net/
+HOMEPAGE=	http://netpbm.sourceforge.net/
 COMMENT=	Toolkit for conversion of images between different formats
 LICENSE=	gnu-gpl-v2
 
@@ -75,7 +75,7 @@ MAKE_FLAGS+=	NETWORKLD="-lsocket -lresolv"
     (!empty(CC_VERSION:Mgcc-[6-9]*) || !empty(PKGSRC_COMPILER:Mclang))
 SUBST_CLASSES+=		xopen
 SUBST_STAGE.xopen=	pre-configure
-SUBST_FILES.xopen=	*.c */*.c */*/*.c */*/*/*.c */*/*/*/*.c */*/*/*/*/*.c
+SUBST_FILES.xopen=	*/*.c */*/*.c */*/*/*.c */*/*/*/*.c */*/*/*/*/*.c
 SUBST_FILES.xopen+=	lib/util/lexheader
 SUBST_SED.xopen=	-e '/_XOPEN_SOURCE/s/500/600/'
 SUBST_SED.xopen+=	-e '/_XOPEN_SOURCE/s/1$$/600/'

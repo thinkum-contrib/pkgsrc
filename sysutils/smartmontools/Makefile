@@ -1,17 +1,18 @@
-# $NetBSD: Makefile,v 1.38 2020/01/18 23:35:21 rillig Exp $
+# $NetBSD: Makefile,v 1.41 2020/08/15 08:28:48 tnn Exp $
 
-DISTNAME=		smartmontools-7.0
-PKGREVISION=		3
+DISTNAME=		smartmontools-7.1
 CATEGORIES=		sysutils
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=smartmontools/}
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://smartmontools.sourceforge.net/
+HOMEPAGE=		http://smartmontools.sourceforge.net/
 COMMENT=		Control and monitor storage systems using SMART
 LICENSE=		gnu-gpl-v2
 
 ONLY_FOR_PLATFORM=	Darwin-*-* DragonFly-*-* FreeBSD-*-* Linux-*-*
 ONLY_FOR_PLATFORM+=	NetBSD-*-* OpenBSD-*-* SunOS-*-*
+
+CHECK_PORTABILITY_SKIP+=	os_darwin/pkg/root/usr/local/sbin/smart-pkg-uninstall
 
 USE_LANGUAGES=		c c++
 USE_TOOLS+=		gmake
@@ -28,6 +29,7 @@ RCD_SCRIPTS=		smartd
 
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR}
 CONFIGURE_ARGS+=	--docdir=${PREFIX}/share/doc/smartmontools
+CONFIGURE_ARGS+=	--with-scriptpath=${PREFIX}/bin:${PREFIX}/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 INSTALL_MAKE_FLAGS=	${MAKE_FLAGS} sysconfdir=${EGDIR}
 
 INSTALLATION_DIRS=	${EGDIR}

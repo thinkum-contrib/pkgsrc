@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.33 2020/01/18 21:49:47 jperkin Exp $
+# $NetBSD: Makefile,v 1.37 2020/06/02 08:24:14 adam Exp $
 
 DISTNAME=	cone-0.90
-PKGREVISION=	20
+PKGREVISION=	23
 CATEGORIES=	mail
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=courier/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.courier-mta.org/cone/
+HOMEPAGE=	https://www.courier-mta.org/cone/
 COMMENT=	Console newsreader and emailer
 LICENSE=	gnu-gpl-v3
 

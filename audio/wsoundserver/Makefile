@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.62 2020/01/20 21:54:01 nia Exp $
+# $NetBSD: Makefile,v 1.64 2020/06/05 12:48:58 jperkin Exp $
 #
 
 DISTNAME=	WSoundServer-0.4.0
 PKGNAME=	wsoundserver-0.4.0
-PKGREVISION=	26
+PKGREVISION=	27
 CATEGORIES=	audio wm windowmaker
 MASTER_SITES=	# ftp://shadowmere.student.utwente.nl/pub/WindowMaker/
 
@@ -15,6 +15,10 @@ LICENSE=	modified-bsd
 GNU_CONFIGURE=		YES
 USE_LIBTOOL=		YES
 USE_TOOLS+=		pkg-config
+
+.include "../../mk/oss.buildlink3.mk"
+
+LIBS+=			${LIBOSSAUDIO}
 
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR:Q}	# not really needed
 CONFIGURE_ENV+=		ac_cv_path_AUDIOFILE_CONFIG="pkg-config audiofile"

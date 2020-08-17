@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.6 2020/01/18 21:48:42 jperkin Exp $
+# $NetBSD: Makefile,v 1.11 2020/06/02 08:23:08 adam Exp $
 
 DISTNAME=	cantata-2.3.3
-PKGREVISION=	4
+PKGREVISION=	8
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_GITHUB:=CDrummond/}
 GITHUB_RELEASE=	v${PKGVERSION_NOREV}
@@ -21,11 +21,11 @@ REPLACE_BASH+=	cantata-remote.cmake
 
 .include "../../mk/bsd.prefs.mk"
 
-PLIST_VARS+=	unix
+PLIST_VARS+=	notdarwin
 .if ${OPSYS} == "Darwin"
 .include "../../x11/qt5-qtmacextras/buildlink3.mk"
 .else
-PLIST.unix=	yes
+PLIST.notdarwin=	yes
 .endif
 
 .include "../../audio/libebur128/buildlink3.mk"

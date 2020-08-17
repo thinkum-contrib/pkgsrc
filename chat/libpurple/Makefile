@@ -1,13 +1,12 @@
-# $NetBSD: Makefile,v 1.95 2019/08/11 13:18:04 wiz Exp $
+# $NetBSD: Makefile,v 1.100 2020/06/12 11:40:19 nia Exp $
 
 PKGNAME=	libpurple-${PIDGIN_VERSION}
-PKGREVISION=	9
 
 COMMENT=	Multi-protocol Instant Messaging client backend
 
 .include		"../../chat/libpurple/Makefile.common"
 
-USE_TOOLS+=		msgfmt intltool
+USE_TOOLS+=		intltool msgfmt msgmerge xgettext
 
 CPPFLAGS.SunOS+=	-D__SunOS
 

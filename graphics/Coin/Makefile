@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.29 2018/07/18 00:06:18 joerg Exp $
+# $NetBSD: Makefile,v 1.31 2020/06/05 12:48:59 jperkin Exp $
 
 DISTNAME=		Coin-3.1.3
-PKGREVISION=		3
+PKGREVISION=		4
 CATEGORIES=		graphics
 MASTER_SITES=		https://bitbucket.org/Coin3D/coin/downloads/
 
@@ -20,7 +20,7 @@ CONFIGURE_ARGS+=	--disable-debug
 .include "../../mk/pthread.buildlink3.mk"
 
 .if defined(PTHREAD_TYPE) && ${PTHREAD_TYPE} != "none"
-CONFIGURE_ARGS+=	--with-pthreads=yes
+CONFIGURE_ARGS+=	--with-pthread=yes
 CONFIGURE_ARGS+=	--enable-threadsafe
 .endif
 

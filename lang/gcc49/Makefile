@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.30 2020/01/18 23:32:42 rillig Exp $
+# $NetBSD: Makefile,v 1.33 2020/05/17 20:08:38 rillig Exp $
 
 GCC_PKGNAME=	gcc49
 .include	"version.mk"
@@ -28,8 +28,12 @@ USE_LANGUAGES=		c c++03
 USE_TOOLS+=		gmake makeinfo sed:run
 USE_TOOLS.NetBSD+=	gsed
 
+CHECK_PORTABILITY_SKIP+=	contrib/* # not needed
 
 GNU_CONFIGURE=		yes
+GNU_CONFIGURE_STRICT=	no # has sub-configures
+CHECK_PORTABILITY_SKIP+= contrib/* # not needed for building
+
 ## Build outside ${WRKSRC}
 OBJDIR=			../build
 CONFIGURE_DIRS=		${OBJDIR}
@@ -167,6 +171,12 @@ CONFIGURE_ENV+=		OBJCOPY=${PREFIX}/bin/gobjcopy
 CONFIGURE_ARGS+=	--with-gnu-as --with-as=${PREFIX}/bin/gas
 CONFIGURE_ARGS+=	--without-gnu-ld --with-ld=/usr/ccs/bin/ld
 .endif
+
+# libgfortran/runtime/environ.c:123:5: error: array subscript has type 'char'
+# See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95177
+# See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95178
+# Not worth fixing though since nobody cared between 2014 and 2020.
+BUILDLINK_TRANSFORM+=	rm:-Werror=char-subscripts
 
 pre-configure:
 	${RUN} cd ${WRKSRC} && ${MKDIR} ${OBJDIR}

@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.27 2020/01/18 23:30:49 rillig Exp $
+# $NetBSD: Makefile,v 1.31 2020/06/02 08:23:45 adam Exp $
 
 DISTNAME=	fuse-1.5.7
 PKGNAME=	${DISTNAME:S/fuse/fuse-emulator/}
-PKGREVISION=	2
+PKGREVISION=	5
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=fuse-emulator/}
 
 MAINTAINER=	adam@NetBSD.org
-HOMEPAGE=	https://fuse-emulator.sourceforge.net/
+HOMEPAGE=	http://fuse-emulator.sourceforge.net/
 COMMENT=	ZX Spectrum Emulator
 LICENSE=	gnu-gpl-v2
 

@@ -1,8 +1,9 @@
-# $NetBSD: Makefile,v 1.12 2020/01/21 18:07:52 fcambus Exp $
+# $NetBSD: Makefile,v 1.14 2020/06/16 09:21:57 fcambus Exp $
 
-DISTNAME=	ansiweather-1.16.0
+DISTNAME=	ansiweather-1.17.0
 CATEGORIES=	misc
 MASTER_SITES=	${MASTER_SITE_GITHUB:=fcambus/}
+GITHUB_RELEASE=	${PKGVERSION_NOREV}
 
 MAINTAINER=	fcambus@NetBSD.org
 HOMEPAGE=	https://github.com/fcambus/ansiweather/
@@ -11,7 +12,7 @@ LICENSE=	2-clause-bsd
 
 USE_LANGUAGES=	# none
 
-USE_TOOLS+=	awk:run date:run grep:run
+USE_TOOLS+=	cut:run date:run grep:run
 
 DEPENDS+=	curl-[0-9]*:../../www/curl
 DEPENDS+=	jq-[0-9]*:../../devel/jq

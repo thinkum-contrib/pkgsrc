@@ -1,16 +1,16 @@
-# $NetBSD: Makefile,v 1.40 2020/01/18 23:30:26 rillig Exp $
+# $NetBSD: Makefile,v 1.42 2020/06/05 12:48:59 jperkin Exp $
 #
 
 DISTNAME=	DevIL-${DEVIL_VERSION}
 PKGNAME=	${DISTNAME:S/D/d/}
-PKGREVISION=	14
+PKGREVISION=	15
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=openil/}
 
 DEVIL_VERSION=	1.7.8
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://openil.sourceforge.net/
+HOMEPAGE=	http://openil.sourceforge.net/
 COMMENT=	Developer's Image Library
 LICENSE=	gnu-lgpl-v2.1
 

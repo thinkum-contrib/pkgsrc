@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.13 2020/01/16 01:31:54 nia Exp $
+$NetBSD: distinfo,v 1.15 2020/08/05 16:34:32 adam Exp $
 
-SHA1 (picard-2.2.3.tar.gz) = 02d84fddd8a3b693f98338428c0bf4c963faa78f
-RMD160 (picard-2.2.3.tar.gz) = e00edd78495ae9474efcbbbba3373e05111b2976
-SHA512 (picard-2.2.3.tar.gz) = 2de1ced5cf07966a865b709734dbb1e04afeefa5d29aff34ba373de29d1ffec350d01280c9a0e318ed8aa893907899bd1a5397d81097a3dca48caef5327547e0
-Size (picard-2.2.3.tar.gz) = 3225273 bytes
+SHA1 (picard-2.3.2.tar.gz) = 1d217d4f0cb8a73e4ccb497a67c387a2ac3330e9
+RMD160 (picard-2.3.2.tar.gz) = 68858b0c86bc17cfb0fc203936e21678d09ff63e
+SHA512 (picard-2.3.2.tar.gz) = 8f78c048b8a09f825cbab606a6e6f6f71ac2fb5290d8ecd69a02b52b0e50075be535c6df37fa7da2bab29ed96cd6548b993f110eb868e4a329726aec824f9cbb
+Size (picard-2.3.2.tar.gz) = 3097113 bytes

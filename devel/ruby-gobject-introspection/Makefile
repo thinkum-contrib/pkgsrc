@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1 2019/09/14 18:11:37 tsutsui Exp $
+# $NetBSD: Makefile,v 1.3 2020/05/02 18:05:04 tsutsui Exp $
 #
 
 DISTNAME=		gobject-introspection-${VERSION}
@@ -11,6 +11,12 @@ CONFLICTS+=		ruby-gnome2-gobject-introspection-[0-9]*
 SUPERSEDES+=		ruby-gnome2-gobject-introspection-[0-9]*
 
 DEPENDS+=		${RUBY_PKGPREFIX}-glib2>=${VERSION}:../../devel/ruby-glib2
+
+# preserve generated files
+GEM_KEEPBUILD=		\
+	ext/gobject-introspection/gobject-introspection-enum-types.c \
+	ext/gobject-introspection/gobject-introspection-enum-types.h \
+	ext/gobject-introspection/rbgiversion.h
 
 BUILDLINK_API_DEPENDS.gobject-introspection+=	gobject-introspection>=1.32.1
 .include "../../devel/gobject-introspection/buildlink3.mk"

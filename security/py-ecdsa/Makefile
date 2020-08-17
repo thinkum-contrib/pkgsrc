@@ -1,21 +1,18 @@
-# $NetBSD: Makefile,v 1.7 2015/06/29 17:00:00 gls Exp $
+# $NetBSD: Makefile,v 1.10 2020/05/23 08:08:54 adam Exp $
 
-DISTNAME=	python-ecdsa-0.13
-PKGNAME=	${PYPKGPREFIX}-ecdsa-0.13
-EGG_NAME=	ecdsa-${PKGVERSION}
+DISTNAME=	ecdsa-0.15
+PKGNAME=	${PYPKGPREFIX}-ecdsa-0.15
 CATEGORIES=	security
-MASTER_SITES=	https://github.com/warner/python-ecdsa/archive/
+MASTER_SITES=	${MASTER_SITE_PYPI:=e/ecdsa/}
 
 MAINTAINER=	gls@NetBSD.org
 HOMEPAGE=	https://github.com/warner/python-ecdsa/
 COMMENT=	Easy-to-use implementation of ECDSA cryptography
 LICENSE=	mit
 
-WRKSRC=		${WRKDIR}/python-ecdsa-${DISTNAME}
+DEPENDS+=	${PYPKGPREFIX}-six-[0-9]*:../../lang/py-six
+
 USE_LANGUAGES=	# none
 
-REPLACE_PYTHON=	ecdsa/ecdsa.py ecdsa/ellipticcurve.py ecdsa/numbertheory.py
-
-.include "../../lang/python/application.mk"
 .include "../../lang/python/egg.mk"
 .include "../../mk/bsd.pkg.mk"

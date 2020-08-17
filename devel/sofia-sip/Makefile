@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.9 2020/01/18 23:30:42 rillig Exp $
+# $NetBSD: Makefile,v 1.11 2020/03/20 11:57:33 nia Exp $
 #
 
 DISTNAME=	sofia-sip-1.12.11
-PKGREVISION=	4
+PKGREVISION=	5
 CATEGORIES=	devel net comms
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=sofia-sip/}
 
 MAINTAINER=	khorben@defora.org
-HOMEPAGE=	https://sofia-sip.sourceforge.net/
+HOMEPAGE=	http://sofia-sip.sourceforge.net/
 COMMENT=	Open-source SIP User-Agent library
 
 LICENSE=	gnu-lgpl-v2.1

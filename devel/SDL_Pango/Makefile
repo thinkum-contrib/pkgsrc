@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.33 2020/01/18 23:30:21 rillig Exp $
+# $NetBSD: Makefile,v 1.36 2020/03/10 22:08:39 wiz Exp $
 
 DISTNAME=	SDL_Pango-0.1.2
-PKGREVISION=	26
+PKGREVISION=	28
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=sdlpango/}
 
@@ -9,7 +9,7 @@ PATCHFILES+=	SDL_Pango-0.1.2-API-adds.patch
 PATCH_SITES+=	http://zarb.org/~gc/t/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://sdlpango.sourceforge.net/
+HOMEPAGE=	http://sdlpango.sourceforge.net/
 COMMENT=	Connects the text rendering engine of GNOME 2.x. with SDL
 LICENSE=	gnu-lgpl-v2.1
 

@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.3 2020/01/10 13:32:15 bsiegert Exp $
+# $NetBSD: Makefile,v 1.10 2020/08/14 20:01:40 bsiegert Exp $
 
 GITHUB_PROJECT=	tiedot
 GITHUB_TAG=	${PKGVERSION_NOREV}
 DISTNAME=	3.4
 PKGNAME=	go-${GITHUB_PROJECT}-${DISTNAME}
-PKGREVISION=	2
+PKGREVISION=	8
 CATEGORIES=	databases
 MASTER_SITES=	${MASTER_SITE_GITHUB:=HouzuoGuo/}
 DIST_SUBDIR=	${GITHUB_PROJECT}
 
-MAINTAINER=	ng0@NetBSD.org
+MAINTAINER=	nikita@NetBSD.org
 HOMEPAGE=	https://github.com/HouzuoGuo/tiedot/
 COMMENT=	NoSQL database in Go
 LICENSE=	2-clause-bsd

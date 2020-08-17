@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.11 2020/01/02 15:34:15 leot Exp $
+# $NetBSD: Makefile,v 1.16 2020/06/15 16:55:07 leot Exp $
 #
 
-DISTNAME=	entr-4.3
+DISTNAME=	entr-4.5
+PKGREVISION=	1
 CATEGORIES=	sysutils
 MASTER_SITES=	http://eradman.com/entrproject/code/
 
@@ -25,6 +26,11 @@ MAKE_FILE=		Makefile.linux
 NOT_FOR_PLATFORM=	${MACHINE_PLATFORM}
 .endif
 
-TEST_TARGET=	test
+TEST_TARGET=			test
+USE_TOOLS+=			bash:test
+CHECK_PORTABILITY_SKIP+=	system_test.sh
+.if ${PKGSRC_RUN_TEST:tl} == yes
+REPLACE_BASH+=	system_test.sh
+.endif
 
 .include "../../mk/bsd.pkg.mk"

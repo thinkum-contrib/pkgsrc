@@ -1,12 +1,10 @@
-# $NetBSD: Makefile,v 1.41 2020/01/18 21:50:27 jperkin Exp $
+# $NetBSD: Makefile,v 1.47 2020/07/31 19:06:29 schmonz Exp $
 #
 
-DISTNAME=		ucspi-ssl-0.11.1
+DISTNAME=		ucspi-ssl-0.11.5
 PKGNAME=		${DISTNAME:S/-0./-0.999./}
-PKGREVISION=		1
 CATEGORIES=		net
 MASTER_SITES=		https://www.fehcom.de/ipnet/ucspi-ssl/
-DIST_SUBDIR=		${PKGNAME_NOREV}
 EXTRACT_SUFX=		.tgz
 
 MAINTAINER=		schmonz@NetBSD.org
@@ -46,6 +44,8 @@ DJB_CONFIG_CMDS=							\
 DEFAULT_MEDIUM_CIPHERS=	aNULL:-aNULL:ALL:!EXPORT:!LOW:+RC4:@STRENGTH
 
 INSTALLATION_DIRS=	bin ${PKGMANDIR}/man1 ${PKGMANDIR}/man2 share/doc/${PKGBASE} ${EGDIR}
+
+.include "options.mk"
 
 do-test:
 	cd ${WRKSRC}; \

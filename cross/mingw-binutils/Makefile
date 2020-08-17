@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.8 2020/01/18 23:30:16 rillig Exp $
+# $NetBSD: Makefile,v 1.10 2020/04/26 09:47:40 rillig Exp $
 
 DISTNAME=	binutils-2.18
 PKGNAME=	mingw-${DISTNAME:S/-src//}
@@ -8,10 +8,11 @@ MASTER_SITES=	${MASTER_SITE_GNU:=binutils/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://mingw.sourceforge.net/
+HOMEPAGE=	http://mingw.sourceforge.net/
 COMMENT=	GNU binutils for win32 cross-development
 
 GNU_CONFIGURE=		yes
+GNU_CONFIGURE_STRICT=	no # several sub-configures know --enable-nls
 USE_TOOLS+=		pax
 INFO_FILES=		yes
 

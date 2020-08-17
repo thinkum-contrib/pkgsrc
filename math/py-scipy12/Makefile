@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.3 2019/11/04 17:47:30 rillig Exp $
+# $NetBSD: Makefile,v 1.5 2020/05/17 18:57:26 adam Exp $
 
-DISTNAME=	scipy-1.2.2
+DISTNAME=	scipy-1.2.3
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	math python
 MASTER_SITES=	${MASTER_SITE_PYPI:=s/scipy/}
@@ -9,6 +9,10 @@ MAINTAINER=	markd@NetBSD.org
 HOMEPAGE=	https://www.scipy.org/
 COMMENT=	Scientific Algorithms Library for Python
 LICENSE=	modified-bsd
+
+TEST_DEPENDS+=	${PYPKGPREFIX}-nose-[0-9]*:../../devel/py-nose
+
+PYTHON_VERSIONED_DEPENDENCIES=	test:test
 
 USE_LANGUAGES+=	c c++ fortran
 MAKE_ENV+=	ATLAS=None
@@ -20,7 +24,6 @@ MAKE_ENV+=	ATLAS=None
 PYSETUPBUILDARGS+=	--fcompiler=g95
 .elif defined(PKGSRC_FORTRAN) && ${PKGSRC_FORTRAN} == "gfortran"
 PYSETUPBUILDARGS+=	--fcompiler=gnu95
-LDFLAGS.Darwin+=	-undefined dynamic_lookup
 .else
 BROKEN=			"Requires fortran 95"
 .endif
@@ -46,9 +49,6 @@ fix-darwin-install-name:
 	done
 .endif
 
-TEST_DEPENDS+=	${PYPKGPREFIX}-nose-[0-9]*:../../devel/py-nose
-TEST_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
-
 # self test failures for 1.1.0 reported at
 # https://github.com/scipy/scipy/issues/9196
 # needs 'make install' first!
@@ -58,6 +58,7 @@ do-test:
 
 .include "../../lang/python/application.mk"
 .include "../../lang/python/distutils.mk"
+.include "../../lang/python/versioned_dependencies.mk"
 .include "../../devel/py-cython/buildlink3.mk"
 .include "../../math/blas/buildlink3.mk"
 .include "../../math/fftw/buildlink3.mk"

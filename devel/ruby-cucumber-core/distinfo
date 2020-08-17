@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.5 2020/01/18 15:18:26 taca Exp $
+$NetBSD: distinfo,v 1.7 2020/04/27 04:58:30 taca Exp $
 
-SHA1 (cucumber-core-5.0.2.gem) = 00fc807c8241df1b73c7b33bbb3177afb640483d
-RMD160 (cucumber-core-5.0.2.gem) = 23ba991bc1a3d456a264bff9f560e49d57d70d00
-SHA512 (cucumber-core-5.0.2.gem) = aa6291d011f437ef1d911b2e677518853356d0d99467b430d0c076094d6c4fc6a8e1886c92bc8cd78338a08079d273f94c7311f97529c89bc3c05092c0161157
-Size (cucumber-core-5.0.2.gem) = 40448 bytes
+SHA1 (cucumber-core-7.0.0.gem) = a2318c695d65c1279583152223b1a615749b9a7f
+RMD160 (cucumber-core-7.0.0.gem) = b7458b89bab95cb17c6c897a9333c9cc61f80d0a
+SHA512 (cucumber-core-7.0.0.gem) = 9b4aa613571afcaae77af358b6cb96f1cc176dafa880187b191ffebb174468fa2b9107272238c8b982d636406441ef6d3d1e1dfa8b20c3aa6985d0334bf8ffe8
+Size (cucumber-core-7.0.0.gem) = 41984 bytes

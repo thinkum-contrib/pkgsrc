@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.4 2020/01/18 23:35:07 rillig Exp $
+# $NetBSD: Makefile,v 1.6 2020/07/27 16:22:46 gdt Exp $
 
 DISTNAME=	gpshell-1.4.4
 PKGREVISION=	2
 CATEGORIES=	security
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=globalplatform/GPShell/GPShell-${PKGVERSION_NOREV}/}
 
-MAINTAINER=	rhansen@bbn.com
-HOMEPAGE=	https://globalplatform.sourceforge.net/
+MAINTAINER=	pkgsrc-users@netbsd.org
+HOMEPAGE=	http://globalplatform.sourceforge.net/
 COMMENT=	Shell to manage the contents of GlobalPlatform smart cards
 LICENSE=	gnu-gpl-v3
 

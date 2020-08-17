@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.25 2020/01/18 21:48:53 jperkin Exp $
+# $NetBSD: Makefile,v 1.27 2020/06/01 06:11:54 rillig Exp $
 #
 
 DISTNAME=	xaric-0.13.6
@@ -7,13 +7,11 @@ CATEGORIES=	chat
 MASTER_SITES=	http://xaric.org/software/xaric/releases/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://xaric.org/
+HOMEPAGE=	https://xaric.org/
 COMMENT=	IRC client similar to BitchX and ircII
 
 GNU_CONFIGURE=	yes
 USE_TOOLS+=	gmake
-
-CONFIGURE_ARGS+=	--enable-optimize
 
 .include "../../security/openssl/buildlink3.mk"
 .include "../../mk/pthread.buildlink3.mk"

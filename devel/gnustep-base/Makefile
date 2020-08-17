@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.79 2020/01/18 21:49:09 jperkin Exp $
+# $NetBSD: Makefile,v 1.88 2020/08/09 23:14:28 joerg Exp $
 
-DISTNAME=	gnustep-base-1.24.0
-PKGREVISION=	24
+DISTNAME=	gnustep-base-1.27.0
+#PKGREVISION=	1
+PKGREVISION=	2
 CATEGORIES=	devel gnustep
 MASTER_SITES=	${MASTER_SITE_GNUSTEP:=core/}
 
@@ -10,13 +11,20 @@ HOMEPAGE=	http://www.gnustep.org/
 COMMENT=	GNUstep foundation classes
 LICENSE=	gnu-gpl-v3
 
+USE_TOOLS+=		pkg-config
 USE_LANGUAGES=		objc
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--exec-prefix=${PREFIX}/libexec/GNUstep
+CONFIGURE_ARGS+=	--with-installation-domain=SYSTEM
+# Allow building with NetBSD libiconv that does not support //TRANSLIT
+CONFIGURE_ARGS+=	--enable-stricticonv
 CONFIGURE_ENV+=		INSTALL_PROGRAM=${INSTALL_SCRIPT:Q}
 MAKE_FILE=		GNUmakefile
 
-GNUSTEP_OVERRIDE_INSTALL=	YES
+# GSMime.m:1098:7: error: array subscript is of type 'char' [-Werror,-Wchar-subscripts]
+# if (isxdigit(*src) && ctxt->pos < sizeof(ctxt->buf))
+# Looks suspicious, but ignore for now.
+BUILDLINK_TRANSFORM+=	rm:-Werror=char-subscripts
 
 pre-configure:
 	sed 's|@PREFIX@|${PREFIX}|g' <${FILESDIR}/openapp >${WRKDIR}/openapp
@@ -30,11 +38,6 @@ PTHREAD_LIBS=		-lpthread
 .if defined(PTHREAD_TYPE) && (${PTHREAD_TYPE} == "pth")
 PTHREAD_LIBS+=		-lpth
 .endif
-
-SUBST_CLASSES+=		pthread
-SUBST_STAGE.pthread=	pre-configure
-SUBST_FILES.pthread=	configure base.make.in
-SUBST_SED.pthread=	-e 's|@PTHREAD_LIBS@|${PTHREAD_LIBS:M*:Q}|g'
 
 CONFIGURE_ARGS+=	--with-library-flags=${GNUSTEP_LDFLAGS:Q}
 

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.41 2020/01/21 20:25:36 adam Exp $
+# $NetBSD: Makefile,v 1.46 2020/06/02 06:41:00 adam Exp $
 
 DISTNAME=	qtbase-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-psql-${QTVERSION}

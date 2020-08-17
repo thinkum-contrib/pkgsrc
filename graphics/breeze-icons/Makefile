@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.19 2020/01/18 21:49:34 jperkin Exp $
+# $NetBSD: Makefile,v 1.25 2020/06/07 11:30:18 markd Exp $
 
 DISTNAME=	breeze-icons-${KF5VER}
-PKGREVISION=	1
 CATEGORIES=	graphics
 
 HOMEPAGE=	https://community.kde.org/Frameworks
@@ -9,6 +8,8 @@ COMMENT=	Breeze icon themes
 LICENSE=	gnu-lgpl-v2.1 AND gnu-lgpl-v3
 
 .include "../../meta-pkgs/kde/kf5.mk"
+
+USE_TOOLS+=	bash gsed
 
 LDFLAGS+=	${COMPILER_RPATH_FLAG}${QTDIR}/lib
 

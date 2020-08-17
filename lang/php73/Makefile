@@ -1,10 +1,9 @@
-# $NetBSD: Makefile,v 1.8 2020/01/18 21:49:42 jperkin Exp $
+# $NetBSD: Makefile,v 1.13 2020/06/14 05:56:51 taca Exp $
 
 #
 # We can't omit PKGNAME here to handle PKG_OPTIONS.
 #
 PKGNAME=		php-${PHP_VERSION:S/RC/rc/}
-PKGREVISION=		1
 
 COMMENT=		PHP Hypertext Preprocessor version 7.3
 LICENSE=		php
@@ -34,8 +33,7 @@ REPLACE_PHP=		ext/phar/phar/phar.php run-tests.php
 SUBST_CLASSES+=		path
 SUBST_MESSAGE.path=	Fixing common paths.
 SUBST_STAGE.path=	pre-configure
-SUBST_FILES.path=	ext/phar/phar/phar.php
-SUBST_FILES.path+=	php.ini-development php.ini-production run-tests.php
+SUBST_FILES.path=	php.ini-development php.ini-production
 SUBST_FILES.path+=	sapi/cgi/Makefile.frag
 SUBST_VARS.path=	CGIDIR
 SUBST_VARS.path+=	PREFIX

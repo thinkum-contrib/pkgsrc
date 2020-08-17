@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.6 2020/01/18 23:32:07 rillig Exp $
+# $NetBSD: Makefile,v 1.8 2020/06/02 08:23:57 adam Exp $
 #
 
 DISTNAME=	xu4-1.0beta3
-PKGREVISION=	3
+PKGREVISION=	4
 CATEGORIES=	games
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=xu4/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://xu4.sourceforge.net/
+HOMEPAGE=	http://xu4.sourceforge.net/
 COMMENT=	Remake of Ultima IV
 LICENSE=	gnu-gpl-v2
 

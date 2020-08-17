@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.11 2020/01/18 21:47:59 jperkin Exp $
+# $NetBSD: Makefile,v 1.13 2020/05/10 13:56:14 rillig Exp $
 
 PKGNAME=	${DISTNAME:S/-/-client-/}
-PKGREVISION=	3
+#PKGREVISION=	1
 COMMENT=	MariaDB 5.5, a free SQL database (client)
 
 CONFLICTS=	mysql3-client-[0-9]*
@@ -11,28 +11,20 @@ CONFLICTS=	mysql-client-[0-9]*
 
 CMAKE_ARGS+=		-DWITHOUT_SERVER=ON
 CMAKE_ARGS+=		-DWITH_UNIT_TESTS=OFF
+# MariaDB uses internal OpenSSL structure made opaque with later versions
+CMAKE_ARGS+=		-DWITH_SSL=bundled
 UNWRAP_FILES+=		scripts/mysql_config
 INFO_FILES=		yes
 INSTALL_DIRS+=		client include libmysql man scripts tests
 
-REPLACE_PERL+=	scripts/mysql_convert_table_format.sh
-REPLACE_PERL+=	scripts/mysql_find_rows.sh
-REPLACE_PERL+=	scripts/mysql_fix_extensions.sh
-REPLACE_PERL+=	scripts/mysql_fix_privilege_tables.sh
-REPLACE_PERL+=	scripts/mysql_setpermission.sh
-REPLACE_PERL+=	scripts/mysql_zap.sh
-REPLACE_PERL+=	scripts/mysqlaccess.sh
-REPLACE_PERL+=	scripts/mysqld_multi.sh
-REPLACE_PERL+=	scripts/mysqldumpslow.sh
-REPLACE_PERL+=	scripts/mysqlhotcopy.sh
-REPLACE_PERL+=	scripts/mytop.sh
+REPLACE_PERL+=		scripts/convert-*.sh scripts/mytop.sh
 
 # REPLACE_PERL doesn't replace @PERL_PATH@, which is what's found in these
 # files now.
 SUBST_CLASSES+=		perlpath
 SUBST_STAGE.perlpath=	pre-configure
-SUBST_FILES.perlpath=	${REPLACE_PERL}
-SUBST_SED.perlpath=	-e s,@PERL_PATH@,perl,
+SUBST_FILES.perlpath=	scripts/mysql*.sh scripts/*.pl.in
+SUBST_SED.perlpath=	-e 1s,@PERL_PATH@,${PERL5},
 
 SUBST_CLASSES+=		fixwrap
 SUBST_STAGE.fixwrap=	post-build

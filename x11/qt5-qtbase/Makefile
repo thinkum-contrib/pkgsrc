@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.88 2020/01/21 20:25:37 adam Exp $
+# $NetBSD: Makefile,v 1.99 2020/06/24 12:29:30 ryoon Exp $
 
 DISTNAME=	qtbase-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtbase-${QTVERSION}
@@ -13,7 +13,6 @@ CONFIGURE_ARGS+=	-L "${PREFIX}/lib"
 CONFIGURE_ARGS+=	-opensource -confirm-license
 CONFIGURE_ARGS+=	-sysconfdir "${PKG_SYSCONFDIR}/xdg"
 CONFIGURE_ARGS+=	-accessibility
-CONFIGURE_ARGS+=	-dbus-linked
 CONFIGURE_ARGS+=	-icu
 CONFIGURE_ARGS+=	-libproxy
 CONFIGURE_ARGS+=	-openssl-linked
@@ -155,7 +154,7 @@ SUBST_VARS.path=	PREFIX
 BROKEN_FILES=		qt5/mkspecs/modules/qt_lib_bootstrap_private.pri
 BROKEN_FILES1=		qt5/mkspecs/qmodule.pri
 
-PC_FILES=		Qt5Concurrent.pc Qt5Core.pc Qt5DBus.pc \
+PC_FILES=		Qt5Concurrent.pc Qt5Core.pc \
 			Qt5Gui.pc Qt5Network.pc Qt5OpenGL.pc \
 			Qt5OpenGLExtensions.pc \
 			Qt5PrintSupport.pc Qt5Sql.pc Qt5Test.pc \
@@ -201,6 +200,8 @@ pre-configure:
 	${RM} -f ${WRKSRC}/mkspecs/features/mac/default_pre.prf
 	${RM} -f ${WRKSRC}/mkspecs/features/mac/default_post.prf
 
+.include "options.mk"
+
 post-install:
 .for i in ${PC_FILES}
 	cd ${DESTDIR}${PREFIX}/lib/pkgconfig && \
@@ -231,9 +232,6 @@ post-install:
 .include "../../graphics/freetype2/buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
 .include "../../security/openssl/buildlink3.mk"
-# Use lib/dbus-1.0/include/dbus/dbus-arch-deps.h from sysutils/dbus
-USE_DBUS-ARCH-DEPS_H=	yes
-.include "../../sysutils/dbus/buildlink3.mk"
 .include "../../textproc/icu/buildlink3.mk"
 .include "../../www/libproxy/buildlink3.mk"
 .if ${OPSYS} != "Darwin"
@@ -242,6 +240,7 @@ USE_DBUS-ARCH-DEPS_H=	yes
 .  if !empty(MESALIB_SUPPORTS_EGL:Myes)
 PLIST.egl=	yes
 .  endif
+BUILDLINK_API_DEPENDS.libxcb+=	libxcb>=1.11
 .include "../../x11/libxcb/buildlink3.mk"
 .include "../../x11/xcb-util/buildlink3.mk"
 .include "../../x11/xcb-util-image/buildlink3.mk"

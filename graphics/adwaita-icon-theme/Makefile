@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.21 2019/11/13 15:19:04 wiz Exp $
+# $NetBSD: Makefile,v 1.24 2020/04/20 06:50:53 wiz Exp $
 
-DISTNAME=		adwaita-icon-theme-3.34.3
+DISTNAME=		adwaita-icon-theme-3.36.1
 CATEGORIES=		graphics gnome
 MASTER_SITES=		${MASTER_SITE_GNOME:=sources/adwaita-icon-theme/${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=		.tar.xz
@@ -27,6 +27,10 @@ INSTALLATION_DIRS+=	share/icons/Adwaita/96x96/places
 ICON_THEMES=		yes
 
 .include "../../mk/bsd.prefs.mk"
+
+.for s in 96 256
+PRINT_PLIST_AWK+=	{gsub("^share/icons/Adwaita/${s}x${s}/places/start-here.png","@comment this is in PLIST.NetBSD, do not add here: &");}
+.endfor
 
 post-install:
 .if ${OPSYS} == "NetBSD"

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.5 2020/01/24 08:17:06 adam Exp $
+# $NetBSD: Makefile,v 1.10 2020/06/20 16:18:33 adam Exp $
 
-DISTNAME=	xmlschema-1.1.0
+DISTNAME=	xmlschema-1.2.2
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	textproc python
 MASTER_SITES=	${MASTER_SITE_PYPI:=x/xmlschema/}
@@ -11,10 +11,20 @@ COMMENT=	XML Schema validator and decoder
 LICENSE=	mit
 
 DEPENDS+=	${PYPKGPREFIX}-elementpath>=1.4.0:../../textproc/py-elementpath
+TEST_DEPENDS+=	${PYPKGPREFIX}-cElementTree-[0-9]*:../../textproc/py-cElementTree
 
 USE_LANGUAGES=	# none
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27	# py-elementpath
+
+post-install:
+.for bin in xmlschema-json2xml xmlschema-validate xmlschema-xml2json
+	cd ${DESTDIR}${PREFIX}/bin && \
+	${MV} ${bin} ${bin}-${PYVERSSUFFIX} || ${TRUE}
+.endfor
+
+do-test:
+	cd ${WRKSRC} && ${PYTHONBIN} -m unittest discover -v
 
 .include "../../lang/python/egg.mk"
 .include "../../mk/bsd.pkg.mk"

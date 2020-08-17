@@ -1,7 +1,6 @@
-$NetBSD: distinfo,v 1.6 2019/10/01 17:44:11 nia Exp $
+$NetBSD: distinfo,v 1.13 2020/07/07 11:16:10 nia Exp $
 
-SHA1 (mbedtls-2.16.3-apache.tgz) = dce8550f8f9465f3aea44cb7d0f9d0ba8140034a
-RMD160 (mbedtls-2.16.3-apache.tgz) = 611635dce5ac99372272dd5c6edcb64d886f6e3b
-SHA512 (mbedtls-2.16.3-apache.tgz) = 62b984d04570334e740ff8b857b4dad73804a4d0aec22b224cb813eb8a6a4b2ec9bff3126c198552e030da94201fd98ed764e8b9f53056e2f94a51dfdbb47cdd
-Size (mbedtls-2.16.3-apache.tgz) = 2553709 bytes
-SHA1 (patch-library_net__sockets.c) = cd8f9cf84947800eb73d004847789626511ceb35
+SHA1 (mbedtls-2.23.0.tar.gz) = 5b0f0f71e96dfbdf93b8f9582df76cbd63faaacf
+RMD160 (mbedtls-2.23.0.tar.gz) = 1b5fc17ec0b8df90c8dc8f5e6bef2ddd7fc4d477
+SHA512 (mbedtls-2.23.0.tar.gz) = c2a04f659bf63522f10f6660c2d196d7f39a057ff5a382734ba3b839f463ead4e5c9bc0d21fb909d56fcd2ee4c711248be14861f388cd383385484d364247634
+Size (mbedtls-2.23.0.tar.gz) = 3877508 bytes

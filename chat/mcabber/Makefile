@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.13 2020/01/18 21:48:52 jperkin Exp $
+# $NetBSD: Makefile,v 1.15 2020/03/08 16:48:58 wiz Exp $
 
 DISTNAME=	mcabber-1.1.0
-PKGREVISION=	2
+PKGREVISION=	3
 CATEGORIES=	chat
 MASTER_SITES=	http://www.lilotux.net/~mikael/mcabber/files/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	degroote@NetBSD.org
-HOMEPAGE=	http://www.lilotux.net/~mikael/mcabber/
+HOMEPAGE=	https://www.lilotux.net/~mikael/mcabber/
 COMMENT=	Jabber console client
 LICENSE=	gnu-gpl-v2
 

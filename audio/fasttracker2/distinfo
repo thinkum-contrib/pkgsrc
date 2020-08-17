@@ -1,7 +1,7 @@
-$NetBSD: distinfo,v 1.46 2020/01/17 11:00:08 fox Exp $
+$NetBSD: distinfo,v 1.66 2020/07/25 21:29:19 fox Exp $
 
-SHA1 (ft2-clone.tar.gz) = 4a9cd441ff2bed2066da1bcc68b67a32f638c0d4
-RMD160 (ft2-clone.tar.gz) = 11dfd2e2a1be27fb8018a9ff78b0104b1e5480d6
-SHA512 (ft2-clone.tar.gz) = ac0067150578ac4bca29b7ed27511228cba922302ce5c25c77feb87fde7bf5ba04715bf17a52916910a618ae93432ea685fd44a6d323ce66d4358b37cfa1dd22
-Size (ft2-clone.tar.gz) = 4376560 bytes
-SHA1 (patch-CMakeLists.txt) = b64b4e4b9cd40e97c34d1541937b6c0b7f451093
+SHA1 (fasttracker2-1.27.tar.gz) = 3e577c9cf02fd1f79ca4695d3eccb24c8c91bd3d
+RMD160 (fasttracker2-1.27.tar.gz) = 9868ce737d6a763295261db94822eed426834a45
+SHA512 (fasttracker2-1.27.tar.gz) = 8a557022df932b16d1d10d2d503a2cbcdbc8300cb04a6d61fa1dc027559e03fbfe424ea2f9841893b0b3d6b563d0d33790a3b08474965015d72261a5ae5f1370
+Size (fasttracker2-1.27.tar.gz) = 4454450 bytes
+SHA1 (patch-CMakeLists.txt) = 81ce61e4c61dbf056366c05f80286f9cb731fb7e

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.537 2020/01/22 00:11:53 pho Exp $
+# $NetBSD: Makefile,v 1.540 2020/08/03 18:28:07 jmcneill Exp $
 #
 
 COMMENT=	Miscellaneous utilities
@@ -10,6 +10,7 @@ SUBDIR+=	JMdict
 SUBDIR+=	R-Hmisc
 SUBDIR+=	R-pillar
 SUBDIR+=	R-praise
+SUBDIR+=	abduco
 SUBDIR+=	ansiweather
 SUBDIR+=	ascii
 SUBDIR+=	asr-manpages
@@ -189,6 +190,7 @@ SUBDIR+=	mate-utils
 SUBDIR+=	mbuffer
 SUBDIR+=	mdp
 SUBDIR+=	mic-paren
+SUBDIR+=	mime-types
 SUBDIR+=	mirmon
 SUBDIR+=	mkcue
 SUBDIR+=	mmv
@@ -339,6 +341,7 @@ SUBDIR+=	rump
 SUBDIR+=	sch
 SUBDIR+=	sci
 SUBDIR+=	screen
+SUBDIR+=	sd-mux-ctrl
 SUBDIR+=	send-pr
 SUBDIR+=	siag
 SUBDIR+=	since

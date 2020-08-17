@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.4 2020/01/18 21:48:46 jperkin Exp $
+# $NetBSD: Makefile,v 1.13 2020/06/02 08:23:14 adam Exp $
 
-DISTNAME=	qmmp-1.3.4
-PKGREVISION=	2
+DISTNAME=	qmmp-1.4.0
+PKGREVISION=	3
 CATEGORIES=	audio
 MASTER_SITES=	http://qmmp.ylsoftware.com/files/
 EXTRACT_SUFX=	.tar.bz2
@@ -41,6 +41,7 @@ SUBST_VARS.oss+=	LIBOSSAUDIO
 .endif
 
 .include "options.mk"
+.include "../../audio/faad2/buildlink3.mk"
 .include "../../audio/flac/buildlink3.mk"
 .include "../../audio/game-music-emu/buildlink3.mk"
 .include "../../audio/libopus/buildlink3.mk"

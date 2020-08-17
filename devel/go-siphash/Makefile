@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.18 2020/01/10 13:32:28 bsiegert Exp $
+# $NetBSD: Makefile,v 1.25 2020/08/14 20:01:26 bsiegert Exp $
 
 GITHUB_TAG=	v1.2.1
 DISTNAME=	${GITHUB_TAG}
 DIST_SUBDIR=	go-siphash
 PKGNAME=	${DIST_SUBDIR}-${GITHUB_TAG:S/v//}
-PKGREVISION=	8
+PKGREVISION=	14
 CATEGORIES=	devel security
 MASTER_SITES=	${MASTER_SITE_GITHUB:=dchest/}
 GITHUB_PROJECT=	siphash
 
-MAINTAINER=	alnsn@NetBSD.org
+MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://github.com/dchest/siphash
 COMMENT=	Go implementation of SipHash-2-4
 LICENSE=	public-domain

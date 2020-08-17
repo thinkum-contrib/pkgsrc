@@ -1,13 +1,15 @@
-# $NetBSD: Makefile,v 1.52 2020/01/18 21:50:49 jperkin Exp $
+# $NetBSD: Makefile,v 1.70 2020/07/29 07:46:37 wiz Exp $
 
-DISTNAME=	src-firefox-tor-browser-60.8.0esr-8.5-1-build2
-PKGNAME=	tor-browser-8.5.4
-PKGREVISION=	3
-CATEGORIES=	www
-MASTER_SITES=	https://dist.torproject.org/torbrowser/8.5.4/
+DISTNAME=	src-firefox-tor-browser-68.11.0esr-9.5-1-build1
+PKGNAME=	tor-browser-9.5.3
+CATEGORIES=	security www
+MASTER_SITES=	https://dist.torproject.org/torbrowser/${PKGVERSION_NOREV}/
 EXTRACT_SUFX=	.tar.xz
+DISTFILES=	${DISTNAME}${EXTRACT_SUFX}
+DISTFILES+=	tor-browser-linux64-${PKGVERSION_NOREV}_en-US${EXTRACT_SUFX}
+#DISTFILES+=	src-tor-launcher-0.2.21.8${EXTRACT_SUFX}
 
-MAINTAINER=	ryoon@NetBSD.org
+MAINTAINER=	wiz@NetBSD.org
 HOMEPAGE=	https://www.torproject.org/projects/torbrowser.html.en
 COMMENT=	Tor Browser based on Firefox
 LICENSE=	mpl-1.1
@@ -15,16 +17,23 @@ LICENSE=	mpl-1.1
 WRKSRC=		${WRKDIR}/${DISTNAME:S/src-//}
 
 DEPENDS+=	tor-[0-9]*:../../net/tor
-
-EXTRACT_USING=	bsdtar
+DEPENDS+=	tor-browser-https-everywhere>=2020.5.20:../../security/tor-browser-https-everywhere
+DEPENDS+=	tor-browser-noscript>=11.0.32:../../security/tor-browser-noscript
 
 # How to update this package:
 #
 # replace all patches with the one from the correspoding www/firefox${ESR_RELEASE}
-# BUT keep patch-xpcom_io_TorFileUtils.cpp!
+# compare e.g. the output of
+# diff -r -I NetBSD . ../../www/firefox68
+# BUT keep:
+# patch-.mozconfig (if still necessary)
+# patch-browser_app_profile_000-tor-browser.js
+# patch-toolkit_moz.configure (second chunk)
+# patch-xpcom_io_TorFileUtils.cpp
 # make the patches apply
 #
 # when packaged up, read MESSAGE and test by visiting https://check.torproject.org
+# and https://panopticlick.eff.org
 
 # Remove hardcoded build directory.
 SUBST_CLASSES+=			fix-build-dir
@@ -32,11 +41,18 @@ SUBST_STAGE.fix-build-dir=	pre-configure
 SUBST_FILES.fix-build-dir+=	.mozconfig
 SUBST_SED.fix-build-dir+=	-e 's,mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj-@CONFIG_GUESS@,,'
 
+SUBST_CLASSES+=		fonts
+SUBST_STAGE.fonts=	pre-configure
+SUBST_FILES.fonts+=	tor-browser_en-US/Browser/TorBrowser/Data/fontconfig/fonts.conf
+SUBST_SED.fonts+=	-e 's,<dir>fonts</dir>,<dir>${PREFIX}/lib/tor-browser/browser/fonts</dir>,'
+SUBST_MESSAGE.fonts=	Fixing path to bundled fonts directory.
+
 MOZILLA_DIR=	# empty
 
 .include "../../mk/bsd.prefs.mk"
 
 CONFIGURE_ARGS+=	--enable-tor-browser-data-outside-app-dir
+CONFIGURE_ARGS+=	--with-tor-browser-version=${PKGVERSION_NOREV}
 CFLAGS+=		-DTOR_BROWSER_DATA_IN_HOME_DIR=1
 CFLAGS+=		-DTOR_BROWSER_DATA_OUTSIDE_APP_DIR=1
 CFLAGS+=		-fPIC
@@ -58,7 +74,7 @@ NOT_PAX_MPROTECT_SAFE+=	lib/${PKGBASE}/tor-browser-bin
 BUILDLINK_TRANSFORM.SunOS+=	rm:-fdata-sections
 BUILDLINK_TRANSFORM.SunOS+=	rm:-ffunction-sections
 
-.include "../../www/firefox60/mozilla-common.mk"
+.include "../../www/firefox68/mozilla-common.mk"
 .include "options.mk"
 
 CHECK_INTERPRETER_SKIP+=	lib/firefox-sdk/sdk/bin/header.py
@@ -75,6 +91,8 @@ MOZILLA_NAME=	TorBrowser
 post-extract:
 	mv ${WRKSRC}/gfx/ycbcr/yuv_row_arm.s ${WRKSRC}/gfx/ycbcr/yuv_row_arm.S
 	${CP} ${FILESDIR}/cubeb_sun.c ${WRKSRC}/media/libcubeb/src/cubeb_sun.c
+	mv ${WRKDIR}/tor-browser_en-US ${WRKSRC}
+#	mv ${WRKDIR}/tor-launcher* ${WRKSRC}/browser/extensions/tor-launcher
 
 pre-configure:
 	cd ${WRKSRC} && mkdir ${OBJDIR}
@@ -88,17 +106,26 @@ post-build:
 	  -e 's|@FIREFOX_ICON@|${MOZILLA}.png|g'			\
 	  < ${FILESDIR}/desktop.in					\
 	  > ${WRKDIR}/desktop
+	${SED} -e 's|@PREFIX@|${PREFIX}|g'				\
+	  < ${FILESDIR}/tor-browser.sh					\
+	  > ${WRKDIR}/tor-browser.sh
 
-INSTALLATION_DIRS+=	share/applications share/pixmaps
+INSTALLATION_DIRS+=	share/applications
+INSTALLATION_DIRS+=	share/pixmaps
+INSTALLATION_DIRS+=	${PREFIX}/lib/tor-browser/browser/fontconfig
+INSTALLATION_DIRS+=	${PREFIX}/lib/tor-browser/browser/fonts
+
 post-install:
-	${ECHO} '#! /bin/sh' > ${DESTDIR}${PREFIX}/bin/${MOZILLA}
-	${ECHO} '${PREFIX}/lib/tor-browser/tor-browser-bin "$$@"' >> \
-		${DESTDIR}${PREFIX}/bin/${MOZILLA}
-	${CHMOD} 755 ${DESTDIR}${PREFIX}/bin/${MOZILLA}
+	${INSTALL_SCRIPT} ${WRKDIR}/tor-browser.sh \
+		${DESTDIR}${PREFIX}/bin/tor-browser
 	${INSTALL_DATA} ${WRKDIR}/desktop				\
-	  ${DESTDIR}${PREFIX}/share/applications/${MOZILLA}.desktop
+		${DESTDIR}${PREFIX}/share/applications/${MOZILLA}.desktop
 	${INSTALL_DATA} ${MOZILLA_ICON}					\
-	  ${DESTDIR}${PREFIX}/share/pixmaps/${MOZILLA}.png
+		${DESTDIR}${PREFIX}/share/pixmaps/${MOZILLA}.png
+	${INSTALL_DATA} ${WRKSRC}/tor-browser_en-US/Browser/TorBrowser/Data/fontconfig/fonts.conf \
+		${DESTDIR}${PREFIX}/lib/tor-browser/browser/fontconfig
+	${INSTALL_DATA} ${WRKSRC}/tor-browser_en-US/Browser/fonts/* \
+		${DESTDIR}${PREFIX}/lib/tor-browser/browser/fonts
 
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
 .include "../../sysutils/dbus-glib/buildlink3.mk"

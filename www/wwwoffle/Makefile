@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.89 2019/11/04 22:10:16 rillig Exp $
+# $NetBSD: Makefile,v 1.92 2020/05/22 10:56:47 adam Exp $
 
 DISTNAME=	wwwoffle-2.9j
-PKGREVISION=	5
+PKGREVISION=	7
 CATEGORIES=	www
 MASTER_SITES=	http://www.gedanken.org.uk/software/wwwoffle/download/
 EXTRACT_SUFX=	.tgz
@@ -17,6 +17,8 @@ BUILD_DEFS+=	VARBASE
 
 CONFIGURE_ARGS+=	--with-confdir=${PKG_SYSCONFDIR:Q}
 CONFIGURE_ARGS+=	--with-spooldir=${VARBASE}/wwwoffle
+
+CHECK_PORTABILITY_SKIP+=	configure.in
 
 PKG_SYSCONFSUBDIR=	wwwoffle
 CONF_FILES+=		${PREFIX}/share/examples/wwwoffle/wwwoffle.conf ${PKG_SYSCONFDIR}/wwwoffle.conf

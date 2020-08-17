@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.2 2019/10/01 19:37:50 nia Exp $
+# $NetBSD: Makefile,v 1.7 2020/06/02 08:23:14 adam Exp $
 
-DISTNAME=	quodlibet-4.2.1
+DISTNAME=	quodlibet-4.3.0
+PKGREVISION=	4
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_GITHUB:=quodlibet/}
 GITHUB_PROJECT=	quodlibet
@@ -14,6 +15,22 @@ LICENSE=	gnu-gpl-v2
 DEPENDS+=	${PYPKGPREFIX}-feedparser-[0-9]*:../../textproc/py-feedparser
 DEPENDS+=	${PYPKGPREFIX}-gstreamer1-[0-9]*:../../multimedia/py-gstreamer1
 DEPENDS+=	${PYPKGPREFIX}-mutagen-[0-9]*:../../audio/py-mutagen
+
+DEPENDS+=	gst-plugins1-flac-[0-9]*:../../audio/gst-plugins1-flac
+DEPENDS+=	gst-plugins1-mpg123-[0-9]*:../../audio/gst-plugins1-mpg123
+DEPENDS+=	gst-plugins1-ogg-[0-9]*:../../multimedia/gst-plugins1-ogg
+DEPENDS+=	gst-plugins1-opus-[0-9]*:../../audio/gst-plugins1-opus
+DEPENDS+=	gst-plugins1-vorbis-[0-9]*:../../audio/gst-plugins1-vorbis
+
+.include "../../mk/oss.buildlink3.mk"
+
+.if ${OPSYS} == "Linux"
+DEPENDS+=	gst-plugins1-alsa-[0-9]*:../../audio/gst-plugins1-alsa
+.endif
+
+.if ${OPSYS} != "Linux" && ${OSS_TYPE} != "none"
+DEPENDS+=	gst-plugins1-oss-[0-9]*:../../audio/gst-plugins1-oss
+.endif
 
 USE_TOOLS+=	msgfmt
 

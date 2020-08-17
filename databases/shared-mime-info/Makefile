@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.67 2020/01/18 23:30:20 rillig Exp $
+# $NetBSD: Makefile,v 1.70 2020/06/02 08:23:32 adam Exp $
 
 DISTNAME=	shared-mime-info-1.10
+PKGREVISION=	2
 CATEGORIES=	databases
 MASTER_SITES=	http://people.freedesktop.org/~hadess/
 EXTRACT_SUFX=	.tar.xz
@@ -18,6 +19,9 @@ USE_TOOLS+=		gmake intltool msgfmt pkg-config xgettext
 MAKE_JOBS_SAFE=		no
 
 CONFIGURE_ARGS+=	--disable-update-mimedb
+
+# patched in Makefile.in
+CHECK_PORTABILITY_SKIP+=	Makefile.am
 
 .include "../../mk/bsd.prefs.mk"
 

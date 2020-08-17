@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.87 2019/10/27 14:46:09 kamil Exp $
+# $NetBSD: Makefile,v 1.94 2020/06/02 08:24:29 adam Exp $
 
 DISTNAME=		avahi-0.6.32
-PKGREVISION=		19
+PKGREVISION=		24
 CATEGORIES=		net
 MASTER_SITES=		https://github.com/lathiat/avahi/releases/download/v${PKGVERSION_NOREV}/
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		http://avahi.org/
+HOMEPAGE=		https://avahi.org/
 COMMENT=		Facilitate service discovery on a local network
 LICENSE=		gnu-lgpl-v2.1
 
@@ -18,6 +18,8 @@ USE_PKGINSTALL=		YES
 USE_PKGLOCALEDIR=	YES
 USE_TOOLS+=		pkg-config gmake intltool msgfmt xgettext
 MAKE_JOBS_SAFE=		no
+
+CONFIGURE_ARGS+=	--disable-gtk
 
 PKGCONFIG_OVERRIDE+=	avahi-client.pc.in
 PKGCONFIG_OVERRIDE+=	avahi-compat-howl.pc.in
@@ -79,6 +81,7 @@ CONFIGURE_ARGS+=	--disable-xmltoman
 CONFIGURE_ARGS+=	--disable-autoipd
 CONFIGURE_ARGS+=	--disable-qt3
 CONFIGURE_ARGS+=	--disable-qt4
+CONFIGURE_ARGS+=	--disable-pygtk
 CONFIGURE_ARGS+=	--with-distro=none
 
 INSTALL_MAKE_FLAGS+=	sysconfdir=${PREFIX}/share/examples

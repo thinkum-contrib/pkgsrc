@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.23 2020/01/18 23:33:11 rillig Exp $
+# $NetBSD: Makefile,v 1.25 2020/05/20 06:09:05 rillig Exp $
 
 DISTNAME=		mpeg4ip-1.6.1
 PKGNAME=		libmp4v2-1.6.1
@@ -9,7 +9,7 @@ CATEGORIES=		multimedia
 MASTER_SITES=		${MASTER_SITE_FREEBSD_LOCAL:=ahze/}
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://mpeg4ip.sourceforge.net/
+HOMEPAGE=		http://mpeg4ip.sourceforge.net/
 COMMENT=		Library for reading and modifying mp4 files
 
 USE_LANGUAGES=		c c++03
@@ -33,6 +33,12 @@ SUBST_STAGE.minmax=	pre-configure
 SUBST_FILES.minmax=	common/video/iso-mpeg4/src/*
 SUBST_SED.minmax=	-e 's,min *(,MIN(,g' -e 's,max *(,MAX(,g'
 SUBST_MESSAGE.minmax=	replace lowercase min,max with uppercase
+
+# util.c: In function 'quicktime_read_pascal':
+# util.c:138:6: error: array subscript has type 'char' [-Werror=char-subscripts]
+#   data[len] = 0;
+# Maybe fix this later.
+BUILDLINK_TRANSFORM+=	rm:-Werror=char-subscripts
 
 pre-configure:
 	${TOUCH} ${WRKSRC}/bootstrapped

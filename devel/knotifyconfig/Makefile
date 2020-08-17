@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.30 2020/01/18 21:48:05 jperkin Exp $
+# $NetBSD: Makefile,v 1.36 2020/06/07 11:15:01 markd Exp $
 
 DISTNAME=	knotifyconfig-${KF5VER}
-PKGREVISION=	1
 CATEGORIES=	devel
 
 HOMEPAGE=	https://community.kde.org/Frameworks
@@ -12,6 +11,7 @@ LICENSE=	gnu-lgpl-v2.1
 
 USE_TOOLS+=	msgmerge
 
+.include "../../audio/libcanberra/buildlink3.mk"
 .include "../../devel/kio/buildlink3.mk"
 .include "../../x11/qt5-qtbase/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

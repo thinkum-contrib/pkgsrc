@@ -1,12 +1,11 @@
-# $NetBSD: Makefile,v 1.208 2020/01/18 21:49:55 jperkin Exp $
+# $NetBSD: Makefile,v 1.215 2020/07/16 02:22:55 markd Exp $
 
-DISTNAME=	R-3.6.1
-PKGREVISION=	3
+DISTNAME=	R-4.0.2
 CATEGORIES=	math
-MASTER_SITES=	${MASTER_SITE_R_CRAN:=base/R-3/}
+MASTER_SITES=	${MASTER_SITE_R_CRAN:=base/R-4/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.R-project.org/
+HOMEPAGE=	https://www.R-project.org/
 COMMENT=	Statistical language for data analysis and graphics
 LICENSE=	gnu-gpl-v2
 
@@ -120,8 +119,7 @@ INSTALL_SCRIPT=		${INSTALL} ${COPY} -m ${BINMODE}
 #BUILD_DEPENDS+=		tex-fontname-[0-9]*:../../fonts/tex-fontname
 #BUILD_DEPENDS+=		tex-graphics-[0-9]*:../../print/tex-graphics
 #BUILD_DEPENDS+=		tex-hyperref-[0-9]*:../../print/tex-hyperref
-#BUILD_DEPENDS+=		tex-ifluatex-[0-9]*:../../print/tex-ifluatex
-#BUILD_DEPENDS+=		tex-ifxetex-[0-9]*:../../print/tex-ifxetex
+#BUILD_DEPENDS+=		tex-iftex>=1.0d:../../print/tex-iftex
 #BUILD_DEPENDS+=		tex-latex-[0-9]*:../../print/tex-latex
 #BUILD_DEPENDS+=		tex-latexconfig-[0-9]*:../../print/tex-latexconfig
 #BUILD_DEPENDS+=		tex-mptopdf-[0-9]*:../../graphics/tex-mptopdf
@@ -161,7 +159,7 @@ fix-darwin-install-name:
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/glib2/buildlink3.mk"
 .include "../../devel/pango/buildlink3.mk"
-.include "../../devel/pcre/buildlink3.mk"
+.include "../../devel/pcre2/buildlink3.mk"
 # uses callback interface
 .include "../../devel/readline/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"

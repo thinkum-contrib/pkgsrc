@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.24 2019/09/14 18:11:38 tsutsui Exp $
+# $NetBSD: Makefile,v 1.27 2020/05/02 18:05:04 tsutsui Exp $
 #
 
 DISTNAME=		clutter-gtk-${VERSION}

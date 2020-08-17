@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.73 2020/01/18 21:50:22 jperkin Exp $
+# $NetBSD: Makefile,v 1.77 2020/05/22 10:56:30 adam Exp $
 
 DISTNAME=	${OPENVPN_DISTNAME}
 PKGREVISION=	1
@@ -7,7 +7,7 @@ MASTER_SITES=	${OPENVPN_MASTER_SITES}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://openvpn.net/
+HOMEPAGE=	https://openvpn.net/
 COMMENT=	Easy-to-use SSL VPN daemon
 LICENSE=	gnu-gpl-v2
 

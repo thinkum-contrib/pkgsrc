@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.23 2020/01/14 17:43:54 wiz Exp $
+$NetBSD: distinfo,v 1.27 2020/07/08 06:50:08 adam Exp $
 
-SHA1 (glib-networking-2.62.3.tar.xz) = 7f4ac967dec7e0bbf063fffc7796046135c07f7a
-RMD160 (glib-networking-2.62.3.tar.xz) = 7a4306403cfb394c9728656b145a94b25f8ec13b
-SHA512 (glib-networking-2.62.3.tar.xz) = 6bcf7584a4d97745e980598eb9182ba2e416471455d9c3debc4cbaea07250e395f6d7001af544ce0114a26d726e71e9b420d9756508cda09499016e89f4a6da1
-Size (glib-networking-2.62.3.tar.xz) = 183996 bytes
+SHA1 (glib-networking-2.64.3.tar.xz) = 0fb4ecad270a1f2a500cc03f32f94d89db1426ab
+RMD160 (glib-networking-2.64.3.tar.xz) = c0c88053b1e594fde9b7f32f5119a23c9f1f0a88
+SHA512 (glib-networking-2.64.3.tar.xz) = 01251f7f95d1c331e883d5ee7857bad0c0d6308991e437ff54ed63e718bb30a12e872755e0611e2bf6ccb2a01c52ba865fe0d94ac69dbab37d74afe063a0590d
+Size (glib-networking-2.64.3.tar.xz) = 189760 bytes

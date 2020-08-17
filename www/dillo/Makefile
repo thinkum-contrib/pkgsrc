@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.78 2020/01/18 21:51:05 jperkin Exp $
+# $NetBSD: Makefile,v 1.80 2020/04/30 07:13:22 rillig Exp $
 
 DISTNAME=	dillo-3.0.5
 PKGREVISION=	6
@@ -15,7 +15,7 @@ USE_LANGUAGES=		c c++
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFBASEDIR}
 
-REPLACE_PERL+=	dpid/dpidc dillo-install-hyphenation
+REPLACE_PERL+=	dillo-install-hyphenation
 USE_TOOLS+=	perl:run wget:run
 
 PKG_SYSCONFSUBDIR=	dillo
@@ -42,6 +42,7 @@ post-install:
 .include "../../mk/jpeg.buildlink3.mk"
 .include "../../graphics/png/buildlink3.mk"
 .include "../../x11/fltk13/buildlink3.mk"
+.include "../../x11/libXcursor/buildlink3.mk"
 
 .include "../../mk/pthread.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

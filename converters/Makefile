@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.174 2020/01/18 02:17:22 pho Exp $
+# $NetBSD: Makefile,v 1.177 2020/07/08 15:10:38 nia Exp $
 #
 
 COMMENT=	Document format and character code converters
@@ -11,6 +11,7 @@ SUBDIR+=	autoconvert
 SUBDIR+=	base64
 SUBDIR+=	bbcim
 SUBDIR+=	bdf2psf
+SUBDIR+=	bdf2sfd
 SUBDIR+=	bib2xml
 SUBDIR+=	bibtex2html
 SUBDIR+=	cbmconvert
@@ -60,6 +61,7 @@ SUBDIR+=	libwpd
 SUBDIR+=	libwpg
 SUBDIR+=	libwps
 SUBDIR+=	libzmf
+SUBDIR+=	lua-iconv
 SUBDIR+=	macfork
 SUBDIR+=	mpack
 SUBDIR+=	nkf
@@ -115,6 +117,7 @@ SUBDIR+=	py-confusable_homoglyphs
 SUBDIR+=	py-emoji
 SUBDIR+=	py-jpCodecs
 SUBDIR+=	py-simplejson
+SUBDIR+=	py-unicode-slugify
 SUBDIR+=	py-yenc
 SUBDIR+=	py-zbase32
 SUBDIR+=	py-zfec

@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.205 2020/01/18 21:50:37 jperkin Exp $
+# $NetBSD: Makefile,v 1.214 2020/06/09 09:53:11 nia Exp $
 
-DISTNAME=	gnutls-3.6.11.1
-PKGREVISION=	1
+DISTNAME=	gnutls-3.6.14
 CATEGORIES=	security devel
 MASTER_SITES=	https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/
 EXTRACT_SUFX=	.tar.xz
@@ -22,8 +21,6 @@ USE_TOOLS+=			msgfmt msgmerge xgettext
 GNU_CONFIGURE=			yes
 # this library duplicates (and conflicts with) openssl
 CONFIGURE_ARGS+=		--disable-openssl-compatibility
-CONFIGURE_ARGS+=		--disable-guile
-CONFIGURE_ARGS+=		--disable-libdane
 CONFIGURE_ARGS+=		--without-idn
 CONFIGURE_ARGS+=		--without-tpm
 CONFIGURE_ARGS+=		--disable-valgrind-tests
@@ -47,9 +44,6 @@ REPLACE_BASH+=		tests/gnutls-cli-debug.sh
 REPLACE_BASH+=		tests/ocsp-tests/ocsp-must-staple-connection
 REPLACE_BASH+=		tests/ocsp-tests/ocsp-tls-connection
 REPLACE_BASH+=		tests/starttls.sh
-REPLACE_BASH+=		tests/suite/cbc-record-check.sh
-REPLACE_BASH+=		tests/suite/testcompat-main-openssl
-REPLACE_BASH+=		tests/suite/testcompat-main-polarssl
 REPLACE_BASH+=		tests/cert-tests/pkcs12-utf8
 
 REPLACE_PERL+=		doc/scripts/gdoc doc/scripts/sort2.pl

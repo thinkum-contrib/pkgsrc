@@ -1,12 +1,11 @@
-# $NetBSD: Makefile,v 1.8 2019/10/21 22:11:34 adam Exp $
+# $NetBSD: Makefile,v 1.11 2020/05/23 09:15:13 rillig Exp $
 
-DISTNAME=		pelican-3.7.1
-PKGREVISION=		1
+DISTNAME=		pelican-4.2.0
+PKGREVISION=		2
 GITHUB_PROJECT=		pelican
 PKGNAME=		${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=		www textproc
 MASTER_SITES=		${MASTER_SITE_GITHUB:=getpelican/}
-EXTRACT_SUFX=		.zip
 
 MAINTAINER=		nils@NetBSD.org
 HOMEPAGE=		https://blog.getpelican.com/
@@ -26,25 +25,18 @@ DEPENDS+=		${PYPKGPREFIX}-dateutil-[0-9]*:../../time/py-dateutil
 
 PYTHON_VERSIONED_DEPENDENCIES=	sphinx:build
 
-USE_TOOLS+=		bash:run make:build sed:build
+USE_TOOLS+=		make:build sed:build
 
 REPLACE_PYTHON+=	pelican/tools/pelican_import.py
 REPLACE_PYTHON+=	pelican/tools/pelican_quickstart.py
 REPLACE_PYTHON+=	pelican/tools/pelican_themes.py
-REPLACE_PYTHON+=	pelican/tools/templates/pelicanconf.py.in
-REPLACE_PYTHON+=	pelican/tools/templates/publishconf.py.in
-
-REPLACE_INTERPRETER+=	bash
-REPLACE.bash.old=	/usr/bin/env bash
-REPLACE.bash.new=	${TOOLS_PATH.bash}
-REPLACE_FILES.bash=	pelican/tools/templates/develop_server.sh.in
+REPLACE_PYTHON+=	pelican/tools/templates/publishconf.py.jinja2
 
 SUBST_CLASSES+=		version
 SUBST_STAGE.version=	pre-build
 SUBST_MESSAGE.version=	Removing useless import of pelican.
 SUBST_FILES.version=	docs/conf.py
-SUBST_SED.version=	-e 's,from pelican,\#from pelican,g'
-SUBST_SED.version+=	-e 's,release = __version__,release = "${PKGVERSION_NOREV}",g'
+SUBST_SED.version=	-e 's,from pelican import __version__,__version__ = "${PKGVERSION_NOREV}",g'
 
 DOCDIR=			${PREFIX}/share/doc/pelican
 INSTALLATION_DIRS+=	${PKGMANDIR}/man1/ ${DOCDIR}

@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.17 2020/01/18 23:32:49 rillig Exp $
+# $NetBSD: Makefile,v 1.19 2020/06/02 08:24:15 adam Exp $
 #
 
 DISTNAME=	pfqueue-0.5.6
-PKGREVISION=	3
+PKGREVISION=	4
 CATEGORIES=	mail
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=pfqueue/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://pfqueue.sourceforge.net/
+HOMEPAGE=	http://pfqueue.sourceforge.net/
 COMMENT=	Real-time queue scanner for postfix
 LICENSE=	gnu-gpl-v2
 

@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.22 2020/01/18 23:35:32 rillig Exp $
+# $NetBSD: Makefile,v 1.24 2020/03/20 11:58:29 nia Exp $
 #
 
 DISTNAME=	sary-ruby-1.2.0
 PKGNAME=	${RUBY_PKGPREFIX}-${DISTNAME:S/-ruby-/-/}
-PKGREVISION=	6
+PKGREVISION=	7
 CATEGORIES=	textproc ruby
 MASTER_SITES=	http://sary.sourceforge.net/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://sary.sourceforge.net/
+HOMEPAGE=	http://sary.sourceforge.net/
 COMMENT=	Ruby Binding of Sary
 LICENSE=	gnu-lgpl-v2.1
 

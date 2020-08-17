@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.34 2020/01/18 23:30:52 rillig Exp $
+# $NetBSD: Makefile,v 1.38 2020/06/02 08:23:47 adam Exp $
 #
 
 DISTNAME=	fusepod-0.5.1
 PKGNAME=	fuse-pod-0.5.1
-PKGREVISION=	30
+PKGREVISION=	33
 CATEGORIES=	filesystems
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=fusepod/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://fusepod.sourceforge.net/
+HOMEPAGE=	http://fusepod.sourceforge.net/
 COMMENT=	FUSE-based filesystem for iPod
 
 GNU_CONFIGURE=	yes

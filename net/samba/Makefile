@@ -1,16 +1,16 @@
-# $NetBSD: Makefile,v 1.278 2020/01/18 21:50:25 jperkin Exp $
+# $NetBSD: Makefile,v 1.283 2020/05/23 10:48:30 rillig Exp $
 
 DISTNAME=	samba-${VERSION}
 CATEGORIES=	net
 MASTER_SITES=	${SAMBA_MIRRORS:=stable/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.samba.org/
+HOMEPAGE=	https://www.samba.org/
 COMMENT=	SMB/CIFS protocol server suite
 LICENSE=	gnu-gpl-v3
 
 VERSION=	3.6.25
-PKGREVISION=	20
+PKGREVISION=	23
 
 CONFLICTS+=	ja-samba-[0-9]* pam-smbpass-[0-9]* winbind-[0-9]*
 
@@ -68,10 +68,6 @@ CONFIGURE_ARGS+=		--localstatedir=${SAMBA_VARDIR}
 CONFIGURE_ARGS+=		--with-mandir=${PREFIX}/${PKGMANDIR}
 CONFIGURE_ARGS+=		--with-swatdir=${PREFIX}/share/samba/swat
 CONFIGURE_ARGS+=		--enable-external-libtdb
-#
-# Explicitly disable samba4 merged-build option which is broken.
-#
-CONFIGURE_ARGS+=		--enable-merged-build=no
 
 .include "../../net/samba/options.mk"
 

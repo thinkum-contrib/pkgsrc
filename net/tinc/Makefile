@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.30 2020/01/18 21:50:27 jperkin Exp $
+# $NetBSD: Makefile,v 1.32 2020/05/01 23:17:34 rillig Exp $
 
 DISTNAME=	tinc-1.0.32
 PKGREVISION=	2
@@ -6,7 +6,7 @@ CATEGORIES=	net
 MASTER_SITES=	http://www.tinc-vpn.org/packages/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.tinc-vpn.org/
+HOMEPAGE=	https://www.tinc-vpn.org/
 COMMENT=	Virtual Private Network (VPN) daemon
 LICENSE=	gnu-gpl-v2
 
@@ -15,11 +15,6 @@ BUILD_DEFS+=		VARBASE
 INFO_FILES=		yes
 USE_TOOLS+=		msgfmt
 GNU_CONFIGURE=		yes
-
-SUBST_CLASSES+=		mdoc
-SUBST_FILES.mdoc=	doc/tinc.conf.5.in
-SUBST_SED.mdoc+=	-e '/^$$/d'
-SUBST_STAGE.mdoc=	pre-configure
 
 EGDIR=			${PREFIX}/share/examples/tinc
 TINC_USER?=		tinc

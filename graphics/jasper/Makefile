@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.51 2019/07/16 10:06:07 nia Exp $
+# $NetBSD: Makefile,v 1.55 2020/07/29 07:03:59 adam Exp $
 
-DISTNAME=	jasper-2.0.16
+DISTNAME=	jasper-2.0.19
 CATEGORIES=	graphics
-MASTER_SITES=	${MASTER_SITE_GITHUB:=mdadams/}
+MASTER_SITES=	${MASTER_SITE_GITHUB:=jasper-software/}
 GITHUB_TAG=	version-${PKGVERSION_NOREV}
 
 MAINTAINER=	adam@NetBSD.org
@@ -13,9 +13,12 @@ LICENSE=	modified-bsd
 WRKSRC=			${WRKDIR}/jasper-${GITHUB_TAG}
 USE_CMAKE=		yes
 USE_LANGUAGES=		c99 c++
+USE_TOOLS+=		bash:test
 CMAKE_ARGS+=		-DALLOW_IN_SOURCE_BUILD=ON
 
-PKGCONFIG_OVERRIDE=	pkgconfig/jasper.pc
+PKGCONFIG_OVERRIDE=	build/jasper.pc.in
+REPLACE_BASH=		test/bin/*
+TEST_TARGET=		test
 
 .include "options.mk"
 .include "../../mk/jpeg.buildlink3.mk"

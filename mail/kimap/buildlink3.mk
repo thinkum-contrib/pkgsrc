@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.2 2020/01/18 21:48:15 jperkin Exp $
+# $NetBSD: buildlink3.mk,v 1.6 2020/06/02 08:22:47 adam Exp $
 
 BUILDLINK_TREE+=	kimap
 
@@ -6,7 +6,7 @@ BUILDLINK_TREE+=	kimap
 KIMAP_BUILDLINK3_MK:=
 
 BUILDLINK_API_DEPENDS.kimap+=	kimap>=17.12.1
-BUILDLINK_ABI_DEPENDS.kimap?=	kimap>=19.08.3nb1
+BUILDLINK_ABI_DEPENDS.kimap?=	kimap>=19.12.1nb4
 BUILDLINK_PKGSRCDIR.kimap?=	../../mail/kimap
 
 .include "../../devel/kio/buildlink3.mk"

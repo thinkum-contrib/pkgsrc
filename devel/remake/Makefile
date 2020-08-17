@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.2 2020/01/18 23:30:39 rillig Exp $
+# $NetBSD: Makefile,v 1.4 2020/04/28 11:46:29 nikita Exp $
 
 DISTNAME=	remake-4.2.1+dbg-1.4
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=bashdb/}
 
-MAINTAINER=	ng0@NetBSD.org
-HOMEPAGE=	https://bashdb.sourceforge.net/remake/
+MAINTAINER=	nikita@NetBSD.org
+HOMEPAGE=	http://bashdb.sourceforge.net/remake/
 COMMENT=	GNU make with debugger
 LICENSE=	gnu-gpl-v3
 

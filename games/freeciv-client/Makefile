@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.106 2020/01/19 00:37:55 nia Exp $
+# $NetBSD: Makefile,v 1.112 2020/05/22 10:56:08 adam Exp $
 
 PKGNAME=	${DISTNAME:S/-/-client-/}
+PKGREVISION=	2
 COMMENT=	Freeciv client
 
 DEPENDS+=	freeciv-share>=${FC_VERS}:../../games/freeciv-share
@@ -19,6 +20,7 @@ SUBST_SED.themesonly+=		-e 's|SUBDIRS = icons.*|SUBDIRS = themes|'
 SUBST_SED.themesonly+=		-e 's|^	isotrident trident|DONT_SUBDIRS =|'
 SUBST_SED.themesonly+=		-e 's|install-data-am: install-data-local|install-data-am: \# install-data-local|'
 SUBST_MESSAGE.themesonly=	Suppressing installation of non-gui-relevant data
+SUBST_NOOP_OK.themesonly=	yes
 
 SUBST_CLASSES+=			themesonly2
 SUBST_STAGE.themesonly2=	post-configure
@@ -26,6 +28,7 @@ SUBST_FILES.themesonly2=	data/Makefile
 SUBST_SED.themesonly2+=		-e 's|SUBDIRS = icons.*|SUBDIRS = themes|'
 SUBST_SED.themesonly2+=		-e 's|^	isotrident trident|DONT_SUBDIRS =|'
 SUBST_MESSAGE.themesonly2=	Suppressing installation of non-gui-relevant data
+SUBST_NOOP_OK.themesonly2=	yes
 
 # conflicts with freeciv-share
 post-install:

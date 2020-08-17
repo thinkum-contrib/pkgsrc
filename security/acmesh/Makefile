@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.5 2020/01/15 16:30:56 ryoon Exp $
+# $NetBSD: Makefile,v 1.7 2020/05/16 18:59:35 nia Exp $
 
-DISTNAME=	acme.sh-2.8.5
+DISTNAME=	acme.sh-2.8.6
 PKGNAME=	${DISTNAME:S/acme.sh/acmesh/}
 CATEGORIES=	security
-MASTER_SITES=	${MASTER_SITE_GITHUB:=Neilpang/}
+MASTER_SITES=	${MASTER_SITE_GITHUB:=acmesh-official/}
 GITHUB_PROJECT=	acme.sh
 GITHUB_TAG=	${PKGVERSION_NOREV}
 
 MAINTAINER=	ryoon@NetBSD.org
-HOMEPAGE=	https://github.com/Neilpang/acme.sh/
+HOMEPAGE=	https://acme.sh/
 COMMENT=	Let's Encrypt ACME client in shell script
 LICENSE=	gnu-gpl-v3
 

@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.27 2020/01/18 21:48:30 jperkin Exp $
+# $NetBSD: Makefile,v 1.31 2020/05/22 10:55:53 adam Exp $
 
-DISTNAME=	elementary-1.7.7
-PKGREVISION=	20
+DISTNAME=	elementary-1.7.10
+PKGREVISION=	2
 CATEGORIES=	x11
-MASTER_SITES=	http://download.enlightenment.org/releases/
+MASTER_SITES=	https://download.enlightenment.org/att/releases/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	joerg@NetBSD.org
@@ -26,7 +26,7 @@ MAKE_FLAGS+=	AUTOMAKE="automake -af"
 PKGCONFIG_OVERRIDE=	elementary
 
 # currently it is like it is
-MODULE_ARCH=		${LOWER_OPSYS}-${MACHINE_ARCH}-1.7.7
+MODULE_ARCH=		${LOWER_OPSYS}-${MACHINE_ARCH}-1.7.10
 PLIST_SUBST=		MODULE_ARCH=${MODULE_ARCH}
 PRINT_PLIST_AWK+=	{ gsub(/${MODULE_ARCH}/, "$${MODULE_ARCH}") }
 

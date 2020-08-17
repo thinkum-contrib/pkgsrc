@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.25 2020/01/14 16:07:22 adam Exp $
+# $NetBSD: Makefile,v 1.29 2020/07/29 14:34:18 adam Exp $
 
-DISTNAME=	Paste-3.2.6
+DISTNAME=	Paste-3.4.3
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:tl}
 CATEGORIES=	www python
 MASTER_SITES=	${MASTER_SITE_PYPI:=P/Paste/}
@@ -11,7 +11,7 @@ COMMENT=	Middleware for Python WSGI applications
 LICENSE=	mit
 
 DEPENDS+=	${PYPKGPREFIX}-six>=1.4.0:../../lang/py-six
-BUILD_DEPENDS+=	${PYPKGPREFIX}-test-runner-[0-9]*:../../devel/py-test-runner
+TEST_DEPENDS+=	${PYPKGPREFIX}-flup-[0-9]*:../../www/py-flup
 
 USE_LANGUAGES=	# none
 

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.5 2020/01/18 21:49:32 jperkin Exp $
+# $NetBSD: Makefile,v 1.9 2020/05/22 10:56:10 adam Exp $
 
-DISTNAME=	quake2-7.42
+DISTNAME=	quake2-7.43
 PKGNAME=	y${DISTNAME}
 PKGREVISION=	2
 CATEGORIES=	games

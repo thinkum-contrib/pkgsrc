@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.17 2020/01/18 23:30:16 rillig Exp $
+# $NetBSD: Makefile,v 1.20 2020/06/01 06:21:22 rillig Exp $
 
 GCC_DIST_VERSION=	4.9.2
 GCC_PKGNAME=		gcc-mips-${GCC_DIST_VERSION}
@@ -21,6 +21,8 @@ EXTRACT_ONLY=		${DEFAULT_DISTFILES}
 
 NOT_FOR_PLATFORM=	Interix-*-*
 
+CHECK_PORTABILITY_SKIP=	contrib/*
+
 USE_LANGUAGES=		c c++03
 USE_TOOLS+=		gmake makeinfo sed:run perl
 GNU_CONFIGURE=		yes
@@ -32,12 +34,6 @@ INFO_FILES=		yes
 
 UNLIMIT_RESOURCES+=	datasize
 UNLIMIT_RESOURCES+=	stacksize
-
-SUBST_CLASSES+=		vars
-SUBST_MESSAGE.vars=	Setting target machine name path in ${SUBST_FILES.vars}
-SUBST_STAGE.vars=	pre-configure
-SUBST_FILES.vars=	gcc/Makefile.in
-SUBST_VARS.vars=	GCC_TARGET_MACHINE
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -61,6 +57,10 @@ CONFIGURE_ENV+=		LDFLAGS_FOR_TARGET=${LDFLAGS_FOR_TARGET:Q}
 # CONFIGURE_ENV+=		${prg:tu}_FOR_TARGET=${PREFIX}/bin/${TARGET}-${prg}
 CONFIGURE_ARGS+=	--with-${prg}=${PREFIX}/bin/${TARGET}-${prg}
 .endfor
+
+# There are several options that are reported as unknown.
+# These are just not documented, but they exist, such as enable_libatomic.
+GNU_CONFIGURE_STRICT=	no
 
 CONFIGURE_ARGS+=	--disable-nls
 CONFIGURE_ARGS+=	--disable-libquadmath

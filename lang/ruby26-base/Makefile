@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.7 2020/01/18 21:49:43 jperkin Exp $
+# $NetBSD: Makefile,v 1.10 2020/04/01 15:21:57 taca Exp $
 
 DISTNAME=	${RUBY_DISTNAME}
 PKGNAME=	${RUBY_PKGPREFIX}-base-${RUBY_VERSION}
-PKGREVISION=	2
 CATEGORIES=	lang ruby
 MASTER_SITES=	${MASTER_SITE_RUBY}
 
@@ -20,6 +19,7 @@ TEST_TARGET=		test
 CONFIGURE_ARGS+=	--enable-shared --enable-install-static-library
 WRKSRC=			${RUBY_WRKSRC}
 
+.include "options.mk"
 .include "../../lang/ruby/platform.mk"
 
 .if !empty(RUBY_SUFFIX)
@@ -56,7 +56,7 @@ BIGDECIMAL_EXAMPLES=	linear.rb nlsolve.rb pi.rb
 OPENSSL_EXAMPLES=	c_rehash.rb cert2text.rb certstore.rb cipher.rb \
 			crlstore.rb echo_cli.rb echo_svr.rb gen_csr.rb \
 			smime_read.rb smime_write.rb wget.rb
-REPLACE_RUBY=		bin/bundle bin/bin/bundler bin/erb bin/gem bin/irb \
+REPLACE_RUBY=		bin/bundle bin/bundler bin/erb bin/gem bin/irb \
 			bin/rdoc bin/ri libexec/bundle libexec/bundle_ruby \
 			libexec/bundler libexec/irb libexec/rdoc libexec/ri \
 			gems/rake-${RUBY_RAKE_VERSION}/exe/rake \

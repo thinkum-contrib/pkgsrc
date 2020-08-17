@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.199 2020/01/19 00:50:30 nia Exp $
+# $NetBSD: Makefile,v 1.210 2020/08/12 14:19:01 ryoon Exp $
 #
 
 COMMENT=	Editors
@@ -39,8 +39,14 @@ SUBDIR+=	emacs25
 SUBDIR+=	emacs25-nox11
 SUBDIR+=	emacs26
 SUBDIR+=	emacs26-nox11
+SUBDIR+=	emacs27
+SUBDIR+=	emacs27-nox11
 SUBDIR+=	ex
 SUBDIR+=	fe
+SUBDIR+=	feathernotes
+SUBDIR+=	featherpad
+SUBDIR+=	fileobj
+SUBDIR+=	focuswriter
 SUBDIR+=	gate
 SUBDIR+=	gconf-editor
 SUBDIR+=	gedit
@@ -76,6 +82,7 @@ SUBDIR+=	medit
 SUBDIR+=	mflteco
 SUBDIR+=	mg
 SUBDIR+=	mg2a
+SUBDIR+=	micro
 SUBDIR+=	mined
 SUBDIR+=	mule
 SUBDIR+=	mule-ucs
@@ -84,10 +91,10 @@ SUBDIR+=	ne
 SUBDIR+=	neatvi
 SUBDIR+=	nedit
 SUBDIR+=	ng
-SUBDIR+=	notecase
 SUBDIR+=	nts
 SUBDIR+=	nvi
 SUBDIR+=	nvi-m17n
+SUBDIR+=	nvi2
 SUBDIR+=	obby
 SUBDIR+=	p5-Acme-Padre-PlayCode
 SUBDIR+=	p5-PPIx-EditorTools
@@ -139,6 +146,7 @@ SUBDIR+=	ted-no
 SUBDIR+=	ted-pl
 SUBDIR+=	ted-pt
 SUBDIR+=	ted-sv
+SUBDIR+=	tepl4
 SUBDIR+=	texmaker
 SUBDIR+=	texstudio
 SUBDIR+=	texworks

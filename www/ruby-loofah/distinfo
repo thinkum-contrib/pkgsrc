@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.6 2019/10/22 16:24:20 taca Exp $
+$NetBSD: distinfo,v 1.9 2020/06/18 16:23:53 taca Exp $
 
-SHA1 (loofah-2.3.1.gem) = 732be438c5a2a3c7e63a8f173b24b05f78df1ff2
-RMD160 (loofah-2.3.1.gem) = 382991856327a36978f2c47ccda2b1185338f412
-SHA512 (loofah-2.3.1.gem) = 188e84818abc3a3eed39afd66a75e7fa3c0a29f8ec957441f43f4cbfd962c8c3ea848e83f435a3d61ffc667273b5ff006df39d718b7631a11b62ae2d3f78b6ba
-Size (loofah-2.3.1.gem) = 68096 bytes
+SHA1 (loofah-2.6.0.gem) = b5a01ea784e7341f121c2504d3111230af095b7d
+RMD160 (loofah-2.6.0.gem) = 06cb681be23dd9dffce215cff2d2cca9ab083b7f
+SHA512 (loofah-2.6.0.gem) = c94ac83607ad31d95e0b263fa9bf76cf6745c1356ee006fa1592d7eef1353956e17e44d5fd8b345b97a837cc55227d770bc3b3dd2cff26acaa4566e4c3d7d417
+Size (loofah-2.6.0.gem) = 53760 bytes

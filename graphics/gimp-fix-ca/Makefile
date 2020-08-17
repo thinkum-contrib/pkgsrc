@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.52 2020/01/18 23:32:11 rillig Exp $
+# $NetBSD: Makefile,v 1.56 2020/06/02 08:24:01 adam Exp $
 
 DISTNAME=		gimp-fix-ca-3.0.1
-PKGREVISION=		38
+PKGREVISION=		41
 CATEGORIES=		graphics
 MASTER_SITES=		http://registry.gimp.org/file/fix-ca.c?action=download&id=9884&file=
 EXTRACT_SUFX=		.c
 
 MAINTAINER=		dsainty@NetBSD.org
-HOMEPAGE=		https://kcd.sourceforge.net/fix-ca.php
+HOMEPAGE=		http://kcd.sourceforge.net/fix-ca.php
 COMMENT=		GIMP plugin to correct chromatic aberration (CA)
 
 FETCH_BEFORE_ARGS+=	-o ${DISTNAME}${EXTRACT_SUFX}

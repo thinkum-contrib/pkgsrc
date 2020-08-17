@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.4 2019/05/11 13:18:48 fox Exp $
+@comment $NetBSD: PLIST,v 1.6 2020/05/23 17:42:32 fox Exp $
 bin/din
 share/applications/din.desktop
 share/din/factory/2600
@@ -295,6 +295,7 @@ share/din/factory/d_circler
 share/din/factory/d_countries
 share/din/factory/d_curve_picker
 share/din/factory/d_dotter
+share/din/factory/d_dpeu
 share/din/factory/d_fft
 share/din/factory/d_fractaliser
 share/din/factory/d_lissajous
@@ -321,9 +322,12 @@ share/din/factory/din.hlp
 share/din/factory/din.osc
 share/din/factory/din_info
 share/din/factory/dot.crv
+share/din/factory/dp_bpm.crv
+share/din/factory/dp_depth.crv
 share/din/factory/drone-mod-am.crv
 share/din/factory/drone-mod-fm.crv
 share/din/factory/drone-modulation.ed
+share/din/factory/drone-pend.ed
 share/din/factory/drone.crv
 share/din/factory/drone.ed
 share/din/factory/droner.help.tcl
@@ -392,6 +396,8 @@ share/din/factory/morph_source.crv
 share/din/factory/morph_target.crv
 share/din/factory/morse-code.ed
 share/din/factory/morse-code.help.tcl
+share/din/factory/noiser.crv
+share/din/factory/noiser.ed
 share/din/factory/notation.help.tcl
 share/din/factory/note-distance.help.tcl
 share/din/factory/num-octaves.help.tcl
@@ -468,7 +474,6 @@ share/din/factory/spiraler_sin.crv
 share/din/factory/spiraler_sin.ed
 share/din/factory/start-end.help.tcl
 share/din/factory/start-end.patch.tcl
-share/din/factory/swav.crv
 share/din/factory/tuning.help.tcl
 share/din/factory/velocity.crv
 share/din/factory/velocity.ed

@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.11 2020/01/18 21:48:18 jperkin Exp $
+# $NetBSD: buildlink3.mk,v 1.13 2020/05/22 10:55:47 adam Exp $
 
 BUILDLINK_TREE+=	ccrtp
 
@@ -6,7 +6,7 @@ BUILDLINK_TREE+=	ccrtp
 CCRTP_BUILDLINK3_MK:=
 
 BUILDLINK_API_DEPENDS.ccrtp+=	ccrtp>=2.0.0
-BUILDLINK_ABI_DEPENDS.ccrtp?=	ccrtp>=2.1.2nb7
+BUILDLINK_ABI_DEPENDS.ccrtp?=	ccrtp>=2.1.2nb9
 BUILDLINK_PKGSRCDIR.ccrtp?=	../../net/ccrtp
 
 pkgbase := ccrtp

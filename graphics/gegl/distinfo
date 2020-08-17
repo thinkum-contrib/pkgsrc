@@ -1,8 +1,7 @@
-$NetBSD: distinfo,v 1.26 2019/11/13 09:28:24 tnn Exp $
+$NetBSD: distinfo,v 1.29 2020/06/15 10:55:58 ryoon Exp $
 
-SHA1 (gegl-0.4.18.tar.xz) = fbb7415f8f9df63cd738f7ef51ef0f0ff65ecfbb
-RMD160 (gegl-0.4.18.tar.xz) = c33c56c7b839b508f9f89a1bf4ae51ccd6758ca2
-SHA512 (gegl-0.4.18.tar.xz) = e79874cd50e9f0c27c7dc9d9b952545c31d0a48e2b158aa54b92c3e933267877222f86ede7256f2528f18985dc85d6eadbcd809f7a3563efc4449ec7634f15fd
-Size (gegl-0.4.18.tar.xz) = 4812756 bytes
+SHA1 (gegl-0.4.24.tar.xz) = d4accfc8044d96c5d3bfcaa23d2c1fda09d4162b
+RMD160 (gegl-0.4.24.tar.xz) = 4b2b50e9fc9699398c97676d18dde6ad6e25e397
+SHA512 (gegl-0.4.24.tar.xz) = 09d857332eeabe39327d312b1a1692b7c6c9f8f952ae3e3cc06b5a5c262757d8b86467c25a4e66c90c37922fd3548fc1342a9864732d17924f97e7b6c6c1786d
+Size (gegl-0.4.24.tar.xz) = 4937056 bytes
 SHA1 (patch-gegl_gegl-config.c) = a8e1f5f5394a33be2bcdcb05ec7654d06f7ad4bc
-SHA1 (patch-meson.build) = 10c564848e9821be63ea6aa82f27339d4e2bc421

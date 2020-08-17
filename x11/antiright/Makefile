@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.42 2020/01/18 23:35:46 rillig Exp $
+# $NetBSD: Makefile,v 1.45 2020/05/21 13:17:45 mef Exp $
 #
 
 DISTNAME=	antiright-3.4
-PKGREVISION=	34
+PKGREVISION=	36
 CATEGORIES=	x11
 MASTER_SITES=	http://download.savannah.nongnu.org/releases/antiright/
 EXTRACT_SUFX=	.tar.bz2
@@ -32,6 +32,7 @@ SUBST_MESSAGE.hpath=	Fixing hardcoded paths.
 SUBST_FILES.hpath=	configure
 SUBST_SED.hpath=	-e 's|^\(INSTALL[	 :]*=\).*|\1${INSTALL}|'
 SUBST_SED.hpath+=	-e 's|/usr/pkg|${PREFIX}|'
+SUBST_NOOP_OK.hpath=	yes
 
 TOOLS_DEPENDS.pkg-config=	pkg-config>=0.20:../../devel/pkg-config
 BUILDLINK_API_DEPENDS.gtk2+=	gtk2+>=2.6.0

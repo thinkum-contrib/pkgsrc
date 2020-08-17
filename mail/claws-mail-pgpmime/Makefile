@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.72 2020/01/18 21:49:46 jperkin Exp $
+# $NetBSD: Makefile,v 1.77 2020/05/22 10:56:17 adam Exp $
 #
 
 PLUGIN_NAME=	pgpmime

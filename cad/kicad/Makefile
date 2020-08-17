@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.41 2020/01/18 21:48:47 jperkin Exp $
+# $NetBSD: Makefile,v 1.47 2020/06/01 03:50:21 mef Exp $
 #
 
 V=		5.1.4
 DISTNAME=	kicad-${V}
-PKGREVISION=	2
+PKGREVISION=	6
 CATEGORIES=	cad
 MASTER_SITES=	https://launchpad.net/kicad/5.0/${V}/+download/
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.kicad-pcb.org/
+HOMEPAGE=	https://www.kicad-pcb.org/
 COMMENT=	Schematic and PCB CAD software (stable branch)
 LICENSE=	gnu-gpl-v3
 
@@ -26,7 +26,7 @@ CMAKE_ARGS+=		-DKICAD_SCRIPTING=OFF -DKICAD_SCRIPTING_MODULES=OFF
 CMAKE_ARGS+=		-DKICAD_SCRIPTING_ACTION_MENU=OFF
 CMAKE_ARGS+=		-DKICAD_SCRIPTING_WXPYTHON=OFF
 
-CMAKE_MODULE_PATH_OVERRIDE = \
+CMAKE_MODULE_PATH_OVERRIDE= \
 			new/CMakeLists.txt
 
 PY_PATCHPLIST=		yes
@@ -43,9 +43,9 @@ SUBST_SED.macosx=	-e 's/[[:<:]]MACOSX_BUNDLE[[:>:]]//'
 # PR 48980: no fabsl on netbsd-5
 .if !empty(MACHINE_PLATFORM:MNetBSD-5.*)
 SUBST_CLASSES+=		netbsd5
-SUBST_STAGE.netbsd5=	pre-patch
+SUBST_STAGE.netbsd5=	post-extract
 SUBST_MESSAGE.netbsd5=	Substituting fabs() for fabsl() for NetBSD-5
-SUBST_FILES.netbsd5=	pcbnew/legacy_plugin.cpp        \
+SUBST_FILES.netbsd5=	pcbnew/legacy_plugin.cpp \
 			tools/test-nm-biu-to-ascii-mm-round-tripping.cpp
 SUBST_SED.netbsd5=	-e 's/fabsl/fabs/g'
 .endif

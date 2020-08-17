@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.36 2020/01/12 20:20:21 ryoon Exp $
+# $NetBSD: Makefile,v 1.39 2020/05/06 14:04:37 adam Exp $
 
-DISTNAME=	gource-0.49
+DISTNAME=	gource-0.51
 PKGREVISION=	1
 CATEGORIES=	graphics
 MASTER_SITES=	${MASTER_SITE_GITHUB:=acaudwell/}

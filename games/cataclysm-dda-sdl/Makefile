@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3 2019/09/20 16:15:23 nia Exp $
+# $NetBSD: Makefile,v 1.5 2020/04/30 14:57:30 nia Exp $
 
 .include "../../games/cataclysm-dda/Makefile.common"
 
@@ -31,12 +31,6 @@ do-install:
 .endfor
 	cd ${WRKSRC}/gfx && ${PAX} -rw -pp . \
 	    ${DESTDIR}${PREFIX}/share/cataclysm-dda/gfx
-	${INSTALL_DATA} ${WRKSRC}/lua/autoexec.lua \
-	    ${DESTDIR}${PREFIX}/share/cataclysm-dda/lua
-	${INSTALL_DATA} ${WRKSRC}/lua/log.lua \
-	    ${DESTDIR}${PREFIX}/share/cataclysm-dda/lua
-	${INSTALL_DATA} ${WRKSRC}/lua/class_definitions.lua \
-	    ${DESTDIR}${PREFIX}/share/cataclysm-dda/lua
 	${INSTALL_DATA} ${WRKSRC}/data/changelog.txt \
 	    ${DESTDIR}${PREFIX}/share/cataclysm-dda
 	${INSTALL_DATA} ${WRKSRC}/data/cataicon.ico \

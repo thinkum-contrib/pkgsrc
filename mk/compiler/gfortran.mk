@@ -1,4 +1,4 @@
-# $NetBSD: gfortran.mk,v 1.10 2018/08/22 20:48:37 maya Exp $
+# $NetBSD: gfortran.mk,v 1.15 2020/03/26 12:44:46 gdt Exp $
 #
 # Copyright (c) 2005 The NetBSD Foundation, Inc.
 # All rights reserved.
@@ -33,7 +33,20 @@ COMPILER_GFORTRAN_MK=	defined
 
 .include "../../mk/bsd.prefs.mk"
 
-GFORTRAN_VERSION?=	48
+# If pkgsrc base compiler is GCC, match the gfortran requirement as closely as
+# possible.  Otherwise, default to a mainstream version and hope for the best.
+# If base compiler is clang, we really should use flang rather than gfortran.
+# \todo Perhaps adjust this so that gcc-4.8.3 maps to 48, or document that 4.8
+# is so old that we intend what seems like a bug to choose the modern version
+# in that case.
+POSSIBLE_GFORTRAN_VERSION?=	${CC_VERSION:S/gcc-//:C/.[0-9].[0-9]$//}
+
+.if !empty(PKGSRC_COMPILER:Mgcc) && \
+    exists(${PKGSRCDIR}/lang/gcc${POSSIBLE_GFORTRAN_VERSION}/buildlink3.mk)
+GFORTRAN_VERSION?=		${POSSIBLE_GFORTRAN_VERSION}
+.else
+GFORTRAN_VERSION?=		7
+.endif
 
 .if !empty(PKGPATH:Mlang/gcc${GFORTRAN_VERSION}) || !empty(PKGPATH:Mdevel/patch) || \
     !empty(PKGPATH:Mdevel/libtool-base)

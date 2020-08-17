@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.23 2020/01/18 23:32:04 rillig Exp $
+# $NetBSD: Makefile,v 1.25 2020/05/20 06:09:08 rillig Exp $
 #
 
 DISTNAME=		scid-3.6.1
@@ -7,7 +7,7 @@ CATEGORIES=		games
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=scid/}
 
 MAINTAINER=		luapzz@gmail.com
-HOMEPAGE=		https://scid.sourceforge.net/
+HOMEPAGE=		http://scid.sourceforge.net/
 COMMENT=		Shane's Chess Information Database
 
 USE_PKGLOCALEDIR=	yes
@@ -33,6 +33,12 @@ SUBST_SED.paths+=	-e 's,@LIBDL@,${BUILDLINK_LDADD.dl},g'
 MAKE_ENV+=		X_LDFLAGS=${X11_LDFLAGS:Q}
 
 REPLACE_PYTHON+=	scripts/pgnfix.py
+
+# src/textbuf.h: In member function 'void TextBuffer::ClearTranslation(char)':
+# src/textbuf.h:70:57: error: array subscript has type 'char' [-Werror=char-subscripts]
+#      void     ClearTranslation (char ch) { Translation[ch] = NULL; }
+# Maybe fix this later.
+BUILDLINK_TRANSFORM+=	rm:-Werror=char-subscripts
 
 .include "../../lang/python/application.mk"
 .include "../../devel/zlib/buildlink3.mk"

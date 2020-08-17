@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.184 2020/01/18 21:49:49 jperkin Exp $
+# $NetBSD: Makefile,v 1.191 2020/06/02 08:22:47 adam Exp $
 
 DISTNAME=	evolution-data-server-3.35.1
-PKGREVISION=	2
+PKGREVISION=	8
 CATEGORIES=	mail
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/evolution-data-server/${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.xz
@@ -24,6 +24,8 @@ TOOL_DEPENDS+=	gdbus-codegen-[0-9]*:../../devel/gdbus-codegen
 CMAKE_ARGS+=	-DENABLE_GOA=OFF
 CMAKE_ARGS+=	-DWITH_LIBDB=OFF
 CMAKE_ARGS+=	-DENABLE_WEATHER=OFF
+
+CFLAGS.NetBSD+=	-D_NETBSD_SOURCE
 
 LDFLAGS+=	${COMPILER_RPATH_FLAG}${PREFIX}/lib/evolution-data-server
 

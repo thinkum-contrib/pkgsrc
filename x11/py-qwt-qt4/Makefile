@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.16 2020/01/18 23:35:55 rillig Exp $
+# $NetBSD: Makefile,v 1.18 2020/03/08 16:51:47 wiz Exp $
 
 DISTNAME=	PyQwt-5.2.0
 PKGNAME=	${PYPKGPREFIX}-qwt-qt4-${DISTNAME:S/PyQwt-//}
-PKGREVISION=	5
+PKGREVISION=	6
 CATEGORIES=	x11
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=pyqwt/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://pyqwt.sourceforge.net/
+HOMEPAGE=	http://pyqwt.sourceforge.net/
 COMMENT=	Python bindings for the Qwt QT4 C++ class library
 LICENSE=	gnu-gpl-v2 OR gnu-gpl-v3
 

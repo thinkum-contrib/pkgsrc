@@ -1,4 +1,4 @@
-# $NetBSD: gcc.mk,v 1.208 2019/09/19 06:46:59 rillig Exp $
+# $NetBSD: gcc.mk,v 1.213 2020/06/02 06:58:13 rillig Exp $
 #
 # This is the compiler definition for the GNU Compiler Collection.
 #
@@ -395,6 +395,9 @@ _LANGUAGES.gcc=		# empty
 .for _lang_ in ${USE_LANGUAGES}
 _LANGUAGES.gcc+=	${LANGUAGES.gcc:M${_lang_}}
 .endfor
+
+_WRAP_EXTRA_ARGS.cc+=	-fcommon
+CWRAPPERS_PREPEND.cc+=	-fcommon
 
 .if !empty(USE_LANGUAGES:Mc99)
 _WRAP_EXTRA_ARGS.CC+=	-std=gnu99
@@ -976,7 +979,7 @@ CC_VERSION=		${_GCC_PKG}
 .endif
 
 # The user can choose the level of stack smashing protection.
-.if !empty(CC_VERSION:Mgcc-[4-9]*)
+.if empty(CC_VERSION:Mgcc-[1-3].*)
 .  if ${PKGSRC_USE_SSP} == "all"
 _SSP_CFLAGS=		-fstack-protector-all
 .  elif ${PKGSRC_USE_SSP} == "strong"
@@ -1046,10 +1049,7 @@ ${_GCC_${_var_}}:
 .endfor
 
 # On systems without a Fortran compiler, pull one in if needed.
-# The default is g95 as it supports a modern dialect, but it can
-# be overridden in mk.conf to use only f2c.
-#
-PKGSRC_FORTRAN?=g95
+PKGSRC_FORTRAN?=gfortran
 
 _GCC_NEEDS_A_FORTRAN=	no
 .if empty(_USE_PKGSRC_GCC:M[yY][eE][sS]) && !exists(${FCPATH})
@@ -1069,5 +1069,8 @@ _GCC_NEEDS_A_FORTRAN=	yes
 COMPILER_INCLUDE_DIRS=	${_GCCBINDIR:H}/include ${_OPSYS_INCLUDE_DIRS}
 COMPILER_LIB_DIRS=	${_GCCBINDIR:H}/lib ${_OPSYS_LIB_DIRS}
 .endif
+
+#.READONLY: GCC_REQD
+_GCC_REQD_EFFECTIVE:=	${GCC_REQD}
 
 .endif	# COMPILER_GCC_MK

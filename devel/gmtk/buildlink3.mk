@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.38 2019/09/18 14:17:08 ryoon Exp $
+# $NetBSD: buildlink3.mk,v 1.41 2020/06/02 08:22:35 adam Exp $
 #
 
 BUILDLINK_TREE+=	gmtk
@@ -7,7 +7,7 @@ BUILDLINK_TREE+=	gmtk
 GMTK_BUILDLINK3_MK:=
 
 BUILDLINK_API_DEPENDS.gmtk+=	gmtk>=1.0.7
-BUILDLINK_ABI_DEPENDS.gmtk+=	gmtk>=1.0.9nb17
+BUILDLINK_ABI_DEPENDS.gmtk+=	gmtk>=1.0.9nb20
 BUILDLINK_PKGSRCDIR.gmtk?=	../../devel/gmtk
 
 pkgbase := gmtk

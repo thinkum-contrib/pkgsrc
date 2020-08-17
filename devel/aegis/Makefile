@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.51 2020/01/18 23:30:21 rillig Exp $
+# $NetBSD: Makefile,v 1.57 2020/06/02 08:23:33 adam Exp $
 #
 
 DISTNAME=	aegis-4.24.2
-PKGREVISION=	26
+PKGREVISION=	30
 CATEGORIES=	devel scm
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=aegis/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://aegis.sourceforge.net/
+HOMEPAGE=	http://aegis.sourceforge.net/
 COMMENT=	Aegis is a transaction base software configuration management system
 LICENSE=	gnu-gpl-v3
 
@@ -23,7 +23,6 @@ AEGIS_USER_GID?=	3
 
 CONFIGURE_ARGS+=	--with-nlsdir=${_PKGLOCALEDIR}
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR}
-CONFIGURE_ARGS+=	--with-no-aegis-configured
 CONFIGURE_ARGS+=	--sharedstatedir=${PREFIX}/com/aegis
 CONFIGURE_ENV+=		PATCH=${PATCH:Q}
 CONFIGURE_ENV+=		AEGIS_UID=${AEGIS_USER_UID:Q}

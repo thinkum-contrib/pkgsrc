@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.6 2019/02/11 09:24:22 adam Exp $
+# $NetBSD: Makefile,v 1.11 2020/06/16 16:54:45 adam Exp $
 
 PKGNAME=	${DISTNAME:S/ffmpeg/ffplay4/}
 MAINTAINER=	pkgsrc-users@NetBSD.org
@@ -6,6 +6,8 @@ HOMEPAGE=	https://ffmpeg.org/
 COMMENT=	Simple SDL frontend for FFmpeg
 
 DISTINFO_FILE=		${.CURDIR}/../ffmpeg4/distinfo
+
+USE_LANGUAGES=	c99
 
 CONFIGURE_ARGS+=	--disable-ffmpeg
 CONFIGURE_ARGS+=	--disable-ffprobe

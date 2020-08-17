@@ -1,14 +1,16 @@
-# $NetBSD: Makefile,v 1.5 2020/01/18 23:30:18 rillig Exp $
+# $NetBSD: Makefile,v 1.8 2020/06/01 22:17:34 joerg Exp $
 
 DISTNAME=	pg_repack-1.4.3
 PKGNAME=	postgresql${PGSQL_VERSION}-${DISTNAME}
 CATEGORIES=	databases
 MASTER_SITES=	${MASTER_SITE_GITHUB:=reorg/}
 
-MAINTAINER=	fhajny@NetBSD.org
+MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://reorg.github.io/pg_repack/
 COMMENT=	Reorganize tables in PostgreSQL databases with minimal locks
 LICENSE=	modified-bsd
+
+PGSQL_VERSIONS_ACCEPTED?=	10 96 95
 
 GITHUB_PROJECT=	pg_repack
 GITHUB_TAG=	ver_${PKGVERSION_NOREV}

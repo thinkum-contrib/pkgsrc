@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.64 2020/01/20 21:26:52 nia Exp $
+# $NetBSD: Makefile,v 1.66 2020/03/08 16:48:45 wiz Exp $
 
 DISTNAME=	libmikmod-3.3.11.1
-PKGREVISION=	1
+PKGREVISION=	2
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=mikmod/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://mikmod.sourceforge.net/
+HOMEPAGE=	http://mikmod.sourceforge.net/
 COMMENT=	MikMod Sound Library
 LICENSE=	gnu-lgpl-v2
 

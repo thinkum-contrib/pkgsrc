@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.9 2020/01/18 13:43:38 pho Exp $
+# $NetBSD: Makefile,v 1.12 2020/03/24 20:40:15 joerg Exp $
 # -----------------------------------------------------------------------------
 # Package metadata
 #
 DISTNAME=	ghc-8.8.1-src
-PKGREVISION=	1
+PKGREVISION=	2
 PKGNAME=	${DISTNAME:S/-src$//}
 CATEGORIES=	lang
 MASTER_SITES=	https://downloads.haskell.org/~ghc/${PKGVERSION_NOREV}/
@@ -13,6 +13,8 @@ MAINTAINER=	pho@cielonegro.org
 HOMEPAGE=	https://www.haskell.org/ghc/
 COMMENT=	Compiler for the functional language Haskell - 8.8 Release Series
 LICENSE=	modified-bsd
+
+UNLIMIT_RESOURCES=	datasize virtualsize
 
 # TODO: We should be using the alternatives framework.
 CONFLICTS+=	ghc-[0-9]*
@@ -26,8 +28,7 @@ BROKEN_EXCEPT_ON_PLATFORM+=	Darwin-*-x86_64
 BROKEN_EXCEPT_ON_PLATFORM+=	FreeBSD-*-i386
 BROKEN_EXCEPT_ON_PLATFORM+=	FreeBSD-*-x86_64
 BROKEN_EXCEPT_ON_PLATFORM+=	NetBSD-*-x86_64
-#BROKEN_EXCEPT_ON_PLATFORM+=	SunOS-*-i386     # Not available yet
-#BROKEN_EXCEPT_ON_PLATFORM+=	SunOS-*-x86_64   # Not available yet
+BROKEN_EXCEPT_ON_PLATFORM+=	SunOS-*-x86_64
 
 
 # -----------------------------------------------------------------------------
@@ -159,6 +160,10 @@ post-configure:
 # Don't even think of PDF.
 	${RUN} ${ECHO} "BUILD_SPHINX_PDF  = NO" >> ${WRKSRC}/mk/build.mk
 
+# https://gitlab.haskell.org/ghc/ghc/issues/13542
+.if ${OPSYS} == "SunOS"
+	${RUN} ${ECHO} "SplitSections  = YES" >> ${WRKSRC}/mk/build.mk
+.endif
 
 # -----------------------------------------------------------------------------
 # Installation/removal hooks
@@ -228,7 +233,7 @@ BUILD_DEPENDS+=	compat80-[0-9]*:../../emulators/compat80
 # In a sandboxed build environment, we have to reach over to the
 # installed libraries themselves, since the symlinks compat80 adds
 # to the /usr tree can't be applied.
-MAKE_ENV+=	LD_LIBRARY_PATH=${PREFIX}/emul/netbsd/usr/lib
+ALL_ENV+=	LD_LIBRARY_PATH=${PREFIX}/emul/netbsd/usr/lib:${FILESDIR}
 .endif
 
 .include "../../converters/libiconv/buildlink3.mk"

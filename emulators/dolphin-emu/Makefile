@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.14 2020/01/18 21:49:19 jperkin Exp $
+# $NetBSD: Makefile,v 1.22 2020/07/07 11:20:26 nia Exp $
 
 DISTNAME=	dolphin-emu-5.0
-PKGREVISION=	10
+PKGREVISION=	16
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_GITHUB:=dolphin-emu/}
 GITHUB_PROJECT=	dolphin
@@ -12,10 +12,9 @@ HOMEPAGE=	https://dolphin-emu.org/
 COMMENT=	Nintendo GameCube and Wii emulator
 LICENSE=	gnu-gpl-v2
 
-EXTRACT_USING=	bsdtar
 USE_TOOLS+=	msgfmt msgmerge pkg-config
 USE_CMAKE=	yes
-USE_LANGUAGES=	c c++14
+USE_LANGUAGES=	c c++
 
 # std::make_unique
 GCC_REQD+=	4.9
@@ -34,7 +33,7 @@ ONLY_FOR_PLATFORM=	${LITTLEENDIANPLATFORMS}
 # No support in the code.
 BROKEN_ON_PLATFORM+=	SunOS-*-*
 
-.if ${MACHINE_ARCH} != "x86_64" && ${MACHINE_ARCH} != "aarch64"
+.if ${MACHINE_ARCH} != "x86_64"
 CMAKE_ARGS+=		-DENABLE_GENERIC=1
 .endif
 

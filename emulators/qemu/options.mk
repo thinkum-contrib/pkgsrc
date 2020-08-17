@@ -1,7 +1,8 @@
-# $NetBSD: options.mk,v 1.6 2020/01/13 02:50:25 gutteridge Exp $
+# $NetBSD: options.mk,v 1.11 2020/06/22 12:13:20 nia Exp $
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.qemu
-PKG_SUPPORTED_OPTIONS=	gtk3 sdl
+PKG_SUPPORTED_OPTIONS=	gtk3 iscsi sdl spice
+PKG_SUGGESTED_OPTIONS+=	iscsi
 
 .include "../../mk/bsd.fast.prefs.mk"
 
@@ -10,7 +11,15 @@ PKG_SUPPORTED_OPTIONS+=	virtfs-proxy-helper
 .endif
 
 .if ${OPSYS} != "Darwin"
+# NetBSD<9.0 does not have EGL support in native X11,
+# so the QEMU OpenGL display driver cannot build.
+.  include "../../graphics/MesaLib/features.mk"
+.  if !empty(MESALIB_SUPPORTS_EGL:M[Yy][Ee][Ss])
+PKG_SUPPORTED_OPTIONS+=	opengl
+PKG_SUGGESTED_OPTIONS+=	opengl sdl
+.  else
 PKG_SUGGESTED_OPTIONS+=	sdl
+.  endif
 .endif
 
 .include "../../mk/bsd.options.mk"
@@ -23,6 +32,14 @@ CONFIGURE_ARGS+=	--enable-gtk
 .include "../../x11/gtk3/buildlink3.mk"
 .else
 CONFIGURE_ARGS+=	--disable-gtk
+.endif
+
+.if !empty(PKG_OPTIONS:Mopengl)
+CONFIGURE_ARGS+=	--enable-opengl
+.include "../../graphics/MesaLib/buildlink3.mk"
+.include "../../graphics/libepoxy/buildlink3.mk"
+.else
+CONFIGURE_ARGS+=	--disable-opengl
 .endif
 
 .if !empty(PKG_OPTIONS:Msdl)
@@ -39,4 +56,19 @@ PLIST.virtfs-proxy-helper=	yes
 CONFIGURE_ARGS+=		--enable-virtfs
 .else
 CONFIGURE_ARGS+=		--disable-virtfs
+.endif
+
+.if !empty(PKG_OPTIONS:Mspice)
+CONFIGURE_ARGS+=	--enable-spice
+.include "../../sysutils/spice-protocol/buildlink3.mk"
+.include "../../sysutils/spice-server/buildlink3.mk"
+.else
+CONFIGURE_ARGS+=	--disable-spice
+.endif
+
+.if !empty(PKG_OPTIONS:Miscsi)
+CONFIGURE_ARGS+=	--enable-libiscsi
+.include "../../net/libiscsi/buildlink3.mk"
+.else
+CONFIGURE_ARGS+=	--disable-libiscsi
 .endif

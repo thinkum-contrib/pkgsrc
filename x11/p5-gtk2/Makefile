@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.79 2020/01/18 23:35:54 rillig Exp $
+# $NetBSD: Makefile,v 1.82 2020/03/10 22:09:11 wiz Exp $
 
 DISTNAME=	Gtk2-1.24992
 PKGNAME=	${DISTNAME:C:Gtk2:p5-gtk2:}
-PKGREVISION=	7
+PKGREVISION=	9
 CATEGORIES=	x11 perl5
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=gtk2-perl/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://gtk2-perl.sourceforge.net/
+HOMEPAGE=	http://gtk2-perl.sourceforge.net/
 COMMENT=	Perl bindings for GTK+ 2.0
 LICENSE=	gnu-lgpl-v2.1
 

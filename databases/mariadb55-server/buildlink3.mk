@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.3 2020/01/18 21:47:59 jperkin Exp $
+# $NetBSD: buildlink3.mk,v 1.5 2020/04/16 09:08:46 manu Exp $
 
 BUILDLINK_TREE+=	mariadb-server
 

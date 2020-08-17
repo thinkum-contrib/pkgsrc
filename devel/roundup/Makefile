@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.58 2020/01/18 23:30:39 rillig Exp $
+# $NetBSD: Makefile,v 1.60 2020/05/22 21:19:11 rillig Exp $
 
 DISTNAME=	roundup-1.4.19
 PKGREVISION=	3
@@ -6,7 +6,7 @@ CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_PYPI:=r/roundup/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://roundup.sourceforge.net/
+HOMEPAGE=	http://roundup.sourceforge.net/
 COMMENT=	Issue tracking system with command-line, web and email clients
 LICENSE=	mit AND zpl-2.0
 
@@ -14,7 +14,7 @@ USE_LANGUAGES=	# empty
 USE_TOOLS+=	pax
 
 PYTHON_VERSIONS_ACCEPTED=	27 # not yet ported as of 1.4.19
-REPLACE_PYTHON+=		cgi-bin/roundup.cgi demo.py roundup/admin.py
+REPLACE_PYTHON+=		demo.py roundup/admin.py
 REPLACE_PYTHON+=		frontends/roundup.cgi
 REPLACE_PYTHON+=		roundup/backends/locking.py
 REPLACE_PYTHON+=		roundup/cgi/TAL/talgettext.py

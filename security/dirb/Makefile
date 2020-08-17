@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.31 2020/01/18 23:35:06 rillig Exp $
+# $NetBSD: Makefile,v 1.35 2020/05/22 10:56:36 adam Exp $
 #
 
 PKGNAME=	dirb-1.9
 DISTNAME=	dirb19
-PKGREVISION=	22
+PKGREVISION=	25
 CATEGORIES=	security
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=dirb/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://dirb.sourceforge.net/
+HOMEPAGE=	http://dirb.sourceforge.net/
 COMMENT=	Web Content Scanner
 
 WRKSRC=	${WRKDIR}/dirb

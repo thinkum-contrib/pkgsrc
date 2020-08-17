@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.29 2020/01/18 21:48:48 jperkin Exp $
+# $NetBSD: Makefile,v 1.34 2020/06/02 08:23:17 adam Exp $
 
 DISTNAME=	anope-2.0.7-source
 PKGNAME=	${DISTNAME:S/-source//1}
-PKGREVISION=	1
+PKGREVISION=	6
 CATEGORIES=	chat
 MASTER_SITES=	${MASTER_SITE_GITHUB:=anope/}
 GITHUB_PROJECT=	anope
@@ -50,9 +50,7 @@ SUBST_CLASSES+=		conf
 SUBST_STAGE.conf=	pre-configure
 SUBST_MESSAGE.conf=	Set variables in configuration file.
 SUBST_FILES.conf+=	data/example.conf
-SUBST_VARS.conf=	PREFIX
-SUBST_VARS.conf+=	PKG_SYSCONFDIR
-SUBST_VARS.conf+=	PKGLOCALEDIR
+SUBST_VARS.conf=	PREFIX PKG_SYSCONFDIR
 
 RCD_SCRIPTS=	anope
 

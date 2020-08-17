@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.7 2019/11/18 20:01:03 adam Exp $
+# $NetBSD: Makefile,v 1.9 2020/05/23 09:12:57 adam Exp $
 
-DISTNAME=	fs-uae-arcade-3.0.2
+DISTNAME=	fs-uae-arcade-3.0.5
 CATEGORIES=	emulators
 MASTER_SITES=	http://fs-uae.net/stable/${PKGVERSION_NOREV}/
 
@@ -24,8 +24,9 @@ INSTALL_TARGET=		install-data
 USE_TOOLS+=		gmake msgfmt
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27
-PYSETUPINSTALLARGS=		--install-lib=${PREFIX:Q}/share/fs-uae-arcade
-PYSETUPINSTALLARGS+=		--install-scripts=${PREFIX:Q}/share/fs-uae-arcade
+
+PYSETUPINSTALLARGS=	--install-lib=${PREFIX:Q}/share/fs-uae-arcade
+PYSETUPINSTALLARGS+=	--install-scripts=${PREFIX:Q}/share/fs-uae-arcade
 
 REPLACE_PYTHON+=	fs-uae-arcade
 
@@ -35,8 +36,7 @@ SUBST_CLASSES+=		prefix
 SUBST_MESSAGE.prefix=	Fixing installation prefix.
 SUBST_STAGE.prefix=	pre-configure
 SUBST_FILES.prefix=	Makefile
-SUBST_FILES.prefix+=	fs_uae_launcher/FSUAELauncher.py
-SUBST_FILES.prefix+=	game_center/gamecenterutil.py
+SUBST_FILES.prefix+=	launcher/ui/launcherwindow.py
 SUBST_SED.prefix=	-e 's,/usr/local,${PREFIX},'
 
 post-install:

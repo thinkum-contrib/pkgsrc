@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.101 2020/01/18 21:49:23 jperkin Exp $
+# $NetBSD: Makefile,v 1.112 2020/06/05 12:49:05 jperkin Exp $
 
 DISTNAME=	flightgear-2019.1.1
-PKGREVISION=	2
+PKGREVISION=	12
 CATEGORIES=	games
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=flightgear/release-${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.bz2
@@ -22,6 +22,9 @@ CMAKE_ARG_PATH=		..
 
 CMAKE_ARGS+=		-DCMAKE_BUILD_TYPE=Release
 CMAKE_ARGS+=		-DFG_BUILD_TYPE=Release
+
+post-extract:
+	${MV} ${WRKSRC}/version ${WRKSRC}/myversion
 
 # The cmake script warns against building in the source directory.
 pre-configure:

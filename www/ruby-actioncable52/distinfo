@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.2 2019/04/14 10:33:01 taca Exp $
+$NetBSD: distinfo,v 1.4 2020/05/19 15:37:45 taca Exp $
 
-SHA1 (actioncable-5.2.3.gem) = eaf111d90d969dbaef1c53e5d4e27cfc9520fc59
-RMD160 (actioncable-5.2.3.gem) = b79642ff71643df4bbc66a7a2ea16b124d91e8c6
-SHA512 (actioncable-5.2.3.gem) = 4baf0216c3693edc35aa6563139039d3fa612fbd19a9008ff878c205c5e1cbf42fb3420133b7cfbfa97d1c4feb4f8eed017ab19ab44f9ac86afbd09734a4db87
-Size (actioncable-5.2.3.gem) = 41472 bytes
+SHA1 (actioncable-5.2.4.3.gem) = 57936c04e421d5626dae6384645d2c04c50fade9
+RMD160 (actioncable-5.2.4.3.gem) = 4f84dc84efd3840070531e1b5e54d522c19fa137
+SHA512 (actioncable-5.2.4.3.gem) = 7859270691a15ec753fa4c77368cafdf972c25168935c00433144c14202012f310c9a90f8978ef85fcca0d7d6629b663ed42c10c8dfd67a1e693ca42d77a3a71
+Size (actioncable-5.2.4.3.gem) = 41472 bytes

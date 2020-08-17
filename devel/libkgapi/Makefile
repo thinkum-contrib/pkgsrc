@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.19 2020/01/18 23:30:31 rillig Exp $
+# $NetBSD: Makefile,v 1.25 2020/06/05 12:49:04 jperkin Exp $
 
 DISTNAME=	libkgapi-2.2.0
-PKGREVISION=	17
+PKGREVISION=	22
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_KDE:=libkgapi/2.2.0/src/}
 EXTRACT_SUFX=	.tar.bz2
@@ -15,6 +15,7 @@ BUILD_DEPENDS+=	automoc4>=0.9.83:../../devel/automoc4
 
 USE_CMAKE=	yes
 USE_LANGUAGES=	c c++
+TOOLS_BROKEN+=	perl
 
 
 .include "../../meta-pkgs/kde4/kde4.mk"

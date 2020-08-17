@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.54 2020/01/18 23:32:10 rillig Exp $
+# $NetBSD: Makefile,v 1.59 2020/05/23 12:38:42 rillig Exp $
 
 DISTNAME=	enblend-enfuse-4.2
-PKGREVISION=	16
+PKGREVISION=	19
 CATEGORIES=	graphics
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=enblend/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://enblend.sourceforge.net/
+HOMEPAGE=	http://enblend.sourceforge.net/
 COMMENT=	Combines overlapping images without seams, with good exposure
 LICENSE=	gnu-gpl-v2
 
@@ -21,7 +21,6 @@ BUILD_DEPENDS+=		help2man-[0-9]*:../../converters/help2man
 .include "../../mk/bsd.prefs.mk"
 
 .if ${OPSYS} != "Darwin"
-CONFIGURE_ARGS+=	--with-x
 .include "../../graphics/freeglut/buildlink3.mk"
 .endif
 

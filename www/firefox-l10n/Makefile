@@ -1,8 +1,7 @@
-# $NetBSD: Makefile,v 1.166 2020/01/22 13:35:21 ryoon Exp $
-#
+# $NetBSD: Makefile,v 1.182 2020/07/31 10:36:43 maya Exp $
 
-FIREFOX_VER=	72.0.2
-PKGNAME=	firefox-l10n-${FIREFOX_VER:S/esr//}
+FIREFOX_VER=	79.0
+PKGNAME=	firefox-l10n-${FIREFOX_VER:S/b/beta/:S/esr//}
 DISTNAME=	# empty
 CATEGORIES=	www
 #MASTER_SITES=	${MASTER_SITE_MOZILLA_ALL:=firefox/releases/${FIREFOX_VER}/linux-i686/xpi/}
@@ -13,23 +12,26 @@ HOMEPAGE=	https://www.mozilla.com/en-US/firefox/
 COMMENT=	Language packs for www/firefox
 LICENSE=	mpl-2.0 AND mpl-1.1 AND gnu-lgpl-v3 # as of 70.0.1
 
+DEPENDS+=	firefox>=${PKGVERSION_NOREV}:../../www/firefox
+
 DIST_SUBDIR=	${PKGNAME_NOREV}
 DISTFILES=	${FIREFOX_LOCALES:=.xpi}
 
 NO_BUILD=	yes
 
-INSTALLATION_DIRS=	lib/firefox/browser/extensions
+INSTALLATION_DIRS=	lib/firefox/distribution/extensions
 
 FIREFOX_LOCALES= \
-	ach af an ar ast az be bg bn br bs ca cak cs cy da de dsb	\
+	ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy	\
+	da de dsb	\
 	el en-CA en-GB en-US eo es-AR es-CL es-ES es-MX et eu		\
 	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN				\
 	he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn	ko	\
 	lij lt lv mk mr ms my nb-NO ne-NP nl nn-NO oc			\
 	pa-IN pl pt-BR pt-PT rm ro ru si sk sl son sq sr sv-SE		\
-	ta te th tr uk uz vi xh zh-CN zh-TW
+	ta te th tl tr trs uk uz vi xh zh-CN zh-TW
 
-EXTENSIONS_DIR=		${PREFIX}/lib/firefox/browser/extensions
+EXTENSIONS_DIR=		${PREFIX}/lib/firefox/distribution/extensions
 
 do-install:
 .for locale in ${FIREFOX_LOCALES}

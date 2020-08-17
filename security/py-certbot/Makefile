@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.22 2019/12/15 09:48:37 adam Exp $
+# $NetBSD: Makefile,v 1.25 2020/05/17 19:34:12 adam Exp $
 
 .include "../../security/py-certbot/Makefile.common"
 
@@ -7,7 +7,7 @@ MASTER_SITES=	${MASTER_SITE_PYPI:=c/certbot/}
 
 COMMENT=	Client for the Let's Encrypt CA
 
-DEPENDS+=	${PYPKGPREFIX}-acme>=0.40.0:../../security/py-acme
+DEPENDS+=	${PYPKGPREFIX}-acme>=1.4.0:../../security/py-acme
 DEPENDS+=	${PYPKGPREFIX}-configargparse>=0.9.3:../../devel/py-configargparse
 DEPENDS+=	${PYPKGPREFIX}-configobj-[0-9]*:../../devel/py-configobj
 DEPENDS+=	${PYPKGPREFIX}-cryptography>=1.2.3:../../security/py-cryptography
@@ -23,9 +23,10 @@ DEPENDS+=	${PYPKGPREFIX}-ZopeInterface-[0-9]*:../../devel/py-ZopeInterface
 # Needed for the test target
 # https://github.com/certbot/certbot/issues/2956
 TEST_DEPENDS+=	${PYPKGPREFIX}-readline-[0-9]*:../../devel/py-readline
-TEST_DEPENDS+=	${PYPKGPREFIX}-test-[0-9]*:../../devel/py-test
 TEST_DEPENDS+=	${PYPKGPREFIX}-test-cov-[0-9]*:../../devel/py-test-cov
 TEST_DEPENDS+=	${PYPKGPREFIX}-test-xdist-[0-9]*:../../devel/py-test-xdist
+
+PYTHON_VERSIONED_DEPENDENCIES=	test:test
 
 BUILD_DEFS+=		VARBASE
 
@@ -34,11 +35,8 @@ PKG_SYSCONFSUBDIR=	letsencrypt
 SUBST_CLASSES+=		path
 SUBST_STAGE.path=	pre-build
 SUBST_MESSAGE.path=	Fixing default paths
-SUBST_FILES.path+=	certbot/cert_manager.py
-SUBST_FILES.path+=	certbot/cli.py
-SUBST_FILES.path+=	certbot/compat/misc.py
-SUBST_FILES.path+=	certbot/tests/cli_test.py
-SUBST_SED.path+=	-e 's,/etc/letsencrypt,${PKG_SYSCONFDIR},g'
+SUBST_FILES.path=	certbot/compat/misc.py
+SUBST_SED.path=		-e 's,/etc/letsencrypt,${PKG_SYSCONFDIR},g'
 SUBST_SED.path+=	-e 's,/var/lib/letsencrypt,${VARBASE}/letsencrypt,g'
 SUBST_SED.path+=	-e 's,/var/log/letsencrypt,${VARBASE}/letsencrypt/log,g'
 
@@ -53,4 +51,5 @@ post-install:
 		${DESTDIR}${PREFIX}/share/examples/certbot-${PYVERSSUFFIX}
 
 .include "../../lang/python/egg.mk"
+.include "../../lang/python/versioned_dependencies.mk"
 .include "../../mk/bsd.pkg.mk"

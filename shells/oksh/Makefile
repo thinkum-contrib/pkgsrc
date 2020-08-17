@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.2 2019/07/24 11:15:41 maya Exp $
+# $NetBSD: Makefile,v 1.5 2020/06/05 20:23:03 maya Exp $
 
-DISTNAME=	oksh-6.5
+DISTNAME=	oksh-6.7
 CATEGORIES=	shells
 MASTER_SITES=	${MASTER_SITE_GITHUB:=ibara/}
 GITHUB_TAG=	${DISTNAME}
@@ -13,5 +13,9 @@ LICENSE=	original-bsd
 WRKSRC=		${WRKDIR}/oksh-${PKGNAME_NOREV}
 
 GNU_CONFIGURE=		yes
+PKG_SHELL=		${PREFIX}/bin/oksh
+
+# XXX remove the following line in oksh>6.7
+LDFLAGS.Linux+=		-lrt
 
 .include "../../mk/bsd.pkg.mk"

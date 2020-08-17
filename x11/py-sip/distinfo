@@ -1,9 +1,9 @@
-$NetBSD: distinfo,v 1.46 2019/09/16 19:49:44 adam Exp $
+$NetBSD: distinfo,v 1.48 2020/06/11 14:49:15 adam Exp $
 
-SHA1 (sip-4.19.19.tar.gz) = bfe8a39bf1d399d5f3580db25befed2e78b4ebb9
-RMD160 (sip-4.19.19.tar.gz) = 722dd0b88078abf73e3a1d41a2548b80ff1eb1d4
-SHA512 (sip-4.19.19.tar.gz) = 396c625f59ccef67c2e94221b26dd4ed5d536652a9b63a9f23b340ddf16adf34c6bdb0fbd7c0c1cc403e1d59e8ebf716b478a24bade66a2703fcc5f00b62533d
-Size (sip-4.19.19.tar.gz) = 1058422 bytes
+SHA1 (sip-4.19.23.tar.gz) = 3601678ce3b5c8e29a0a2b916ca09dbba9e35b73
+RMD160 (sip-4.19.23.tar.gz) = 8f99219ea118f829c0f7239dfc1e52a792ef4c6b
+SHA512 (sip-4.19.23.tar.gz) = a50c6202ebb6a5d1c98b6fc79925fa5d82236a944003854b057be9e2f7340d5cd689ba0e08f46f521736f3574c4089768c869bb8921e66b23944a31a832770f1
+Size (sip-4.19.23.tar.gz) = 1053640 bytes
 SHA1 (patch-configure.py) = 822a5fd4b23dde511fb9268a32458d7cd46d91ea
 SHA1 (patch-sipgen_sipgen.sbf) = f90554d3d0e4cdcf33e69f492281a028ed6975fb
 SHA1 (patch-siputils.py) = 39436983efbf6719b376084a14b8c71b708ed329

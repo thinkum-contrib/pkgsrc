@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.129 2020/01/18 23:33:27 rillig Exp $
+# $NetBSD: Makefile,v 1.140 2020/06/12 14:59:59 leot Exp $
 
-DISTNAME=	cups-filters-1.26.1
+DISTNAME=	cups-filters-1.27.5
 CATEGORIES=	print
 MASTER_SITES=	http://openprinting.org/download/cups-filters/
 EXTRACT_SUFX=	.tar.xz
@@ -11,8 +11,8 @@ COMMENT=	Backends, filters, and other software for cups
 LICENSE=	gnu-gpl-v2 AND gnu-gpl-v3 AND gnu-lgpl-v2 AND mit
 
 TOOL_DEPENDS+=	gdbus-codegen-[0-9]*:../../devel/gdbus-codegen
+DEPENDS+=	dejavu-ttf-[0-9]*:../../fonts/dejavu-ttf
 DEPENDS+=	poppler-utils-[0-9]*:../../print/poppler-utils
-TEST_DEPENDS+=	dejavu-ttf-[0-9]*:../../fonts/dejavu-ttf
 
 USE_LANGUAGES=		c c++11
 USE_LIBTOOL=		yes
@@ -22,7 +22,6 @@ CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR}
 CONFIGURE_ARGS+=	--disable-braille
 CONFIGURE_ARGS+=	--disable-ldap
 CONFIGURE_ARGS+=	--disable-mutool
-CONFIGURE_ARGS+=	--enable-ijs
 CONFIGURE_ARGS+=	--localstatedir=${VARBASE}
 CONFIGURE_ARGS+=	--with-apple-raster-filter=rastertopdf
 CONFIGURE_ARGS+=	--with-gs-path=${PREFIX}/bin/gs
@@ -39,6 +38,7 @@ REPLACE_BASH+=	filter/braille/drivers/generic/brftoembosser.in
 REPLACE_BASH+=	filter/braille/drivers/index/imageubrltoindexv3.in
 REPLACE_BASH+=	filter/braille/drivers/index/imageubrltoindexv4.in
 REPLACE_BASH+=	filter/braille/drivers/index/textbrftoindexv3.in
+REPLACE_BASH+=	filter/braille/filters/brftopagedbrf.in
 REPLACE_BASH+=	filter/braille/filters/imagetobrf.in
 REPLACE_BASH+=	filter/braille/filters/texttobrf.in
 

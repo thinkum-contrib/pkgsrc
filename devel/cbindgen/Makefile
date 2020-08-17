@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.13 2020/01/19 18:20:45 maya Exp $
+# $NetBSD: Makefile,v 1.19 2020/08/14 20:50:21 tnn Exp $
 
-DISTNAME=	cbindgen-0.12.1
+DISTNAME=	cbindgen-0.14.3
 CATEGORIES=	devel
 EXTRACT_SUFX=	.crate
 
@@ -16,6 +16,7 @@ CARGO_CRATE_DEPENDS+=	c2-chacha-0.2.3
 CARGO_CRATE_DEPENDS+=	cfg-if-0.1.10
 CARGO_CRATE_DEPENDS+=	clap-2.33.0
 CARGO_CRATE_DEPENDS+=	getrandom-0.1.13
+CARGO_CRATE_DEPENDS+=	heck-0.3.1
 CARGO_CRATE_DEPENDS+=	itoa-0.4.4
 CARGO_CRATE_DEPENDS+=	libc-0.2.66
 CARGO_CRATE_DEPENDS+=	log-0.4.8
@@ -37,6 +38,7 @@ CARGO_CRATE_DEPENDS+=	syn-1.0.11
 CARGO_CRATE_DEPENDS+=	tempfile-3.1.0
 CARGO_CRATE_DEPENDS+=	textwrap-0.11.0
 CARGO_CRATE_DEPENDS+=	toml-0.5.5
+CARGO_CRATE_DEPENDS+=	unicode-segmentation-1.6.0
 CARGO_CRATE_DEPENDS+=	unicode-width-0.1.7
 CARGO_CRATE_DEPENDS+=	unicode-xid-0.2.0
 CARGO_CRATE_DEPENDS+=	vec_map-0.8.1
@@ -47,12 +49,9 @@ CARGO_CRATE_DEPENDS+=	winapi-x86_64-pc-windows-gnu-0.4.0
 
 INSTALLATION_DIRS=	bin
 
-do-build:
-	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} ${PREFIX}/bin/cargo build --locked --frozen --release -j${_MAKE_JOBS_N}
-
 do-install:
 	${INSTALL_PROGRAM} ${WRKSRC}/target/release/cbindgen ${DESTDIR}${PREFIX}/bin
 
+RUST_RUNTIME=	yes
 .include "../../lang/rust/cargo.mk"
-.include "../../lang/rust/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

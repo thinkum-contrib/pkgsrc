@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3 2020/01/12 20:20:31 ryoon Exp $
+# $NetBSD: Makefile,v 1.5 2020/05/06 14:04:49 adam Exp $
 
 PKGREVISION= 1
 .include "../../math/libixion/Makefile.common"

@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.17 2020/01/18 21:50:39 jperkin Exp $
+# $NetBSD: Makefile,v 1.24 2020/06/02 08:24:40 adam Exp $
 
 DISTNAME=	keepassxc-${GITHUB_RELEASE}-src
 PKGNAME=	${DISTNAME:S/-src//}
 PKGREVISION=	1
-CATEGORIES=	security x11
+CATEGORIES=	security
 MASTER_SITES=	${MASTER_SITE_GITHUB:=keepassxreboot/}
-GITHUB_RELEASE=	2.5.2
+GITHUB_RELEASE=	2.5.4
 GITHUB_PROJECT=	keepassxc
 EXTRACT_SUFX=	.tar.xz
 
@@ -18,10 +18,6 @@ SUPERSEDES+=	keepassx-[0-9]*
 SUPERSEDES+=	keepassx0-[0-9]*
 
 WRKSRC=		${WRKDIR}/${DISTNAME:S/-src//}
-
-.if exists(/usr/lib/libjemalloc.so)
-LDFLAGS.NetBSD+=	-ljemalloc # for malloc_usable_size()
-.endif
 
 USE_CMAKE=	yes
 USE_LANGUAGES=	c c++

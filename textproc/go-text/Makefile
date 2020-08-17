@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.29 2020/01/10 13:32:17 bsiegert Exp $
+# $NetBSD: Makefile,v 1.36 2020/08/14 20:01:37 bsiegert Exp $
 
 DISTNAME=		go-text-0.3.0
-PKGREVISION=		12
+PKGREVISION=		18
 CATEGORIES=		textproc
 MASTER_SITES=		${MASTER_SITE_GITHUB:=golang/}
 GITHUB_PROJECT=		text
 GITHUB_TAG=		v0.3.0
 
 MAINTAINER=		bsiegert@NetBSD.org
-HOMEPAGE=		http://golang.org/
+HOMEPAGE=		https://golang.org/
 COMMENT=		Supplementary text processing libraries for Go
 LICENSE=		modified-bsd
 

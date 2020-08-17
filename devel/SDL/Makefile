@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.136 2020/01/20 21:13:16 nia Exp $
+# $NetBSD: Makefile,v 1.139 2020/05/14 14:44:17 nia Exp $
 
 DISTNAME=	SDL-1.2.15
-PKGREVISION=	29
+PKGREVISION=	31
 CATEGORIES=	devel games
 MASTER_SITES=	http://www.libsdl.org/release/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.libsdl.org/
+HOMEPAGE=	https://www.libsdl.org/
 COMMENT=	Simple DirectMedia Layer, a cross-platform multimedia library
 LICENSE=	gnu-lgpl-v2.1
 

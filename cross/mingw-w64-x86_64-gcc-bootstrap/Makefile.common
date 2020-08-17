@@ -1,4 +1,4 @@
-# $NetBSD: Makefile.common,v 1.5 2019/09/18 15:29:21 ryoon Exp $
+# $NetBSD: Makefile.common,v 1.8 2020/05/28 15:28:34 rillig Exp $
 #
 # used by cross/mingw-w64-x86_64-gcc-bootstrap/Makefile
 # used by cross/mingw-w64-i686-gcc-bootstrap/Makefile
@@ -11,14 +11,16 @@ MASTER_SITES=		${MASTER_SITE_GNU:=gcc/gcc-${PKGVERSION_NOREV}/}
 EXTRACT_SUFX=		.tar.xz
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://mingw-w64.org/
+HOMEPAGE=		http://mingw-w64.org/
 
 PATCHDIR=		${.CURDIR}/../../cross/mingw-w64-x86_64-gcc/patches
 DISTINFO_FILE=		${.CURDIR}/../../cross/mingw-w64-x86_64-gcc/distinfo
 
 USE_LANGUAGES=		c c++
 USE_TOOLS+=		gmake
+TOOLS_BROKEN+=		perl
 GNU_CONFIGURE=		yes
+GNU_CONFIGURE_STRICT=	no # has sub-configures
 GNU_CONFIGURE_PREFIX=	${PREFIX}/cross/${MINGW_TARGET}-bootstrap
 OBJDIR=			../build
 CONFIGURE_DIRS=		${OBJDIR}
@@ -34,6 +36,8 @@ CONFIGURE_ARGS+=	--enable-lto
 CONFIGURE_ARGS+=	--disable-dw2-exceptions
 CONFIGURE_ARGS+=	--enable-version-specific-runtime-libs
 CONFIGURE_ARGS+=	--disable-multilib
+
+CHECK_PORTABILITY_SKIP+=	contrib/*
 
 INFO_FILES=		yes
 

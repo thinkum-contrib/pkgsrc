@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.149 2020/01/18 21:49:34 jperkin Exp $
+# $NetBSD: Makefile,v 1.159 2020/06/10 11:08:05 markd Exp $
 
 DISTNAME=	digikam-6.4.0
-PKGREVISION=	2
+PKGREVISION=	11
 CATEGORIES=	graphics
 MASTER_SITES=	${MASTER_SITE_KDE:=digikam/6.4.0/}
 
@@ -18,6 +18,8 @@ CMAKE_ARGS+=	-DBUILD_TESTING=OFF
 USE_TOOLS+=	flex bison msgmerge perl:run pkg-config
 
 CXXFLAGS.NetBSD+=	-D_KERNTYPES
+
+CHECK_PORTABILITY_SKIP+=	*.desktop.cmake.in
 
 .include "../../devel/boost-libs/buildlink3.mk"
 .include "../../devel/knotifications/buildlink3.mk"
@@ -37,7 +39,9 @@ CXXFLAGS.NetBSD+=	-D_KERNTYPES
 .include "../../graphics/tiff/buildlink3.mk"
 .include "../../math/eigen3/buildlink3.mk"
 .include "../../misc/libkvkontakte/buildlink3.mk"
+.include "../../misc/marble/buildlink3.mk"
 .include "../../multimedia/ffmpeg4/buildlink3.mk"
+.include "../../multimedia/x265/buildlink3.mk"
 .include "../../sysutils/kfilemetadata5/buildlink3.mk"
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
 .include "../../textproc/libxslt/buildlink3.mk"

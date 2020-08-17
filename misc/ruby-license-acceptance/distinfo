@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.1 2020/01/19 15:38:45 taca Exp $
+$NetBSD: distinfo,v 1.3 2020/04/27 15:38:48 taca Exp $
 
-SHA1 (license-acceptance-1.0.13.gem) = 222c43f759dbd9e0968640f3f16a9714e30c9a5f
-RMD160 (license-acceptance-1.0.13.gem) = 39c5ebd35c75ab42f220c8d697ae407b2d8bfafd
-SHA512 (license-acceptance-1.0.13.gem) = f66cd6feccf5c791d4aa651fca002b3af72e1bd542891d49df1444280ff3656055f4972f77606651017c5762dff3fbab61e77b451ee63f69713844d32d57c792
-Size (license-acceptance-1.0.13.gem) = 21504 bytes
+SHA1 (license-acceptance-1.0.19.gem) = d7cfd032c6eb201cf0f976acf717225da3d55ce9
+RMD160 (license-acceptance-1.0.19.gem) = e7d682e53ef452c031b7fdeb62846ea1dfceea5a
+SHA512 (license-acceptance-1.0.19.gem) = 2b8ab755418924742f97b055f1b14b31394397d103cfd539c806be685038f89fe4bb3c11c67a20052f1564f7a52d1208577dbc7d81ff14a08aede71f0750d8f8
+Size (license-acceptance-1.0.19.gem) = 15360 bytes

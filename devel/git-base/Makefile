@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.76 2020/01/20 20:07:40 adam Exp $
+# $NetBSD: Makefile,v 1.82 2020/06/03 14:06:47 adam Exp $
 
 .include "../../devel/git/Makefile.common"
 
@@ -75,8 +75,7 @@ MESSAGE_SUBST+=		GIT_TEMPLATE_INSTDIR=${GIT_TEMPLATE_INSTDIR}
 
 .if ${OPSYS} == "NetBSD" || ${OPSYS} == "SunOS" || ${OPSYS} == "OSF1" || ${OPSYS} == "HPUX" || ${OPSYS} == "QNX" || ${OPSYS} == "UnixWare"
 SUBST_CLASSES+=		fix-cd-P
-SUBST_FILES.fix-cd-P=	git-sh-setup.sh
-SUBST_FILES.fix-cd-P+=	t/test-lib.sh
+SUBST_FILES.fix-cd-P=	t/test-lib.sh
 SUBST_MESSAGE.fix-cd-P=	Fixing cd arguments.
 SUBST_STAGE.fix-cd-P=	pre-build
 SUBST_SED.fix-cd-P=	-e "s/cd -P/cd/g"

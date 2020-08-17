@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.14 2019/04/19 14:36:05 wen Exp $
+$NetBSD: distinfo,v 1.17 2020/06/18 19:54:33 fcambus Exp $
 
-SHA1 (Sereal-Decoder-4.007.tar.gz) = 546b5ee08ffb66acd0b65d00ae04b9d5c8d3f439
-RMD160 (Sereal-Decoder-4.007.tar.gz) = 342da4aaa8cbfaa1bd0a2759e9891092ef3df174
-SHA512 (Sereal-Decoder-4.007.tar.gz) = a316261923d0b76962544df19fbb95bbf15659dd0a3a18bc1ef68ab5db1ad1e2492d65e2b753b4d2bab001d398da9cdcc2e29447d6ae6f773b4dabc7adc082b1
-Size (Sereal-Decoder-4.007.tar.gz) = 488293 bytes
+SHA1 (Sereal-Decoder-4.014.tar.gz) = 6ec079b0a52b04a697721d4ba47b2bb05edf6afc
+RMD160 (Sereal-Decoder-4.014.tar.gz) = d041d0e20202b43c0eaf454707e75e70bf7a0f62
+SHA512 (Sereal-Decoder-4.014.tar.gz) = 80256958526cd97b23197e2a26a1cf285e60a480ebbbb884a43cee2ad8dc0584229943091942ee6362af12f3e2c837d610f25da6ab2e73f30a56585f0a753ab3
+Size (Sereal-Decoder-4.014.tar.gz) = 690699 bytes

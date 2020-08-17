@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.42 2020/01/18 23:30:19 rillig Exp $
+# $NetBSD: Makefile,v 1.44 2020/05/22 19:28:33 rillig Exp $
 
 DISTNAME=	phpldapadmin-${VERSION}
 PKGREVISION=	2
@@ -7,14 +7,12 @@ MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=phpldapadmin/}
 EXTRACT_SUFX=	.tgz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://phpldapadmin.sourceforge.net/
+HOMEPAGE=	http://phpldapadmin.sourceforge.net/
 COMMENT=	Set of PHP-scripts to administer an LDAP directory over the WWW
 LICENSE=	gnu-gpl-v2
 
 .include "../../mk/bsd.prefs.mk"
 .include "../../lang/php/phpversion.mk"
-
-REPLACE_SH=	tools/po/make*
 
 DEPENDS+=	${PHP_PKG_PREFIX}-ldap>=4.1.2:../../databases/php-ldap
 DEPENDS+=	${PHP_PKG_PREFIX}-gettext>=4.1.2:../../devel/php-gettext

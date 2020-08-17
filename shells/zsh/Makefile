@@ -1,13 +1,12 @@
-# $NetBSD: Makefile,v 1.94 2020/01/18 23:35:14 rillig Exp $
+# $NetBSD: Makefile,v 1.97 2020/05/31 09:25:51 rillig Exp $
 
-DISTNAME=	zsh-5.7.1
-PKGREVISION=	1
+DISTNAME=	zsh-5.8
 CATEGORIES=	shells
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=zsh/}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://zsh.sourceforge.net/
+HOMEPAGE=	http://zsh.sourceforge.net/
 COMMENT=	The Z shell
 LICENSE=	gnu-gpl-v2 AND zsh
 
@@ -16,6 +15,8 @@ USE_TOOLS+=		automake autoconf makeinfo
 GNU_CONFIGURE=		yes
 INFO_FILES=		yes
 TEXINFO_REQD=		4.0
+
+CHECK_PORTABILITY_SKIP=	Misc/c2z # not used
 
 CONFIGURE_ARGS+=	--disable-gdbm
 CONFIGURE_ARGS+=	--enable-etcdir=${PKG_SYSCONFDIR:Q}

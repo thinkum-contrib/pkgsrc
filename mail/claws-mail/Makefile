@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.106 2020/01/18 21:49:44 jperkin Exp $
+# $NetBSD: Makefile,v 1.112 2020/05/31 09:31:58 rillig Exp $
 
 INSTALLATION_DIRS+=	${EGDIR}
 INSTALLATION_DIRS+=	share/claws-mail
@@ -14,6 +14,7 @@ COMMENT=	X based e-mail and netnews client
 CONFLICTS+=	sylpheed-claws-[0-9]*
 
 USE_TOOLS+=		msgfmt
+TOOLS_BROKEN+=		perl
 PKGCONFIG_OVERRIDE+=	claws-mail.pc.in
 
 PKG_SYSCONFSUBDIR=	claws-mail

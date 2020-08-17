@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.46 2019/07/21 22:24:30 wiz Exp $
+# $NetBSD: Makefile,v 1.48 2020/03/10 22:09:27 wiz Exp $
 #
 
 DISTNAME=	gsmc-1.1
-PKGREVISION=	33
+PKGREVISION=	35
 CATEGORIES=	cad
 MASTER_SITES=	http://www.qsl.net/ik5nax/
 

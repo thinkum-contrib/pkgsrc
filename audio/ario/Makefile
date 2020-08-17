@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.89 2020/01/18 23:29:57 rillig Exp $
+# $NetBSD: Makefile,v 1.95 2020/06/02 08:23:08 adam Exp $
 
 DISTNAME=	ario-1.6
-PKGREVISION=	2
+PKGREVISION=	7
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=ario-player/1.6/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://ario-player.sourceforge.net/
+HOMEPAGE=	http://ario-player.sourceforge.net/
 COMMENT=	Graphical client for mpd using GTK3
 LICENSE=	gnu-gpl-v2
 

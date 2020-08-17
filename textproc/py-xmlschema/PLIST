@@ -1,12 +1,19 @@
-@comment $NetBSD: PLIST,v 1.3 2020/01/24 08:17:06 adam Exp $
+@comment $NetBSD: PLIST,v 1.5 2020/06/01 16:01:01 adam Exp $
+bin/xmlschema-json2xml-${PYVERSSUFFIX}
+bin/xmlschema-validate-${PYVERSSUFFIX}
+bin/xmlschema-xml2json-${PYVERSSUFFIX}
 ${PYSITELIB}/${EGG_INFODIR}/PKG-INFO
 ${PYSITELIB}/${EGG_INFODIR}/SOURCES.txt
 ${PYSITELIB}/${EGG_INFODIR}/dependency_links.txt
+${PYSITELIB}/${EGG_INFODIR}/entry_points.txt
 ${PYSITELIB}/${EGG_INFODIR}/requires.txt
 ${PYSITELIB}/${EGG_INFODIR}/top_level.txt
 ${PYSITELIB}/xmlschema/__init__.py
 ${PYSITELIB}/xmlschema/__init__.pyc
 ${PYSITELIB}/xmlschema/__init__.pyo
+${PYSITELIB}/xmlschema/cli.py
+${PYSITELIB}/xmlschema/cli.pyc
+${PYSITELIB}/xmlschema/cli.pyo
 ${PYSITELIB}/xmlschema/codepoints.py
 ${PYSITELIB}/xmlschema/codepoints.pyc
 ${PYSITELIB}/xmlschema/codepoints.pyo
@@ -83,9 +90,9 @@ ${PYSITELIB}/xmlschema/validators/exceptions.pyo
 ${PYSITELIB}/xmlschema/validators/facets.py
 ${PYSITELIB}/xmlschema/validators/facets.pyc
 ${PYSITELIB}/xmlschema/validators/facets.pyo
-${PYSITELIB}/xmlschema/validators/globals_.py
-${PYSITELIB}/xmlschema/validators/globals_.pyc
-${PYSITELIB}/xmlschema/validators/globals_.pyo
+${PYSITELIB}/xmlschema/validators/global_maps.py
+${PYSITELIB}/xmlschema/validators/global_maps.pyc
+${PYSITELIB}/xmlschema/validators/global_maps.pyo
 ${PYSITELIB}/xmlschema/validators/groups.py
 ${PYSITELIB}/xmlschema/validators/groups.pyc
 ${PYSITELIB}/xmlschema/validators/groups.pyo

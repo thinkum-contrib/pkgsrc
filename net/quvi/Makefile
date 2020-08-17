@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.37 2020/01/18 23:33:21 rillig Exp $
+# $NetBSD: Makefile,v 1.41 2020/05/22 10:56:30 adam Exp $
 #
 
 DISTNAME=	quvi-0.4.2
-PKGREVISION=	20
+PKGREVISION=	23
 CATEGORIES=	net
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=quvi/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	ryoon@NetBSD.org
-HOMEPAGE=	https://quvi.sourceforge.net/
+HOMEPAGE=	http://quvi.sourceforge.net/
 COMMENT=	Command line tool for parsing video links
 LICENSE=	gnu-lgpl-v2.1
 

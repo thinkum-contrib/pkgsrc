@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.20 2020/01/18 23:32:44 rillig Exp $
+# $NetBSD: Makefile,v 1.22 2020/06/14 10:32:04 ryoon Exp $
 
 DISTNAME=	pfe-0.33.71
 PKGREVISION=	13
@@ -7,7 +7,7 @@ MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=pfe/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	asau@inbox.ru
-HOMEPAGE=	https://pfe.sourceforge.net/
+HOMEPAGE=	http://pfe.sourceforge.net/
 COMMENT=	Portable FORTH Environment
 
 GNU_CONFIGURE=	yes
@@ -15,6 +15,8 @@ CONFIGURE_ARGS=	--without-testmodule
 USE_LIBTOOL=	yes
 USE_TOOLS+=	perl pkg-config
 MAKE_ENV+=	SHELL=${CONFIG_SHELL}
+
+PYTHON_VERSIONS_ACCEPTED=	27 # not yet as of 0.33.71
 
 MAKE_JOBS_SAFE=	no
 BUILD_TARGET=	all mans docs

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.48 2019/11/03 11:45:38 rillig Exp $
+# $NetBSD: Makefile,v 1.56 2020/05/27 14:32:02 ryoon Exp $
 
-DISTNAME=	knot-2.8.3
+DISTNAME=	knot-2.9.5
 CATEGORIES=	net
 MASTER_SITES=	https://secure.nic.cz/files/knot-dns/
 EXTRACT_SUFX=	.tar.xz
@@ -31,8 +31,6 @@ CFLAGS +=	-march=i586
 
 USE_LIBTOOL=	yes
 USE_TOOLS+=	bison flex gmake pkg-config
-
-REPLACE_PYTHON=		src/utils/pykeymgr/pykeymgr.in
 
 .include "../../lang/python/extension.mk"
 .include "../../lang/python/application.mk"

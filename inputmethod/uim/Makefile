@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.158 2020/01/18 21:49:42 jperkin Exp $
+# $NetBSD: Makefile,v 1.163 2020/06/02 08:24:11 adam Exp $
 
-PKGREVISION= 1
+PKGREVISION= 5
 .include "../../inputmethod/uim/Makefile.common"
 
 COMMENT=	Multilingual input method library
@@ -17,7 +17,7 @@ BUILDLINK_TRANSFORM+=	opt:-O2:-O1
 USE_TOOLS+=	gmake pkg-config
 USE_TOOLS+=	intltool msgfmt msgmerge xgettext
 USE_TOOLS+=	autopoint
-USE_LANGUAGES=	c99 c++03
+USE_LANGUAGES=	c99 gnu++03
 
 # Avoid finding mono tool and breaking.
 MAKE_FLAGS+=	CSI=

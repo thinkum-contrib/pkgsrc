@@ -1,4 +1,4 @@
-$NetBSD: patch-Po4aBuilder.pm,v 1.2 2015/03/18 02:25:23 mef Exp $
+$NetBSD: patch-Po4aBuilder.pm,v 1.4 2020/03/05 14:02:37 schmonz Exp $
 
 (1) ryoon: remove gzip at initial import
 (2) mef: Add PerlIO::F_UTF8 () macro

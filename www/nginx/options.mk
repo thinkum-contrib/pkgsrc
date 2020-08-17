@@ -1,14 +1,14 @@
-# $NetBSD: options.mk,v 1.52 2019/11/04 22:09:57 rillig Exp $
+# $NetBSD: options.mk,v 1.56 2020/06/01 06:18:51 adam Exp $
 
-PKG_OPTIONS_VAR=		PKG_OPTIONS.nginx
-PKG_SUPPORTED_OPTIONS=		dav flv gtools inet6 luajit mail-proxy memcache naxsi \
-				pcre push realip ssl sub uwsgi image-filter \
-				debug status nginx-autodetect-cflags echo \
-				set-misc headers-more array-var encrypted-session \
-				form-input perl gzip http2 auth-request secure-link rtmp
+PKG_OPTIONS_VAR=	PKG_OPTIONS.nginx
+PKG_SUPPORTED_OPTIONS=	array-var auth-request dav debug echo encrypted-session \
+			form-input flv geoip gtools gzip headers-more http2 \
+			image-filter luajit mail-proxy memcache naxsi \
+			pcre perl push realip rtmp secure-link set-misc slice \
+			ssl status stream-ssl-preread sub uwsgi
+PKG_SUGGESTED_OPTIONS=	pcre ssl
+
 PKG_OPTIONS_LEGACY_OPTS+=	v2:http2
-
-PKG_SUGGESTED_OPTIONS=	inet6 pcre ssl
 
 PLIST_VARS+=		naxsi perl uwsgi
 
@@ -19,7 +19,7 @@ PLIST_VARS+=		naxsi perl uwsgi
 PLIST.naxsi=			yes
 CONFIGURE_ARGS+=		--add-module=../${NAXSI_DISTNAME}/naxsi_src
 .endif
-.if !empty(PKG_OPTIONS:Mnaxsi) || make(makesum)
+.if !empty(PKG_OPTIONS:Mnaxsi) || make(makesum) || make(mdi)
 NAXSI_VERSION=			0.56
 NAXSI_DISTNAME=			naxsi-${NAXSI_VERSION}
 NAXSI_DISTFILE=			${NAXSI_DISTNAME}.tar.gz
@@ -51,6 +51,11 @@ CONFIGURE_ARGS+=	--with-http_dav_module
 
 .if !empty(PKG_OPTIONS:Mflv)
 CONFIGURE_ARGS+=	--with-http_flv_module
+.endif
+
+.if !empty(PKG_OPTIONS:Mgeoip)
+.include "../../net/GeoIP/buildlink3.mk"
+CONFIGURE_ARGS+=	--with-http_geoip_module
 .endif
 
 .if !empty(PKG_OPTIONS:Mhttp2)
@@ -85,7 +90,7 @@ CONFIGURE_ARGS+=	--add-module=../${NDK_DISTNAME}
 NEED_NDK=		yes
 .  endif
 .endfor
-.if defined(NEED_NDK) || make(makesum)
+.if defined(NEED_NDK) || make(makesum) || make(mdi)
 NDK_VERSION=		0.3.1
 NDK_DISTNAME=		ngx_devel_kit-${NDK_VERSION}
 NDK_DISTFILE=		${NDK_DISTNAME}.tar.gz
@@ -99,7 +104,7 @@ CONFIGURE_ENV+=		LUAJIT_LIB=${PREFIX}/lib
 CONFIGURE_ENV+=		LUAJIT_INC=${PREFIX}/include/luajit-2.0
 CONFIGURE_ARGS+=	--add-module=../${LUA_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Mluajit) || make(makesum)
+.if !empty(PKG_OPTIONS:Mluajit) || make(makesum) || make(mdi)
 LUA_VERSION=		0.10.15
 LUA_DISTNAME=		lua-nginx-module-${LUA_VERSION}
 LUA_DISTFILE=		${LUA_DISTNAME}.tar.gz
@@ -110,7 +115,7 @@ DISTFILES+=		${LUA_DISTFILE}
 .if !empty(PKG_OPTIONS:Mecho)
 CONFIGURE_ARGS+=		--add-module=../${ECHOMOD_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Mecho) || make(makesum)
+.if !empty(PKG_OPTIONS:Mecho) || make(makesum) || make(mdi)
 ECHOMOD_VERSION=		0.61
 ECHOMOD_DISTNAME=		echo-nginx-module-${ECHOMOD_VERSION}
 ECHOMOD_DISTFILE=		${ECHOMOD_DISTNAME}.tar.gz
@@ -121,7 +126,7 @@ DISTFILES+=			${ECHOMOD_DISTFILE}
 .if !empty(PKG_OPTIONS:Mset-misc)
 CONFIGURE_ARGS+=		--add-module=../${SETMISC_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Mset-misc) || make(makesum)
+.if !empty(PKG_OPTIONS:Mset-misc) || make(makesum) || make(mdi)
 SETMISC_VERSION=		0.32
 SETMISC_DISTNAME=		set-misc-nginx-module-${SETMISC_VERSION}
 SETMISC_DISTFILE=		${SETMISC_DISTNAME}.tar.gz
@@ -132,7 +137,7 @@ DISTFILES+=			${SETMISC_DISTFILE}
 .if !empty(PKG_OPTIONS:Marray-var)
 CONFIGURE_ARGS+=		--add-module=../${ARRAYVAR_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Marray-var) || make(makesum)
+.if !empty(PKG_OPTIONS:Marray-var) || make(makesum) || make(mdi)
 ARRAYVAR_VERSION=		0.05
 ARRAYVAR_DISTNAME=		array-var-nginx-module-${ARRAYVAR_VERSION}
 ARRAYVAR_DISTFILE=		${ARRAYVAR_DISTNAME}.tar.gz
@@ -143,7 +148,7 @@ DISTFILES+=			${ARRAYVAR_DISTFILE}
 .if !empty(PKG_OPTIONS:Mencrypted-session)
 CONFIGURE_ARGS+=		--add-module=../${ENCSESS_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Mencrypted-session) || make(makesum)
+.if !empty(PKG_OPTIONS:Mencrypted-session) || make(makesum) || make(mdi)
 ENCSESS_VERSION=		0.08
 ENCSESS_DISTNAME=		encrypted-session-nginx-module-${ENCSESS_VERSION}
 ENCSESS_DISTFILE=		${ENCSESS_DISTNAME}.tar.gz
@@ -154,7 +159,7 @@ DISTFILES+=			${ENCSESS_DISTFILE}
 .if !empty(PKG_OPTIONS:Mform-input)
 CONFIGURE_ARGS+=		--add-module=../${FORMINPUT_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Mform-input) || make(makesum)
+.if !empty(PKG_OPTIONS:Mform-input) || make(makesum) || make(mdi)
 FORMINPUT_VERSION=		0.12
 FORMINPUT_DISTNAME=		form-input-nginx-module-${FORMINPUT_VERSION}
 FORMINPUT_DISTFILE=		${FORMINPUT_DISTNAME}.tar.gz
@@ -165,7 +170,7 @@ DISTFILES+=			${FORMINPUT_DISTFILE}
 .if !empty(PKG_OPTIONS:Mheaders-more)
 CONFIGURE_ARGS+=		--add-module=../${HEADMORE_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Mheaders-more) || make(makesum)
+.if !empty(PKG_OPTIONS:Mheaders-more) || make(makesum) || make(mdi)
 HEADMORE_VERSION=		0.33
 HEADMORE_DISTNAME=		headers-more-nginx-module-${HEADMORE_VERSION}
 HEADMORE_DISTFILE=		${HEADMORE_DISTNAME}.tar.gz
@@ -184,8 +189,8 @@ CONFIGURE_ARGS+=	--without-http_uwsgi_module
 .if !empty(PKG_OPTIONS:Mpush)
 CONFIGURE_ARGS+=	--add-module=../nchan-${PUSH_VERSION}
 .endif
-.if !empty(PKG_OPTIONS:Mpush) || make(makesum)
-PUSH_VERSION=		1.2.6
+.if !empty(PKG_OPTIONS:Mpush) || make(makesum) || make(mdi)
+PUSH_VERSION=		1.2.7
 PUSH_DISTNAME=		nginx_http_push_module-${PUSH_VERSION}
 PUSH_DISTFILE=		${PUSH_DISTNAME}.tar.gz
 SITES.${PUSH_DISTFILE}=	-https://github.com/slact/nchan/archive/v${PUSH_VERSION}.tar.gz
@@ -195,6 +200,10 @@ DISTFILES+=		${PUSH_DISTFILE}
 .if !empty(PKG_OPTIONS:Mimage-filter)
 .include "../../graphics/gd/buildlink3.mk"
 CONFIGURE_ARGS+=	--with-http_image_filter_module
+.endif
+
+.if !empty(PKG_OPTIONS:Mslice)
+CONFIGURE_ARGS+=	--with-http_slice_module
 .endif
 
 .if !empty(PKG_OPTIONS:Mstatus)
@@ -222,10 +231,14 @@ CONFIGURE_ARGS+=	--with-http_auth_request_module
 CONFIGURE_ARGS+=	--with-http_secure_link_module
 .endif
 
+.if !empty(PKG_OPTIONS:Mstream-ssl-preread)
+CONFIGURE_ARGS+=	--with-stream --with-stream_ssl_preread_module
+.endif
+
 .if !empty(PKG_OPTIONS:Mrtmp)
 CONFIGURE_ARGS+=	--add-module=../${RTMP_DISTNAME}
 .endif
-.if !empty(PKG_OPTIONS:Mrtmp) || make(makesum)
+.if !empty(PKG_OPTIONS:Mrtmp) || make(makesum) || make(mdi)
 RTMP_VERSION=		1.2.1
 RTMP_DISTNAME=		nginx-rtmp-module-${RTMP_VERSION}
 RTMP_DISTFILE=		${RTMP_DISTNAME}.tar.gz

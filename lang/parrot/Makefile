@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.96 2019/11/03 19:04:04 rillig Exp $
+# $NetBSD: Makefile,v 1.99 2020/06/02 08:22:46 adam Exp $
 #
 
 DISTNAME=		parrot-${PARROT_VERSION}
-PKGREVISION=		20
+PKGREVISION=		22
 CATEGORIES=		lang
 MASTER_SITES=		ftp://ftp.parrot.org/pub/parrot/releases/${PARROT_RTYPE}/${PARROT_VERSION}/
 
@@ -59,11 +59,6 @@ REPLACE_PERL+=		tools/dev/gen_makefile.pl
 REPLACE_PERL+=		tools/dev/mk_language_shell.in
 REPLACE_PERL+=		tools/dev/pprof2cg.pl
 REPLACE_PERL+=		tools/dev/reconfigure.pl
-
-REPLACE_INTERPRETER+=	parrot
-REPLACE.parrot.old=	.*parrot[^[:space:]]*
-REPLACE.parrot.new=	${PREFIX}/bin/parrot
-REPLACE_FILES.parrot+=	tools/dev/pbc_to_exe.pir
 
 REPLACE_INTERPRETER+=		parrot-nqp
 REPLACE.parrot-nqp.old=		.*parrot-nqp[^[:space:]]*

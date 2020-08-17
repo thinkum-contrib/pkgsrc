@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.18 2020/01/18 21:50:39 jperkin Exp $
+# $NetBSD: Makefile,v 1.24 2020/06/09 11:56:17 markd Exp $
 
 DISTNAME=	kwalletmanager-${KAPPSVER}
-PKGREVISION=	1
 CATEGORIES=	security
 
 HOMEPAGE=	https://kde.org/applications/system/kwalletmanager/

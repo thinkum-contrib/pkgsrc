@@ -1,4 +1,4 @@
-# $NetBSD: metadata.mk,v 1.22 2020/01/15 20:11:11 rillig Exp $
+# $NetBSD: metadata.mk,v 1.29 2020/07/06 18:29:11 maya Exp $
 
 ######################################################################
 ### The targets below are all PRIVATE.
@@ -62,6 +62,7 @@ ${_BUILD_INFO_FILE}: ${_PLIST_NOKEYWORDS}
 	*)	ldd=${LDD:Q} ;;						\
 	esac;								\
 	bins=`${AWK} '/(^|\/)(bin|sbin|libexec)\// { print "${DESTDIR}${PREFIX}/" $$0 } END { exit 0 }' ${_PLIST_NOKEYWORDS}`; \
+	requires="";							\
 	case ${OBJECT_FMT:Q}"" in					\
 	ELF)								\
 		libs=`${AWK} '/\/lib.*\.so(\.[0-9]+)*$$/ { print "${DESTDIR}${PREFIX}/" $$0 } END { exit 0 }' ${_PLIST_NOKEYWORDS}`; \
@@ -105,13 +106,11 @@ ${_BUILD_INFO_FILE}: ${_PLIST_NOKEYWORDS}
 	requires=`{ for i in $$requires $$requires; do echo $$i; done; \
 		${AWK} '{ print "${PREFIX}/" $$0 }' ${_PLIST_NOKEYWORDS}; } | \
 		${SORT} | uniq -c | awk '$$1 == 2 {print $$2}'`; \
-	for i in "" $$libs; do						\
-		${TEST} "$$i" != "" || continue;			\
-		${ECHO} "PROVIDES=$${i}";				\
+	for i in $$libs; do						\
+		${ECHO} "PROVIDES=$$i";					\
 	done | ${SED} -e 's,^PROVIDES=${DESTDIR},PROVIDES=,'		\
 		>> ${.TARGET}.tmp;					\
-	for req in "" $$requires; do					\
-		${TEST} "$$req" != "" || continue;			\
+	for req in $$requires; do					\
 		${ECHO} "REQUIRES=$$req" >> ${.TARGET}.tmp;		\
 	done
 .endif
@@ -138,6 +137,8 @@ ${_BUILD_VERSION_FILE}:
 	${FIND} ${FILESDIR} -type f 2> /dev/null | while read f; do	\
 		${TEST} ! -f "$$f" || ${ECHO} "$$f";			\
 	done
+	${RUN}								\
+	exec 1>>${.TARGET}.tmp;						\
 	for f in ${.CURDIR}/Makefile ${PKGDIR}/*; do			\
 		${TEST} ! -f "$$f" || ${ECHO} "$$f";			\
 	done
@@ -174,7 +175,7 @@ ${_BUILD_VERSION_FILE}:
 	${RUN}${RM} -f ${.TARGET}.tmp
 	${RUN}								\
 	exec 1>>${.TARGET}.tmp;						\
-	for f in ${.CURDIR}/Makefile ${FILESDIR}/* ${PKGDIR}/*; do	\
+	for f in ${.CURDIR}/Makefile ${FILESDIR:tA}/* ${PKGDIR:tA}/*; do \
 		${TEST} ! -f "$$f" || ${ECHO} "$$f";			\
 	done
 	${RUN}								\
@@ -184,7 +185,7 @@ ${_BUILD_VERSION_FILE}:
 	${AWK} 'NF == 4 && $$3 == "=" { gsub("[()]", "", $$2); print $$2 }' | \
 	while read file; do						\
 		${TEST} ! -f "${PATCHDIR}/$$file" ||			\
-			${ECHO} "${PATCHDIR}/$$file";			\
+			${ECHO} "${PATCHDIR:tA}/$$file";		\
 	done
 	${RUN}								\
 	exec 1>>${.TARGET}.tmp;						\
@@ -192,7 +193,7 @@ ${_BUILD_VERSION_FILE}:
 	cd ${PATCHDIR}; for f in *; do					\
 		case "$$f" in						\
 		"*"|*.orig|*.rej|*~)	;;				\
-		patch-*)		${ECHO} "${PATCHDIR}/$$f" ;;	\
+		patch-*)		${ECHO} "${PATCHDIR:tA}/$$f" ;;	\
 		esac;							\
 	done
 	${RUN}								\

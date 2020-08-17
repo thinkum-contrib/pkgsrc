@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.21 2019/07/21 22:25:08 wiz Exp $
+# $NetBSD: Makefile,v 1.24 2020/03/10 22:10:17 wiz Exp $
 
 DISTNAME=	xnec2c-3.5.1
-PKGREVISION=	7
+PKGREVISION=	9
 CATEGORIES=	ham
 MASTER_SITES=	http://www.qsl.net/5b4az/pkg/nec2/xnec2c/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.qsl.net/5b4az/pages/nec2.html
+HOMEPAGE=	https://www.qsl.net/5b4az/pages/nec2.html
 COMMENT=	GTK+ graphical interactive version of nec2c
 LICENSE=	gnu-gpl-v3
 

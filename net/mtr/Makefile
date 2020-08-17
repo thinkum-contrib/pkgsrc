@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.110 2019/10/03 11:01:39 tron Exp $
+# $NetBSD: Makefile,v 1.113 2020/03/10 22:10:46 wiz Exp $
 
 DISTNAME=	mtr-0.93
-PKGREVISION=	1
+PKGREVISION=	3
 CATEGORIES=	net
 MASTER_SITES=	ftp://ftp.bitwizard.nl/mtr/
 
@@ -13,7 +13,7 @@ PATCHFILES=		919422d1dee7d35a236035f190f491a4a2113772.patch
 PATCHFILES+=		9fe183d61f5382bd6dae1df1db6439a27e8edde2.patch
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.bitwizard.nl/mtr/
+HOMEPAGE=	https://www.bitwizard.nl/mtr/
 COMMENT=	Traceroute and ping in a single graphical network diagnostic tool
 LICENSE=	gnu-gpl-v2
 

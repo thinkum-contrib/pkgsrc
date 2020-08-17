@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.57 2020/01/18 21:47:57 jperkin Exp $
+# $NetBSD: Makefile,v 1.67 2020/07/27 00:02:45 nia Exp $
 
-DISTNAME=	audacious-3.10.1
-PKGREVISION=	2
+DISTNAME=	audacious-4.0.5
 CATEGORIES=	audio
 MASTER_SITES=	https://distfiles.audacious-media-player.org/
 EXTRACT_SUFX=	.tar.bz2
@@ -23,7 +22,7 @@ LDFLAGS.Darwin+=	-flat_namespace -undefined suppress
 .include "options.mk"
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/glib2/buildlink3.mk"
-.include "../../devel/gobject-introspection/buildlink3.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../sysutils/desktop-file-utils/desktopdb.mk"
+.include "../../x11/qt5-qtbase/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

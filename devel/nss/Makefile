@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.177 2020/01/14 12:58:08 ryoon Exp $
+# $NetBSD: Makefile,v 1.188 2020/07/31 01:24:30 maya Exp $
 
 DISTNAME=		nss-${NSS_RELEASE:S/.0$//}
-NSS_RELEASE=		3.49.1
+NSS_RELEASE=		3.55.0
 CATEGORIES=		security
 MASTER_SITES=		${MASTER_SITE_MOZILLA_ALL:=security/nss/releases/NSS_${NSS_DIST_DIR_VERSION:S/_0$//}_RTM/src/}
 
@@ -40,6 +40,7 @@ SUBST_SED.zlib=			-e 's,^ZLIB_LIBS,\#ZLIB_LIBS,g'
 
 BUILDLINK_TRANSFORM+=	rm:-Werror
 BUILDLINK_TRANSFORM+=	rm:-ansi
+LDFLAGS.NetBSD+=	-lrt # sem_wait(3)
 
 MAKE_ENV.Linux+=	FREEBL_NO_DEPEND=0
 
@@ -123,7 +124,7 @@ do-install:
 	(cd ${DIST}/public && pax -Lrw . ${DESTDIR}${PREFIX}/include/nss/ )
 	(cd ${DIST}/*_OPT.OBJ/lib && \
 		pax -Lrw *.${SO_SUFFIX} ${DESTDIR}${PREFIX}/lib/nss/ )
-	${INSTALL_LIB} ${DIST}/*_OPT.OBJ/lib/libcrmf.a \
+	${INSTALL_DATA} ${DIST}/*_OPT.OBJ/lib/libcrmf.a \
 		${DESTDIR}${PREFIX}/lib/nss/
 	${INSTALL_DATA} ${WRKSRC}/nss.pc ${DESTDIR}${PREFIX}/lib/pkgconfig/nss.pc
 	${INSTALL_SCRIPT} ${WRKSRC}/nss-config ${DESTDIR}${PREFIX}/bin/nss-config
@@ -134,7 +135,7 @@ do-install:
 # For consistency of libxul.so link in www/firefox.
 BUILDLINK_API_DEPENDS.sqlite3+=	sqlite3>=3.8.4.2
 .include "../../databases/sqlite3/buildlink3.mk"
-BUILDLINK_API_DEPENDS.nspr+=	nspr>=4.24
+BUILDLINK_API_DEPENDS.nspr+=	nspr>=4.25
 .include "../../devel/nspr/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
 .include "../../mk/pthread.buildlink3.mk"

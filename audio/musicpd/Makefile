@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.207 2020/01/18 23:22:45 nia Exp $
+# $NetBSD: Makefile,v 1.223 2020/07/07 12:52:19 nia Exp $
 
-DISTNAME=	mpd-0.21.19
+DISTNAME=	mpd-0.21.25
 PKGNAME=	${DISTNAME:S/mpd/musicpd/}
 CATEGORIES=	audio
 MASTER_SITES=	https://www.musicpd.org/download/mpd/0.21/
@@ -14,7 +14,7 @@ LICENSE=	gnu-gpl-v2
 CONFLICTS=	mpd-[0-9]*
 
 USE_TOOLS+=	pkg-config
-USE_LANGUAGES=	c99 c++14
+USE_LANGUAGES=	c c++
 
 # c++14
 GCC_REQD+=	6
@@ -86,7 +86,7 @@ CPPFLAGS.SunOS+=	-std=gnu99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
 SUBST_CLASSES+=		conf
 SUBST_STAGE.conf=	pre-configure
-SUBST_FILES.conf=	${WRKSRC}/mpd.conf
+SUBST_FILES.conf=	mpd.conf
 SUBST_MESSAGE.conf=	Setting variables in the configuration file.
 SUBST_VARS.conf+=	VARBASE
 SUBST_VARS.conf+=	MPD_USER
@@ -113,11 +113,14 @@ post-install:
 .include "../../devel/meson/build.mk"
 BUILDLINK_ABI_DEPENDS.flac+=	flac>=1.2
 .include "../../audio/flac/buildlink3.mk"
+.include "../../audio/libid3tag/buildlink3.mk"
 .include "../../audio/libopus/buildlink3.mk"
+.include "../../audio/libsndfile/buildlink3.mk"
 .include "../../audio/mpg123/buildlink3.mk"
 .include "../../databases/sqlite3/buildlink3.mk"
 .include "../../devel/boost-libs/buildlink3.mk"
 .include "../../devel/pcre/buildlink3.mk"
+.include "../../devel/zlib/buildlink3.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../lang/python/versioned_dependencies.mk"
 .include "../../security/libgcrypt/buildlink3.mk"

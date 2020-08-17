@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.20 2019/11/16 00:39:01 mef Exp $
+# $NetBSD: Makefile,v 1.22 2020/04/26 13:56:06 mef Exp $
 
-DISTNAME=	Future-0.42
+DISTNAME=	Future-0.45
 PKGNAME=	p5-${DISTNAME}
 CATEGORIES=	devel perl5
 MASTER_SITES=	${MASTER_SITE_PERL_CPAN:=../../authors/id/P/PE/PEVANS/}

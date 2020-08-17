@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.25 2020/01/18 21:49:06 jperkin Exp $
+# $NetBSD: Makefile,v 1.30 2020/06/02 08:23:32 adam Exp $
 #
 
 DISTNAME=	virtuoso-opensource-6.1.6
-PKGREVISION=	22
+PKGREVISION=	26
 CATEGORIES=	databases
 MASTER_SITES=	http://sourceforge.net/projects/virtuoso/files/virtuoso/6.1.6/
 
@@ -10,6 +10,8 @@ MAINTAINER=	jaapb@NetBSD.org
 HOMEPAGE=	https://virtuoso.openlinksw.com/
 COMMENT=	Universal SQL/Application server
 LICENSE=	gnu-gpl-v2 # with exemptions
+
+BROKEN=		"Fails to build with OpenSSL 1.1"
 
 GNU_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--without-jdk2 --without-jdk3 --without-jdk4 \

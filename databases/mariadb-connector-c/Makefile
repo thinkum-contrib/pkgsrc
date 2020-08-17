@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.11 2020/01/18 21:47:59 jperkin Exp $
+# $NetBSD: Makefile,v 1.15 2020/05/27 19:37:38 wiz Exp $
 
 DISTNAME=	mariadb-connector-c-3.0.6
-PKGREVISION=	6
+PKGREVISION=	9
 CATEGORIES=	databases
 MASTER_SITES=	${MASTER_SITE_GITHUB:=MariaDB/}
 
-MAINTAINER=	fhajny@NetBSD.org
+MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://github.com/MariaDB/mariadb-connector-c/
 COMMENT=	MariaDB Connector/C library
 LICENSE=	gnu-lgpl-v2.1

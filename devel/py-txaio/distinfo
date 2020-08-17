@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.11 2020/01/23 14:20:34 adam Exp $
+$NetBSD: distinfo,v 1.13 2020/04/07 08:47:45 adam Exp $
 
-SHA1 (txaio-20.1.1.tar.gz) = 0ea0e76c3e7742ca8ec1dcb4de2a10b6f6239d93
-RMD160 (txaio-20.1.1.tar.gz) = 3f894a87c5801b0e975d07582a66694c629bc6eb
-SHA512 (txaio-20.1.1.tar.gz) = a5a631fe9b0e648db66178991353c8e5ec6b1bf653f411dd11b1d3c2df9f205f907ea996a51b53c1722c0412bf5414929c96304e04072f4ed7991f61ea85e9a0
-Size (txaio-20.1.1.tar.gz) = 53391 bytes
+SHA1 (txaio-20.4.1.tar.gz) = 2ebb0e3987a89e819280009cf1523660dfe43cbe
+RMD160 (txaio-20.4.1.tar.gz) = e85d0120a2321ac56486662f78598a366b730752
+SHA512 (txaio-20.4.1.tar.gz) = da0269d13d72f4ea14f2e67585cdb74ec5105884c31d81157fb85e92d4eb935b1c13eb1222bd5ecd57a8caa36008cf49de85321e7b67e94159330e1d592d42c4
+Size (txaio-20.4.1.tar.gz) = 52580 bytes

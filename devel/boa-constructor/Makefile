@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.48 2020/01/18 23:30:24 rillig Exp $
+# $NetBSD: Makefile,v 1.51 2020/03/10 22:09:33 wiz Exp $
 
 VERSION=		0.6.1
 DISTNAME=		boa-constructor-${VERSION}.src
 PKGNAME=		boa-constructor-${VERSION}
-PKGREVISION=		33
+PKGREVISION=		35
 CATEGORIES=		devel
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=boa-constructor/}
 EXTRACT_SUFX=		.zip
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://boa-constructor.sourceforge.net/
+HOMEPAGE=		http://boa-constructor.sourceforge.net/
 COMMENT=		Python IDE
 
 DEPENDS+=		${PYPKGPREFIX}-expat-[0-9]*:../../textproc/py-expat

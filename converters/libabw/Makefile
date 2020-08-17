@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.28 2020/01/12 20:19:53 ryoon Exp $
+# $NetBSD: Makefile,v 1.32 2020/06/02 08:23:23 adam Exp $
 
-DISTNAME=	libabw-0.1.1
-PKGREVISION=	17
+DISTNAME=	libabw-0.1.3
+PKGREVISION=	2
 CATEGORIES=	converters
 MASTER_SITES=	http://dev-www.libreoffice.org/src/
-EXTRACT_SUFX=	.tar.bz2
+EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	ryoon@NetBSD.org
-HOMEPAGE=	http://dev-www.libreoffice.org/src/
+HOMEPAGE=	https://dev-www.libreoffice.org/src/
 COMMENT=	Library for AbiWord documents
 LICENSE=	mpl-2.0
 
@@ -18,11 +18,12 @@ USE_LIBTOOL=	yes
 USE_TOOLS+=	perl:build pkg-config
 USE_LANGUAGES=	c c++
 
+# C++11
+GCC_REQD+=	4.7
+
 CONFIGURE_ARGS+=	--without-docs
 
 PKGCONFIG_OVERRIDE+=	libabw.pc.in
-
-BUILDLINK_TRANSFORM+=	rm:-Werror
 
 .include "../../converters/libwpd/buildlink3.mk"
 .include "../../converters/librevenge/buildlink3.mk"

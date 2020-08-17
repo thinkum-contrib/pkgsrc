@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.57 2020/01/18 23:30:35 rillig Exp $
+# $NetBSD: Makefile,v 1.61 2020/06/02 08:23:40 adam Exp $
 
 DISTNAME=	Gnome2-1.047
 PKGNAME=	p5-${DISTNAME}
-PKGREVISION=	11
+PKGREVISION=	14
 CATEGORIES=	devel perl5
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=gtk2-perl/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://gtk2-perl.sourceforge.net/
+HOMEPAGE=	http://gtk2-perl.sourceforge.net/
 COMMENT=	Perl bindings for libgnome and libgnomeui
 LICENSE=	gnu-lgpl-v2.1
 

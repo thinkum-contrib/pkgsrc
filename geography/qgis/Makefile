@@ -1,12 +1,15 @@
-# $NetBSD: Makefile,v 1.82 2020/01/18 21:49:33 jperkin Exp $
+# $NetBSD: Makefile,v 1.96 2020/06/24 21:49:20 gdt Exp $
 
-DISTNAME=	qgis-3.8.3
-PKGREVISION=	2
+# This is intentionally 3.10 Long Term Release.  Please do not update
+# to 3.14, and instead discuss whether/how we want multiple versions.
+DISTNAME=	qgis-3.10.7
 CATEGORIES=	geography
 MASTER_SITES=	https://qgis.org/downloads/
 EXTRACT_SUFX=	.tar.bz2
 
-MAINTAINER=	brook@nmsu.edu
+MAINTAINER=	gdt@NetBSD.org
+#MAINTAINER+=	brook@nmsu.edu
+#MAINTAINER+=	bouyer@NetBSD.orrg
 HOMEPAGE=	http://www.qgis.org/
 COMMENT=	Geographic Information System (GIS)
 LICENSE=	gnu-gpl-v2
@@ -36,10 +39,18 @@ SUBST_CLASSES+=			xapple
 SUBST_STAGE.xapple=		pre-configure
 SUBST_MESSAGE.xapple=		Disabling APPLE App in cmake scripts
 xapple_FIND_CMD=		cd ${WRKSRC} && \
-	find . -name '*.cmake' -o -name CMakeLists.txt
+				find . -name '*.cmake' -o -name CMakeLists.txt
 SUBST_FILES.xapple=		${xapple_FIND_CMD:sh}
 SUBST_SED.xapple+=		-e 's,APPLE,XAPPLE,'
 SUBST_SED.xapple+=		-e 's,MACOSX_BUNDLE ,,'
+SUBST_NOOP_OK.xapple=		yes # since SUBST_FILES is generated
+
+SUBST_CLASSES+=			pyqt
+SUBST_STAGE.pyqt=		pre-configure
+SUBST_MESSAGE.pyqt=		Use correct python version for PyQt5 programs
+SUBST_FILES.pyqt=		cmake/PyQtMacros.cmake
+SUBST_SED.pyqt+=		-e '/^SET/s,pyuic5,&-${PYVERSSUFFIX},'
+SUBST_SED.pyqt+=		-e '/^SET/s,pyrcc5,&-${PYVERSSUFFIX},'
 
 CMAKE_ARGS+=	-DWITH_QTWEBKIT=FALSE
 CMAKE_ARGS+=	-DQWT_DIR=${QWT_DIR}

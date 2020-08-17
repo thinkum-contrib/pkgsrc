@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.27 2020/01/18 21:50:02 jperkin Exp $
+# $NetBSD: Makefile,v 1.33 2020/06/06 02:01:05 mef Exp $
 
 DISTNAME=	libcarddav_0.6.2-2debian2
 PKGNAME=	${DISTNAME:S/_/-/:S/-2debian2/.2.2/}
-PKGREVISION=	22
+PKGREVISION=	25
 CATEGORIES=	misc
 #MASTER_SITES=	https://quickbuild.pearsoncomputing.net/~trinity/+archive/trinity-builddeps/+files/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.trinitydesktop.org/relatedprojects.php
+HOMEPAGE=	https://www.trinitydesktop.org/relatedprojects.php
 COMMENT=	CardDAV library
 LICENSE=	gnu-gpl-v3
 

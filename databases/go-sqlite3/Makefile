@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.3 2020/01/10 13:32:16 bsiegert Exp $
+# $NetBSD: Makefile,v 1.10 2020/08/14 20:01:40 bsiegert Exp $
 
 GITHUB_TAG=		v${PKGVERSION_NOREV}
 DISTNAME=		go-sqlite3-1.11.0
-PKGREVISION=		2
+PKGREVISION=		8
 CATEGORIES=		devel
 MASTER_SITES=		${MASTER_SITE_GITHUB:=mattn/}
 GITHUB_PROJECT=		go-sqlite3
 
-MAINTAINER=		ng0@NetBSD.org
+MAINTAINER=		nikita@NetBSD.org
 HOMEPAGE=		https://github.com/mattn/go-sqlite3
 COMMENT=		Sqlite3 driver for Go using database/sql
 LICENSE=		mit

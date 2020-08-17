@@ -1,21 +1,19 @@
-# $NetBSD: Makefile,v 1.86 2020/01/18 23:30:15 rillig Exp $
+# $NetBSD: Makefile,v 1.90 2020/06/02 08:22:33 adam Exp $
 
 DISTNAME=	wv-1.2.9
-PKGREVISION=	13
+PKGREVISION=	15
 CATEGORIES=	converters
 MASTER_SITES=	http://www.abiword.com/downloads/wv/${PKGVERSION_NOREV}/
 
 MAINTAINER=	adam@NetBSD.org
-HOMEPAGE=	https://wvware.sourceforge.net/
+HOMEPAGE=	http://wvware.sourceforge.net/
 COMMENT=	Library and executables to access Microsoft Word files
 
 USE_LIBTOOL=		yes
 USE_PKGLOCALEDIR=	yes
 USE_TOOLS+=		gmake pkg-config
 GNU_CONFIGURE=		yes
-CONFIGURE_ARGS+=	--with-libiconv=${BUILDLINK_PREFIX.libiconv}
 CONFIGURE_ARGS+=	--with-libwmf=${BUILDLINK_PREFIX.libwmf}
-CONFIGURE_ARGS+=	--with-libxml2=${BUILDLINK_PREFIX.libxml2}
 CONFIGURE_ARGS+=	--with-png=${BUILDLINK_PREFIX.png}
 CONFIGURE_ARGS+=	--with-zlib=${BUILDLINK_PREFIX.zlib}
 

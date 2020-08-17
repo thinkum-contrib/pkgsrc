@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.116 2019/11/20 17:02:14 nia Exp $
+# $NetBSD: Makefile,v 1.119 2020/07/26 23:34:08 nia Exp $
 
-DISTNAME=	mc-4.8.23
+DISTNAME=	mc-4.8.25
 CATEGORIES=	sysutils
-MASTER_SITES=	http://ftp.midnight-commander.org/
+MASTER_SITES=	https://ftp.midnight-commander.org/
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	cheusov@NetBSD.org
@@ -59,6 +59,6 @@ CONF_FILES+=	${EGDIR}/${i} ${PKG_SYSCONFDIR}/mc/${i}
 .endfor
 
 .include "../../devel/gettext-lib/buildlink3.mk"
-BUILDLINK_API_DEPENDS.glib2+=	glib2>=2.26.0
+BUILDLINK_API_DEPENDS.glib2+=	glib2>=2.30.0
 .include "../../devel/glib2/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

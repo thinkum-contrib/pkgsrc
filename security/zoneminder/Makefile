@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.47 2020/01/18 21:50:50 jperkin Exp $
+# $NetBSD: Makefile,v 1.50 2020/05/16 17:57:45 rillig Exp $
 
 # See wip/zoneminder for a draft update to 1.29.0.
 PKGNAME=	${DISTNAME:S/ZoneMinder-/zoneminder-/}
@@ -21,6 +21,7 @@ EXTRACT_USING=	gtar
 
 DEPENDS+=	netpbm-[0-9]*:../../graphics/netpbm
 
+# This PHP 5.6 limitation is only to match the limitation in php-mysql
 PHP_VERSIONS_ACCEPTED=	56
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.zoneminder
@@ -196,7 +197,7 @@ SUBST_SED.dbpaths-path+=	-e 's|/cgi-bin/nph-zms|/zm/cgi-bin/nph-zms|g'
 SUBST_CLASSES+=			script-path
 SUBST_MESSAGE.script-path=	Adjusting paths in scripts.
 SUBST_STAGE.script-path=	pre-configure
-SUBST_FILES.script-path=	${REPLACE_PERL} ${EXTRA_PERL}
+SUBST_FILES.script-path=	${REPLACE_PERL} ${EXTRA_PERL:Nscripts/zmsystemctl.pl.in}
 SUBST_SED.script-path=		-e "s|^\\([\$$]ENV{PATH} *= *'\\).*';\$$|\\1${PREFIX}/bin:/bin:/usr/bin';|g"
 
 SUBST_CLASSES+=		files
@@ -218,6 +219,7 @@ LIBS+=		-lexecinfo
 
 post-extract:
 	${CP} ${FILESDIR}/zoneminder.conf ${WRKSRC}/zoneminder.conf
+	${RM} ${WRKSRC}/version
 
 pre-configure:
 	set -e; cd ${WRKSRC}; \

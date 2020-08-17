@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.5 2019/12/11 12:48:07 adam Exp $
+# $NetBSD: Makefile,v 1.16 2020/08/07 13:04:08 jperkin Exp $
 
-DISTNAME=	meson-0.52.1
+DISTNAME=	meson-0.55.0
+PKGREVISION=	2
 CATEGORIES=	devel python
 MASTER_SITES=	${MASTER_SITE_PYPI:=m/meson/}
 
@@ -12,7 +13,7 @@ LICENSE=	apache-2.0
 CONFLICTS=	${PYPKGPREFIX}-meson-[0-9]*
 SUPERSEDES=	${PYPKGPREFIX}-meson-[0-9]*
 
-DEPENDS+=	ninja-build-[0-9]*:../../devel/ninja-build
+DEPENDS+=	ninja-build>=1.7:../../devel/ninja-build
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27
 
@@ -33,8 +34,8 @@ REPLACE_PYTHON+=	test\ cases/*/*/*.py
 REPLACE_PYTHON+=	test\ cases/*/*/*/*.py
 REPLACE_PYTHON+=	test\ cases/*/*/*/*/*.py
 REPLACE_PYTHON+=	test\ cases/common/14\ configure\ file/test.py.in
-REPLACE_PYTHON+=	test\ cases/common/188\ find\ override/subdir/gencodegen.py.in
-REPLACE_PYTHON+=	test\ cases/common/55\ run\ target/configure.in
+REPLACE_PYTHON+=	test\ cases/common/187\ find\ override/subdir/gencodegen.py.in
+REPLACE_PYTHON+=	test\ cases/common/54\ run\ target/configure.in
 REPLACE_PYTHON+=	test\ cases/windows/8\ find\ program/test-script
 REPLACE_PYTHON+=	tools/*.py
 

@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.6 2020/01/18 21:51:02 jperkin Exp $
+# $NetBSD: Makefile,v 1.8 2020/08/15 02:31:28 tnn Exp $
 
-DISTNAME=	ntpsec-1.1.3
-PKGREVISION=	2
+DISTNAME=	ntpsec-1.1.9
 CATEGORIES=	time
 MASTER_SITES=	http://ftp.ntpsec.org/pub/releases/
 
@@ -29,9 +28,6 @@ WAF_ENV+=		BIN_XSLTPROC=${PREFIX}/bin/xsltproc
 RCD_SCRIPTS=		ntpd
 REPLACE_PYTHON+=	ntpclients/*.py
 PY_PATCHPLIST=		yes
-
-# kludge for waf-2.x; fixed upstream already. see patch-wafhelpers_waf.py.
-CFLAGS+=	-I../../build -I../../include
 
 .include "../../devel/waf/waf.mk"
 .include "../../geography/gpsd/buildlink3.mk"

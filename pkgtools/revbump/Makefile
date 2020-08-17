@@ -1,11 +1,10 @@
-# $NetBSD: Makefile,v 1.40 2019/08/11 13:22:37 wiz Exp $
+# $NetBSD: Makefile,v 1.42 2020/03/08 17:06:16 wiz Exp $
 
-PKGNAME=		revbump-2.14
-PKGREVISION=		2
+PKGNAME=		revbump-2.15
 CATEGORIES=		pkgtools
 
 MAINTAINER=		wiz@NetBSD.org
-HOMEPAGE=		http://www.pkgsrc.org/
+HOMEPAGE=		https://www.pkgsrc.org/
 COMMENT=		Tools for bumping PKGREVISIONs (for pkgsrc developers)
 LICENSE=		modified-bsd
 

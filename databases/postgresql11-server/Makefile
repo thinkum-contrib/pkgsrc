@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.5 2020/01/18 21:49:01 jperkin Exp $
+# $NetBSD: Makefile,v 1.9 2020/08/14 06:56:23 adam Exp $
 
-PKGNAME=	${DISTNAME:C/-/11-server-/}
-PKGREVISION=	1
+PKGNAME=	${DISTNAME:S/-/11-server-/}
 COMMENT=	PostgreSQL database server programs
 
 # mips has no TAS implementation
@@ -9,6 +8,7 @@ BROKEN_ON_PLATFORM=	*-*-mips
 
 .include "../../databases/postgresql11/Makefile.common"
 
+TOOLS_BROKEN+=		perl
 CONFIGURE_ARGS+=	--with-openssl
 
 INSTALL_DIRS=	src/backend

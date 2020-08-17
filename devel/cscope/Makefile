@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.59 2020/01/18 23:30:25 rillig Exp $
+# $NetBSD: Makefile,v 1.61 2020/05/08 16:20:38 rillig Exp $
 
 DISTNAME=	cscope-15.8a
 PKGREVISION=	2
@@ -6,14 +6,13 @@ CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=cscope/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://cscope.sourceforge.net/
+HOMEPAGE=	http://cscope.sourceforge.net/
 COMMENT=	Interactive C program browser
 LICENSE=	original-bsd
 
 GNU_CONFIGURE=		YES
 USE_TOOLS+=		byacc lex:run
 
-CONFIGURE_ARGS+=	--with-flex --with-yacc
 INSTALLATION_DIRS+=	share/emacs/site-lisp
 
 SUBST_CLASSES+=		path

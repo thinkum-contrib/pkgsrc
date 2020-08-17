@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.81 2020/01/18 21:51:16 jperkin Exp $
+# $NetBSD: Makefile,v 1.85 2020/05/22 10:56:49 adam Exp $
 #
 
 DISTNAME=	x11vnc-0.9.16
-PKGREVISION=	4
+PKGREVISION=	7
 CATEGORIES=	x11 net
 MASTER_SITES=	${MASTER_SITE_GITHUB:=LibVNC/}
 GITHUB_PROJECT=	x11vnc
@@ -20,6 +20,7 @@ SUBST_CLASSES+=		pthread
 SUBST_STAGE.pthread=	pre-configure
 SUBST_FILES.pthread=	configure
 SUBST_SED.pthread=	-e 's|-lpthread||g'
+SUBST_NOOP_OK.pthread=	yes # configure does not contain "pthread"
 
 .include "options.mk"
 

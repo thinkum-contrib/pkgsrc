@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.17 2019/12/13 00:47:23 gutteridge Exp $
+# $NetBSD: Makefile,v 1.21 2020/05/14 14:28:04 nikita Exp $
 
-DISTNAME=	guile-2.2.6
+DISTNAME=	guile-2.2.7
 PKGNAME=	${DISTNAME:S/guile/guile22/}
 PKGREVISION=	2
 CATEGORIES=	lang
@@ -18,8 +18,6 @@ GUILE_SUBDIR=	guile/2.2
 # guile does not like the --build and --host triplets on NetBSD
 HAS_CONFIGURE=		yes
 CONFIGURE_ARGS+=	--disable-shared
-# not until boehm-gc is threaded
-CONFIGURE_ARGS+=	--without-threads
 CONFIGURE_ARGS+=	SHELL=${CONFIG_SHELL}
 # Needed to work around broken configure check for accept4()
 LDFLAGS.SunOS+=		-lsocket -lnsl
@@ -60,7 +58,7 @@ SUBST_MESSAGE.tools=	Fixing path to pkg-config in installed file.
 
 OPSYSVARS+=		GUILE_LIBNAME
 GUILE_LIBNAME.Darwin=	a
-GUILE_LIBNAME.*=	so.1.4.1
+GUILE_LIBNAME.*=	so.1.4.2
 
 PLIST_SUBST+=		GUILE_LIBNAME=${GUILE_LIBNAME}
 PRINT_PLIST_AWK+=	{gsub(/${GUILE_LIBNAME}/, "$${GUILE_LIBNAME}");}
@@ -82,10 +80,10 @@ post-configure:
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/libltdl/buildlink3.mk"
 .include "../../textproc/libunistring/buildlink3.mk"
-# needs a particular bug fix on NetBSD
-BUILDLINK_API_DEPENDS.boehm-gc+=	boehm-gc>=7.4.2nb1
+# needs threaded boehm-gc
+BUILDLINK_API_DEPENDS.boehm-gc+=	boehm-gc>=8.0.4nb1
 .include "../../devel/boehm-gc/buildlink3.mk"
 .include "../../devel/libffi/buildlink3.mk"
 .include "../../devel/readline/buildlink3.mk"
-#.include "../../mk/pthread.buildlink3.mk"
+.include "../../mk/pthread.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.1 2019/12/07 21:34:17 bsiegert Exp $
+@comment $NetBSD: PLIST,v 1.4 2020/07/17 17:10:20 bsiegert Exp $
 bin/go${GOVERSSUFFIX}
 bin/gofmt${GOVERSSUFFIX}
 go113/AUTHORS
@@ -530,6 +530,7 @@ go113/misc/swig/stdio/file.swig
 go113/misc/swig/stdio/file_test.go
 go113/misc/trace/README.md
 go113/misc/trace/trace_viewer_full.html
+go113/misc/trace/webcomponents.min.js
 go113/misc/wasm/go_js_wasm_exec
 go113/misc/wasm/wasm_exec.html
 go113/misc/wasm/wasm_exec.js
@@ -799,6 +800,7 @@ go113/pkg/${GO_PLATFORM}/internal/poll.a
 go113/pkg/${GO_PLATFORM}/internal/race.a
 go113/pkg/${GO_PLATFORM}/internal/reflectlite.a
 go113/pkg/${GO_PLATFORM}/internal/singleflight.a
+go113/pkg/${GO_PLATFORM}/internal/syscall/execenv.a
 go113/pkg/${GO_PLATFORM}/internal/syscall/unix.a
 go113/pkg/${GO_PLATFORM}/internal/testenv.a
 go113/pkg/${GO_PLATFORM}/internal/testlog.a
@@ -1934,6 +1936,7 @@ go113/src/cmd/go/testdata/script/README
 go113/src/cmd/go/testdata/script/bug.txt
 go113/src/cmd/go/testdata/script/build_GOTMPDIR.txt
 go113/src/cmd/go/testdata/script/build_acl_windows.txt
+go113/src/cmd/go/testdata/script/build_cache_arch_mode.txt
 go113/src/cmd/go/testdata/script/build_cache_compile.txt
 go113/src/cmd/go/testdata/script/build_cache_gomips.txt
 go113/src/cmd/go/testdata/script/build_cache_link.txt
@@ -2011,6 +2014,7 @@ go113/src/cmd/go/testdata/script/mod_domain_root.txt
 go113/src/cmd/go/testdata/script/mod_dot.txt
 go113/src/cmd/go/testdata/script/mod_download.txt
 go113/src/cmd/go/testdata/script/mod_download_hash.txt
+go113/src/cmd/go/testdata/script/mod_download_partial.txt
 go113/src/cmd/go/testdata/script/mod_edit.txt
 go113/src/cmd/go/testdata/script/mod_edit_go.txt
 go113/src/cmd/go/testdata/script/mod_enabled.txt
@@ -4520,6 +4524,8 @@ go113/src/internal/reflectlite/type.go
 go113/src/internal/reflectlite/value.go
 go113/src/internal/singleflight/singleflight.go
 go113/src/internal/singleflight/singleflight_test.go
+go113/src/internal/syscall/execenv/execenv_default.go
+go113/src/internal/syscall/execenv/execenv_windows.go
 go113/src/internal/syscall/unix/asm_aix_ppc64.s
 go113/src/internal/syscall/unix/asm_solaris.s
 go113/src/internal/syscall/unix/at.go
@@ -5221,10 +5227,8 @@ go113/src/os/dir_plan9.go
 go113/src/os/dir_unix.go
 go113/src/os/dir_windows.go
 go113/src/os/env.go
-go113/src/os/env_default.go
 go113/src/os/env_test.go
 go113/src/os/env_unix_test.go
-go113/src/os/env_windows.go
 go113/src/os/error.go
 go113/src/os/error_errno.go
 go113/src/os/error_plan9.go
@@ -8433,6 +8437,8 @@ go113/test/fixedbugs/issue3552.go
 go113/test/fixedbugs/issue3705.go
 go113/test/fixedbugs/issue3783.go
 go113/test/fixedbugs/issue3925.go
+go113/test/fixedbugs/issue39459.go
+go113/test/fixedbugs/issue39541.go
 go113/test/fixedbugs/issue4066.go
 go113/test/fixedbugs/issue4085a.go
 go113/test/fixedbugs/issue4085b.go

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.7 2020/01/18 21:49:40 jperkin Exp $
+# $NetBSD: Makefile,v 1.12 2020/06/02 08:24:09 adam Exp $
 
 DISTNAME=	fcitx-qt5-1.2.3
-PKGREVISION=	5
+PKGREVISION=	10
 CATEGORIES=	inputmethod
 MASTER_SITES=	https://download.fcitx-im.org/fcitx-qt5/
 EXTRACT_SUFX=	.tar.xz
@@ -17,6 +17,9 @@ USE_TOOLS+=	pkg-config
 USE_CMAKE=	yes
 USE_LANGUAGES=	c c++
 
+LDFLAGS+=	-lintl
+
+.include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../inputmethod/fcitx/buildlink3.mk"
 .include "../../x11/qt5-qtbase/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

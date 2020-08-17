@@ -1,13 +1,14 @@
-# $NetBSD: Makefile,v 1.5 2020/01/18 23:35:18 rillig Exp $
+# $NetBSD: Makefile,v 1.8 2020/04/30 18:52:33 wiedi Exp $
 #
 
 DISTNAME=	menu-cache-1.1.0
+PKGREVISION=	1
 CATEGORIES=	sysutils
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=lxde/}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://lxde.sourceforge.net/
+HOMEPAGE=	http://lxde.sourceforge.net/
 COMMENT=	Cache for freedesktop.org menu spec
 LICENSE=	gnu-gpl-v2
 
@@ -17,6 +18,8 @@ USE_LIBTOOL=		yes
 USE_TOOLS+=		pkg-config
 
 PKGCONFIG_OVERRIDE+=	libmenu-cache/libmenu-cache.pc.in
+
+LDFLAGS.SunOS+=	-lsocket -lnsl
 
 post-install:
 	${INSTALL_DATA} ${WRKSRC}/README \

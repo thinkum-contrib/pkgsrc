@@ -1,4 +1,4 @@
-$NetBSD: distinfo,v 1.10 2020/01/18 21:58:44 prlw1 Exp $
+$NetBSD: distinfo,v 1.13 2020/06/23 13:22:30 manu Exp $
 
 SHA1 (xen411/ipxe-git-356f6c1b64d7a97746d1816cef8ca22bdd8d0b5d.tar.gz) = 272b8c904dc0127690eca2c5c20c67479e40da34
 RMD160 (xen411/ipxe-git-356f6c1b64d7a97746d1816cef8ca22bdd8d0b5d.tar.gz) = cfcb4a314c15da19b36132b27126f3bd9699d0e5
@@ -31,13 +31,14 @@ SHA1 (patch-tools_Rules.mk) = c15994d1e0c089674fdea874b56950a07be3deb5
 SHA1 (patch-tools_configure) = aa0838a1eadf70f5ed99748926234c0376989ff5
 SHA1 (patch-tools_console_daemon_utils.c) = 1c954e1edadad2607f7b87eaf2d6285be7f968ff
 SHA1 (patch-tools_debugger_gdbsx_Makefile) = 88960adedd258af3278ef105204ab97c662b8e61
+SHA1 (patch-tools_debugger_gdbsx_xg_xg_main.c) = 059551256e95858d7ade25e7637667862bd92499
 SHA1 (patch-tools_examples_Makefile) = fe258fc26e4507ca2fb4363c5e2197ee06e89d64
 SHA1 (patch-tools_firmware_etherboot_Makefile) = cc37708336c0a496511926327cfe807ac9f33ce0
 SHA1 (patch-tools_firmware_hvmloader_Makefile) = 02cac5e9314c4c71105f15a3c1c303c573d6583a
 SHA1 (patch-tools_hotplug_NetBSD_Makefile) = a880a38f82e97a5d7846345307d354c8055d23a9
 SHA1 (patch-tools_hotplug_NetBSD_block) = 535ecef7cc0431a14515387e47aadea5dec79569
 SHA1 (patch-tools_hotplug_NetBSD_vif-bridge) = 6d5288c9c47fe81b388ea73f9a71ca3975df36c2
-SHA1 (patch-tools_hotplug_NetBSD_vif-ip) = cb8fd1150f6ac24fa853444618437f7d984b4282
+SHA1 (patch-tools_hotplug_NetBSD_vif-ip) = 40588fd0d637e55e6108afc441ac2e9c67597edc
 SHA1 (patch-tools_hotplug_common_Makefile) = 590186dfb31713e8d9ee675186f826bcbcba3c15
 SHA1 (patch-tools_include_xen-sys_NetBSD_gntdev.h) = ce4f7160e92d23afa029c9548cead180fe980ff4
 SHA1 (patch-tools_libs_call_netbsd.c) = c5e166212b0069220d9155636b41028f0f7f9e9e
@@ -80,4 +81,5 @@ SHA1 (patch-tools_xenstore_xs_lib.c) = e3a8f6e3b149c3ab0f4ec8dcfa455983f94e6c16
 SHA1 (patch-tools_xentrace_xentrace.c) = f964c7555f454358a39f28a2e75db8ee100a4243
 SHA1 (patch-tools_xl_Makefile) = dd4fa8cc66c74eea8b022cd6129aa2831776f2a8
 SHA1 (patch-xen_Rules.mk) = c743dc63f51fc280d529a7d9e08650292c171dac
+SHA1 (patch-xen_common_lz4_dexompress.c) = 521a247c2d36980b3433c4be92c77308a2d3f3b9
 SHA1 (patch-xen_tools_symbols.c) = 67b5a38312095029631e00457abc0e4bb633aaf8

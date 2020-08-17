@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.12 2019/08/11 13:21:40 wiz Exp $
+# $NetBSD: Makefile,v 1.14 2020/05/22 18:12:15 rillig Exp $
 #
 
 DISTNAME=		policyd-weight-0.1.14.17
@@ -39,10 +39,8 @@ SUBST_CLASSES+=		fix-paths
 SUBST_STAGE.fix-paths=	post-build
 SUBST_FILES.fix-paths=	policyd-weight policyd-weight.conf.sample
 SUBST_SED.fix-paths=	-e 's,"/var/run/,"${VARBASE}/run/,g'
-SUBST_SED.fix-paths+=	-e 's,"/etc/policyd-weight.conf","${PKG_SYSCONFDIR}/policyd-weight.conf",g'
+SUBST_SED.fix-paths+=	-e 's,"/etc/policyd-weight\.conf","${PKG_SYSCONFDIR}/policyd-weight.conf",g'
 SUBST_SED.fix-paths+=	-e 's,"polw";,"${POLICYD_WEIGHT_USER}";,g'
-
-do-build:		replace-interpreter
 
 do-install:
 	${INSTALL_PROGRAM_DIR} ${DESTDIR}${PREFIX}/sbin

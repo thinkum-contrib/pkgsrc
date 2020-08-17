@@ -1,6 +1,5 @@
-# $NetBSD: Makefile,v 1.315 2020/01/18 21:49:53 jperkin Exp $
+# $NetBSD: Makefile,v 1.321 2020/06/15 15:43:32 taca Exp $
 
-PKGREVISION= 1
 .include "../../mail/postfix/Makefile.common"
 
 COMMENT=	Fast, easy to administer, and secure mail transfer agent
@@ -76,5 +75,8 @@ do-install:
 		${DESTDIR}${PREFIX}/sbin/qshape
 	${INSTALL_MAN} ${WRKSRC}/man/man1/qshape.1 \
 		${DESTDIR}${PREFIX}/${PKGMANDIR}/man1
+.for dir in ${POSTFIX_QUEUE_SUBDIR}
+	${RMDIR} ${DESTDIR}${POSTFIX_QUEUE_DIR}/${dir}
+.endfor
 
 .include "../../mk/bsd.pkg.mk"

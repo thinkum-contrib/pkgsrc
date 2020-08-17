@@ -1,6 +1,5 @@
-# $NetBSD: Makefile,v 1.21 2020/01/18 21:49:43 jperkin Exp $
+# $NetBSD: Makefile,v 1.26 2020/08/14 19:28:44 schmonz Exp $
 
-PKGREVISION= 1
 .include "dist.mk"
 
 PKGNAME=	python36-${PY_DISTVERSION}
@@ -157,6 +156,12 @@ SUBST_FILES.findlib+=	Lib/ctypes/util.py
 SUBST_FILES.findlib+=	Lib/distutils/unixccompiler.py
 SUBST_SED.findlib=	-e 's,/usr/local,${PREFIX},'
 SUBST_SED.findlib+=	-e "s!\('-Wl,-t'\)!'${COMPILER_RPATH_FLAG}${PREFIX}/lib', '-L${PREFIX}/lib', \1!"
+SUBST_NOOP_OK.findlib=	yes
+
+SUBST_CLASSES+=		pkgversion
+SUBST_STAGE.pkgversion=	pre-configure
+SUBST_FILES.pkgversion=	Lib/lib2to3/pgen2/driver.py
+SUBST_VARS.pkgversion=	PKGVERSION_NOREV
 
 .include "options.mk"
 
@@ -178,6 +183,7 @@ post-install:
 		${DESTDIR}${PREFIX}/lib/libpython3.6.sl.1.0
 .endif
 
+# needed to make devel/py-readline pick up the correct readline implementation
 BUILDLINK_DEPMETHOD.readline=		build
 
 .include "../../archivers/bzip2/buildlink3.mk"

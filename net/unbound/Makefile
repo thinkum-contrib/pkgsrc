@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.75 2020/01/18 21:48:21 jperkin Exp $
+# $NetBSD: Makefile,v 1.78 2020/05/19 08:39:31 he Exp $
 
-DISTNAME=	unbound-1.9.6
-PKGREVISION=	1
+DISTNAME=	unbound-1.10.1
 CATEGORIES=	net
 MASTER_SITES=	http://www.nlnetlabs.nl/downloads/unbound/
 
@@ -75,12 +74,6 @@ CONFIGURE_ARGS+=	--enable-sha2
 .else
 CONFIGURE_ARGS+=	--disable-sha2
 .endif
-
-SUBST_CLASSES+=		paths
-SUBST_STAGE.paths=	post-configure
-SUBST_MESSAGE.paths=	Fixing path names
-SUBST_FILES.paths=	doc/example.conf doc/*.5 doc/*.8
-SUBST_SED.paths=	-e "s|/usr/local|${PREFIX}|"
 
 INSTALL_MAKE_FLAGS+=	\
 	configfile=${PREFIX}/share/examples/unbound/unbound.conf

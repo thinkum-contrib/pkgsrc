@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.45 2020/01/18 21:51:00 jperkin Exp $
+# $NetBSD: Makefile,v 1.51 2020/06/05 12:49:16 jperkin Exp $
 
 DISTNAME=	dikt-2j
-PKGREVISION=	30
+PKGREVISION=	35
 CATEGORIES=	textproc x11
 #MASTER_SITES=	http://dikt.googlecode.com/files/
 EXTRACT_SUFX=	.txz
@@ -15,6 +15,7 @@ BUILD_DEPENDS+=	automoc4-[0-9]*:../../devel/automoc4
 BUILD_DEPENDS+=	xz-[0-9]*:../../archivers/xz
 
 USE_TOOLS+=	tar
+TOOLS_BROKEN+=	perl
 USE_LIBTOOL=	yes
 USE_CMAKE=	yes
 USE_LANGUAGES=	c c++

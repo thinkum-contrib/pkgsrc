@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.98 2020/01/18 21:48:10 jperkin Exp $
+# $NetBSD: Makefile,v 1.109 2020/06/05 12:48:59 jperkin Exp $
 
 DISTNAME=	simgear-2019.1.1
-PKGREVISION=	2
+PKGREVISION=	12
 CATEGORIES=	games devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=flightgear/release-${PKGVERSION_NOREV:R}/}
 EXTRACT_SUFX=	.tar.bz2
@@ -22,6 +22,9 @@ CMAKE_ARG_PATH=		..
 CMAKE_ARGS+=		-DCMAKE_BUILD_TYPE=Release
 
 LDFLAGS.SunOS+=		-lsocket -lnsl
+
+post-extract:
+	${MV} ${WRKSRC}/version ${WRKSRC}/version.txt
 
 # The cmake script warns against building in the source directory.
 pre-configure:

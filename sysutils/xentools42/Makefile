@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.75 2019/11/04 21:28:58 rillig Exp $
+# $NetBSD: Makefile,v 1.77 2020/05/19 19:24:41 rillig Exp $
 
 VERSION=	4.2.5
 VERSION_IPXE=	1.0.0
 
 DISTNAME=		xen-${VERSION}
 PKGNAME=		xentools42-${VERSION}
-PKGREVISION=		32
+PKGREVISION=		33
 CATEGORIES=		sysutils
 MASTER_SITES=		https://downloads.xenproject.org/release/xen/${VERSION}/
 
@@ -142,7 +142,6 @@ SUBST_CLASSES+=		conf
 SUBST_STAGE.conf=	pre-configure
 SUBST_FILES.conf+=	python/xen/xm/create.py
 SUBST_FILES.conf+=	ocaml/xenstored/define.ml
-SUBST_FILES.conf+=	libxl/xl_cmdtable.c
 SUBST_FILES.conf+=	../docs/misc/xl-disk-configuration.txt
 SUBST_SED.conf=		-e "s,@XENDCONFDIR@,${PKG_SYSCONFDIR},g"
 

@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.178 2020/01/22 20:04:30 leot Exp $
+# $NetBSD: Makefile,v 1.190 2020/07/28 14:24:03 leot Exp $
 
-DISTNAME=	webkitgtk-2.26.3
+DISTNAME=	webkitgtk-2.28.4
 PKGNAME=	${DISTNAME:S/webkitgtk/webkit-gtk/}
 CATEGORIES=	www
 MASTER_SITES=	https://www.webkitgtk.org/releases/
@@ -41,6 +41,7 @@ CMAKE_ARGS+=		-DPORT=GTK
 CMAKE_ARGS+=		-DENABLE_X11_TARGET=ON
 CMAKE_ARGS+=		-DENABLE_MINIBROWSER=ON
 CMAKE_ARGS+=		-DENABLE_GEOLOCATION=OFF
+CMAKE_ARGS+=		-DENABLE_BUBBLEWRAP_SANDBOX=OFF
 CMAKE_ARGS+=		-DUSE_GSTREAMER_GL=OFF
 CMAKE_ARGS+=		-DUSE_LIBHYPHEN=OFF
 CMAKE_ARGS+=		-DUSE_OPENJPEG=OFF
@@ -67,7 +68,6 @@ REPLACE_PYTHON+=	Source/JavaScriptCore/yarr/create_regex_tables
 REPLACE_PYTHON+=	Source/JavaScriptCore/yarr/generateYarrCanonicalizeUnicode
 REPLACE_PYTHON+=	Source/ThirdParty/ANGLE/src/compiler/translator/*.py
 REPLACE_PYTHON+=	Source/ThirdParty/ANGLE/src/libANGLE/*.py
-REPLACE_PYTHON+=	Source/ThirdParty/ANGLE/src/libGLESv2/*.py
 REPLACE_PYTHON+=	Source/ThirdParty/gtest/scripts/*.py
 REPLACE_PYTHON+=	Source/ThirdParty/gtest/test/*.py
 REPLACE_PYTHON+=	Source/ThirdParty/gtest/xcode/Scripts/*.py
@@ -78,10 +78,12 @@ REPLACE_PYTHON+=	Source/WebKit/Scripts/*.py
 REPLACE_PYTHON+=	Tools/glib/*.py
 REPLACE_PYTHON+=	Tools/gtkdoc/generate-gtkdoc
 
-REPLACE_BASH+=		Source/ThirdParty/ANGLE/src/compiler/preprocessor/generate_parser.sh
-REPLACE_BASH+=		Source/ThirdParty/ANGLE/src/compiler/translator/generate_parser.sh
+REPLACE_BASH+=		Source/JavaScriptCore/postprocess-headers.sh
+REPLACE_BASH+=		Source/ThirdParty/ANGLE/adjust-angle-include-paths-rule
 REPLACE_BASH+=		Source/ThirdParty/gtest/xcode/Samples/FrameworkSample/runtests.sh
 REPLACE_BASH+=		Source/ThirdParty/gtest/xcode/Scripts/runtests.sh
+REPLACE_BASH+=		Source/WebKit/Scripts/copy-webcontent-resources-to-private-headers.sh
+REPLACE_BASH+=		Source/WebKit/Scripts/generate-https-upgrade-database.sh
 REPLACE_BASH+=		Source/WebKit/Scripts/process-entitlements.sh
 REPLACE_BASH+=		Tools/gtk/install-dependencies
 

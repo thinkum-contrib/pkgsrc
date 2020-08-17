@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.132 2020/01/22 18:27:38 nia Exp $
+# $NetBSD: Makefile,v 1.138 2020/06/02 08:23:35 adam Exp $
 
 DISTNAME=	devhelp-3.34.0
+PKGREVISION=	4
 CATEGORIES=	devel gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/devhelp/3.34/}
 EXTRACT_SUFX=	.tar.xz
@@ -11,6 +12,8 @@ COMMENT=	Tool for browsing and searching API documentation from GNOME
 LICENSE=	gnu-gpl-v3
 
 USE_TOOLS+=	pkg-config msgfmt xgettext
+
+TOOL_DEPENDS+=	itstool-[0-9]*:../../textproc/itstool
 
 # workaround for build failure
 # https://gitlab.gnome.org/GNOME/json-glib/issues/35
@@ -26,6 +29,7 @@ PKGCONFIG_OVERRIDE+=		output/meson-private/libdevhelp-3.0.pc
 
 .include "../../devel/meson/build.mk"
 .include "../../devel/amtk/buildlink3.mk"
+.include "../../devel/gobject-introspection/buildlink3.mk"
 .include "../../devel/glib2/schemas.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"
 .include "../../sysutils/gsettings-desktop-schemas/buildlink3.mk"

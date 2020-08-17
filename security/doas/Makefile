@@ -1,10 +1,11 @@
-# $NetBSD: Makefile,v 1.7 2020/01/01 01:30:19 ng0 Exp $
+# $NetBSD: Makefile,v 1.9 2020/04/28 11:46:29 nikita Exp $
 
 DISTNAME=	doas-6.2p4
+PKGREVISION=	1
 CATEGORIES=	security
 MASTER_SITES=	${MASTER_SITE_GITHUB:=slicer69/}
 
-MAINTAINER=	ng0@NetBSD.org
+MAINTAINER=	nikita@NetBSD.org
 HOMEPAGE=	https://github.com/slicer69/doas/
 COMMENT=	Execute commands as another user
 LICENSE=	2-clause-bsd AND isc AND modified-bsd
@@ -15,12 +16,7 @@ USE_TOOLS+=	gmake yacc
 # illumos, SmartOS, OpenIndiana.
 # Add any failing platforms as BROKEN_ON_PLATFORM.
 
-SUBST_CLASSES+=			fix-paths
-SUBST_STAGE.fix-paths=		pre-install
-SUBST_MESSAGE.fix-paths=	Fixing paths.
-SUBST_FILES.fix-paths=		Makefile
-SUBST_SED.fix-paths+=		-e 's,$${PREFIX}/etc,${PKG_SYSCONFDIR},g'
-SUBST_SED.fix-paths+=		-e 's,/man/,/${PKGMANDIR}/,g'
+MAKE_ENV+=	MANDIR=${DESTDIR}${PREFIX}/${PKGMANDIR}
 
 SPECIAL_PERMS+=		bin/doas ${SETUID_ROOT_PERMS}
 

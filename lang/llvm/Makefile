@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.49 2019/12/29 15:31:21 adam Exp $
+# $NetBSD: Makefile,v 1.57 2020/07/27 11:12:48 adam Exp $
 #
 # when updating this, please also update:
 # devel/include-what-you-use
@@ -6,7 +6,6 @@
 # devel/lldb
 # devel/polly
 # lang/clang
-# lang/clang-static-analyzer
 # lang/clang-tools-extra
 # lang/compiler-rt
 # lang/libcxx
@@ -29,11 +28,11 @@ PKGNAME=	${DISTNAME:S/.src//}
 CATEGORIES=	lang devel
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://llvm.org/
+HOMEPAGE=	https://llvm.org/
 COMMENT=	Low Level Virtual Machine compiler infrastructure
 LICENSE=	apache-2.0
 
-USE_LANGUAGES=		c c++11
+USE_LANGUAGES=		c c++14
 USE_CMAKE=		yes
 GCC_REQD+=		5.1
 PYTHON_FOR_BUILD_ONLY=	yes
@@ -66,8 +65,7 @@ REPLACE_PYTHON+=	utils/*.py
 REPLACE_PYTHON+=	utils/Misc/zkill
 REPLACE_PYTHON+=	utils/bisect
 REPLACE_PYTHON+=	utils/clang-parse-diagnostics-file
-REPLACE_PYTHON+=	utils/git/find-rev
-REPLACE_PYTHON+=	utils/lit/tests/Inputs/googletest-format/DummySubDir/OneTest
+REPLACE_PYTHON+=	utils/lit/tests/Inputs/googletest-format/DummySubDir/OneTest.py
 REPLACE_PYTHON+=	utils/llvm-build/llvm-build
 REPLACE_PYTHON+=	utils/llvm-compilers-check
 REPLACE_PYTHON+=	utils/llvm-lit/llvm-lit.in
@@ -80,7 +78,6 @@ TEST_ENV+=		LD_LIBRARY_PATH=${WRKDIR}/build/lib
 SUBST_CLASSES.SunOS+=	linkmap
 SUBST_STAGE.linkmap=	pre-configure
 SUBST_FILES.linkmap=	tools/lto/lto.exports
-SUBST_FILES.linkmap+=	tools/opt-remarks/OptRemarks.exports
 SUBST_FILES.linkmap+=	tools/remarks-shlib/Remarks.exports
 SUBST_SED.linkmap=	-e '/^LLVM/d'
 

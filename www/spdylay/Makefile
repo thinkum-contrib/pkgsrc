@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.7 2020/01/18 21:48:30 jperkin Exp $
+# $NetBSD: Makefile,v 1.9 2020/06/02 08:23:01 adam Exp $
 
 DISTNAME=	spdylay-1.4.0
-PKGREVISION=	1
+PKGREVISION=	2
 CATEGORIES=	www
 MASTER_SITES=	${MASTER_SITE_GITHUB:=tatsuhiro-t/}
 EXTRACT_SUFX=	.tar.xz
@@ -38,7 +38,6 @@ PLIST.spdyd=	yes
 .endif
 
 BUILDLINK_API_DEPENDS.libevent+=	libevent>=2.0.8
-BUILDLINK_API_DEPENDS.openssl+=		openssl>=1.0.1
 
 .include "../../devel/libevent/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"

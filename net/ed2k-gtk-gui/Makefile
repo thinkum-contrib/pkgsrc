@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.55 2020/01/18 23:33:14 rillig Exp $
+# $NetBSD: Makefile,v 1.58 2020/03/20 11:58:06 nia Exp $
 
 DISTNAME=		ed2k-gtk-gui-0.6.3
-PKGREVISION=		34
+PKGREVISION=		36
 CATEGORIES=		net
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=ed2k-gtk-gui/}
 
 MAINTAINER=		minskim@NetBSD.org
-HOMEPAGE=		https://ed2k-gtk-gui.sourceforge.net/
+HOMEPAGE=		http://ed2k-gtk-gui.sourceforge.net/
 COMMENT=		GUI for the eDonkey2000 and Overnet
 
 USE_TOOLS+=		pkg-config

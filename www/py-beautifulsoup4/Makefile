@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.17 2020/01/08 21:08:26 adam Exp $
+# $NetBSD: Makefile,v 1.19 2020/05/27 13:00:40 adam Exp $
 
-DISTNAME=	beautifulsoup4-4.8.2
+DISTNAME=	beautifulsoup4-4.9.1
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	www python
 MASTER_SITES=	https://www.crummy.com/software/BeautifulSoup/bs4/download/${PKGVERSION_NOREV:R}/

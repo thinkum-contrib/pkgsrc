@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.2 2017/09/18 01:11:36 taca Exp $
+$NetBSD: distinfo,v 1.4 2020/06/14 15:51:21 taca Exp $
 
-SHA1 (websocket-driver-0.7.0.gem) = 393ca8cdfafc63e4ec27053fb1ed4548c6539e78
-RMD160 (websocket-driver-0.7.0.gem) = 455516bf6bc7dd69c1007a5d77cd3b5bbb6c4067
-SHA512 (websocket-driver-0.7.0.gem) = adb1c13e5ca41bfaf7aa136169de0590cbc392cb9b9e8bce76899d7577891bee5ed2fa75a66af58ce2277ba7d97dbb39c0d9edf55aba1300df54ceeb39675528
-Size (websocket-driver-0.7.0.gem) = 22016 bytes
+SHA1 (websocket-driver-0.7.2.gem) = 9699886dea8a79fe5139226a94f16e40622407f4
+RMD160 (websocket-driver-0.7.2.gem) = f097522b013a63439bec1c7e334eea23fc68f133
+SHA512 (websocket-driver-0.7.2.gem) = fb3b55f35237a84ac5be1bdb235447e8075416dd0735969b096378e28233476ee822a9ed74e204e7b2aac11d50c9d7ed1f7d7a9116b9ea8a992ee2be70a880b8
+Size (websocket-driver-0.7.2.gem) = 22016 bytes

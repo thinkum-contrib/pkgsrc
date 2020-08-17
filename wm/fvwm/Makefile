@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.42 2020/01/19 22:16:18 maya Exp $
+# $NetBSD: Makefile,v 1.50 2020/06/02 08:24:54 adam Exp $
 
 DISTNAME=	fvwm-${FVWM_VER}
-CATEGORIES=	x11 wm
+PKGREVISION=	4
+CATEGORIES=	wm x11
 MASTER_SITES=	${MASTER_SITE_GITHUB:=fvwmorg/}
 GITHUB_RELEASE=	${FVWM_VER}
 
@@ -22,10 +23,13 @@ INSTALLATION_DIRS+=	lib/X11/fvwm2
 INSTALLATION_DIRS+=	lib/X11/fvwm2/pixmaps
 INSTALLATION_DIRS+=	${PKGMANDIR}/man1
 
+# \todo: build with debug(or dbug?) to see fvwm console etc
+# \todo: look into more configure options
 CONFIGURE_ARGS+=	--sysconfdir=${PREFIX}/lib/X11/fvwm2
 CONFIGURE_ARGS+=	--libexecdir=${PREFIX}/lib/X11
 CONFIGURE_ARGS+=	--with-xpm-includes=${BUILDLINK_PREFIX.libXpm}/include
 CONFIGURE_ARGS+=	--with-imagepath=${PREFIX}/lib/X11/fvwm2/pixmaps:${X11BASE}/include/X11/bitmaps:${X11BASE}/include/X11/pixmaps
+CONFIGURE_ARGS+=	--without-rplay-library
 
 # We don't want to have CPP from the buildlink directory
 CONFIGURE_ENV+=		ac_cv_path_FVWM_CPP=${CPP:Q}
@@ -38,11 +42,6 @@ PYTHON_VERSIONS_INCOMPATIBLE=	27
 DEPENDS+=			${PYPKGPREFIX}-xdg-[0-9]*:../../devel/py-xdg
 CONFIGURE_ENV+=			PYTHON=${PYTHONBIN}
 CONFIGURE_ENV+=			ac_cv_path_PYTHON=${PYTHONBIN:Q}
-
-# 2 manpages want xsltproc.
-CONFIGURE_ARGS+=	--enable-mandoc
-BUILD_DEPENDS+=		docbook-xsl-[0-9]*:../../textproc/docbook-xsl
-BUILD_DEPENDS+=		libxslt-[0-9]*:../../textproc/libxslt
 
 .include "options.mk"
 

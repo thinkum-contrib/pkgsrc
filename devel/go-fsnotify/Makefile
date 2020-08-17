@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.18 2020/01/10 13:32:31 bsiegert Exp $
+# $NetBSD: Makefile,v 1.24 2020/08/14 20:01:35 bsiegert Exp $
 
 DISTNAME=	fsnotify-1.3.0
 PKGNAME=	go-${DISTNAME}
-PKGREVISION=	15
+PKGREVISION=	21
 MASTER_SITES=	${MASTER_SITE_GITHUB:=fsnotify/}
 CATEGORIES=	devel
 GITHUB_TAG=	v${PKGVERSION_NOREV}

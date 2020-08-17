@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.145 2020/01/08 12:52:13 nia Exp $
+# $NetBSD: Makefile,v 1.150 2020/07/23 19:55:19 pin Exp $
 #
 
 COMMENT=	X11 window managers, configuration tools, and themes
@@ -8,7 +8,6 @@ SUBDIR+=	3ddesktop
 SUBDIR+=	9wm
 SUBDIR+=	aewm++
 SUBDIR+=	afterstep
-SUBDIR+=	amaterus
 SUBDIR+=	amiwm
 SUBDIR+=	awesome
 SUBDIR+=	bbkeys
@@ -36,9 +35,9 @@ SUBDIR+=	echinus
 SUBDIR+=	enlightenment16
 SUBDIR+=	evilwm
 SUBDIR+=	fluxbox
-SUBDIR+=	fluxconf
 SUBDIR+=	fluxter
 SUBDIR+=	flwm
+SUBDIR+=	frankenwm
 SUBDIR+=	fvwm
 SUBDIR+=	fvwm-devel
 SUBDIR+=	fvwm-themes
@@ -63,6 +62,7 @@ SUBDIR+=	musca
 SUBDIR+=	notion
 SUBDIR+=	novawm
 SUBDIR+=	obconf
+SUBDIR+=	obconf-qt
 SUBDIR+=	obpager
 SUBDIR+=	olvwm
 SUBDIR+=	openbox
@@ -77,6 +77,7 @@ SUBDIR+=	sawfish
 SUBDIR+=	selectwm
 SUBDIR+=	skhd
 SUBDIR+=	skippy
+SUBDIR+=	sowm
 SUBDIR+=	spectrwm
 SUBDIR+=	swc
 SUBDIR+=	trayer

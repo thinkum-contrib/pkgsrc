@@ -1,7 +1,8 @@
-$NetBSD: distinfo,v 1.3 2020/01/10 11:52:05 nia Exp $
+$NetBSD: distinfo,v 1.8 2020/08/08 21:24:25 nia Exp $
 
-SHA1 (libtorrent-rasterbar-1.2.3.tar.gz) = ca0f0e018115388db7a40aab1a9a472b43047608
-RMD160 (libtorrent-rasterbar-1.2.3.tar.gz) = 2af0385b24338e007b68a1ad510a485a04467ef5
-SHA512 (libtorrent-rasterbar-1.2.3.tar.gz) = 18cffb86c5affcde79860236440eaca492fce71f16c2ccc5e20ec0d9351fbfb6c15d97e203b61c8cf8168f86cf31459ce0b76a4b0559244f9add385434ff4ae6
-Size (libtorrent-rasterbar-1.2.3.tar.gz) = 4145859 bytes
+SHA1 (libtorrent-rasterbar-1.2.8.tar.gz) = 2f9f9e6ed84a49027c884ea1370a9fe410f32dd4
+RMD160 (libtorrent-rasterbar-1.2.8.tar.gz) = 95194f9a34fc9eda1b539d1bb3c5d02529313f0a
+SHA512 (libtorrent-rasterbar-1.2.8.tar.gz) = 3669175763b1df96f1a2568b7a51df4e7fdf48033826484db8a5bf6525ec117423cdb23b4c357d7ea1d24ec47cf2ee4a0bbfe5f13e825418de9f8ac2dfee5971
+Size (libtorrent-rasterbar-1.2.8.tar.gz) = 4121254 bytes
 SHA1 (patch-include_libtorrent_buffer.hpp) = 365f04a6a4b63f86288119201bfec0b9d9e67bee
+SHA1 (patch-include_libtorrent_config.hpp) = 20d887a755935cdc23bdc80fcfbc8f07a89ec1e1

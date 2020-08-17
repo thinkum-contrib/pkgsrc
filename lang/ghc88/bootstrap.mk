@@ -1,4 +1,4 @@
-# $NetBSD: bootstrap.mk,v 1.4 2020/01/15 01:34:08 pho Exp $
+# $NetBSD: bootstrap.mk,v 1.6 2020/03/24 20:40:15 joerg Exp $
 # -----------------------------------------------------------------------------
 # Select a bindist of bootstrapping compiler on a per-platform basis.
 #
@@ -63,9 +63,10 @@ DISTFILES:=	${DISTFILES} ${BOOT_ARCHIVE} # Available in LOCAL_PORTS
 .endif
 
 .if !empty(MACHINE_PLATFORM:MSunOS-*-x86_64) || make(distinfo) || make (makesum) || make(mdi)
-#BOOT_VERSION:=	8.4.4
-#BOOT_ARCHIVE:=	ghc-${BOOT_VERSION}-boot-x86_64-unknown-solaris2.tar.xz
-#DISTFILES:=	${DISTFILES} ${BOOT_ARCHIVE} # Available in LOCAL_PORTS
+BOOT_VERSION:=		8.4.4
+BOOT_ARCHIVE:=		ghc-${BOOT_VERSION}-boot-x86_64-unknown-solaris2.tar.xz
+SITES.${BOOT_ARCHIVE}=	https://us-east.manta.joyent.com/pkgsrc/public/pkg-bootstraps/
+DISTFILES:=		${DISTFILES} ${BOOT_ARCHIVE}
 .endif
 
 .if empty(BOOT_ARCHIVE)
@@ -118,7 +119,7 @@ pre-configure:
 	${RUN}cd ${WRKDIR}/build-extract/ghc-${BOOT_VERSION}-boot && \
 		${PKGSRC_SETENV} ${CONFIGURE_ENV} ${SH} ./configure \
 			--prefix=${TOOLS_DIR:Q} && \
-		${MAKE_PROGRAM} install
+		${PKGSRC_SETENV} ${MAKE_ENV} ${MAKE_PROGRAM} install
 
 
 # -----------------------------------------------------------------------------

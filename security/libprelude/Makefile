@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.63 2019/12/20 22:11:02 gutteridge Exp $
+# $NetBSD: Makefile,v 1.67 2020/05/31 15:36:12 rillig Exp $
 #
 
-PKGREVISION=	19
+PKGREVISION=	21
 COMMENT=	LibPrelude libraries and c++ easy bindings
 LICENSE=	gnu-gpl-v2
 
@@ -12,7 +12,7 @@ CONF_FILES+=	${PREFIX}/share/examples/libprelude/global.conf ${PKG_SYSCONFDIR}/d
 CONF_FILES+=	${PREFIX}/share/examples/libprelude/idmef-client.conf ${PKG_SYSCONFDIR}/default/idmef-client.conf
 CONF_FILES+=	${PREFIX}/share/examples/libprelude/tls.conf ${PKG_SYSCONFDIR}/default/tls.conf
 
-CONFIGURE_ARGS+=	--without-python --without-lua --without-perl --without-ruby
+CONFIGURE_ARGS+=	--without-python --without-lua --without-perl
 
 # Work around mktime configure test failure leading to build issue
 .if !empty(MACHINE_PLATFORM:MDarwin-*-x86_64)
@@ -29,6 +29,9 @@ PKG_SUPPORTED_OPTIONS=	debug
 .if !empty(PKG_OPTIONS:Mdebug)
 CFLAGS=			-O0 -ggdb
 .endif
+
+# we already patch 'configure'
+CHECK_PORTABILITY_SKIP+=	configure.in
 
 .include "../../devel/libltdl/convenience.mk"
 .include "../../security/gnutls/buildlink3.mk"

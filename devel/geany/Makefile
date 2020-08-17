@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.63 2019/08/11 13:18:43 wiz Exp $
+# $NetBSD: Makefile,v 1.66 2020/03/10 22:09:35 wiz Exp $
 
-DISTNAME=	geany-1.35
+DISTNAME=	geany-1.36
 PKGREVISION=	2
 CATEGORIES=	devel
 MASTER_SITES=	http://download.geany.org/
@@ -9,7 +9,7 @@ EXTRACT_SUFX=	.tar.bz2
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://www.geany.org/
 COMMENT=	Geany integrated development environment (IDE)
-#LICENSE=	gnu-gpl-v2 (or later) AND internal scintilla License.
+LICENSE=	gnu-gpl-v2 # AND internal Scintilla License.
 
 GNU_CONFIGURE=		yes
 USE_LIBTOOL=		yes

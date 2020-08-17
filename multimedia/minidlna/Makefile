@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.38 2020/01/18 23:33:12 rillig Exp $
+# $NetBSD: Makefile,v 1.41 2020/06/02 08:24:27 adam Exp $
 
 PKGNAME=	minidlna-1.2.1.20180601
-PKGREVISION=	5
+PKGREVISION=	7
 DISTNAME=	minidlna-git-799e6cf505ec470b2bf0ae4118143380aa16b837
 CATEGORIES=	multimedia
 #MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=minidlna/}
@@ -9,7 +9,7 @@ MASTER_SITES=	https://sourceforge.net/code-snapshots/git/m/mi/minidlna/git.git/
 EXTRACT_SUFX=	.zip
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://minidlna.sourceforge.net/
+HOMEPAGE=	http://minidlna.sourceforge.net/
 COMMENT=	DLNA server
 LICENSE=	gnu-gpl-v2
 

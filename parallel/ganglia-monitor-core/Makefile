@@ -1,14 +1,13 @@
-# $NetBSD: Makefile,v 1.64 2020/01/18 23:33:25 rillig Exp $
-#
+# $NetBSD: Makefile,v 1.70 2020/07/13 18:40:47 wiz Exp $
 
 DISTNAME=		ganglia-3.7.2
 PKGNAME=		ganglia-monitor-core-3.7.2
-PKGREVISION=		8
-CATEGORIES=		net parallel
+PKGREVISION=		11
+CATEGORIES=		parallel net
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=ganglia/}
 
 MAINTAINER=		bacon@NetBSD.org
-HOMEPAGE=		https://ganglia.sourceforge.net/
+HOMEPAGE=		http://ganglia.sourceforge.net/
 COMMENT=		Ganglia cluster monitor, monitoring daemon
 LICENSE=		modified-bsd
 
@@ -60,15 +59,8 @@ INSTALL_MAKE_FLAGS+=	sysconfdir=${EGDIR}
 SUBST_CLASSES+=		paths
 SUBST_STAGE.paths=	pre-configure
 SUBST_MESSAGE.paths=	Fixing default paths
-SUBST_FILES.paths=	configure ganglia.html			\
-			gmetad/cmdline.c gmetad/cmdline.h	\
-			gmetric/cmdline.c gmetric/cmdline.h	\
-			gmond/cmdline.c gmond/cmdline.h		\
-			gmond/g25_config.h gmond/gmond.conf.5	\
-			gmond/modules/conf.d/modpython.conf	\
-			gmond/modules/conf.d/modpython.conf.in	\
-			gmond/modules/python/README.in		\
-			mans/gmetad.1 mans/gmetric.1 mans/gmond.1
+SUBST_FILES.paths=	configure ganglia.html \
+			gmond/gmond.conf.5 mans/gmetric.1
 SUBST_SED.paths+=	-e 's|/etc/ganglia|${PKG_SYSCONFDIR}|g'
 SUBST_SED.paths+=	-e 's|/usr/lib/ganglia|${PREFIX}/lib/ganglia|g'
 SUBST_VARS.paths+=	GANGLIA_VARBASE
@@ -77,9 +69,9 @@ SUBST_VARS.paths+=	GANGLIA_VARBASE
 ## doing so requires perl installed in the build stage.
 SUBST_CLASSES+=		etcdir
 SUBST_STAGE.etcdir=	pre-configure
-SUBST_FILES.etcdir=	${WRKSRC}/README \
-			${WRKSRC}/mans/gmetad.1 \
-			${WRKSRC}/mans/gmond.1
+SUBST_FILES.etcdir+=	README
+SUBST_FILES.etcdir+=	mans/gmetad.1
+SUBST_FILES.etcdir+=	mans/gmond.1
 SUBST_SED.etcdir=	-e "s|/etc/ganglia/\(gm.*d\.conf\)|${PREFIX}/etc/\1|g"
 
 SUBST_CLASSES+=			linux_init

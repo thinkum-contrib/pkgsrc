@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.60 2019/10/05 06:11:25 ryoon Exp $
+# $NetBSD: Makefile,v 1.63 2020/05/21 16:04:22 taca Exp $
 #
 
 DISTNAME=	rabbit-3.0.0
@@ -6,7 +6,7 @@ CATEGORIES=	graphics ruby
 MASTER_SITES=	http://rabbit-shocker.org/download/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://rabbit-shocker.org/
+HOMEPAGE=	https://rabbit-shocker.org/
 COMMENT=	RD-document-based presentation application
 LICENSE=	gnu-gpl-v2 # or later
 

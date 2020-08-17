@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.82 2020/01/18 23:33:12 rillig Exp $
+# $NetBSD: Makefile,v 1.85 2020/03/20 11:58:04 nia Exp $
 
 DISTNAME=		ORBit2-2.14.19
-PKGREVISION=		4
+PKGREVISION=		5
 CATEGORIES=		net gnome
 MASTER_SITES=		${MASTER_SITE_GNOME:=sources/ORBit2/2.14/}
 EXTRACT_SUFX=		.tar.bz2
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://orbit-resource.sourceforge.net/
+HOMEPAGE=		http://orbit-resource.sourceforge.net/
 COMMENT=		High-performance CORBA ORB with C language support
 LICENSE=		gnu-gpl-v2 AND gnu-lgpl-v2
 
@@ -21,6 +21,9 @@ USE_LIBTOOL=		YES
 GNU_CONFIGURE=		YES
 # needs interaction
 #TEST_TARGET=		check
+
+# patched in configure
+CHECK_PORTABILITY_SKIP+=	configure.in
 
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFDIR:Q}
 

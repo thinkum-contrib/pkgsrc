@@ -1,11 +1,10 @@
-# $NetBSD: Makefile,v 1.14 2019/08/11 13:18:40 wiz Exp $
+# $NetBSD: Makefile,v 1.16 2020/07/27 16:22:46 gdt Exp $
 
-DISTNAME=	colordiff-1.0.18
-PKGREVISION=	2
+DISTNAME=	colordiff-1.0.19
 CATEGORIES=	devel
 MASTER_SITES=	https://www.colordiff.org/
 
-MAINTAINER=	rhansen@bbn.com
+MAINTAINER=	pkgsrc-users@netbsd.org
 HOMEPAGE=	https://www.colordiff.org/
 COMMENT=	Colour-highlighted 'diff' output
 LICENSE=	gnu-gpl-v2 OR gnu-gpl-v3

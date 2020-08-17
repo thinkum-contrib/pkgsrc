@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.52 2019/07/21 22:26:05 wiz Exp $
+# $NetBSD: Makefile,v 1.54 2020/03/10 22:11:21 wiz Exp $
 #
 
 DISTNAME=		Xdialog-2.3.1
 PKGNAME=		${DISTNAME:S/^X/x/}
-PKGREVISION=		29
+PKGREVISION=		31
 CATEGORIES=		x11 misc
 MASTER_SITES=		http://xdialog.free.fr/
 EXTRACT_SUFX=		.tar.bz2

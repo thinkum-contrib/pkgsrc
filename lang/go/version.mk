@@ -1,4 +1,4 @@
-# $NetBSD: version.mk,v 1.78 2020/01/10 12:56:35 bsiegert Exp $
+# $NetBSD: version.mk,v 1.96 2020/08/14 18:45:56 bsiegert Exp $
 
 #
 # If bsd.prefs.mk is included before go-package.mk in a package, then this
@@ -6,13 +6,11 @@
 #
 .include "go-vars.mk"
 
-GO113_VERSION=	1.13.6
-GO112_VERSION=	1.12.15
-GO111_VERSION=	1.11.13
+GO114_VERSION=	1.14.7
+GO113_VERSION=	1.13.15
 GO110_VERSION=	1.10.8
 GO19_VERSION=	1.9.7
 GO14_VERSION=	1.4.3
-GO_VERSION=	${GO110_VERSION}
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -25,7 +23,7 @@ GO_VERSION_DEFAULT?=	19
 # darwin version 13.4 is osx 10.9.5
 GO_VERSION_DEFAULT?=	110
 .else
-GO_VERSION_DEFAULT?=	113
+GO_VERSION_DEFAULT?=	114
 .endif
 
 .if !empty(GO_VERSION_DEFAULT)
@@ -38,7 +36,7 @@ GO=			${PREFIX}/go${GOVERSSUFFIX}/bin/go
 # Build dependency for Go
 GO_PACKAGE_DEP=		go${GOVERSSUFFIX}-${GO${GOVERSSUFFIX}_VERSION}*:../../lang/go${GOVERSSUFFIX}
 
-ONLY_FOR_PLATFORM=	*-*-i386 *-*-x86_64 *-*-earmv[67]hf
+ONLY_FOR_PLATFORM=	*-*-i386 *-*-x86_64 *-*-earmv[67]hf *-*-aarch64
 NOT_FOR_PLATFORM=	SunOS-*-i386
 .if ${MACHINE_ARCH} == "i386"
 GOARCH=			386
@@ -49,6 +47,11 @@ GOCHAR=			6
 .elif ${MACHINE_ARCH} == "earmv6hf" || ${MACHINE_ARCH} == "earmv7hf"
 GOARCH=			arm
 GOCHAR=			5
+.elif ${MACHINE_ARCH} == "aarch64"
+GOARCH=			arm64
+GOOPT=			GOARM=7
+# GOHOSTARCH is being misdetected as arm on NetBSD. Unclear why.
+GOOPT+=			GOHOSTARCH=arm64
 .endif
 .if ${MACHINE_ARCH} == "earmv6hf"
 GOOPT=			GOARM=6

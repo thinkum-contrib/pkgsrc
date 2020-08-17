@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.17 2020/01/18 23:35:05 rillig Exp $
+# $NetBSD: Makefile,v 1.19 2020/04/30 16:29:45 rillig Exp $
 #
 
 DISTNAME=	Bastille-3.0.9
@@ -8,7 +8,7 @@ MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=bastille-linux/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://bastille-linux.sourceforge.net/
+HOMEPAGE=	http://bastille-linux.sourceforge.net/
 COMMENT=	System hardening tool focusing on educating the user
 
 WRKSRC=			${WRKDIR}/Bastille
@@ -42,6 +42,7 @@ SUBST_CLASSES+=		b3
 SUBST_STAGE.b3=		pre-configure
 SUBST_FILES.b3=		${REPLACE_PERL}
 SUBST_SED.b3=		-e 's,^use lib.*,use lib "${PREFIX}/lib";,'
+SUBST_NOOP_OK.b3=	yes # some of the files don't match
 
 REPLACE_PERL+=		AutomatedBastille BastilleBackEnd BastilleChooser
 REPLACE_PERL+=		InteractiveBastille RevertBastille *.pm

@@ -1,10 +1,12 @@
-# $NetBSD: Makefile,v 1.41 2020/01/18 21:51:15 jperkin Exp $
+# $NetBSD: Makefile,v 1.43 2020/05/28 15:21:17 rillig Exp $
 
-PKGREVISION= 3
+PKGREVISION= 4
 .include "../../x11/qt4-libs/Makefile.common"
 
 PKGNAME=	qt4-tiff-${QTVERSION}
 COMMENT=	QT TIFF image format plugin
+
+TOOLS_BROKEN+=		perl
 
 CONFIGURE_ARGS+=	-I${QTDIR}/include
 CONFIGURE_ARGS+=	-L${QTDIR}/lib

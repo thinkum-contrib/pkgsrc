@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.65 2020/01/18 23:33:24 rillig Exp $
+# $NetBSD: Makefile,v 1.67 2020/04/13 12:00:48 nia Exp $
 
 DISTNAME=	slrn-1.0.3a
 PKGREVISION=	1
@@ -7,7 +7,7 @@ MASTER_SITES=	http://jedsoft.org/releases/slrn/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://slrn.sourceforge.net/
+HOMEPAGE=	http://slrn.sourceforge.net/
 COMMENT=	Highly customizable threaded newsreader
 LICENSE=	gnu-gpl-v2
 
@@ -18,11 +18,15 @@ WRKSRC=		${WRKDIR}/slrn-1.0.3
 
 USE_PKGLOCALEDIR=	yes
 GNU_CONFIGURE=		yes
-CONFIGURE_ARGS+=	--disable-inews --with-slrnpull --enable-spool \
-			--enable-grouplens --with-libdir=${PREFIX}/lib/slrn \
-			--enable-mid-cache \
-			--with-slang=${BUILDLINK_PREFIX.libslang2} \
-			--with-localedir=${PREFIX}/${PKGLOCALEDIR}/locale
+
+CONFIGURE_ARGS+=	--disable-inews
+CONFIGURE_ARGS+=	--enable-spool
+CONFIGURE_ARGS+=	--enable-grouplens
+CONFIGURE_ARGS+=	--enable-mid-cache
+CONFIGURE_ARGS+=	--with-slrnpull
+CONFIGURE_ARGS+=	--with-libdir=${PREFIX}/lib/slrn
+CONFIGURE_ARGS+=	--with-slang=${BUILDLINK_PREFIX.libslang2}
+CONFIGURE_ARGS+=	--with-localedir=${PREFIX}/${PKGLOCALEDIR}/locale
 
 .include "options.mk"
 

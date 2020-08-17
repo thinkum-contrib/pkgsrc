@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.38 2020/01/18 23:29:58 rillig Exp $
+# $NetBSD: Makefile,v 1.41 2020/06/02 08:23:08 adam Exp $
 #
 
 DISTNAME=	cdplayer-0.5.1
-PKGREVISION=	16
+PKGREVISION=	18
 CATEGORIES=	audio gnustep
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=gsburn/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://gsburn.sourceforge.net/
+HOMEPAGE=	http://gsburn.sourceforge.net/
 COMMENT=	GNUstep CD player with CDDB support
 LICENSE=	gnu-gpl-v2
 

@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# $NetBSD: bootstrap,v 1.273 2019/12/05 22:19:56 sevan Exp $
+# $NetBSD: bootstrap,v 1.291 2020/08/14 08:45:30 jperkin Exp $
 #
 # Copyright (c) 2001-2011 Alistair Crooks <agc@NetBSD.org>
 # All rights reserved.
@@ -37,8 +37,6 @@
 # * the ${var%pattern} or ${var#pattern} expansions
 # * the $(command) subshell
 
-BOOTSTRAP_VERSION=20190721
-
 # Don't let the bootstrap program get confused by a pre-existing mk.conf
 # file.
 MAKECONF=/dev/null
@@ -61,7 +59,6 @@ wrkdir="`pwd`/work"
 usage="Usage: $0 "'
     [ --abi [32|64] ]
     [ --binary-kit <tarball> ]
-    [ --binary-macpkg <pkg> ]
     [ --compiler <compiler> ]
     [ --cwrappers <auto|yes|no> ]
     [ --full ]
@@ -85,28 +82,6 @@ usage="Usage: $0 "'
 # strip / for BSD/OS, strip - for HP-UX
 opsys=`uname -s | tr -d /-`
 
-mkbinarykit_macpkg()
-{
-	local macdestdir
-	macdestdir=${wrkdir}/macpkg-destdir
-	rm -rf ${macdestdir} || die "cleanup destdir"
-
-	mkdir -p ${macdestdir}${prefix} || die "mkdir destprefix"
-	rmdir ${macdestdir}${prefix} || die "rmdir destprefix"
-	cp -Rp ${prefix} ${macdestdir}${prefix} || die "copy prefix"
-
-	if [ ! -d ${macdestdir}${pkgdbdir} ]; then
-		mkdir -p ${macdestdir}${pkgdbdir} || die "mkdir destdbdir"
-		rmdir ${macdestdir}${pkgdbdir} || die "rmdir destdbdir"
-		cp -Rp ${pkgdbdir} ${macdestdir}${pkgdbdir} || die "copy dbdir"
-	fi
-
-	${sedprog} -e "s|%WRKDIR%|${wrkdir}|g" \
-		-e "s|%TARGETDIR%|${targetdir}|g" -e "s|%DATE%|${date}|g" \
-		< macpkg.pmproj.in > ${wrkdir}/macpkg.pmproj
-	${packagemaker} -build -proj ${wrkdir}/macpkg.pmproj -p "${binary_macpkg}"
-}
-
 mkbinarykit_tar()
 {
 	# in case tar was built by bootstrap
@@ -123,13 +98,13 @@ mkbinarykit_tgz()
 
 die()
 {
-	echo >&2 "$@"
+	echo >&2 "$*"
 	exit 1
 }
 
 echo_msg()
 {
-	echo "===> $@"
+	echo "===> $*"
 }
 
 # see if we're using gcc.  If so, set $compiler_is_gnu to '1'.
@@ -221,6 +196,9 @@ get_machine_arch_aix()
 get_machine_arch_darwin()
 {
 	case `uname -p` in
+	arm)
+		echo "aarch64"
+		;;
 	i386)
 		# Returns "i386" or "x86_64" depending on CPU
 		echo `uname -m`
@@ -293,7 +271,7 @@ is_root()
 # run a command, abort if it fails
 run_cmd()
 {
-	echo_msg "running: $@"
+	echo_msg "running: $*"
 	eval "$@"
 	ret=$?
         if [ $ret -ne 0 ]; then
@@ -306,7 +284,7 @@ run_cmd()
 # install-sh wrapper instead.
 mkdir_p()
 {
-	for dir in $@; do
+	for dir in "$@"; do
 		run_cmd "$install_sh -d -o $user -g $group $dir"
 	done
 }
@@ -424,7 +402,7 @@ if [ -n "$PKG_PATH" ]; then
 fi
 
 build_start=`date`
-echo_msg "bootstrap command: $0 $@"
+echo_msg "bootstrap command: $0 $*"
 echo_msg "bootstrap started: $build_start"
 
 # ensure system locations are empty; we will set them later when we know
@@ -483,10 +461,6 @@ while [ $# -gt 0 ]; do
 			binary_gzip_kit=`get_optarg "$1"` ;;
 	--gzip-binary-kit)
 			binary_gzip_kit="$2"; shift ;;
-	--binary-macpkg=*)
-			binary_macpkg=`get_optarg "$1"` ;;
-	--binary-macpkg)
-			binary_macpkg="$2"; shift ;;
 	--make-jobs=*)	make_jobs=`get_optarg "$1"` ;;
 	--make-jobs)	make_jobs="$2"; shift ;;
 	--full)		full=yes ;;
@@ -499,7 +473,6 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-checkarg_sane_absolute_path "$prefix" "--prefix"
 checkarg_sane_absolute_path "$pkgdbdir" "--pkgdbdir"
 checkarg_sane_absolute_path "$sysconfdir" "--sysconfdir"
 checkarg_sane_absolute_path "$varbase" "--varbase"
@@ -515,6 +488,7 @@ elif [ -z "$prefix" -o "$prefix" = "/usr/pkg" ]; then
 	prefix=/usr/pkg
 	[ -z "$varbase" ] && varbase=/var
 fi
+checkarg_sane_absolute_path "$prefix" "--prefix"
 
 [ -z "$varbase" ] && varbase=${prefix}/var
 [ -z "$pkgdbdir" ] && pkgdbdir=${prefix}/pkgdb
@@ -537,7 +511,12 @@ fi
 overpath=""
 root_user=root
 bmakexargs=
+need_awk=no
+need_bsd_install=no
 need_extras=no
+need_sed=no
+need_xargs=no
+set_opsys=no
 use_bsdinstall=
 case "$opsys" in
 AIX)
@@ -547,15 +526,10 @@ AIX)
 	need_sed=yes
 	need_ksh=yes
 	need_fixed_strip=yes
-	set_opsys=no
 	machine_arch=`get_machine_arch_aix`
 	;;
 Bitrig)
 	root_group=wheel
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	machine_arch=`arch -s`
 	check_compiler=yes
 	;;
@@ -568,88 +542,62 @@ CYGWIN_*)
 	}
 	root_user=Administrators
 	root_group=Administrators
-	need_bsd_install=no
 	opsys=`uname -o`
-	need_awk=no
 	need_sed=yes
-	need_xargs=no
 	machine_arch=`uname -m`
 	# only used for unprivileged builds.
 	whoamiprog='id -u'
 	groupsprog='id -g'
 	;;
-
 Darwin)
 	root_group=wheel
-	need_bsd_install=no
-	need_awk=yes
-	need_sed=yes
-	set_opsys=no
 	machine_arch=`get_machine_arch_darwin`
 	CC=${CC:-"cc -isystem /usr/include"}; export CC
 	check_compiler=yes
 	osrev=`uname -r`
-	macosx_version=`echo $osrev | awk -F . '{ print "10."$1-4; }'`
-	case "$macosx_version" in
-	10.[7-9])
-		packagemaker=/Applications/PackageMaker.app/Contents/MacOS/PackageMaker
-		;;
-	10.[0-4])
-		packagemaker=/Developer/Tools/packagemaker
-		;;
-	*)
-		packagemaker=/Developer/usr/bin/packagemaker
-		;;
-	esac
-	case "$macosx_version" in
-	10.[0-7])
-		need_awk=no
-		need_sed=no
-		;;
-	esac
-	unset osrev macosx_version
+
+	# Combine major.minor product version for simpler numerical tests.
+	macos_version=`sw_vers -productVersion | awk -F. '{print $1 $2}'`
+
+	# Newer native sed does not support multibyte correctly.
+	if [ $macos_version -ge 1008 ]; then
+		need_awk=yes
+		need_sed=yes
+	fi
+
+	# Avoid system shells on macOS versions that enable System Integrity
+	# Protection (SIP) as it affects packages that rely on variables such
+	# as LD_LIBRARY_PATH.  SIP unsets any variables that may affect
+	# security when using system binaries, i.e. /bin/*sh, but using a
+	# non-system shell is unaffected, at least for now.
+	if [ $macos_version -ge 1011 ]; then
+		need_mksh=yes
+	fi
+
+	unset osrev macos_version
 	;;
 DragonFly)
 	root_group=wheel
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	check_prog tarprog tar
 	machine_arch=`uname -p`
 	;;
 FreeBSD)
 	root_group=wheel
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	machine_arch=`uname -p`
 	check_compiler=yes
 	;;
 FreeMiNT)
 	root_group=root
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	machine_arch=m68k
 	;;
 GNUkFreeBSD)
 	root_group=root
-	need_bsd_install=no
 	need_awk=yes
-	need_sed=no
-	set_opsys=no
 	machine_arch=`uname -m`
 	;;
 Haiku)
 	root_user=`id -un`
 	root_group=root
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	case `uname -m` in
 	BeMac)
 		machine_arch=powerpc
@@ -667,7 +615,6 @@ HPUX)
 	need_bsd_install=yes
 	need_awk=yes
 	need_sed=yes
-	set_opsys=no
 	machine_arch=`uname -m | sed 's/^9000.*$/hppa/'`
 	;;
 Interix)
@@ -688,15 +635,7 @@ Interix)
 		need_bsd_install=yes
 		need_awk=yes
 		need_sed=yes
-		set_opsys=no
 		need_xargs=yes
-		;;
-	*)
-		need_bsd_install=no
-		need_awk=no
-		need_sed=no
-		set_opsys=no
-		need_xargs=no
 		;;
 	esac
 	# only used for unprivileged builds
@@ -737,7 +676,6 @@ Linux)
 	else
 		root_group=root
 	fi
-	need_bsd_install=no
 	# Debian/Ubuntu's awk is mawk, and mawk does not understand
 	# some regexp used in pkgsrc/mk.
 	if [ -f /etc/debian_version ]; then
@@ -750,11 +688,7 @@ Linux)
 	elif grep -sq '^CHROMEOS_RELEASE_NAME' /etc/lsb-release; then
 		need_awk=yes
 		need_sed=yes
-	else
-		need_awk=no
-		need_sed=no
 	fi
-	set_opsys=no
 	machine_arch=`uname -m`
 	# Override machine_arch where required.
 	case "$machine_arch" in
@@ -764,22 +698,12 @@ Linux)
 	;;
 Minix)
 	root_group=wheel
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	machine_arch=`uname -p`
 	check_compiler=yes
 	;;	
 MirBSD)
 	root_group=wheel
 	need_pax=yes
-	need_mtree=no
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
-	check_prog mtreeprog mtree
 	machine_arch=`arch -s`
 	# there is no /usr/bin/cc, so use mgcc if unset
 	test -n "$CC" || { CC=mgcc; export CC; }
@@ -801,18 +725,10 @@ MirBSD)
 	;;
 NetBSD)
 	root_group=wheel
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	machine_arch=`uname -p`
 	;;
 OpenBSD)
 	root_group=wheel
-	need_bsd_install=no
-	need_awk=no
-	need_sed=no
-	set_opsys=no
 	machine_arch=`arch -s`
 	CC=${CC:-cc}; export CC
 	check_compiler=yes
@@ -822,8 +738,7 @@ OSF1)
 	need_bsd_install=yes
 	need_awk=yes
 	need_sed=yes
-	need_ksh=yes
-	set_opsys=no
+	need_mksh=yes
 	machine_arch=`uname -p`
 	;;
 QNX)
@@ -831,7 +746,6 @@ QNX)
 	need_bsd_install=yes
 	need_awk=yes
 	need_sed=yes
-	set_opsys=no
 	groupsprog="id -gn"
 	whoamiprog="id -un"
 	machine_arch=`uname -p | sed -e 's/x86/i386/'`
@@ -841,7 +755,6 @@ SCO_SV)
 	need_awk=yes
 	need_bsd_install=yes
 	need_sed=yes
-	set_opsys=no
 	whoamiprog='id -u'
 	groupsprog='id -g'
 	# /bin/sh under OpenServer 5.0.7/3.2 breaks bmake tests.
@@ -851,39 +764,32 @@ SunOS)
 	root_group=root
 	need_bsd_install=yes
 	use_bsdinstall=yes
-	if [ -x "/usr/gnu/bin/awk" ]; then
-		need_awk=no
-	else
+	if [ ! -x "/usr/gnu/bin/awk" ]; then
 		need_awk=yes
 	fi
-	if [ -x "/usr/gnu/bin/sed" ]; then
-		need_sed=no
-	else
+	if [ ! -x "/usr/gnu/bin/sed" ]; then
 		need_sed=yes
 	fi
 	if [ -x "/usr/bin/bash" ]; then
 		bootstrap_sh=${SH:-/usr/bin/bash}
 		bootstrap_sh_set=set
 	else
-		need_ksh=yes
+		need_mksh=yes
 	fi
-	set_opsys=no
 	idprog="/usr/xpg4/bin/id"
 	groupsprog="${idprog} -gn"
 	whoamiprog="${idprog} -un"
-	machine_arch=`uname -p | sed -e 's/i86pc/i386/'`
+	machine_arch=`isainfo -k`
 	check_compiler=yes
 	check_ssp=yes
 	;;
 UnixWare)
 	root_group=sys
-	need_bsd_install=no
 	BSTRAP_ENV="INSTALL=/usr/ucb/install $BSTRAP_ENV"
 	need_mkdir=yes
 	need_awk=yes
 	need_sed=yes
 	whoamiprog=/usr/ucb/whoami
-	set_opsys=no
 	CC="gcc -DUNIXWARE"; export CC
 	;;
 *)
@@ -892,7 +798,6 @@ UnixWare)
 	need_bsd_install=yes
 	need_awk=yes
 	need_sed=yes
-	set_opsys=no
 	;;
 esac
 
@@ -917,7 +822,9 @@ powerpc/*)	abi=32	machine_arch=powerpc	;;
 powerpc64/32)	abi=32	machine_arch=powerpc	;;
 powerpc64/*)	abi=64	machine_arch=powerpc64	;;
 powerpc64le/*)	abi=64	machine_arch=powerpc64le;;
-# "sparc" can support 64-bit, e.g. SunOS, defaults to 32-bit.
+# sparc/sparcv9 support 32-bit/64-bit, default to native.
+sparcv9/32)	abi=32	machine_arch=sparc	;;
+sparcv9/*)	abi=64	machine_arch=sparc64	;;
 sparc/64)	abi=64	machine_arch=sparc64	;;
 sparc/*)	abi=32	machine_arch=sparc	;;
 # x86_64 supports 32-bit/64-bit, defaults to 64-bit.
@@ -933,8 +840,13 @@ yes)
 	need_bsd_install=yes
 	need_awk=yes
 	need_sed=yes
-	need_ksh=yes
+	need_mksh=yes
 	;;
+esac
+
+# mksh and ksh are mutually exclusive, prefer mksh while we transition to it.
+case "$need_mksh" in
+yes)	need_ksh=no ;;
 esac
 
 case "$quiet" in
@@ -1005,10 +917,8 @@ if [ "$compiler" = "" ] && [ x"$check_compiler" = x"yes" ]; then
 	# Clang pretends to be GCC, so we have to check it first.
 	if [ $compiler_is_clang -gt 0 ]; then
 		compiler="clang"
-		test -n "$CC" || CC=clang
 	elif [ $compiler_is_gnu -gt 0 ]; then
 		compiler="gcc"
-		test -n "$CC" || CC=gcc
 	else
 		case "$opsys" in
 		IRIX)
@@ -1017,14 +927,21 @@ if [ "$compiler" = "" ] && [ x"$check_compiler" = x"yes" ]; then
 			else
 				compiler="ido"
 			fi
-			test -n "$CC" || CC=cc
 			;;
 		SunOS)	compiler="sunpro"
-			test -n "$CC" || CC=cc
 			;;
 		esac
 	fi
 fi
+
+case "$compiler" in
+clang|gcc)
+	test -n "$CC" || CC=$compiler
+	;;
+*)
+	test -n "$CC" || CC=cc
+	;;
+esac
 
 has_ssp_support() {
 	mkdir_p_early ${wrkdir}/tmp
@@ -1215,6 +1132,10 @@ run_cmd "(cd ${pkgsrcdir}/pkgtools/bootstrap-mk-files/files && env CP=${cpprog} 
 ROOT_USER=${root_user} SED=${sedprog} SYSCONFDIR=${sysconfdir} \
 $shprog ./bootstrap.sh)"
 
+if [ -n "${bootstrap_sh_set}" ]; then
+	bmakexargs="${bmakexargs} --with-defshell=${bootstrap_sh}"
+fi
+
 bootstrap_bmake() {
 	echo_msg "Bootstrapping bmake"
 	copy_src $pkgsrcdir/devel/bmake/files bmake
@@ -1231,11 +1152,24 @@ echo_msg "Building libnbcompat"
 copy_src $pkgsrcdir/pkgtools/libnbcompat/files libnbcompat
 run_cmd "(cd $wrkdir/libnbcompat; $shprog ./configure $configure_quiet_flags -C --prefix=$prefix --infodir=$infodir --mandir=$mandir --sysconfdir=$sysconfdir --enable-bsd-getopt --enable-db && $bmake $make_quiet_flags -j$make_jobs)"
 
+# bootstrap mksh if necessary
+case "$need_mksh" in
+yes)	echo_msg "Bootstrapping mksh"
+	copy_src $pkgsrcdir/shells/mksh/files mksh
+	run_cmd "(cd $wrkdir/mksh && env $BSTRAP_ENV CC=\"${CC}\" $shprog Build.sh -r)"
+	run_cmd "$install_sh -c -o $user -g $group -m 755 $wrkdir/mksh/mksh $wrkdir/bin/mksh"
+	echo "TOOLS_PLATFORM.sh?=               $prefix/bin/mksh" >> ${TARGET_MKCONF}
+	echo "TOOLS_PLATFORM.sh?=               $wrkdir/bin/mksh" >> ${BOOTSTRAP_MKCONF}
+	echo_msg "Rebootstrapping bmake for mksh"
+	bmakexargs="$bmakexargs --with-defshell=$wrkdir/bin/mksh"
+	bootstrap_bmake
+	;;
+esac
+
 # bootstrap ksh if necessary
 case "$need_ksh" in
 yes)	echo_msg "Bootstrapping ksh"
 	copy_src $pkgsrcdir/shells/pdksh/files ksh
-	test -n "$CC" || CC=gcc	# default to gcc if no compiler is specified
 	run_cmd "(cd $wrkdir/ksh && env $BSTRAP_ENV $shprog ./configure $configure_quiet_flags --prefix=$prefix --infodir=$infodir --mandir=$mandir --sysconfdir=$sysconfdir && $bmake $make_quiet_flags -j$make_jobs)"
 	run_cmd "$install_sh -c -o $user -g $group -m 755 $wrkdir/ksh/ksh $wrkdir/bin/pdksh"
 	echo "TOOLS_PLATFORM.sh?=		$prefix/bin/pdksh" >> ${TARGET_MKCONF}
@@ -1253,7 +1187,6 @@ esac
 case "$need_awk" in
 yes)	echo_msg "Bootstrapping awk"
 	copy_src $pkgsrcdir/lang/nawk/files awk
-	test -n "$CC" || CC=gcc	# default to gcc if no compiler is specified
 	run_cmd "(cd $wrkdir/awk && $bmake $make_quiet_flags -j$make_jobs -f Makefile CC=\"${CC}\" CFLAGS=\"${CFLAGS}\")"
 	run_cmd "$install_sh -c -o $user -g $group -m 755 $wrkdir/awk/a.out $wrkdir/bin/nawk"
 	echo "TOOLS_PLATFORM.awk?=		$prefix/bin/nawk" >> ${TARGET_MKCONF}
@@ -1317,6 +1250,14 @@ fi
 if test -n "$GREP"; then
 	echo "TOOLS_PLATFORM.grep?=		$GREP" >> ${TARGET_MKCONF}
 	echo "TOOLS_PLATFORM.grep?=		$GREP" >> ${BOOTSTRAP_MKCONF}
+fi
+if test -n "$EGREP"; then
+	echo "TOOLS_PLATFORM.egrep?=		$EGREP" >> ${TARGET_MKCONF}
+	echo "TOOLS_PLATFORM.egrep?=		$EGREP" >> ${BOOTSTRAP_MKCONF}
+fi
+if test -n "$FGREP"; then
+	echo "TOOLS_PLATFORM.fgrep?=		$FGREP" >> ${TARGET_MKCONF}
+	echo "TOOLS_PLATFORM.fgrep?=		$FGREP" >> ${BOOTSTRAP_MKCONF}
 fi
 if test -n "$ID"; then
 	echo "TOOLS_PLATFORM.id?=		$ID" >> ${TARGET_MKCONF}
@@ -1402,6 +1343,9 @@ yes)
 	fi
 	;;
 esac
+case "$need_mksh" in
+yes)	build_package "shells/mksh";;
+esac
 case "$need_ksh" in
 yes)	build_package "shells/pdksh";;
 esac
@@ -1430,6 +1374,9 @@ if [ ! -f "$etc_mk_conf" ]; then
 	TARGET_MKCONF="$etc_mk_conf"
 fi
 
+[ -n "${binary_kit}" ] && mkbinarykit_tar
+[ -n "${binary_gzip_kit}" ] && mkbinarykit_tgz
+
 hline="==========================================================================="
 echo ""
 echo "$hline"
@@ -1453,10 +1400,6 @@ echo "Thank you for using pkgsrc!"
 echo ""
 echo "$hline"
 echo ""
-
-[ -n "${binary_kit}" ] && mkbinarykit_tar
-[ -n "${binary_gzip_kit}" ] && mkbinarykit_tgz
-[ -n "${binary_macpkg}" ] && mkbinarykit_macpkg
 
 echo_msg "bootstrap started: $build_start"
 echo_msg "bootstrap ended:   `date`"

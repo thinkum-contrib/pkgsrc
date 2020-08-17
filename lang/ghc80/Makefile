@@ -1,9 +1,10 @@
-# $NetBSD: Makefile,v 1.3 2020/01/14 08:46:17 pho Exp $
+# $NetBSD: Makefile,v 1.7 2020/03/30 19:36:03 joerg Exp $
 # -----------------------------------------------------------------------------
 # Package metadata
 #
 DISTNAME=	ghc-8.0.2-src
 PKGNAME=	${DISTNAME:S/-src$//}
+PKGREVISION=	1
 CATEGORIES=	lang
 MASTER_SITES=	https://downloads.haskell.org/~ghc/${PKGVERSION_NOREV}/
 EXTRACT_SUFX=	.tar.xz
@@ -12,6 +13,8 @@ MAINTAINER=	pho@cielonegro.org
 HOMEPAGE=	https://www.haskell.org/ghc/
 COMMENT=	Compiler for the functional language Haskell - 8.0 Release Series
 LICENSE=	modified-bsd
+
+UNLIMIT_RESOURCES=	datasize virtualsize
 
 # TODO: We should be using the alternatives framework.
 CONFLICTS+=	ghc-[0-9]*
@@ -26,8 +29,7 @@ CONFLICTS+=	ghc-[0-9]*
 BROKEN_EXCEPT_ON_PLATFORM+= FreeBSD-*-i386
 BROKEN_EXCEPT_ON_PLATFORM+= FreeBSD-*-x86_64
 BROKEN_EXCEPT_ON_PLATFORM+= NetBSD-*-x86_64
-#BROKEN_EXCEPT_ON_PLATFORM+= SunOS-*-i386     # Not available yet
-#BROKEN_EXCEPT_ON_PLATFORM+= SunOS-*-x86_64   # Not available yet
+BROKEN_EXCEPT_ON_PLATFORM+= SunOS-*-x86_64
 
 
 # -----------------------------------------------------------------------------
@@ -191,7 +193,7 @@ BUILD_DEPENDS+=	compat80-[0-9]*:../../emulators/compat80
 # In a sandboxed build environment, we have to reach over to the
 # installed libraries themselves, since the symlinks compat80 adds
 # to the /usr tree can't be applied.
-MAKE_ENV+=	LD_LIBRARY_PATH=${PREFIX:Q}/emul/netbsd/usr/lib
+ALL_ENV+=	LD_LIBRARY_PATH=${PREFIX:Q}/emul/netbsd/usr/lib:${FILESDIR}
 .endif
 
 .include "../../converters/libiconv/buildlink3.mk"

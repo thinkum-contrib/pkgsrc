@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.35 2020/01/18 21:48:04 jperkin Exp $
+# $NetBSD: Makefile,v 1.46 2020/06/10 22:22:15 jperkin Exp $
 
-DISTNAME=	kio-${KF5VER}
-PKGREVISION=	1
+DISTNAME=	kio-5.70.1
+#DISTNAME=	kio-${KF5VER}
 CATEGORIES=	devel
 
 HOMEPAGE=	https://community.kde.org/Frameworks
@@ -12,14 +12,12 @@ LICENSE=	gnu-lgpl-v2.1
 
 USE_TOOLS+=	msgmerge
 
-#CMAKE_ARGS+=	-DKAUTH_DBUS_DIR=${PREFIX}/share/examples/kio
-
 LDFLAGS.SunOS+=	-lsocket
 
 SUBST_CLASSES+=		xdg
 SUBST_STAGE.xdg=	pre-configure
 SUBST_MESSAGE.xdg=	Install via examples dir.
-SUBST_FILES.xdg=	src/core/CMakeLists.txt CMakeLists.txt
+SUBST_FILES.xdg=	src/core/CMakeLists.txt
 SUBST_FILES.xdg+=	src/urifilters/shorturi/CMakeLists.txt
 SUBST_SED.xdg=		-e 's:{KDE_INSTALL_CONFDIR}:{KDE_INSTALL_XDG_EX_DIR}:'
 
@@ -33,12 +31,12 @@ CONF_FILES+=	${PREFIX}/share/examples/kde-xdg/kshorturifilterrc \
 SUBST_CLASSES+=		fix-moc
 SUBST_STAGE.fix-moc=	post-configure
 SUBST_MESSAGE.fix-moc=	Cleaning up MOC includes
-SUBST_FILES.fix-moc=	_KDE_build/src/ioslaves/http/kcookiejar/CMakeFiles/kded_kcookiejar_autogen.dir/AutogenInfo.cmake
-SUBST_FILES.fix-moc+=	_KDE_build/src/ioslaves/trash/CMakeFiles/kcm_trash_autogen.dir/AutogenInfo.cmake
-SUBST_FILES.fix-moc+=	_KDE_build/src/urifilters/ikws/CMakeFiles/kurisearchfilter_autogen.dir/AutogenInfo.cmake
-SUBST_FILES.fix-moc+=	_KDE_build/autotests/CMakeFiles/jobremotetest_autogen.dir/AutogenInfo.cmake
-SUBST_FILES.fix-moc+=	_KDE_build/src/kcms/kio/CMakeFiles/kcm_kio_autogen.dir/AutogenInfo.cmake
-SUBST_SED.fix-moc=	-e 's,;${PREFIX}/include;,;,g'
+SUBST_FILES.fix-moc=	_KDE_build/src/ioslaves/http/kcookiejar/CMakeFiles/kded_kcookiejar_autogen.dir/AutogenInfo.json
+SUBST_FILES.fix-moc+=	_KDE_build/src/ioslaves/trash/CMakeFiles/kcm_trash_autogen.dir/AutogenInfo.json
+SUBST_FILES.fix-moc+=	_KDE_build/src/urifilters/ikws/CMakeFiles/kurisearchfilter_autogen.dir/AutogenInfo.json
+SUBST_FILES.fix-moc+=	_KDE_build/src/kcms/kio/CMakeFiles/kcm_kio_autogen.dir/AutogenInfo.json
+SUBST_NOOP_OK.fix-moc=	yes
+SUBST_SED.fix-moc=	-e 's;"${PREFIX}/include",;;g'
 
 .include "../../devel/zlib/buildlink3.mk"
 .include "../../mk/krb5.buildlink3.mk"

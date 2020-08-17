@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.96 2020/01/18 21:50:09 jperkin Exp $
+# $NetBSD: Makefile,v 1.100 2020/05/22 10:56:25 adam Exp $
 
-DISTNAME=		xine-ui-0.99.10
-PKGREVISION=		6
+DISTNAME=		xine-ui-0.99.12
+PKGREVISION=		2
 CATEGORIES=		multimedia
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=xine/}
 EXTRACT_SUFX=		.tar.xz
@@ -12,7 +12,8 @@ COMMENT=		Skinned xlib-based xine GUI
 LICENSE=		gnu-gpl-v2
 
 USE_PKGLOCALEDIR=	YES
-USE_TOOLS+=		msgfmt pkg-config gmake perl
+USE_TOOLS+=		pkg-config gmake perl
+USE_TOOLS+=		msgfmt msgmerge xgettext
 USE_LIBTOOL=		YES
 GNU_CONFIGURE=		YES
 CONFIGURE_ARGS+=	--disable-lirc

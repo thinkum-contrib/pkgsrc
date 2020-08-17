@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.37 2020/01/21 20:25:38 adam Exp $
+# $NetBSD: Makefile,v 1.42 2020/06/02 06:41:01 adam Exp $
 
 DISTNAME=	qtquickcontrols-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtquickcontrols-${QTVERSION}

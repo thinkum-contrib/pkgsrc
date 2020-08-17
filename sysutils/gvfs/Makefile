@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.105 2020/01/18 21:50:54 jperkin Exp $
+# $NetBSD: Makefile,v 1.111 2020/06/02 08:24:45 adam Exp $
 #
 
 DISTNAME=	gvfs-1.6.7
-PKGREVISION=	44
+PKGREVISION=	50
 CATEGORIES=	sysutils
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/gvfs/1.6/}
 EXTRACT_SUFX=	.tar.bz2
@@ -43,7 +43,7 @@ CONFIGURE_ARGS+=	--disable-avahi
 .if !empty(PKG_OPTIONS:Msamba)
 CONFIGURE_ARGS+=	--with-samba-includes=${BUILDLINK_PREFIX.samba}/include
 CONFIGURE_ARGS+=	--with-samba-libs=${BUILDLINK_PREFIX.samba}/lib
-.include "../../net/samba/buildlink3.mk"
+.include "../../net/samba4/buildlink3.mk"
 PLIST.samba=		yes
 .else
 CONFIGURE_ARGS+=	--disable-samba

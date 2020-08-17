@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.5 2020/01/18 23:30:00 rillig Exp $
+# $NetBSD: Makefile,v 1.8 2020/04/25 17:42:53 rillig Exp $
 
-DISTNAME=	liblo-0.30
+DISTNAME=	liblo-0.31
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=liblo/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://liblo.sourceforge.net/
+HOMEPAGE=	http://liblo.sourceforge.net/
 COMMENT=	Lightweight Open Sound Control implementation
 LICENSE=	gnu-lgpl-v2.1
 
@@ -18,13 +18,6 @@ CFLAGS+=		${PTHREAD_CFLAGS}
 PKGCONFIG_OVERRIDE+=	liblo.pc.in
 PTHREAD_OPTS+=		require
 RESOLV_AUTO_VARS=	yes	# gethostbyname and friends
-
-SUBST_CLASSES+=		conf
-SUBST_FILES.conf=	configure Makefile.in src/Makefile.in liblo.pc.in
-SUBST_MESSAGE.conf=	Performing build-time configuration substitutions.
-SUBST_SED.conf=		-e 's,-lpthread,$${PTHREAD_LDFLAGS} $${PTHREAD_LIBS},'
-SUBST_STAGE.conf=	pre-configure
-SUBST_VARS.conf=	PTHREAD_CFLAGS PTHREAD_LDFLAGS PTHREAD_LIBS
 
 LDFLAGS.SunOS+=		-lsocket -lnsl
 

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.22 2020/01/18 23:32:43 rillig Exp $
+# $NetBSD: Makefile,v 1.25 2020/04/28 16:17:17 rillig Exp $
 
 GCC_PKGNAME=		gcc6
 .include		"version.mk"
@@ -28,6 +28,7 @@ USE_TOOLS+=		gmake makeinfo sed:run tar:build
 USE_TOOLS.NetBSD+=	gsed
 
 GNU_CONFIGURE=		yes
+GNU_CONFIGURE_STRICT=	no # has sub-configures
 ## Build outside ${WRKSRC}
 OBJDIR=			../build
 CONFIGURE_DIRS=		${OBJDIR}
@@ -47,6 +48,11 @@ SUBST_MESSAGE.vars=	Setting target machine name path in ${SUBST_FILES.vars}
 SUBST_STAGE.vars=	pre-configure
 SUBST_FILES.vars=	gcc/Makefile.in
 SUBST_VARS.vars=	GCC_TARGET_MACHINE
+
+# These programs use [[ ... ]] and are not needed for the build.
+CHECK_PORTABILITY_SKIP+= \
+	contrib/prepare_patch.sh \
+	contrib/patch_tester.sh
 
 .include "../../mk/bsd.prefs.mk"
 

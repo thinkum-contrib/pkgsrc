@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.18 2019/12/01 11:45:35 adam Exp $
+# $NetBSD: Makefile,v 1.21 2020/07/27 17:32:51 adam Exp $
 
-DISTNAME=	asyncssh-2.1.0
+DISTNAME=	asyncssh-2.3.0
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	security python
 MASTER_SITES=	${MASTER_SITE_PYPI:=a/asyncssh/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://asyncssh.timeheart.net/
+HOMEPAGE=	https://asyncssh.readthedocs.io/
 COMMENT=	Asynchronous SSHv2 client and server library
 LICENSE=	eclipse-license
 

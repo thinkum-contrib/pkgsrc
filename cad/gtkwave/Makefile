@@ -1,13 +1,14 @@
-# $NetBSD: Makefile,v 1.103 2020/01/18 23:30:10 rillig Exp $
+# $NetBSD: Makefile,v 1.109 2020/06/02 08:23:16 adam Exp $
 #
 
-DISTNAME=		gtkwave-3.3.103
+DISTNAME=		gtkwave-3.3.104
+PKGREVISION=		3
 CATEGORIES=		cad
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=gtkwave/}
 #MASTER_SITES=		http://home.nc.rr.com/gtkwave/
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://gtkwave.sourceforge.net/
+HOMEPAGE=		http://gtkwave.sourceforge.net/
 COMMENT=		Electronic waveform viewer
 LICENSE=		gnu-gpl-v3
 
@@ -18,7 +19,7 @@ USE_TOOLS+=		gmake pkg-config
 USE_LANGUAGES+=		c c++
 
 PTHREAD_AUTO_VARS=		yes
-CHECK_PORTABILITY_SKIP+=	contrib/bundle_for_osx/launcher.sh
+CHECK_PORTABILITY_SKIP+=	contrib/bundle_for_osx/*.sh
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.gtkwave
 PKG_SUPPORTED_OPTIONS=	gtkwave-tcl gconf

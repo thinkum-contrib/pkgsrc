@@ -1,14 +1,17 @@
-# $NetBSD: Makefile,v 1.191 2020/01/21 15:44:32 nia Exp $
+# $NetBSD: Makefile,v 1.199 2020/06/10 19:45:51 nia Exp $
 
-DISTNAME=	epiphany-3.34.3.1
+DISTNAME=	epiphany-3.36.2
 CATEGORIES=	www gnome
-MASTER_SITES=	${MASTER_SITE_GNOME:=sources/epiphany/3.34/}
+MASTER_SITES=	${MASTER_SITE_GNOME:=sources/epiphany/3.36/}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://wiki.gnome.org/Apps/Web
 COMMENT=	Web browser for the GNOME desktop
 LICENSE=	gnu-gpl-v2
+
+TOOL_DEPENDS+=	gdbus-codegen-[0-9]*:../../devel/gdbus-codegen
+TOOL_DEPENDS+=	itstool-[0-9]*:../../textproc/itstool
 
 USE_TOOLS+=	pkg-config msgfmt xgettext
 
@@ -23,6 +26,7 @@ _TOOLS_USE_PKGSRC.msgfmt=	yes
 
 .include "../../devel/meson/build.mk"
 .include "../../devel/glib2/schemas.mk"
+BUILDLINK_API_DEPENDS.libdazzle+=	libdazzle>=3.35.3
 .include "../../devel/libdazzle/buildlink3.mk"
 .include "../../devel/libhandy/buildlink3.mk"
 .include "../../graphics/hicolor-icon-theme/buildlink3.mk"

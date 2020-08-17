@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3 2020/01/09 14:02:31 wiz Exp $
+# $NetBSD: Makefile,v 1.5 2020/05/31 20:44:31 joerg Exp $
 
 DISTNAME=	angr-8.20.1.7
 PKGNAME=	${PYPKGPREFIX}-${EGG_NAME}
@@ -18,6 +18,7 @@ USE_TOOLS+=	gmake
 MAKE_FLAGS+=	LIBDIR=${LIBDIR:Q}
 
 DEPENDS+=	${PYPKGPREFIX}-archinfo-[0-9]*:../../devel/py-archinfo
+BUILD_DEPENDS+=	${PYPKGPREFIX}-pip-[0-9]*:../../devel/py-pip
 DEPENDS+=	${PYPKGPREFIX}-cachetools-[0-9]*:../../devel/py-cachetools
 DEPENDS+=	${PYPKGPREFIX}-capstone-[0-9]*:../../devel/py-capstone
 DEPENDS+=	${PYPKGPREFIX}-cffi-[0-9]*:../../devel/py-cffi
@@ -25,6 +26,7 @@ DEPENDS+=	${PYPKGPREFIX}-cle-[0-9]*:../../devel/py-cle
 DEPENDS+=	${PYPKGPREFIX}-pyvex-[0-9]*:../../devel/py-pyvex
 DEPENDS+=	${PYPKGPREFIX}-unicorn-[0-9]*:../../emulators/py-unicorn
 DEPENDS+=	${PYPKGPREFIX}-claripy-[0-9]*:../../math/py-claripy
+BUILD_DEPENDS+=	${PYPKGPREFIX}-wheel-[0-9]*:../../devel/py-wheel
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27
 

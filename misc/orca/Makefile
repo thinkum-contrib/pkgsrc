@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.49 2020/01/22 19:45:33 nia Exp $
+# $NetBSD: Makefile,v 1.53 2020/03/26 14:30:01 nia Exp $
 
 DISTNAME=	orca-3.34.1
+PKGREVISION=	2
 CATEGORIES=	misc gnome
 MASTER_SITES=	${MASTER_SITE_GNOME:=sources/orca/3.34/}
 EXTRACT_SUFX=	.tar.xz
@@ -9,6 +10,8 @@ MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://wiki.gnome.org/Projects/Orca
 COMMENT=	Screen reader
 LICENSE=	gnu-lgpl-v2.1
+
+TOOL_DEPENDS+=	itstool-[0-9]*:../../textproc/itstool
 
 DEPENDS+=	${PYPKGPREFIX}-gobject3-[0-9]*:../../devel/py-gobject3
 DEPENDS+=	${PYPKGPREFIX}-at-spi2-[0-9]*:../../devel/py-at-spi2
@@ -26,6 +29,8 @@ _TOOLS_USE_PKGSRC.msgfmt=	yes
 
 # Python 3 only
 PYTHON_VERSIONS_INCOMPATIBLE=	27
+
+CHECK_PORTABILITY_SKIP+=	run_pylint.sh.in
 
 .include "../../devel/glib2/schemas.mk"
 .include "../../audio/speech-dispatcher/buildlink3.mk"

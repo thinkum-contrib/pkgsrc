@@ -1,6 +1,6 @@
-$NetBSD: distinfo,v 1.21 2020/01/19 15:43:21 taca Exp $
+$NetBSD: distinfo,v 1.24 2020/06/10 13:57:28 taca Exp $
 
-SHA1 (ffi-1.12.1.gem) = 5e0a3ad81c59833057b11366a96693ccf4a44136
-RMD160 (ffi-1.12.1.gem) = be1dd0fe7aecb6cdede2a2b13fe02170efd32321
-SHA512 (ffi-1.12.1.gem) = ad4a0c8ca49157cb8042283cb4481bace124df48b45ff481e3ade2c9415bc4c6e2a0cfcaecee230260e748426c992ac3c375f417a3bd56b317b27e966f1745af
-Size (ffi-1.12.1.gem) = 896000 bytes
+SHA1 (ffi-1.13.1.gem) = cfa25e7a3760c3ec16723cb8263d9b7a52d0eadf
+RMD160 (ffi-1.13.1.gem) = 1c704785139f770858a8fed0da37c161dd8e3cc5
+SHA512 (ffi-1.13.1.gem) = 4c0b5086463c5abedc440c44fb12c62612627a2aaad60b1959ea8831d4ec2bbe3217fec0b63612730bb219748fd2bd2252dd615ca0305fb7f0e8456c63c31fbd
+Size (ffi-1.13.1.gem) = 897536 bytes

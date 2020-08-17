@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.24 2014/10/09 14:06:58 wiz Exp $
+# $NetBSD: Makefile,v 1.26 2020/06/25 05:42:40 schmonz Exp $
 #
 
 DISTNAME=		memtester-4.3.0

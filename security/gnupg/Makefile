@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.152 2020/01/18 21:50:36 jperkin Exp $
+# $NetBSD: Makefile,v 1.156 2020/05/22 10:56:36 adam Exp $
 
 DISTNAME=	gnupg-1.4.23
-PKGREVISION=	7
+PKGREVISION=	10
 CATEGORIES=	security
 MASTER_SITES=	ftp://ftp.gnupg.org/gcrypt/gnupg/
 MASTER_SITES+=	ftp://ftp.ring.gr.jp/pub/net/gnupg/gnupg/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.gnupg.org/
+HOMEPAGE=	https://www.gnupg.org/
 COMMENT=	GNU Privacy Guard, public-Key encryption and digital signatures
 LICENSE=	gnu-gpl-v3
 

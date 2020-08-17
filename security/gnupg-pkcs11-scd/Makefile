@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.19 2020/01/18 23:35:07 rillig Exp $
+# $NetBSD: Makefile,v 1.22 2020/05/22 10:56:36 adam Exp $
 
 VERSION=	0.9.2
 DISTNAME=	gnupg-pkcs11-scd-${VERSION}
 #PKGREVISION=	1
-PKGREVISION=	1
+PKGREVISION=	3
 CATEGORIES=	security
 GITHUB_PROJECT=	gnupg-pkcs11-scd
 GITHUB_RELEASE=	${DISTNAME}
@@ -11,7 +11,7 @@ MASTER_SITES=	${MASTER_SITE_GITHUB:=alonbl/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://gnupg-pkcs11.sourceforge.net/
+HOMEPAGE=	http://gnupg-pkcs11.sourceforge.net/
 COMMENT=	OpenSC smart card support for GnuPG
 LICENSE=	modified-bsd
 

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.169 2020/01/19 00:59:17 pho Exp $
+# $NetBSD: Makefile,v 1.176 2020/07/02 20:00:23 nia Exp $
 #
 
 COMMENT=	Archivers
@@ -11,6 +11,7 @@ SUBDIR+=	arc
 SUBDIR+=	archangel
 SUBDIR+=	arj
 SUBDIR+=	ark
+SUBDIR+=	arqiver
 SUBDIR+=	atool
 SUBDIR+=	bicom
 SUBDIR+=	bmap-tools
@@ -54,6 +55,8 @@ SUBDIR+=	libmspack
 SUBDIR+=	libunrar
 SUBDIR+=	libzip
 SUBDIR+=	lrzip
+SUBDIR+=	lua-zlib
+SUBDIR+=	lxqt-archiver
 SUBDIR+=	lz4
 SUBDIR+=	lz4json
 SUBDIR+=	lzip
@@ -64,6 +67,7 @@ SUBDIR+=	lzo
 SUBDIR+=	lzop
 SUBDIR+=	macutil
 SUBDIR+=	makeself
+SUBDIR+=	minizip
 SUBDIR+=	mousetar
 SUBDIR+=	mscompress
 SUBDIR+=	nomarch
@@ -86,6 +90,7 @@ SUBDIR+=	pax
 SUBDIR+=	pbzip2
 SUBDIR+=	pdbar
 SUBDIR+=	php-bz2
+SUBDIR+=	php-pecl-zip
 SUBDIR+=	php-zip
 SUBDIR+=	php-zlib
 SUBDIR+=	pigz
@@ -101,8 +106,10 @@ SUBDIR+=	py-lz4
 SUBDIR+=	py-rarfile
 SUBDIR+=	py-yuicompressor
 SUBDIR+=	py-zipp
+SUBDIR+=	py-zipp1
 SUBDIR+=	py-zipstream
 SUBDIR+=	py-zstandard
+SUBDIR+=	quazip
 SUBDIR+=	rar
 SUBDIR+=	rox-archive
 SUBDIR+=	ruby-archive-tar-minitar

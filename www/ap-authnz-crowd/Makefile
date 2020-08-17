@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.26 2020/01/18 21:51:03 jperkin Exp $
+# $NetBSD: Makefile,v 1.32 2020/06/02 08:24:55 adam Exp $
 
 DISTNAME=	mod_authnz_crowd-2.2.2
 PKGNAME=	${APACHE_PKG_PREFIX}-${DISTNAME:S/mod_//:S/_/-/}
-PKGREVISION=	24
+PKGREVISION=	29
 CATEGORIES=	www
 MASTER_SITES=	http://downloads.atlassian.com/software/crowd/downloads/cwdapache/
 
@@ -23,6 +23,8 @@ CONFIGURE_ENV+=	ac_cv_path_HTTPD=${BUILDLINK_PREFIX.apache}/sbin/httpd
 CONFIGURE_ENV+=	APXS=${APXS:Q}
 CONFIGURE_ENV+=	BUILDLINK_PREFIX_apache=${BUILDLINK_PREFIX.apache}
 CONFIGURE_ENV+=	BUILDLINK_PREFIX_subversion=${BUILDLINK_PREFIX.subversion-base}
+
+GNU_CONFIGURE_APXS2=	no
 
 BUILDLINK_TRANSFORM+=	opt:-O2:-O1
 

@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.7 2019/10/10 11:44:38 wiz Exp $
+# $NetBSD: Makefile,v 1.10 2020/05/02 14:59:57 rillig Exp $
 
-DISTNAME=		enchant-2.2.7
+DISTNAME=		enchant-2.2.8
 PKGNAME=		${DISTNAME:S/enchant/enchant2/}
+PKGREVISION=		1
 CATEGORIES=		textproc
 MASTER_SITES=		${MASTER_SITE_GITHUB:=AbiWord/}
 GITHUB_PROJECT=		enchant
@@ -26,7 +27,6 @@ CONF_FILES=		${PREFIX}/share/examples/enchant.ordering ${PREFIX}/share/enchant/e
 # unsupported in pkgsrc - other dictionaries can be used instead
 # avoid PLIST problems
 CONFIGURE_ARGS+=	--without-hspell
-CONFIGURE_ARGS+=	--without-uspell
 CONFIGURE_ARGS+=	--without-voikko
 
 # Status as of 2.2.7:

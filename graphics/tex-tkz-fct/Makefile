@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.4 2020/01/18 23:32:38 rillig Exp $
+# $NetBSD: Makefile,v 1.6 2020/05/11 11:33:48 markd Exp $
 
 DISTNAME=	tkz-fct
-PKGNAME=	tex-${DISTNAME}-1.16c
-TEXLIVE_REV=	22831
+PKGNAME=	tex-${DISTNAME}-1.3c.55031
+TEXLIVE_REV=	55031
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://ctan.org/pkg/tkz-fct
@@ -11,6 +11,5 @@ LICENSE=	lppl-1.3c
 
 DEPENDS+=	tex-tkz-base-[0-9]*:../../graphics/tex-tkz-base
 
-TEXLIVE_UNVERSIONED=	yes
 .include "../../print/texlive/package.mk"
 .include "../../mk/bsd.pkg.mk"

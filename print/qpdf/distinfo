@@ -1,8 +1,8 @@
-$NetBSD: distinfo,v 1.27 2019/12/04 13:05:20 ryoon Exp $
+$NetBSD: distinfo,v 1.30 2020/04/12 07:50:24 ryoon Exp $
 
-SHA1 (qpdf-9.1.0.tar.gz) = 14312ba0f30c86ae8cd71b4e82e2ec907734c9f1
-RMD160 (qpdf-9.1.0.tar.gz) = ca95b5499f1b8e34e0f7697f1447fe7afe48b60c
-SHA512 (qpdf-9.1.0.tar.gz) = 7561ffc366dbce9df58cc85ff18480b28b0d46de04733ba463139188bee95690f92cf0960a328619f0c9f34ce865598db490fa1c6aaa76ee87d2c034a5f7f57e
-Size (qpdf-9.1.0.tar.gz) = 18285597 bytes
+SHA1 (qpdf-10.0.1.tar.gz) = 0d101ffc8356618a2f950753e739e55946709143
+RMD160 (qpdf-10.0.1.tar.gz) = cc0864688a307219ca72e1671ab39f9092e87503
+SHA512 (qpdf-10.0.1.tar.gz) = b73c0839b08905052d90ed78645cc9fb4fda4a0fa803db7b46f3d77a2c2f7e8cec52173834b1e1f008f3a3475a7d913362d22e1ebece11187a90c9035b81de94
+Size (qpdf-10.0.1.tar.gz) = 18399985 bytes
 SHA1 (patch-libqpdf.pc.in) = f592899487bb958a01931afbe4ddf3c749ea103e
 SHA1 (patch-make_libtool.mk) = 8622d6a446da284269102dde38bf14271363dfdc

@@ -1,13 +1,13 @@
-# $NetBSD: Makefile,v 1.7 2020/01/18 23:35:26 rillig Exp $
+# $NetBSD: Makefile,v 1.10 2020/03/20 11:58:26 nia Exp $
 
 DISTNAME=	gtkspell3-3.0.10
-PKGREVISION=	2
+PKGREVISION=	4
 CATEGORIES=	textproc devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=gtkspell/}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://gtkspell.sourceforge.net/
+HOMEPAGE=	http://gtkspell.sourceforge.net/
 COMMENT=	Spell checking GtkTextView widget (v3)
 LICENSE=	gnu-gpl-v2
 

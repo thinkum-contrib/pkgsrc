@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.77 2019/11/03 19:04:06 rillig Exp $
+# $NetBSD: Makefile,v 1.83 2020/06/02 08:24:12 adam Exp $
 
 PKGNAME=		racket-6.12
-PKGREVISION=		4
+PKGREVISION=		8
 DISTNAME=		${PKGNAME_NOREV}-src
 CATEGORIES=		lang
 MASTER_SITES_PLT=	https://download.racket-lang.org/installers/${PKGVERSION_NOREV}/
@@ -30,7 +30,7 @@ CONFIGURE_DIRS=		src
 CONFIGURE_ARGS=		--enable-pthread
 USE_LANGUAGES=		c c++
 USE_TOOLS=		pkg-config gmake
-UNLIMIT_RESOURCES=	datasize
+UNLIMIT_RESOURCES=	virtualsize datasize cputime
 MAKE_ENV+=		"PAXCTL=${TOOLS_PLATFORM.paxctl}"
 
 CPPFLAGS.SunOS+=	-D_POSIX_PTHREAD_SEMANTICS

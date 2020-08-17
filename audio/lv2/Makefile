@@ -1,15 +1,19 @@
-# $NetBSD: Makefile,v 1.17 2020/01/13 16:53:01 nia Exp $
+# $NetBSD: Makefile,v 1.21 2020/05/19 17:05:44 nia Exp $
 
-DISTNAME=	lv2-1.16.0
-PKGREVISION=	3
+DISTNAME=	lv2-1.18.0
 CATEGORIES=	audio
-MASTER_SITES=	http://lv2plug.in/spec/
+MASTER_SITES=	https://lv2plug.in/spec/
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://lv2plug.in/
+HOMEPAGE=	https://lv2plug.in/
 COMMENT=	Open standard for audio plugins, used by hundreds of plugins
 LICENSE=	isc
+
+DEPENDS+=	${PYPKGPREFIX}-markdown-[0-9]*:../../textproc/py-markdown
+DEPENDS+=	${PYPKGPREFIX}-pygments-[0-9]*:../../textproc/py-pygments
+
+PLIST_SRC+=	${PLIST_SRC_DFLT}
 
 USE_TOOLS+=	pkg-config
 

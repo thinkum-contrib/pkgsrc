@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.44 2019/10/19 12:37:05 nia Exp $
+# $NetBSD: Makefile,v 1.46 2020/03/04 15:51:24 wiz Exp $
 
 .include "../../print/poppler/Makefile.common"
 
@@ -8,8 +8,6 @@ COMMENT=	PDF utilities (from poppler)
 CONFLICTS+=	poppler-0.5.1{,nb*}
 CONFLICTS+=	xpdf<3.02pl4nb1
 
-# Don't build the splash graphics backend.
-CMAKE_ARGS+=	-DENABLE_SPLASH=OFF
 # Don't compile GTK+ test program.
 CMAKE_ARGS+=	-DBUILD_GTK_TESTS=OFF
 # Don't compile GLib wrapper which also needs gtk2

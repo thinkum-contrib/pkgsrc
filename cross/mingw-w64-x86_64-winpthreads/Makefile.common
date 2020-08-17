@@ -1,4 +1,4 @@
-# $NetBSD: Makefile.common,v 1.2 2019/12/29 01:08:14 ryoon Exp $
+# $NetBSD: Makefile.common,v 1.4 2020/05/12 11:13:51 nia Exp $
 #
 # used by cross/mingw-w64-i686-winpthreads/Makefile
 # used by cross/mingw-w64-x86_64-winpthreads/Makefile
@@ -9,7 +9,7 @@ MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=mingw-w64/}
 EXTRACT_SUFX=		.tar.bz2
 
 MAINTAINER=		pkgsrc-users@NetBSD.org
-HOMEPAGE=		https://mingw-w64.org/
+HOMEPAGE=		http://mingw-w64.org/
 
 PATCHDIR=		${.CURDIR}/../../cross/mingw-w64-x86_64-headers/patches
 DISTINFO_FILE=		${.CURDIR}/../../cross/mingw-w64-x86_64-headers/distinfo
@@ -17,7 +17,7 @@ DISTINFO_FILE=		${.CURDIR}/../../cross/mingw-w64-x86_64-headers/distinfo
 WRKSRC=			${WRKDIR}/${DISTNAME}/mingw-w64-libraries/winpthreads
 
 USE_LANGUAGES=		c c++
-USE_TOOLS+=		gmake perl:build
+USE_TOOLS+=		gmake pax perl:build
 
 USE_GNU_CONFIGURE_HOST=	no
 

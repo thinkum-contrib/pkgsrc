@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.19 2019/12/30 23:45:51 gutteridge Exp $
+# $NetBSD: Makefile,v 1.22 2020/04/05 16:05:45 bsiegert Exp $
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27
 .include "../../meta-pkgs/mate/Makefile.common"
 
-DISTNAME=	mozo-${VERSION:R}.2
+DISTNAME=	mozo-${VERSION:R}.0
 CATEGORIES=	x11
 
 COMMENT=	Menu editor for MATE

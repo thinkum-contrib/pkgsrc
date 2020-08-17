@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.38 2020/01/21 20:25:39 adam Exp $
+# $NetBSD: Makefile,v 1.43 2020/06/02 06:41:02 adam Exp $
 
 DISTNAME=	qtserialport-everywhere-src-${QTVERSION}
 PKGNAME=	qt5-qtserialport-${QTVERSION}

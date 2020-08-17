@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.8 2020/01/04 11:54:51 nia Exp $
+# $NetBSD: Makefile,v 1.18 2020/08/08 21:36:38 nia Exp $
 
-DISTNAME=	dosbox-x-0.82.25
+DISTNAME=	dosbox-x-0.83.4
 CATEGORIES=	emulators
 MASTER_SITES=	${MASTER_SITE_GITHUB:=joncampbell123/}
 GITHUB_TAG=	dosbox-x-v${PKGVERSION_NOREV}
@@ -12,8 +12,8 @@ LICENSE=	gnu-gpl-v2
 
 WRKSRC=		${WRKDIR}/dosbox-x-${GITHUB_TAG}
 GNU_CONFIGURE=	yes
-USE_TOOLS+=	autoconf automake pkg-config
-USE_LANGUAGES=	c gnu++11
+USE_TOOLS+=	autoconf autoreconf automake pkg-config
+USE_LANGUAGES=	c c++
 
 # C++11
 GCC_REQD+=	4.7
@@ -26,13 +26,11 @@ CONFIGURE_ARGS+=	--disable-sdltest
 CONFIGURE_ARGS+=	--disable-sdl
 CONFIGURE_ARGS+=	--enable-sdl2
 
-.include "../../mk/bsd.prefs.mk"
-
 .if ${MACHINE_ARCH} != "i386" && ${MACHINE_ARCH} != "x86_64"
 CONFIGURE_ARGS+=	--disable-dynrec
-CONFIGURE_ARGS+=	--disable-fpu-x86
-CONFIGURE_ARGS+=	--disable-fpu-x64
+CONFIGURE_ARGS+=	--disable-unaligned-memory
 .else
+TOOL_DEPENDS+=		nasm>=2.14:../../devel/nasm
 # LOG: Setting execute permission on the code cache has failed
 NOT_PAX_MPROTECT_SAFE+=	bin/dosbox-x
 .endif
@@ -43,16 +41,27 @@ PKGCONFIG_OVERRIDE+=	vs2015/sdl2/sdl2.pc.in
 PKGCONFIG_OVERRIDE+=	vs2015/sdlnet/SDL_net.pc.in
 PKGCONFIG_OVERRIDE+=	vs2015/zlib/zlib.pc.in
 
+INSTALLATION_DIRS+=	bin share/dosbox-x
 INSTALLATION_DIRS+=	share/applications
 INSTALLATION_DIRS+=	share/pixmaps
 
 CHECK_PORTABILITY_SKIP+=	vs2015/sdl2/build-scripts/androidbuildlibs.sh
 CHECK_PORTABILITY_SKIP+=	vs2015/sdl2/build-scripts/iosbuild.sh
 
-pre-configure:
-	cd ${WRKSRC} && ${SH} autogen.sh
+BUILDLINK_TRANSFORM+=	rm:-Wno-int-to-void-pointer-cast
+BUILDLINK_TRANSFORM+=	rm:-Wno-address-of-packed-member
 
-post-install:
+pre-configure:
+	cd ${WRKSRC} && autoreconf -fi
+
+do-install:
+	${INSTALL_PROGRAM} ${WRKSRC}/src/dosbox-x ${DESTDIR}${PREFIX}/bin
+	${INSTALL_DATA} ${WRKSRC}/font/FREECG98.BMP \
+	    ${DESTDIR}${PREFIX}/share/dosbox-x
+	${INSTALL_DATA} ${WRKSRC}/CHANGELOG \
+	    ${DESTDIR}${PREFIX}/share/dosbox-x
+	${INSTALL_DATA} ${WRKSRC}/dosbox-x.reference.conf \
+	    ${DESTDIR}${PREFIX}/share/dosbox-x
 	${INSTALL_DATA} ${WRKSRC}/src/dosbox.png \
 	    ${DESTDIR}${PREFIX}/share/pixmaps/dosbox.png
 	${INSTALL_DATA} ${FILESDIR}/dosbox-x.desktop \

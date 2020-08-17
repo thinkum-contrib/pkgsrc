@@ -1,11 +1,12 @@
-# $NetBSD: Makefile,v 1.14 2019/11/03 09:14:17 rillig Exp $
+# $NetBSD: Makefile,v 1.18 2020/06/02 08:25:03 adam Exp $
 
-DISTNAME=	rofi-1.5.2
+DISTNAME=	rofi-1.5.4
 PKGREVISION=	1
 CATEGORIES=	x11
 MASTER_SITES=	${MASTER_SITE_GITHUB:=DaveDavenport/}
 # We need to specify this way to get submodules fetched
 GITHUB_RELEASE=	${PKGVERSION_NOREV}
+EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://github.com/DaveDavenport/rofi
@@ -19,8 +20,6 @@ CONFIGURE_ARGS+=	YACC='bison -y'
 
 REPLACE_BASH+=	script/rofi-sensible-terminal
 REPLACE_BASH+=	script/rofi-theme-selector
-
-.include "options.mk"
 
 .include "../../devel/check/buildlink3.mk"
 .include "../../devel/glib2/buildlink3.mk"

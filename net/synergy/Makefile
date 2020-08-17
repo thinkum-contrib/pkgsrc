@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.59 2020/01/18 21:50:26 jperkin Exp $
+# $NetBSD: Makefile,v 1.64 2020/05/22 10:56:31 adam Exp $
 
-DISTNAME=		synergy-core-1.10.3
+DISTNAME=		synergy-core-1.11.1
 PKGNAME=		${DISTNAME:S/-core//}
 PKGREVISION=		2
 CATEGORIES=		net x11

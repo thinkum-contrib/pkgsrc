@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.69 2020/01/18 23:32:10 rillig Exp $
+# $NetBSD: Makefile,v 1.73 2020/06/02 08:23:59 adam Exp $
 
 DISTNAME=		comix-4.0.4
-PKGREVISION=		36
+PKGREVISION=		39
 CATEGORIES=		graphics python
 MASTER_SITES=		${MASTER_SITE_SOURCEFORGE:=comix/}
 
 MAINTAINER=		hugor@users.sourceforge.net
-HOMEPAGE=		https://comix.sourceforge.net/index.html
+HOMEPAGE=		http://comix.sourceforge.net/index.html
 COMMENT=		Image viewer specifically designed to handle comic books
 LICENSE=		gnu-gpl-v2
 

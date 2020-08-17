@@ -1,12 +1,10 @@
-# $NetBSD: Makefile,v 1.49 2020/01/17 11:00:08 fox Exp $
+# $NetBSD: Makefile,v 1.71 2020/07/25 21:29:19 fox Exp $
 
-DISTNAME=	ft2-clone
-PKGNAME=	fasttracker2-${DISTVERSION}
-DISTVERSION=	1.06
+DISTNAME=	fasttracker2-1.27
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_GITHUB:=8bitbubsy/}
-GITHUB_PROJECT=	${DISTNAME}
-GITHUB_TAG=	v${DISTVERSION}
+GITHUB_PROJECT=	ft2-clone
+GITHUB_TAG=	v${PKGVERSION_NOREV}
 EXTRACT_USING=	bsdtar
 
 MAINTAINER=	fox@NetBSD.org
@@ -29,12 +27,6 @@ INSTALLATION_DIRS+=	share/appdata
 .for s in ${ICON_SIZES}
 INSTALLATION_DIRS+=	share/icons/hicolor/${s}x${s}/apps
 .endfor
-
-SUBST_CLASSES+=		d2u
-SUBST_MESSAGE.d2u=	Converting CRLF to LF.
-SUBST_STAGE.d2u=	post-extract
-SUBST_FILES.d2u=	CMakeLists.txt src/*.[ch]
-SUBST_FILTER_CMD.d2u=	${TR} -d '\r'
 
 pre-configure:
 .for s in ${ICON_SIZES}

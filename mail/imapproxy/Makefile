@@ -1,9 +1,9 @@
-# $NetBSD: Makefile,v 1.23 2020/01/18 21:49:50 jperkin Exp $
+# $NetBSD: Makefile,v 1.25 2020/04/16 14:03:29 manu Exp $
 #
 
 DISTNAME=	squirrelmail-imap_proxy-1.2.7
 PKGNAME=	imapproxy-1.2.7
-PKGREVISION=	7
+PKGREVISION=	6
 CATEGORIES=	mail
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=squirrelmail/}
 

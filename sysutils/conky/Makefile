@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.42 2020/01/18 23:35:14 rillig Exp $
+# $NetBSD: Makefile,v 1.47 2020/06/02 08:24:44 adam Exp $
 #
 
 DISTNAME=	conky-1.9.0
-PKGREVISION=	36
+PKGREVISION=	40
 CATEGORIES=	sysutils
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=conky/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	imil@NetBSD.org
-HOMEPAGE=	https://conky.sourceforge.net/
+HOMEPAGE=	http://conky.sourceforge.net/
 COMMENT=	Free, light-weight system monitor for X
 LICENSE=	gnu-gpl-v3
 

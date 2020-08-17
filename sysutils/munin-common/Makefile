@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1 2019/09/09 12:21:44 tm Exp $
+# $NetBSD: Makefile,v 1.3 2020/04/09 15:00:47 tm Exp $
 #
 
 PKGNAME=	${DISTNAME:S/munin/munin-common/}

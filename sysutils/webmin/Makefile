@@ -1,6 +1,5 @@
-# $NetBSD: Makefile,v 1.49 2020/01/18 21:51:00 jperkin Exp $
+# $NetBSD: Makefile,v 1.53 2020/07/29 10:28:27 mef Exp $
 
-PKGREVISION= 3
 .include "version.mk"
 
 DISTNAME=	webmin-${WBM_VERSION}
@@ -60,6 +59,19 @@ CONF_FILES_PERMS+=	${WEBMIN_EGDIR}/${f} ${PKG_SYSCONFDIR}/${f}	\
 .endfor
 RCD_SCRIPTS=		webmin
 
+REPLACE_PYTHON=	webmin/acme_tiny.py
+
+REPLACE_PERL=	\
+	bin/disable-proxy \
+	bin/disable-twofactor \
+	bin/enable-proxy \
+	bin/language-manager \
+	bin/list-config \
+	bin/set-config \
+	bin/update-devel \
+	bin/webmin
+
+
 CHECK_INTERPRETER_SKIP+=	share/webmin/webmin-gentoo-init
 
 ALL_ENV+=	tempdir=${WRKDIR}/.tmp
@@ -72,6 +84,7 @@ post-extract:
 	${CP} ${FILESDIR}/man_config-dragonfly ${WRKSRC}/man/config-dragonfly
 	${CP} ${FILESDIR}/proc_config-dragonfly ${WRKSRC}/proc/config-dragonfly
 	${RM} -r ${WRKSRC}/acl/Authen-SolarisRBAC-0.1*
+	${RM} ${WRKSRC}/update-from-repo.sh # contains lots of bashisms
 
 pre-configure:
 	cd ${WRKSRC} &&							\
@@ -143,5 +156,5 @@ do-install:
 	${CHMOD} -x *.pl */*.pl */*.gif */*/*.gif */*/*.html */*.ca lang/* \
 	*/lang/* */*.svg */*.png */*.eu
 
-
+.include "../../lang/python/application.mk"
 .include "../../mk/bsd.pkg.mk"

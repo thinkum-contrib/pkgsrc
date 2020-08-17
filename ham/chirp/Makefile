@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.17 2019/11/03 19:32:06 rillig Exp $
+# $NetBSD: Makefile,v 1.20 2020/06/02 08:24:08 adam Exp $
 
 DISTNAME=	chirp-0.4.1
-PKGREVISION=	10
+PKGREVISION=	13
 CATEGORIES=	ham
 MASTER_SITES=	https://chirp.danplanet.com/download/${PKGVERSION}/
 

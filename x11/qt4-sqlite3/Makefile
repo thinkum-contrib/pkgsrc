@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.59 2020/01/18 21:51:15 jperkin Exp $
+# $NetBSD: Makefile,v 1.63 2020/06/02 08:25:03 adam Exp $
 
-PKGREVISION= 13
+PKGREVISION= 16
 .include "../../x11/qt4-libs/Makefile.common"
 
 PKGNAME=	qt4-sqlite3-${QTVERSION}
@@ -12,6 +12,7 @@ CONFIGURE_ARGS+=	-system-sqlite
 
 BUILD_QT4=		yes
 USE_TOOLS+=		pkg-config
+TOOLS_BROKEN+=		perl
 
 do-build:
 	cd ${WRKSRC}/src/tools/bootstrap && env ${MAKE_ENV} ${GMAKE}

@@ -1,16 +1,16 @@
-# $NetBSD: Makefile,v 1.27 2020/01/10 13:32:10 bsiegert Exp $
+# $NetBSD: Makefile,v 1.34 2020/08/14 20:01:25 bsiegert Exp $
 #
 
 DISTNAME=		gcloud-golang
 PKGNAME=		gcloud-golang-metadata-20150310
-PKGREVISION=		24
+PKGREVISION=		30
 GITHUB_PROJECT=		${DISTNAME}
 CATEGORIES=		net
 MASTER_SITES=		${MASTER_SITE_GITHUB:=GoogleCloudPlatform/}
 GITHUB_TAG=		9e1852f597
 
 MAINTAINER=		bsiegert@NetBSD.org
-HOMEPAGE=		http://golang.org/
+HOMEPAGE=		https://golang.org/
 COMMENT=		Google Compute Engine metadata package
 LICENSE=		modified-bsd
 

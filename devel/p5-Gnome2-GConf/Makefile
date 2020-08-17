@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.17 2020/01/18 23:30:35 rillig Exp $
+# $NetBSD: Makefile,v 1.20 2020/06/02 08:23:40 adam Exp $
 #
 
 DISTNAME=	Gnome2-GConf-1.044
 PKGNAME=	p5-${DISTNAME}
-PKGREVISION=	14
+PKGREVISION=	16
 CATEGORIES=	devel perl5
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=gtk2-perl/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://gtk2-perl.sourceforge.net/
+HOMEPAGE=	http://gtk2-perl.sourceforge.net/
 COMMENT=	Perl bindings for the GConf configuration database
 #LICENSE=	gnu-lgpl-v2
 

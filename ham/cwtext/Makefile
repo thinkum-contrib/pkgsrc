@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.24 2020/01/18 23:32:39 rillig Exp $
+# $NetBSD: Makefile,v 1.26 2020/05/03 16:49:32 rillig Exp $
 
 DISTNAME=	cwtext-0.96
 PKGREVISION=	3
@@ -6,12 +6,15 @@ CATEGORIES=	ham
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=cwtext/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://cwtext.sourceforge.net/
+HOMEPAGE=	http://cwtext.sourceforge.net/
 COMMENT=	Morse Code Generator
 
 MAKE_FILE=	makefile
 USE_TOOLS+=	gmake
 BUILD_TARGET=	ALL
+
+# harmless; the only call is properly guarded
+BUILDLINK_TRANSFORM+=	rm:-Werror=char-subscripts
 
 INSTALLATION_DIRS=	bin
 INSTALLATION_DIRS+=	share/doc/${PKGBASE}

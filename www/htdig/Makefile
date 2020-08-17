@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.45 2020/01/18 23:35:43 rillig Exp $
+# $NetBSD: Makefile,v 1.47 2020/05/20 06:09:05 rillig Exp $
 
 DISTNAME=	htdig-3.2.0b6
 PKGREVISION=	1
@@ -9,7 +9,7 @@ MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=htdig/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://htdig.sourceforge.net/
+HOMEPAGE=	http://htdig.sourceforge.net/
 COMMENT=	WWW indexing and searching system
 
 USE_LANGUAGES=		c c++03
@@ -23,6 +23,13 @@ CONFIGURE_ARGS+=	--with-image-dir=${PREFIX}/share/examples/htdig
 CONFIGURE_ARGS+=	--with-search-dir=${PREFIX}/share/examples/htdig
 CONFIGURE_ENV+=		PDF_PARSER="${LOCALBASE}/bin/acroread"
 CXXFLAGS+=		-Wno-deprecated
+
+# StringMatch.cc: In member function 'int StringMatch::Compare(const char*, int&, int&)':
+# StringMatch.cc:314:37: error: array subscript has type 'char' [-Werror=char-subscripts]
+#   new_state = table[trans[string[pos]]][state];
+#                                      ^
+# Maybe fix this later.
+BUILDLINK_TRANSFORM+=	rm:-Werror=char-subscripts
 
 PKG_SYSCONFSUBDIR=	htdig
 INSTALLATION_DIRS+=	share/htdig/common

@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.32 2020/01/18 23:30:41 rillig Exp $
+# $NetBSD: Makefile,v 1.35 2020/03/20 11:57:32 nia Exp $
 #
 
 DISTNAME=	scintilla339
 PKGNAME=	scintilla-3.3.9
-PKGREVISION=	10
+PKGREVISION=	12
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=scintilla/}
 EXTRACT_SUFX=	.tgz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://scintilla.sourceforge.net/
+HOMEPAGE=	http://scintilla.sourceforge.net/
 COMMENT=	Source code editing component
 #LICENSE=	# TODO: (see mk/license.mk)
 

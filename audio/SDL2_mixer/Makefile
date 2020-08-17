@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.9 2020/01/18 21:48:41 jperkin Exp $
+# $NetBSD: Makefile,v 1.11 2020/03/08 16:47:24 wiz Exp $
 
 DISTNAME=	SDL2_mixer-2.0.4
-PKGREVISION=	1
+PKGREVISION=	2
 CATEGORIES=	audio devel
 MASTER_SITES=	http://www.libsdl.org/projects/SDL_mixer/release/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.libsdl.org/projects/SDL_mixer/
+HOMEPAGE=	https://www.libsdl.org/projects/SDL_mixer/
 COMMENT=	Sample multi-channel audio mixer library
 LICENSE=	zlib
 

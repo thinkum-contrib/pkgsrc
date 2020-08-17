@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.18 2020/01/23 08:00:55 taca Exp $
+# $NetBSD: Makefile,v 1.24 2020/06/02 08:24:29 adam Exp $
 
 DISTNAME=	bind-${BIND_VERSION}
 PKGNAME=	${DISTNAME:S/-P/pl/}
+PKGREVISION=	1
 CATEGORIES=	net
 MASTER_SITES=	ftp://ftp.isc.org/isc/bind9/${BIND_VERSION}/
 
@@ -14,7 +15,7 @@ CONFLICTS+=	host-[0-9]*
 
 MAKE_JOBS_SAFE=	no
 
-BIND_VERSION=	9.14.10
+BIND_VERSION=	9.14.12
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -22,9 +23,14 @@ BUILD_DEFS+=	BIND_DIR VARBASE
 
 .include "options.mk"
 
-USE_TOOLS+=		pax perl
+USE_TOOLS+=		pax perl pkg-config
 USE_LIBTOOL=		yes
 GNU_CONFIGURE=		yes
+MAKE_ENV+=		WRKDIR=${WRKDIR} PREFIX=${PREFIX}
+
+.if ${OPSYS} == "Linux" && !exists(/usr/include/sys/capability.h)
+CONFIGURE_ARGS+=		--disable-linux-caps
+.endif
 
 CONFIGURE_ARGS+=		--with-libtool
 CONFIGURE_ARGS+=		--sysconfdir=${PKG_SYSCONFDIR}

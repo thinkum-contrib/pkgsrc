@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.70 2019/12/03 16:32:16 adam Exp $
+# $NetBSD: Makefile,v 1.76 2020/05/16 06:49:39 rillig Exp $
 #
 
 COMMENT=	Monetary, financial and related applications
@@ -14,11 +14,16 @@ SUBDIR+=	R-timeSeries
 SUBDIR+=	R-tseries
 SUBDIR+=	bitcoin
 SUBDIR+=	cpuminer
+SUBDIR+=	electrum
 SUBDIR+=	gkrellm-stock
 SUBDIR+=	gnucash
 SUBDIR+=	gnucash-docs
+SUBDIR+=	hledger
+SUBDIR+=	hledger-lib
 SUBDIR+=	homebank
+SUBDIR+=	hs-Decimal
 SUBDIR+=	ledger
+SUBDIR+=	ledger2beancount
 SUBDIR+=	libofx
 SUBDIR+=	magento
 SUBDIR+=	moneyguru
@@ -30,6 +35,7 @@ SUBDIR+=	p5-Locale-Currency-Format
 SUBDIR+=	py-alpha_vantage
 SUBDIR+=	py-alphalens
 SUBDIR+=	py-backtrader
+SUBDIR+=	py-beancount
 SUBDIR+=	py-bitcoinlib
 SUBDIR+=	py-bitcoinrpc
 SUBDIR+=	py-braintree
@@ -101,7 +107,6 @@ SUBDIR+=	py-trytond-stock-supply-production
 SUBDIR+=	py-vatnumber
 SUBDIR+=	ruby-activemerchant
 SUBDIR+=	ruby-braintree
-SUBDIR+=	tclticker
 SUBDIR+=	tex-euro
 SUBDIR+=	tex-euro-doc
 SUBDIR+=	xfinans

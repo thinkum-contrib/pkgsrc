@@ -1,12 +1,12 @@
-# $NetBSD: Makefile,v 1.17 2020/01/18 23:33:12 rillig Exp $
+# $NetBSD: Makefile,v 1.19 2020/06/02 08:24:28 adam Exp $
 
 DISTNAME=	tvtime-1.0.2
-PKGREVISION=	9
+PKGREVISION=	10
 CATEGORIES=	multimedia x11
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=tvtime/}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://tvtime.sourceforge.net/
+HOMEPAGE=	http://tvtime.sourceforge.net/
 COMMENT=	High quality television application
 LICENSE=	gnu-gpl-v2 AND mit AND gnu-lgpl-v2
 

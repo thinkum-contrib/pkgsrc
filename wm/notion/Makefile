@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.26 2020/01/18 23:35:40 rillig Exp $
+# $NetBSD: Makefile,v 1.28 2020/06/30 14:56:36 nia Exp $
 
 DISTNAME=	notion-3-2017050501
 PKGNAME=	${DISTNAME:S/3-/3./}
@@ -8,7 +8,7 @@ MASTER_SITES=	${MASTER_SITE_GITHUB:=raboof/}
 GITHUB_TAG=	${DISTNAME:S/notion-//}
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://notion.sourceforge.net/
+HOMEPAGE=	http://notion.sourceforge.net/
 COMMENT=	Tiling window manager based on ion3
 LICENSE=	ion-license AND gnu-lgpl-v2.1
 
@@ -19,7 +19,7 @@ WRKSRC=		${WRKDIR}/${DISTNAME:S/-src//}
 USE_LANGUAGES=	c99
 USE_TOOLS+=	gmake msgfmt pax pkg-config
 
-LUA_VERSIONS_INCOMPATIBLE=	53
+LUA_VERSIONS_ACCEPTED=	52 51
 
 MAKE_FLAGS+=	PREFIX=${PREFIX}
 MAKE_FLAGS+=	EXAMPLEDIR=${PREFIX}/share/examples/notion

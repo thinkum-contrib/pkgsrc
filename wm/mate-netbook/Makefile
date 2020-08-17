@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.18 2019/12/30 22:59:56 gutteridge Exp $
+# $NetBSD: Makefile,v 1.21 2020/04/05 16:05:43 bsiegert Exp $
 
 .include "../../meta-pkgs/mate/Makefile.common"
 
-DISTNAME=	mate-netbook-${VERSION:R}.2
+DISTNAME=	mate-netbook-${VERSION:R}.0
 CATEGORIES=	wm
 
 COMMENT=	Simple window management tool for MATE desktop

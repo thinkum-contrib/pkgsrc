@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.227 2020/01/18 21:49:19 jperkin Exp $
+# $NetBSD: Makefile,v 1.247 2020/08/12 18:31:27 ryoon Exp $
 
-DISTNAME=	qemu-4.2.0
-PKGREVISION=	4
+DISTNAME=	qemu-5.1.0
 CATEGORIES=	emulators
 MASTER_SITES=	https://download.qemu.org/
 EXTRACT_SUFX=	.tar.xz
@@ -22,16 +21,10 @@ GMAKE_REQD=		4.1 # needed for docs
 
 PYTHON_VERSIONED_DEPENDENCIES=	sphinx:tool
 
-SUBST_CLASSES+=			prefix
-SUBST_STAGE.prefix=		pre-configure
-SUBST_MESSAGE.prefix=		Setting PREFIX
-SUBST_FILES.prefix+=		configure
-SUBST_VARS.prefix+=		PREFIX
-
 SUBST_CLASSES+=			sphinx-build
 SUBST_STAGE.sphinx-build=	pre-configure
 SUBST_MESSAGE.sphinx-build=	Fix hardcoded sphinx-build
-SUBST_FILES.sphinx-build+=	Makefile configure
+SUBST_FILES.sphinx-build+=	configure
 SUBST_FILES.sphinx-build+=	roms/skiboot/doc/Makefile
 SUBST_FILES.sphinx-build+=	roms/u-boot/Documentation/Makefile
 SUBST_SED.sphinx-build+=	-e 's/sphinx-build/sphinx-build-${PYVERSSUFFIX}/g'
@@ -49,7 +42,6 @@ CONFIGURE_ARGS+=	--mandir=${PREFIX}/${PKGMANDIR}
 CONFIGURE_ARGS+=	--enable-curses
 CONFIGURE_ARGS+=	--enable-docs
 CONFIGURE_ARGS+=	--enable-jemalloc
-CONFIGURE_ARGS+=	--disable-opengl
 CONFIGURE_ENV+=		mansuffix=/${PKGMANDIR}
 
 .if defined(PKGSRC_USE_SSP)
@@ -110,8 +102,12 @@ UE_ARCHS+=		tilegx
 UE_ARCHS+=		x86_64 xtensa xtensaeb
 
 .if ${OPSYS} == "NetBSD"
-USER_EMUL=			i386 x86_64 sparc sparc64
 PLIST.nbd=			yes
+.  if !exists(/usr/include/machine/trap.h)
+CONFIGURE_ARGS+=		--disable-bsd-user
+.  else
+USER_EMUL=			i386 x86_64 sparc sparc64
+.  endif
 .elif !empty(OPSYS:M*BSD) || ${OPSYS} == "DragonFly"
 USER_EMUL=			i386 x86_64 sparc sparc64
 PLIST.nbd=			yes

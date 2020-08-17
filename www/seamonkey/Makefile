@@ -1,15 +1,15 @@
-# $NetBSD: Makefile,v 1.202 2020/01/18 21:51:11 jperkin Exp $
+# $NetBSD: Makefile,v 1.218 2020/06/26 11:40:28 nia Exp $
 
 DISTNAME=	seamonkey-${SM_VER}.source
 PKGNAME=	seamonkey-${SM_VER:S/b/beta/}
-PKGREVISION=	2
-SM_VER=		2.49.5
+PKGREVISION=	5
+SM_VER=		2.53.2
 CATEGORIES=	www
 MASTER_SITES=	${MASTER_SITE_MOZILLA:=seamonkey/releases/${SM_VER}/source/}
 EXTRACT_SUFX=	.tar.xz
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	http://www.seamonkey-project.org/
+HOMEPAGE=	https://www.seamonkey-project.org/
 COMMENT=	Full-featured gecko-based browser
 LICENSE=	mpl-2.0
 
@@ -22,9 +22,13 @@ USE_TOOLS+=	unzip pax
 NOT_PAX_MPROTECT_SAFE+=	lib/${PKGBASE}/seamonkey
 NOT_PAX_MPROTECT_SAFE+=	lib/${PKGBASE}/seamonkey-bin
 
+GCC_REQD+=	6
+
 .include "../../mk/bsd.prefs.mk"
 .include "options.mk"
-.include "../../www/firefox52/mozilla-common.mk"
+# See mozilla/config/milestone.txt
+#.include "../../www/firefox60/mozilla-common.mk"
+.include "mozilla-common.mk"
 
 # Workaround to fix pixman.h detection
 CFLAGS+=	-I${BUILDLINK_PREFIX.pixman}/include/pixman-1
@@ -40,13 +44,8 @@ LDFLAGS+=		${COMPILER_RPATH_FLAG}${PREFIX}/lib/${PKGBASE}
 
 .include "../../mk/bsd.prefs.mk"
 
-#.if (${OPSYS} == "Linux" || ${OPSYS} == "SunOS" || ${OPSYS} == "Darwin" || \
-#     ${OPSYS} == "DragonFly") && \
-#    (${MACHINE_ARCH} == "i386" || ${MACHINE_ARCH} == "x86_64")
-#BUILD_DEPENDS+=		yasm>=1.1.0:../../devel/yasm
-#.endif
-
 CHECK_PORTABILITY_SKIP+=	mozilla/js/src/tests/update-test262.sh
+CHECK_PORTABILITY_SKIP+=	mozilla/modules/pdfium/update.sh
 CHECK_PORTABILITY_SKIP+=	mozilla/security/nss/tests/libpkix/libpkix.sh
 
 CHECK_INTERPRETER_SKIP+=	lib/seamonkey-sdk/sdk/bin/header.py
@@ -54,13 +53,22 @@ CHECK_INTERPRETER_SKIP+=	lib/seamonkey-sdk/sdk/bin/typelib.py
 CHECK_INTERPRETER_SKIP+=	lib/seamonkey-sdk/sdk/bin/xpidl.py
 CHECK_INTERPRETER_SKIP+=	lib/seamonkey-sdk/sdk/bin/xpt.py
 
-SUBST_CLASSES+=		sys-dic
-SUBST_STAGE.sys-dic=	pre-configure
-SUBST_MESSAGE.sys-dic=	Reference to system hunspell dictionaries.
-SUBST_FILES.sys-dic=	mozilla/extensions/spellcheck/hunspell/src/mozHunspell.cpp
-SUBST_VARS.sys-dic=	PREFIX
-
 CHECK_WRKREF_SKIP=	lib/seamonkey/chrome/toolkit/content/global/buildconfig.html
+
+CKSUM_CRATES+=	mozilla/third_party/rust/libc
+
+# patch-mozilla_third__party_rust_libc_src_unix_bsd_netbsdlike_netbsd_other_mod.rs
+CKSUMS+=	4d9f7091af8e166943ac6f42ce85558909e5b6e61325039bff7adfbcf4b90212
+CKSUMS+=	30c5211b393d9314f880f63e29833785c8b55369102eec21170a0fe0fd1c4a16
+
+SUBST_CLASSES+=		cksum
+SUBST_STAGE.cksum=	pre-configure
+.for crate in ${CKSUM_CRATES}
+SUBST_FILES.cksum+=	${crate}/.cargo-checksum.json
+.endfor
+.for from to in ${CKSUMS}
+SUBST_SED.cksum+=	-e 's,${from},${to},g'
+.endfor
 
 post-extract:
 	mv ${WRKSRC}/mozilla/gfx/ycbcr/yuv_row_arm.s ${WRKSRC}/mozilla/gfx/ycbcr/yuv_row_arm.S
@@ -75,8 +83,10 @@ pre-configure:
 #	touch ${WRKSRC}/.mozconfig
 
 post-install:
-#	${TOUCH} ${TOUCH_FLAGS} \
-#		${DESTDIR}${PREFIX}/include/seamonkey/mozilla/throw_gcc.h
+	${ECHO} '#! /bin/sh' > ${DESTDIR}${PREFIX}/bin/seamonkey
+	${ECHO} '${PREFIX}/lib/seamonkey/seamonkey "$$@"' >> \
+		${DESTDIR}${PREFIX}/bin/seamonkey
+	${CHMOD} 755 ${DESTDIR}${PREFIX}/bin/seamonkey
 	@${STEP_MSG} "Installing bundled seamonkey extensions."
 	rm -rf ${WRKDIR}/${OBJDIR}/extensions
 	${MKDIR} ${WRKDIR}/${OBJDIR}/extensions

@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.45 2020/01/18 21:49:40 jperkin Exp $
+# $NetBSD: Makefile,v 1.50 2020/05/22 10:56:14 adam Exp $
 
-DISTNAME=		tqsl-2.4.7
-PKGREVISION=		2
+DISTNAME=		tqsl-2.5.1
+PKGREVISION=		3
 CATEGORIES=		ham
 MASTER_SITES=		http://www.arrl.org/files/file/LoTW%20Instructions/
 
@@ -26,12 +26,13 @@ USE_CMAKE=		yes
 # cause (aside from having two pixman versions installed) is ad hoc -L
 # usage in Makefile.am, without matching -R.
 
+# Filed upstream by email 20200314.
 # remove the string $(LIB_SUFFIX), tested with NetBSD at least
 SUBST_CLASSES+=			lib-suffix
 SUBST_MESSAGE.lib-suffix=	Removing $$(LIB_SUFFIX) from src/CMakeLists.txt
 SUBST_STAGE.lib-suffix=		pre-configure
 SUBST_FILES.lib-suffix=		src/CMakeLists.txt
-SUBST_SED.lib-suffix=		-e s/\$$\(LIB_SUFFIX\)//
+SUBST_SED.lib-suffix=		-e s/\$${\LIB_SUFFIX\}//
 
 do-configure:
 	(cd ${WRKSRC} ; \
@@ -49,12 +50,15 @@ post-install:
 	(cd ${WRKSRC} ;\
 	${INSTALL_DATA} LICENSE.txt ${DESTDIR}${PREFIX}/share/TrustedQSL/ \
 	)
-	# Conflicting PLIST with wxGTK28-2.8.12nb8:
-	${RM} -f ${DESTDIR}${PREFIX}/share/locale/*/LC_MESSAGES/wxstd.mo
+
+# \todo Perhaps change to lmdb, and (unlikely) consider an option.
+.include "../../databases/db5/buildlink3.mk"
+#.include "../../databases/lmdb/buildlink3.mk"
 
 .include "../../textproc/expat/buildlink3.mk"
-.include "../../databases/db5/buildlink3.mk"
-.include "../../mk/wxGTK.mk"
+.include "../../security/openssl/buildlink3.mk"
 .include "../../www/curl/buildlink3.mk"
-
+# Upstream uses wxGTK28 on Windows because it has accessibility patches, but
+# 30 is newer.
+.include "../../x11/wxGTK30/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"
