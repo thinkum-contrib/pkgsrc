@@ -33,4 +33,28 @@ post-install:
 .if ${OPSYS} == "Linux" || ${OPSYS} == "SunOS"
 .include "../../devel/libuuid/buildlink3.mk"
 .endif
+
+.include "options.mk"
+
+PTHREADS_OPTS?= 	optional
+.for V in CFLAGS CPPFLAGS LDFLAGS LIBS
+PTHREAD_AUTO_VARS+=	${V}
+.endfor
+
+.include "../../mk/pthread.buildlink3.mk"
+
+.if empty(PTHREAD_TYPE:Mnone)
+CONFIGURE_ARGS+=	--enable-threads
+. for V in CFLAGS CPPFLAGS LDFLAGS # LIBS
+${V}+=			${PTHREAD_${V}}
+CONFIGURE_ENV+= 	${V}=${${V}:Q}
+. endfor
+.else
+CONFIGURE_ARGS+=	--disable-threads
+.endif
+
+post-install:
+	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
+	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
+
 .include "../../mk/bsd.pkg.mk"

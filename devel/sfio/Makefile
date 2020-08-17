@@ -16,6 +16,16 @@ EXTRACT_SUFX=	.cpio
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 #HOMEPAGE=	http://akpublic.research.att.com/sw/tools/sfio/
+HOMEPAGE=	https://github.com/att/ast/tree/master/src/lib/libast/sfio
+
+## NB
+## - graphics/graphviz is distributed with a bundled sfio source tree
+##
+## - sfio is also available in AT&T libast
+##   https://github.com/att/ast/tree/master/src/lib/libast
+##   which is used in pkgsrc under shells/ast-ksh
+##   WRKDIR subdirectory src/lib/libast/
+
 COMMENT=	Safe and Fast IO library
 
 MAKE_JOBS_SAFE=	no

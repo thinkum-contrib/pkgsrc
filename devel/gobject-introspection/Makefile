@@ -38,6 +38,14 @@ SUBST_SED.timet+=	-e 's,@TIMET_CTYPE@,glong,g'
 
 MAKE_ENV+=	LD_LIBRARY_PATH=${WRKSRC}/output/girepository
 
+.include "../../devel/gettext-lib/buildlink3.mk"
+
+SUBST_CLASSES+=		blinc
+SUBST_STAGE.blinc=	pre-configure
+SUBST_FILES.blinc+=	gir/meson.build
+SUBST_MESSAGE.blinc=	Apply buildlink include directory for build
+SUBST_SED.blinc=	-e 's,@BLINC@,${BUILDLINK_DIR}/include,g'
+
 BUILDLINK_API_DEPENDS.glib2+= glib2>=2.58.0
 .include "../../devel/glib2/buildlink3.mk"
 BUILDLINK_API_DEPENDS.libffi+= libffi>=3.0.0

@@ -35,8 +35,8 @@ CHECK_BUILTIN.gettext:=	no
 .if !empty(USE_BUILTIN.gettext:M[yY][eE][sS])
 USE_BUILTIN.iconv=			yes
 .else
-#BUILDLINK_INCDIRS.gettext+=		include/gettext
-BUILDLINK_FNAME_TRANSFORM.gettext+=	-e 's|include/gettext/|include/|'
+BUILDLINK_INCDIRS.gettext+=		include/gettext
+#BUILDLINK_FNAME_TRANSFORM.gettext+=	-e 's|include/gettext/|include/|'
 .endif
 
 .include "../../converters/libiconv/buildlink3.mk"

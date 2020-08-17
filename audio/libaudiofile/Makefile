@@ -8,6 +8,7 @@ MASTER_SITES=	https://audiofile.68k.org/
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
 HOMEPAGE=	https://audiofile.68k.org/
+#HOMEPAGE=	https://github.com/mpruett/audiofile/
 COMMENT=	Sound library for SGI audio file
 LICENSE=	gnu-gpl-v2 AND gnu-lgpl-v2.1
 

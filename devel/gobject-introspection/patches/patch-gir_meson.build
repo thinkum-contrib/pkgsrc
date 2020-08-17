@@ -1,15 +1,31 @@
-$NetBSD: patch-gir_meson.build,v 1.2 2020/03/11 10:09:36 wiz Exp $
+$NetBSD$
 
-gircompiler requires libraries from the build area.
+Patch gir meson.build to add the build's gettext include path to the gir
+scanner_command, via a later subst class.
 
---- gir/meson.build.orig	2020-03-07 14:13:21.645308500 +0000
+This may serve to ensure that the build's gettext libintl.h will be
+available to gir in the pkg build environment, as under some build
+configurations using pkgsrc gettext-lib and pkgsrc cwrappers.
+
+Under build configurations not using pkgsrc gettext-lib - e.g in which
+USE_BUILTIN.gettext is true - it may be assumed that libintl.h will be
+available via conventional system header paths.
+
+Under build configurations not using pkgsrc cwrappers, it may assumed
+that this patch will not negatively affect the usage of include paths,
+in the build environment - whether in builds using pkgsrc gettext-lib,
+or in builds using gettext support from the build host environment.
+
+Usage: Used in the blinc subst-class in pkg Makefile
+
+--- gir/meson.build.orig	2019-09-09 19:22:10.000000000 +0000
 +++ gir/meson.build
-@@ -446,7 +446,7 @@ typelibs = []
- if get_option('gi_cross_binary_wrapper') != ''
-     gircompiler_command = [get_option('gi_cross_binary_wrapper'), gircompiler.full_path(), ]
- else
--    gircompiler_command = [gircompiler, ]
-+    gircompiler_command = ['env', 'LD_LIBRARY_PATH=' + meson.current_build_dir() + '/../girepository', gircompiler ]
- endif
- 
- gircompiler_command += [ '-o', '@OUTPUT@', '@INPUT@',
+@@ -112,7 +112,7 @@
+     endif
+     glib_files += ret.stdout().strip().split('\n')
+   endif
+-  glib_includes = ['-I' + glib_incdir, '-I' + glib_libincdir]
++  glib_includes = ['-I' + glib_incdir, '-I' + glib_libincdir, '-I@BLINC@']
+ elif dep_type == 'internal'
+   glib_command += ['--pkg-export=glib-2.0']
+   # XXX: Assumes that the builddir layout is 'mirror'

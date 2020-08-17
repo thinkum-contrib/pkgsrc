@@ -1,4 +1,4 @@
-# $NetBSD: options.mk,v 1.81 2020/04/09 16:54:22 nia Exp $
+# $NetBSD: options.mk,v 1.77+ 2019/12/08 13:07:20 nia Exp $
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.MesaLib
 
@@ -64,7 +64,8 @@ BUILDLINK_TRANSFORM+=	rm:-DUSE_ELF_TLS
 #
 .if !empty(PKG_OPTIONS:Mllvm)
 MESON_ARGS+=		-Dllvm=true
-BUILDLINK_API_DEPENDS.libLLVM+=	libLLVM>=7.0.1nb2
+BUILDLINK_API_DEPENDS.libLLVM+= libLLVM>=7.0.1nb2
+BUILDLINK_PKGSRCDIR.libLLVM?=	../../lang/libLLVM/
 .  include "../../devel/libelf/buildlink3.mk"
 .  include "../../lang/libLLVM/buildlink3.mk"
 
