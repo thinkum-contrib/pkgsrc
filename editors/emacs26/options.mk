@@ -114,7 +114,11 @@ CONFIGURE_ARGS+=	--without-xaw3d
 .include "../../graphics/libotf/buildlink3.mk"
 .include "../../graphics/freetype2/buildlink3.mk"
 .include "../../x11/libXft/buildlink3.mk"
+.if ${OPSYS} = "Linux"
+CONFIGURE_ARGS+=	 --without-m17n-flt
+.else
 .include "../../devel/m17n-lib/buildlink3.mk"
+.endif
 .  else
 CONFIGURE_ARGS+=	--without-xft --without-libotf --without-m17n-flt
 .  endif
@@ -129,6 +133,8 @@ CONFIGURE_ARGS+=	--without-xft --without-libotf --without-m17n-flt
 USE_TOOLS+=		pkg-config
 .include "../../x11/gtk3/buildlink3.mk"
 CONFIGURE_ARGS+=	--with-x-toolkit=gtk3
+.include "../../graphics/cairo/buildlink3.mk"
+CONFIGURE_ARGS+=	--with-cairo
 .  elif !empty(PKG_OPTIONS:Mgtk2) || !empty(PKG_OPTIONS:Mgtk)
 USE_TOOLS+=		pkg-config
 .include "../../x11/gtk2/buildlink3.mk"

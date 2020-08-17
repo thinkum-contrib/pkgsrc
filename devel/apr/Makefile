@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.82 2020/02/20 06:25:28 rin Exp $
+# $NetBSD: Makefile,v 1.81 2020/01/18 23:30:22 rillig Exp $
 #
 # Take care, changelogs often include "PR 12345" strings
 # which cause GNATS indigestion.
@@ -25,6 +25,16 @@ LIBS.SunOS+=		-lnsl
 
 TEST_TARGET=		check
 
+SUBST_CLASSES+= 	jlibtool
+SUBST_STAGE.jlibtool=	post-configure
+SUBST_FILES.jlibtool=	build/jlibtool.c
+SUBST_SED.jlibtool=	-e 's,@AR@,${AR},;s,@RANLIB@,${RANLIB},'
+SUBST_MESSAGE.jlibtool= Set tool paths in jlibtool
+
+post-install:
+	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
+	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
+
 .include "../../mk/bsd.prefs.mk"
 .if ${OPSYS} == "Linux" || ${OPSYS} == "SunOS"
 .include "../../devel/libuuid/buildlink3.mk"
@@ -48,9 +58,5 @@ CONFIGURE_ENV+= 	${V}=${${V}:Q}
 .else
 CONFIGURE_ARGS+=	--disable-threads
 .endif
-
-post-install:
-	${RM} ${DESTDIR}${PREFIX}/libexec/apr/libtool
-	${INSTALL_SCRIPT} ${PKG_LIBTOOL} ${DESTDIR}${PREFIX}/libexec/apr/libtool
 
 .include "../../mk/bsd.pkg.mk"

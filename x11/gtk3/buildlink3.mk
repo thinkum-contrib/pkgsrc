@@ -42,6 +42,9 @@ BUILDLINK_API_DEPENDS.Xft2+=	Xft2>=2.1.2nb2
 .include "../../devel/wayland-protocols/buildlink3.mk"
 .include "../../x11/libxkbcommon/buildlink3.mk"
 .endif # PKG_BUILD_OPTIONS.gtk3:Mwayland
+.if !empty(PKG_BUILD_OPTIONS.gtk3:Mxdamage)
+.include "../../x11/libXdamage/buildlink3.mk"
+.endif  # PKG_BUILD_OPTIONS.gtk3:Mxdamage
 .endif # GTK3_BUILDLINK3_MK
 
 BUILDLINK_TREE+=	-gtk3

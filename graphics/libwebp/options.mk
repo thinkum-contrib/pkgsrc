@@ -1,7 +1,7 @@
 # $NetBSD: options.mk,v 1.2 2017/04/15 15:56:00 kim Exp $
 
 PKG_OPTIONS_VAR=	PKG_OPTIONS.libwebp
-PKG_SUPPORTED_OPTIONS=	tiff
+PKG_SUPPORTED_OPTIONS=	tiff sdl
 PKG_SUGGESTED_OPTIONS=	tiff
 
 .include "../../mk/bsd.options.mk"
@@ -10,4 +10,11 @@ PKG_SUGGESTED_OPTIONS=	tiff
 .include "../../graphics/tiff/buildlink3.mk"
 .else
 CONFIGURE_ARGS+=	--disable-tiff
+.endif
+
+.if !empty(PKG_OPTIONS:Msdl)
+.include "../../devel/SDL/buildlink3.mk"
+CONFIGURE_ARGS+=	--enable-sdl
+.else
+CONFIGURE_ARGS+=	--disable-sdl
 .endif

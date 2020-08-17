@@ -1,0 +1,74 @@
+$Thinkum$
+
+Patch Mono manual pages for pathname update.
+
+This patch will be used for the subst class, fix-paths-man
+
+--- man/mono.1.orig	2019-09-19 07:46:04.000000000 +0000
++++ man/mono.1
+@@ -435,7 +435,7 @@
+ .TP
+ \fB--config filename\fR
+ Load the specified configuration file instead of the default one(s).
+-The default files are /etc/mono/config and ~/.mono/config or the file
++The default files are @CONFDIR@/mono/config and ~/.mono/config or the file
+ specified in the MONO_CONFIG environment variable, if set.  See the
+ mono-config(5) man page for details on the format of this file.
+ .TP
+@@ -1997,12 +1997,12 @@
+ The directory for the ahead-of-time compiler demand creation
+ assemblies are located. 
+ .TP
+-.B /etc/mono/config, ~/.mono/config
++.B @CONFDIR@/mono/config, ~/.mono/config
+ .Sp
+ Mono runtime configuration file.  See the mono-config(5) manual page
+ for more information.
+ .TP
+-.B ~/.config/.mono/certs, /usr/share/.mono/certs
++.B ~/.config/.mono/certs, @SHARE_APP@/certs
+ .Sp
+ Contains Mono certificate stores for users / machine. See the certmgr(1) 
+ manual page for more information on managing certificate stores and
+@@ -2015,7 +2015,7 @@
+ for a given system assembly, the format is the one described in the
+ mono-config(5) page. 
+ .TP
+-.B ~/.config/.mono/keypairs, /usr/share/.mono/keypairs
++.B ~/.config/.mono/keypairs, @SHARE_APP@/keypairs
+ .Sp
+ Contains Mono cryptographic keypairs for users / machine. They can be 
+ accessed by using a CspParameters object with DSACryptoServiceProvider
+--- man/mono-config.5.orig	2019-09-19 07:46:04.000000000 +0000
++++ man/mono-config.5
+@@ -10,7 +10,7 @@
+ mono-config \- Mono runtime file format configuration
+ .SH DESCRIPTION
+ The Mono runtime will load configuration data from the
+-installation prefix /etc/mono/config file, the ~/.mono/config or from
++installation prefix @CONFDIR@/mono/config file, the ~/.mono/config or from
+ the file pointed by the MONO_CONFIG environment variable.
+ .PP
+ For each assembly loaded a config file with the name:
+--- man/mono-configuration-crypto.1.orig	2019-09-19 07:46:04.000000000 +0000
++++ man/mono-configuration-crypto.1
+@@ -18,7 +18,7 @@
+ .TP
+ .B   -m, --machine, --global
+ Use machine (global) store for all the key actions. Note that on Unix machines global store is located in
+-\fI/usr/share/.mono\fR and modifying it requires root user permissions.
++\fI@SHARE_APP@\fR and modifying it requires root user permissions.
+ 
+ .TP
+ .B   -u, --user, --local
+--- man/gacutil.1.orig	2019-09-19 07:46:04.000000000 +0000
++++ man/gacutil.1
+@@ -109,7 +109,7 @@
+ Windows, the assemblies are loaded from the directory where mono and
+ mint live.
+ .PP
+-/etc/mono/config, ~/.mono/config
++@CONFDIR@/mono/config, ~/.mono/config
+ .PP
+ Mono runtime configuration file.  See the mono-config(5) manual page
+ for more information.

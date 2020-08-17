@@ -44,4 +44,5 @@ CONF_FILES+=		share/examples/p11-kit/pkcs11.conf.example \
 
 .include "../../devel/libffi/buildlink3.mk"
 .include "../../security/libtasn1/buildlink3.mk"
+.include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"

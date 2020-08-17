@@ -123,8 +123,18 @@ SUBST_FILES.fix-python+=	mono/mini/Makefile.am.in
 SUBST_FILES.fix-python+=	mono/tests/Makefile.am
 SUBST_SED.fix-python=		-e 's,python,${PYTHONBIN},'
 
-# Uses [[ ... ]], not needed during the build.
-CHECK_PORTABILITY_SKIP+=	acceptance-tests/microbench-perf.sh.in
+SUBST_CLASSES+= 		fix-share
+SUBST_STAGE.fix-share=		post-patch
+SUBST_MESSAGE.fix-share=	Fixing SpecialFolder paths
+SUBST_FILES.fix-share+= 	external/corefx/src/System.Runtime.Extensions/src/System/Environment.Unix.cs
+SUBST_FILES.fix-share+= 	mcs/class/corlib/System/Environment.cs
+SUBST_SED.fix-share=		 -e 's|@SHARE_TEMPLATES@|${MONO_SHARE_TEMPLATES}|g; s|@SHARE_APP@|${MONO_SHARE_APPLICATION}|g'
+
+SUBST_CLASSES+=			fix-paths-man
+SUBST_STAGE.fix-paths-man=	post-patch
+SUBST_MESSAGE.fix-paths-man=	Fixing system paths in manual pages
+SUBST_FILES.fix-paths-man+= 	man/mono.1 man/mono-config.5 man/mono-configuration-crypto.1 man/gacutil.1
+SUBST_SED.fix-paths-man=	-e 's|@CONFDIR@|${PKG_SYSCONFDIR}|g; s|@SHARE_APP@|${MONO_SHARE_APPLICATION}|g'
 
 .include "../../mk/bsd.prefs.mk"
 
@@ -162,6 +172,29 @@ CONFIGURE_ARGS+=	--with-libgc=none
 .else
 PLIST.boehm=		yes
 .endif
+
+## FIXME update to build with --enable-ninja (autodetected by default)
+## - may be used only when building boringssl
+
+## NB Preventing dtrace usage, on all platforms
+##
+## This may serve as a workaround for some build failures in sgen
+## w/ Mono dtrace support on some BSD.
+##
+## sgen might be safe to build on NetBSD, with dtrace disabled in
+## the build -- cf. has_dtrace in configure.ac
+## 
+## It works OK for a build on FreeBSD 11.2 w/ Mono 6.4, to disable
+## dtrace support in the build.
+##
+## NB Wiki/Documentation
+## - https://www.mono-project.com/docs/advanced/garbage-collector/sgen/working-with-sgen/
+##
+## NB Mono configure my print out a warning as though it does not recognize
+## some configuration options, such that are apparently parsed during
+## the configure, regardless. Seen with --enable-dtrace, also --enable-btls
+## and --enable-btls-lib
+CONFIGURE_ARGS+=	--enable-dtrace=no
 
 # Unsafe JIT, possibly problematic boehm-gc
 NOT_PAX_MPROTECT_SAFE+=	bin/mono-sgen

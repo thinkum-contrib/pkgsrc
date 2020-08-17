@@ -40,6 +40,8 @@ CONFIGURE_ARGS+=	XPM_CFLAGS=${XPM_CFLAGS:Q} \
 			SXPM_LIBS=${SXPM_LIBS:Q}
 .endif
 
+CFLAGS+=	-I${BUILDLINK_PREFIX.gettext}/include/gettext
+
 .include "../../meta-pkgs/modular-xorg/hacks.mk"
 
 .include "../../devel/gettext-lib/buildlink3.mk"
