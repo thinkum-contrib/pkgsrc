@@ -1,0 +1,112 @@
+$Thinkum$
+
+Patch for configuration paths
+ /usr/share/.mono => ${PREFIX}/share/mono/application
+ /usr/share/.mono/templates => ${PREFIX}/share/mono/templates
+
+Similarly:
+ CommonApplicationData => ${PREFIX}/share/mono/application
+ CommonTemplates => ${PREFIX}/share/mono/templates
+
+NB: This also uses the fix-share subst class, defined in the lang/mono6 Makefile
+
+Test configuration with the following, under a non-privileged pkgsrc install:
+  test -e cacert.pem || curl -L -o cacert.pem https://curl.haxx.se/ca/cacert.pem; cert-sync  cacert.pem
+
+Test in applications with
+  env MONO_OPTIONS=--debug MONO_LOG_LEVEL=debug csharp -e 'new System.Net.WebClient ().DownloadString ("https://www.nuget.org")'
+cf. https://github.com/mono/website/blob/gh-pages/docs/getting-started/mono-basics.md
+
+(FIXME: Although the cert-sync works out, the csharp call does not ??)
+
+Affected Files:
+external/corefx/src/System.Runtime.Extensions/src/System/Environment.Unix.cs
+mcs/class/Mono.Security/Mono.Security.Cryptography/KeyPairPersistence.cs
+mcs/class/corlib/System/Environment.cs
+mcs/tools/mono-configuration-crypto/lib/Mono.Configuration.Crypto/KeyContainerCollection.cs
+mcs/class/Mono.Security/Mono.Security.X509/X509StoreManager.cs
+
+See other patches, locally
+
+
+--- external/corefx/src/System.Runtime.Extensions/src/System/Environment.Unix.cs.orig	2019-09-19 07:46:37.000000000 +0000
++++ external/corefx/src/System.Runtime.Extensions/src/System/Environment.Unix.cs
+@@ -98,8 +98,8 @@
+             // https://www.freedesktop.org/software/systemd/man/file-hierarchy.html
+             switch (folder)
+             {
+-                case SpecialFolder.CommonApplicationData: return "/usr/share";
+-                case SpecialFolder.CommonTemplates: return "/usr/share/templates";
++                case SpecialFolder.CommonApplicationData: return "@SHARE_APP@";
++                case SpecialFolder.CommonTemplates: return "@SHARE_TEMPLATES@";
+             }
+             if (IsMac)
+             {
+--- mcs/class/Mono.Security/Mono.Security.Cryptography/KeyPairPersistence.cs.orig	2019-09-19 07:46:04.000000000 +0000
++++ mcs/class/Mono.Security/Mono.Security.Cryptography/KeyPairPersistence.cs
+@@ -242,9 +242,7 @@
+ 			get {
+ 				lock (lockobj) {
+ 					if ((_machinePath == null) || (!_machinePathExists)) {
+-						_machinePath = Path.Combine (
+-							Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
+-							".mono");
++						_machinePath = Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData);
+ 						_machinePath = Path.Combine (_machinePath, "keypairs");
+ 
+ 						_machinePathExists = Directory.Exists (_machinePath);
+--- mcs/class/corlib/System/Environment.cs.orig	2019-09-19 07:46:06.000000000 +0000
++++ mcs/class/corlib/System/Environment.cs
+@@ -678,7 +678,7 @@
+ 			case SpecialFolder.MyVideos:
+ 				return ReadXdgUserDir (config, home, "XDG_VIDEOS_DIR", "Videos");
+ 			case SpecialFolder.CommonTemplates:
+-				return "/usr/share/templates";
++				return "@SHARE_TEMPLATES@";
+ 			case SpecialFolder.Fonts:
+ 				if (Platform == PlatformID.MacOSX)
+ 					return Path.Combine (home, "Library", "Fonts");
+@@ -741,7 +741,7 @@
+ 				return String.Empty;
+ 			// This is where data common to all users goes
+ 			case SpecialFolder.CommonApplicationData:
+-				return "/usr/share";
++				return "@SHARE_APP@";
+ 			default:
+ 				throw new ArgumentException ("Invalid SpecialFolder");
+ 			}
+--- mcs/tools/mono-configuration-crypto/lib/Mono.Configuration.Crypto/KeyContainerCollection.cs.orig	2019-09-19 07:46:07.000000000 +0000
++++ mcs/tools/mono-configuration-crypto/lib/Mono.Configuration.Crypto/KeyContainerCollection.cs
+@@ -32,7 +32,7 @@
+ 			string topPath;
+ 
+ 			if (machineStore)
+-				topPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData), ".mono");
++				topPath = Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData);
+ 			else
+ 				topPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), ".mono");
+ 			topPath = Path.Combine (topPath, "keypairs");
+--- mcs/class/Mono.Security/Mono.Security.X509/X509StoreManager.cs.orig	2019-09-19 07:46:04.000000000 +0000
++++ mcs/class/Mono.Security/Mono.Security.X509/X509StoreManager.cs
+@@ -71,9 +71,7 @@
+ 		internal static string LocalMachinePath {
+ 			get {
+ 				if (_localMachinePath == null) {
+-					_localMachinePath = Path.Combine (
+-						Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
+-						".mono");
++					_localMachinePath = Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData);
+ 					_localMachinePath = Path.Combine (_localMachinePath, "certs");
+ 				}
+ 				return _localMachinePath;
+@@ -95,9 +93,7 @@
+ 		internal static string NewLocalMachinePath {
+ 			get {
+ 				if (_newLocalMachinePath == null) {
+-					_newLocalMachinePath = Path.Combine (
+-						Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
+-						".mono");
++					_newLocalMachinePath = Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData);
+ 					_newLocalMachinePath = Path.Combine (_newLocalMachinePath, "new-certs");
+ 				}
+ 				return _newLocalMachinePath;

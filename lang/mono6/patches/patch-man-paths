@@ -2,7 +2,7 @@ $Thinkum$
 
 Patch Mono manual pages for pathname update.
 
-This patch will be used for the subst class, fix-paths-man
+This patch will be used for the subst. class, fix-paths-man.
 
 --- man/mono.1.orig	2019-09-19 07:46:04.000000000 +0000
 +++ man/mono.1
@@ -61,14 +61,3 @@ This patch will be used for the subst class, fix-paths-man
  
  .TP
  .B   -u, --user, --local
---- man/gacutil.1.orig	2019-09-19 07:46:04.000000000 +0000
-+++ man/gacutil.1
-@@ -109,7 +109,7 @@
- Windows, the assemblies are loaded from the directory where mono and
- mint live.
- .PP
--/etc/mono/config, ~/.mono/config
-+@CONFDIR@/mono/config, ~/.mono/config
- .PP
- Mono runtime configuration file.  See the mono-config(5) manual page
- for more information.

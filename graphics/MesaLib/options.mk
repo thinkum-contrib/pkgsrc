@@ -67,7 +67,7 @@ MESON_ARGS+=		-Dllvm=true
 BUILDLINK_API_DEPENDS.libLLVM+= libLLVM>=7.0.1nb2
 BUILDLINK_PKGSRCDIR.libLLVM?=	../../lang/libLLVM/
 .  include "../../devel/libelf/buildlink3.mk"
-.  include "../../lang/libLLVM/buildlink3.mk"
+.  include "${BUILDLINK_PKGSRCDIR.libLLVM}/buildlink3.mk"
 
 .  if ${OPSYS} != "Darwin" && ${OPSYS} != "Cygwin"
 # This is the latest libdrm requirement for amdgpu.

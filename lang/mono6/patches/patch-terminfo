@@ -1,0 +1,27 @@
+$Thinkum$
+
+Patch source files for adding an optional, local terminfo path.
+
+This patch is used together with the subst class fix-terminfo
+
+--- external/corefx/src/System.Console/src/System/TermInfo.cs.orig	2019-09-19 07:46:36.000000000 +0000
++++ external/corefx/src/System.Console/src/System/TermInfo.cs
+@@ -173,6 +173,7 @@
+             /// This is the ordering of well-known locations used by ncurses.
+             /// </summary>
+             private static readonly string[] _terminfoLocations = new string[] {
++                    @TERMINFO@
+                     "/etc/terminfo",
+                     "/lib/terminfo",
+                     "/usr/share/terminfo",
+--- mcs/class/corlib/System/TermInfoDriver.cs.orig	2019-09-19 07:46:06.000000000 +0000
++++ mcs/class/corlib/System/TermInfoDriver.cs
+@@ -53,7 +53,7 @@
+ 		static int terminal_size;
+ 		
+ 		//static uint flag = 0xdeadbeef;
+-		readonly static string [] locations = { "/usr/share/terminfo", "/etc/terminfo", "/usr/lib/terminfo", "/lib/terminfo" };
++		readonly static string [] locations = { @TERMINFO@ "/usr/share/terminfo", "/etc/terminfo", "/usr/lib/terminfo", "/lib/terminfo" };
+ 
+ 		TermInfoReader reader;
+ 		int cursorLeft;
