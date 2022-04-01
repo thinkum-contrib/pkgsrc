@@ -46,6 +46,7 @@ PYTHON_FOR_BUILD_ONLY=	test
 
 .include "../../devel/gettext-lib/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
+.include "../../archivers/zstd/buildlink3.mk"
 .include "../../lang/python/application.mk"
 .include "../../security/openssl/buildlink3.mk"
 .include "../../mk/pthread.buildlink3.mk"
