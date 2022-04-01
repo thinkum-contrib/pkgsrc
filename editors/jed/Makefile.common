@@ -25,6 +25,11 @@ CONF_FILES=		${EGDIR}/jed.conf ${PREFIX}/etc/jed.conf
 
 INSTALLATION_DIRS+=	${EGDIR}
 
+SUBST_CLASSES+=		termcap
+SUBST_STAGE.termcap=	post-patch
+SUBST_FILES.termcap=	autoconf/aclocal.m4 configure src/Makefile.in
+SUBST_SED.termcap=	-e 's@-ltermcap@-l${BUILDLINK_LIBNAME.termcap}@g'
+
 post-install:
 	${RMDIR} ${DESTDIR}${PREFIX}/share/jed/bin
 	${RMDIR} ${DESTDIR}${PREFIX}/share/jed/lib/tm
