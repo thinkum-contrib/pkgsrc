@@ -7,6 +7,9 @@
 # CLANGBASE
 #	The base directory where the compiler is installed.
 #
+# CLANG_SUFFIX
+#	Optional suffix for clang binaries, if similar to
+#	/usr/bin/clang++13 or /usr/bin/clang-13
 
 .if !defined(COMPILER_CLANG_MK)
 COMPILER_CLANG_MK=	defined
@@ -20,28 +23,28 @@ COMPILER_CLANG_MK=	defined
 CLANGBASE?=		${LOCALBASE}
 LANGUAGES.clang=	# empty
 
-.if exists(${CLANGBASE}/bin/clang)
+.if exists(${CLANGBASE}/bin/clang${CLANG_SUFFIX})
 LANGUAGES.clang+=	c objc
 _COMPILER_STRIP_VARS+=	CC
-CCPATH=			${CLANGBASE}/bin/clang
+CCPATH=			${CLANGBASE}/bin/clang${CLANG_SUFFIX}
 PKG_CC:=		${CCPATH}
 .endif
 
-.if exists(${CLANGBASE}/bin/clang++)
+.if exists(${CLANGBASE}/bin/clang++${CLANG_SUFFIX})
 LANGUAGES.clang+=	c++
 _COMPILER_STRIP_VARS+=	CXX
-CXXPATH=		${CLANGBASE}/bin/clang++
+CXXPATH=		${CLANGBASE}/bin/clang++${CLANG_SUFFIX}
 PKG_CXX:=		${CXXPATH}
 .endif
 
-.if exists(${CLANGBASE}/bin/clang-cpp)
-CPPPATH=		${CLANGBASE}/bin/clang-cpp
+.if exists(${CLANGBASE}/bin/clang-cpp${CLANG_SUFFIX})
+CPPPATH=		${CLANGBASE}/bin/clang-cpp${CLANG_SUFFIX}
 PKG_CPP:=		${CPPPATH}
 .endif
 
 .if exists(${CCPATH})
-CC_VERSION_STRING!=	${CCPATH} -v 2>&1
-CC_VERSION!=		${CCPATH} --version 2>&1 | ${SED} -n "s/^.* version /clang-/p" 
+CC_VERSION_STRING!=	${CCPATH} -v 2>&1 | ${TOOLS_PLATFORM.head} -n1
+CC_VERSION!=		${CCPATH} --version 2>&1 | ${SED} -n "s/^.* version \([^[:space:]][^[:space:]]*\)[[:space:]]*.*/clang-\1/p"
 .else
 CC_VERSION_STRING?=	${CC_VERSION}
 CC_VERSION?=		clang
@@ -89,7 +92,7 @@ CWRAPPERS_APPEND.cxx+=	${_MKPIE_CFLAGS.clang}
 .  endif
 .endif
 
-LDFLAGS+=	${_CLANG_LDFLAGS}
+<LDFLAGS+=	${_CLANG_LDFLAGS}
 
 # _LANGUAGES.<compiler> is ${LANGUAGES.<compiler>} restricted to the
 # ones requested by the package in USE_LANGUAGES.
