@@ -294,12 +294,13 @@ mkdir_p()
 
 mkdir_p_early()
 {
+        local MKDIR=${MKDIR:-mkdir}
 	[ -d "$1" ] && return 0
-	mkdir -p "$1" 2> /dev/null && return 0
+	${MKDIR} -p "$1" 2> /dev/null && return 0
 	parent=`dirname "$1"`
 	mkdir_p_early "$parent"
-	if [ ! -d "$1" ] && mkdir "$1"; then
-		echo_msg "mkdir $1 exited with status $?"
+	if [ ! -d "$1" ] && ! ${MKDIR} "$1"; then
+		echo_msg "${MKDIR} $1 exited with status $?"
 		die "aborted."
 	fi
 	return 0
